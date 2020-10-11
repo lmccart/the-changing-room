@@ -1,0 +1,952 @@
+[
+  {
+    "level": 1,
+    "emotion": "annoyed",
+    "base emotion": "angry"
+  },
+  {
+    "level": 1,
+    "emotion": "frustrated",
+    "base emotion": "angry"
+  },
+  {
+    "level": 1,
+    "emotion": "irritated",
+    "base emotion": "angry"
+  },
+  {
+    "level": 1,
+    "emotion": "upset",
+    "base emotion": "angry"
+  },
+  {
+    "level": 2,
+    "emotion": "angry",
+    "base emotion": "angry"
+  },
+  {
+    "level": 2,
+    "emotion": "mad",
+    "base emotion": "angry"
+  },
+  {
+    "level": 3,
+    "emotion": "enraged",
+    "base emotion": "angry"
+  },
+  {
+    "level": 3,
+    "emotion": "furious",
+    "base emotion": "angry"
+  },
+  {
+    "level": 1,
+    "emotion": "jealous",
+    "base emotion": "envious"
+  },
+  {
+    "level": 2,
+    "emotion": "envious",
+    "base emotion": "envious"
+  },
+  {
+    "level": 3,
+    "emotion": "resentful",
+    "base emotion": "envious"
+  },
+  {
+    "level": 1,
+    "emotion": "low",
+    "base emotion": "depressed"
+  },
+  {
+    "level": 1,
+    "emotion": "down",
+    "base emotion": "depressed"
+  },
+  {
+    "level": 1,
+    "emotion": "grouchy",
+    "base emotion": "depressed"
+  },
+  {
+    "level": 1,
+    "emotion": "crabby",
+    "base emotion": "depressed"
+  },
+  {
+    "level": 1,
+    "emotion": "cranky",
+    "base emotion": "depressed"
+  },
+  {
+    "level": 1,
+    "emotion": "grumpy",
+    "base emotion": "depressed"
+  },
+  {
+    "level": 2,
+    "emotion": "dejected",
+    "base emotion": "depressed"
+  },
+  {
+    "level": 2,
+    "emotion": "bad",
+    "base emotion": "depressed"
+  },
+  {
+    "level": 2,
+    "emotion": "gloomy",
+    "base emotion": "depressed"
+  },
+  {
+    "level": 2,
+    "emotion": "glum",
+    "base emotion": "depressed"
+  },
+  {
+    "level": 3,
+    "emotion": "miserable",
+    "base emotion": "depressed"
+  },
+  {
+    "level": 3,
+    "emotion": "hopeless",
+    "base emotion": "depressed"
+  },
+  {
+    "level": 3,
+    "emotion": "morose",
+    "base emotion": "depressed"
+  },
+  {
+    "level": 3,
+    "emotion": "depressed",
+    "base emotion": "depressed"
+  },
+  {
+    "level": 1,
+    "emotion": "doubtful",
+    "base emotion": "confused"
+  },
+  {
+    "level": 1,
+    "emotion": "uncertain",
+    "base emotion": "confused"
+  },
+  {
+    "level": 1,
+    "emotion": "indecisive",
+    "base emotion": "confused"
+  },
+  {
+    "level": 1,
+    "emotion": "hesitant",
+    "base emotion": "confused"
+  },
+  {
+    "level": 1,
+    "emotion": "uneasy",
+    "base emotion": "confused"
+  },
+  {
+    "level": 2,
+    "emotion": "confused",
+    "base emotion": "confused"
+  },
+  {
+    "level": 2,
+    "emotion": "perplexed",
+    "base emotion": "confused"
+  },
+  {
+    "level": 2,
+    "emotion": "distrustful",
+    "base emotion": "confused"
+  },
+  {
+    "level": 2,
+    "emotion": "embarrassed",
+    "base emotion": "confused"
+  },
+  {
+    "level": 3,
+    "emotion": "lost",
+    "base emotion": "confused"
+  },
+  {
+    "level": 3,
+    "emotion": "unsure",
+    "base emotion": "confused"
+  },
+  {
+    "level": 3,
+    "emotion": "confounded",
+    "base emotion": "confused"
+  },
+  {
+    "level": 1,
+    "emotion": "vulnerable",
+    "base emotion": "helpless"
+  },
+  {
+    "level": 2,
+    "emotion": "alone",
+    "base emotion": "helpless"
+  },
+  {
+    "level": 2,
+    "emotion": "distressed",
+    "base emotion": "helpless"
+  },
+  {
+    "level": 2,
+    "emotion": "helpless",
+    "base emotion": "helpless"
+  },
+  {
+    "level": 2,
+    "emotion": "disappointed",
+    "base emotion": "helpless"
+  },
+  {
+    "level": 2,
+    "emotion": "lonely",
+    "base emotion": "helpless"
+  },
+  {
+    "level": 3,
+    "emotion": "paralyzed",
+    "base emotion": "helpless"
+  },
+  {
+    "level": 3,
+    "emotion": "useless",
+    "base emotion": "helpless"
+  },
+  {
+    "level": 1,
+    "emotion": "tired",
+    "base emotion": "indifferent"
+  },
+  {
+    "level": 1,
+    "emotion": "sluggish",
+    "base emotion": "indifferent"
+  },
+  {
+    "level": 2,
+    "emotion": "weary",
+    "base emotion": "indifferent"
+  },
+  {
+    "level": 2,
+    "emotion": "bored",
+    "base emotion": "indifferent"
+  },
+  {
+    "level": 3,
+    "emotion": "indifferent",
+    "base emotion": "indifferent"
+  },
+  {
+    "level": 3,
+    "emotion": "uncaring",
+    "base emotion": "indifferent"
+  },
+  {
+    "level": 1,
+    "emotion": "anxious",
+    "base emotion": "afraid"
+  },
+  {
+    "level": 1,
+    "emotion": "nervous",
+    "base emotion": "afraid"
+  },
+  {
+    "level": 1,
+    "emotion": "worried",
+    "base emotion": "afraid"
+  },
+  {
+    "level": 1,
+    "emotion": "timid",
+    "base emotion": "afraid"
+  },
+  {
+    "level": 1,
+    "emotion": "wary",
+    "base emotion": "afraid"
+  },
+  {
+    "level": 1,
+    "emotion": "defensive",
+    "base emotion": "afraid"
+  },
+  {
+    "level": 1,
+    "emotion": "guarded",
+    "base emotion": "afraid"
+  },
+  {
+    "level": 2,
+    "emotion": "afraid",
+    "base emotion": "afraid"
+  },
+  {
+    "level": 2,
+    "emotion": "fearful",
+    "base emotion": "afraid"
+  },
+  {
+    "level": 2,
+    "emotion": "alarmed",
+    "base emotion": "afraid"
+  },
+  {
+    "level": 2,
+    "emotion": "scared",
+    "base emotion": "afraid"
+  },
+  {
+    "level": 2,
+    "emotion": "cowardly",
+    "base emotion": "afraid"
+  },
+  {
+    "level": 2,
+    "emotion": "insecure",
+    "base emotion": "afraid"
+  },
+  {
+    "level": 2,
+    "emotion": "troubled",
+    "base emotion": "afraid"
+  },
+  {
+    "level": 3,
+    "emotion": "terrified",
+    "base emotion": "afraid"
+  },
+  {
+    "level": 3,
+    "emotion": "petrified",
+    "base emotion": "afraid"
+  },
+  {
+    "level": 3,
+    "emotion": "paranoid",
+    "base emotion": "afraid"
+  },
+  {
+    "level": 1,
+    "emotion": "aching",
+    "base emotion": "hurt"
+  },
+  {
+    "level": 1,
+    "emotion": "miffed",
+    "base emotion": "hurt"
+  },
+  {
+    "level": 1,
+    "emotion": "withdrawn",
+    "base emotion": "hurt"
+  },
+  {
+    "level": 1,
+    "emotion": "slighted",
+    "base emotion": "hurt"
+  },
+  {
+    "level": 2,
+    "emotion": "pained",
+    "base emotion": "hurt"
+  },
+  {
+    "level": 2,
+    "emotion": "rejected",
+    "base emotion": "hurt"
+  },
+  {
+    "level": 2,
+    "emotion": "insulted",
+    "base emotion": "hurt"
+  },
+  {
+    "level": 2,
+    "emotion": "distant",
+    "base emotion": "hurt"
+  },
+  {
+    "level": 3,
+    "emotion": "crushed",
+    "base emotion": "hurt"
+  },
+  {
+    "level": 3,
+    "emotion": "indignant",
+    "base emotion": "hurt"
+  },
+  {
+    "level": 1,
+    "emotion": "tearful",
+    "base emotion": "sad"
+  },
+  {
+    "level": 1,
+    "emotion": "remorseful",
+    "base emotion": "sad"
+  },
+  {
+    "level": 1,
+    "emotion": "sullen",
+    "base emotion": "sad"
+  },
+  {
+    "level": 1,
+    "emotion": "fragile",
+    "base emotion": "sad"
+  },
+  {
+    "level": 1,
+    "emotion": "wistful",
+    "base emotion": "sad"
+  },
+  {
+    "level": 2,
+    "emotion": "sorrowful",
+    "base emotion": "sad"
+  },
+  {
+    "level": 2,
+    "emotion": "unhappy",
+    "base emotion": "sad"
+  },
+  {
+    "level": 2,
+    "emotion": "mournful",
+    "base emotion": "sad"
+  },
+  {
+    "level": 2,
+    "emotion": "nostalgic",
+    "base emotion": "sad"
+  },
+  {
+    "level": 2,
+    "emotion": "melancholy",
+    "base emotion": "sad"
+  },
+  {
+    "level": 3,
+    "emotion": "anguished",
+    "base emotion": "sad"
+  },
+  {
+    "level": 3,
+    "emotion": "devastated",
+    "base emotion": "sad"
+  },
+  {
+    "level": 1,
+    "emotion": "serious",
+    "base emotion": "judgmental"
+  },
+  {
+    "level": 1,
+    "emotion": "stern",
+    "base emotion": "judgmental"
+  },
+  {
+    "level": 2,
+    "emotion": "judgmental",
+    "base emotion": "judgmental"
+  },
+  {
+    "level": 2,
+    "emotion": "proud",
+    "base emotion": "judgmental"
+  },
+  {
+    "level": 3,
+    "emotion": "combative",
+    "base emotion": "judgmental"
+  },
+  {
+    "level": 1,
+    "emotion": "satisfied",
+    "base emotion": "open"
+  },
+  {
+    "level": 2,
+    "emotion": "interested",
+    "base emotion": "open"
+  },
+  {
+    "level": 2,
+    "emotion": "confident",
+    "base emotion": "open"
+  },
+  {
+    "level": 2,
+    "emotion": "receptive",
+    "base emotion": "open"
+  },
+  {
+    "level": 2,
+    "emotion": "accepting",
+    "base emotion": "open"
+  },
+  {
+    "level": 2,
+    "emotion": "present",
+    "base emotion": "open"
+  },
+  {
+    "level": 2,
+    "emotion": "empathetic",
+    "base emotion": "open"
+  },
+  {
+    "level": 2,
+    "emotion": "friendly",
+    "base emotion": "open"
+  },
+  {
+    "level": 2,
+    "emotion": "open",
+    "base emotion": "open"
+  },
+  {
+    "level": 3,
+    "emotion": "free",
+    "base emotion": "open"
+  },
+  {
+    "level": 1,
+    "emotion": "sensitive",
+    "base emotion": "loving"
+  },
+  {
+    "level": 1,
+    "emotion": "attracted",
+    "base emotion": "loving"
+  },
+  {
+    "level": 1,
+    "emotion": "humble",
+    "base emotion": "loving"
+  },
+  {
+    "level": 2,
+    "emotion": "loving",
+    "base emotion": "loving"
+  },
+  {
+    "level": 2,
+    "emotion": "tender",
+    "base emotion": "loving"
+  },
+  {
+    "level": 2,
+    "emotion": "warm",
+    "base emotion": "loving"
+  },
+  {
+    "level": 2,
+    "emotion": "gracious",
+    "base emotion": "loving"
+  },
+  {
+    "level": 2,
+    "emotion": "kindly",
+    "base emotion": "loving"
+  },
+  {
+    "level": 2,
+    "emotion": "grateful",
+    "base emotion": "loving"
+  },
+  {
+    "level": 3,
+    "emotion": "devoted",
+    "base emotion": "loving"
+  },
+  {
+    "level": 3,
+    "emotion": "passionate",
+    "base emotion": "loving"
+  },
+  {
+    "level": 1,
+    "emotion": "thankful",
+    "base emotion": "happy"
+  },
+  {
+    "level": 1,
+    "emotion": "statisfied",
+    "base emotion": "happy"
+  },
+  {
+    "level": 1,
+    "emotion": "glad",
+    "base emotion": "happy"
+  },
+  {
+    "level": 1,
+    "emotion": "cheerful",
+    "base emotion": "happy"
+  },
+  {
+    "level": 1,
+    "emotion": "mellow",
+    "base emotion": "happy"
+  },
+  {
+    "level": 2,
+    "emotion": "happy",
+    "base emotion": "happy"
+  },
+  {
+    "level": 2,
+    "emotion": "delighted",
+    "base emotion": "happy"
+  },
+  {
+    "level": 2,
+    "emotion": "gleeful",
+    "base emotion": "happy"
+  },
+  {
+    "level": 2,
+    "emotion": "jovial",
+    "base emotion": "happy"
+  },
+  {
+    "level": 3,
+    "emotion": "blissful",
+    "base emotion": "happy"
+  },
+  {
+    "level": 3,
+    "emotion": "joyous",
+    "base emotion": "happy"
+  },
+  {
+    "level": 3,
+    "emotion": "overjoyed",
+    "base emotion": "happy"
+  },
+  {
+    "level": 3,
+    "emotion": "ecstatic",
+    "base emotion": "happy"
+  },
+  {
+    "level": 3,
+    "emotion": "elated",
+    "base emotion": "happy"
+  },
+  {
+    "level": 3,
+    "emotion": "jubilant",
+    "base emotion": "happy"
+  },
+  {
+    "level": 3,
+    "emotion": "euphoric",
+    "base emotion": "happy"
+  },
+  {
+    "level": 3,
+    "emotion": "rapturous",
+    "base emotion": "happy"
+  },
+  {
+    "level": 1,
+    "emotion": "curious",
+    "base emotion": "interested"
+  },
+  {
+    "level": 1,
+    "emotion": "attentive",
+    "base emotion": "interested"
+  },
+  {
+    "level": 1,
+    "emotion": "observant",
+    "base emotion": "interested"
+  },
+  {
+    "level": 2,
+    "emotion": "interested",
+    "base emotion": "interested"
+  },
+  {
+    "level": 2,
+    "emotion": "thoughtful",
+    "base emotion": "interested"
+  },
+  {
+    "level": 2,
+    "emotion": "focused",
+    "base emotion": "interested"
+  },
+  {
+    "level": 3,
+    "emotion": "fascinated",
+    "base emotion": "interested"
+  },
+  {
+    "level": 3,
+    "emotion": "intrigued",
+    "base emotion": "interested"
+  },
+  {
+    "level": 3,
+    "emotion": "absorbed",
+    "base emotion": "interested"
+  },
+  {
+    "level": 3,
+    "emotion": "amazed",
+    "base emotion": "interested"
+  },
+  {
+    "level": 1,
+    "emotion": "playful",
+    "base emotion": "alive"
+  },
+  {
+    "level": 1,
+    "emotion": "optimistic",
+    "base emotion": "alive"
+  },
+  {
+    "level": 2,
+    "emotion": "alive",
+    "base emotion": "alive"
+  },
+  {
+    "level": 2,
+    "emotion": "energetic",
+    "base emotion": "alive"
+  },
+  {
+    "level": 3,
+    "emotion": "liberated",
+    "base emotion": "alive"
+  },
+  {
+    "level": 3,
+    "emotion": "frisky",
+    "base emotion": "alive"
+  },
+  {
+    "level": 3,
+    "emotion": "spirited",
+    "base emotion": "alive"
+  },
+  {
+    "level": 3,
+    "emotion": "thrilled",
+    "base emotion": "alive"
+  },
+  {
+    "level": 3,
+    "emotion": "wonderful",
+    "base emotion": "alive"
+  },
+  {
+    "level": 3,
+    "emotion": "excited",
+    "base emotion": "alive"
+  },
+  {
+    "level": 3,
+    "emotion": "aroused",
+    "base emotion": "alive"
+  },
+  {
+    "level": 1,
+    "emotion": "keen",
+    "base emotion": "positive"
+  },
+  {
+    "level": 1,
+    "emotion": "earnest",
+    "base emotion": "positive"
+  },
+  {
+    "level": 1,
+    "emotion": "hopeful",
+    "base emotion": "positive"
+  },
+  {
+    "level": 2,
+    "emotion": "positive",
+    "base emotion": "positive"
+  },
+  {
+    "level": 2,
+    "emotion": "eager",
+    "base emotion": "positive"
+  },
+  {
+    "level": 2,
+    "emotion": "inspired",
+    "base emotion": "positive"
+  },
+  {
+    "level": 2,
+    "emotion": "upbeat",
+    "base emotion": "positive"
+  },
+  {
+    "level": 2,
+    "emotion": "motivated",
+    "base emotion": "positive"
+  },
+  {
+    "level": 3,
+    "emotion": "brave",
+    "base emotion": "positive"
+  },
+  {
+    "level": 3,
+    "emotion": "daring",
+    "base emotion": "positive"
+  },
+  {
+    "level": 3,
+    "emotion": "exuberant",
+    "base emotion": "positive"
+  },
+  {
+    "level": 1,
+    "emotion": "good",
+    "base emotion": "peaceful"
+  },
+  {
+    "level": 1,
+    "emotion": "quiet",
+    "base emotion": "peaceful"
+  },
+  {
+    "level": 1,
+    "emotion": "clear",
+    "base emotion": "peaceful"
+  },
+  {
+    "level": 1,
+    "emotion": "okay",
+    "base emotion": "peaceful"
+  },
+  {
+    "level": 1,
+    "emotion": "fine",
+    "base emotion": "peaceful"
+  },
+  {
+    "level": 2,
+    "emotion": "peaceful",
+    "base emotion": "peaceful"
+  },
+  {
+    "level": 2,
+    "emotion": "calm",
+    "base emotion": "peaceful"
+  },
+  {
+    "level": 2,
+    "emotion": "content",
+    "base emotion": "peaceful"
+  },
+  {
+    "level": 2,
+    "emotion": "certain",
+    "base emotion": "peaceful"
+  },
+  {
+    "level": 2,
+    "emotion": "carefree",
+    "base emotion": "peaceful"
+  },
+  {
+    "level": 2,
+    "emotion": "placid",
+    "base emotion": "peaceful"
+  },
+  {
+    "level": 3,
+    "emotion": "relaxed",
+    "base emotion": "peaceful"
+  },
+  {
+    "level": 3,
+    "emotion": "serene",
+    "base emotion": "peaceful"
+  },
+  {
+    "level": 3,
+    "emotion": "radiant",
+    "base emotion": "peaceful"
+  },
+  {
+    "level": 3,
+    "emotion": "reflective",
+    "base emotion": "peaceful"
+  },
+  {
+    "level": 3,
+    "emotion": "centered",
+    "base emotion": "peaceful"
+  },
+  {
+    "level": 1,
+    "emotion": "secure",
+    "base emotion": "strong"
+  },
+  {
+    "level": 1,
+    "emotion": "composed",
+    "base emotion": "strong"
+  },
+  {
+    "level": 1,
+    "emotion": "sane",
+    "base emotion": "strong"
+  },
+  {
+    "level": 2,
+    "emotion": "sure",
+    "base emotion": "strong"
+  },
+  {
+    "level": 2,
+    "emotion": "honest",
+    "base emotion": "strong"
+  },
+  {
+    "level": 3,
+    "emotion": "dynamic",
+    "base emotion": "strong"
+  },
+  {
+    "level": 3,
+    "emotion": "determined",
+    "base emotion": "strong"
+  },
+  {
+    "level": 3,
+    "emotion": "excellent",
+    "base emotion": "strong"
+  },
+  {
+    "level": 3,
+    "emotion": "energized",
+    "base emotion": "strong"
+  }
+]
