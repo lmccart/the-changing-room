@@ -1,0 +1,947 @@
+{
+  "annoyed": {
+    "base": "angry",
+    "level": 1,
+    "name": "annoyed"
+  },
+  "frustrated": {
+    "base": "angry",
+    "level": 1,
+    "name": "frustrated"
+  },
+  "irritated": {
+    "base": "angry",
+    "level": 1,
+    "name": "irritated"
+  },
+  "upset": {
+    "base": "angry",
+    "level": 1,
+    "name": "upset"
+  },
+  "angry": {
+    "base": "angry",
+    "level": 2,
+    "name": "angry"
+  },
+  "mad": {
+    "base": "angry",
+    "level": 2,
+    "name": "mad"
+  },
+  "enraged": {
+    "base": "angry",
+    "level": 3,
+    "name": "enraged"
+  },
+  "furious": {
+    "base": "angry",
+    "level": 3,
+    "name": "furious"
+  },
+  "jealous": {
+    "base": "envious",
+    "level": 1,
+    "name": "jealous"
+  },
+  "envious": {
+    "base": "envious",
+    "level": 2,
+    "name": "envious"
+  },
+  "resentful": {
+    "base": "envious",
+    "level": 3,
+    "name": "resentful"
+  },
+  "low": {
+    "base": "depressed",
+    "level": 1,
+    "name": "low"
+  },
+  "down": {
+    "base": "depressed",
+    "level": 1,
+    "name": "down"
+  },
+  "grouchy": {
+    "base": "depressed",
+    "level": 1,
+    "name": "grouchy"
+  },
+  "crabby": {
+    "base": "depressed",
+    "level": 1,
+    "name": "crabby"
+  },
+  "cranky": {
+    "base": "depressed",
+    "level": 1,
+    "name": "cranky"
+  },
+  "grumpy": {
+    "base": "depressed",
+    "level": 1,
+    "name": "grumpy"
+  },
+  "dejected": {
+    "base": "depressed",
+    "level": 2,
+    "name": "dejected"
+  },
+  "bad": {
+    "base": "depressed",
+    "level": 2,
+    "name": "bad"
+  },
+  "gloomy": {
+    "base": "depressed",
+    "level": 2,
+    "name": "gloomy"
+  },
+  "glum": {
+    "base": "depressed",
+    "level": 2,
+    "name": "glum"
+  },
+  "miserable": {
+    "base": "depressed",
+    "level": 3,
+    "name": "miserable"
+  },
+  "hopeless": {
+    "base": "depressed",
+    "level": 3,
+    "name": "hopeless"
+  },
+  "morose": {
+    "base": "depressed",
+    "level": 3,
+    "name": "morose"
+  },
+  "depressed": {
+    "base": "depressed",
+    "level": 3,
+    "name": "depressed"
+  },
+  "doubtful": {
+    "base": "confused",
+    "level": 1,
+    "name": "doubtful"
+  },
+  "uncertain": {
+    "base": "confused",
+    "level": 1,
+    "name": "uncertain"
+  },
+  "indecisive": {
+    "base": "confused",
+    "level": 1,
+    "name": "indecisive"
+  },
+  "hesitant": {
+    "base": "confused",
+    "level": 1,
+    "name": "hesitant"
+  },
+  "uneasy": {
+    "base": "confused",
+    "level": 1,
+    "name": "uneasy"
+  },
+  "confused": {
+    "base": "confused",
+    "level": 2,
+    "name": "confused"
+  },
+  "perplexed": {
+    "base": "confused",
+    "level": 2,
+    "name": "perplexed"
+  },
+  "distrustful": {
+    "base": "confused",
+    "level": 2,
+    "name": "distrustful"
+  },
+  "embarrassed": {
+    "base": "confused",
+    "level": 2,
+    "name": "embarrassed"
+  },
+  "lost": {
+    "base": "confused",
+    "level": 3,
+    "name": "lost"
+  },
+  "unsure": {
+    "base": "confused",
+    "level": 3,
+    "name": "unsure"
+  },
+  "confounded": {
+    "base": "confused",
+    "level": 3,
+    "name": "confounded"
+  },
+  "vulnerable": {
+    "base": "helpless",
+    "level": 1,
+    "name": "vulnerable"
+  },
+  "alone": {
+    "base": "helpless",
+    "level": 2,
+    "name": "alone"
+  },
+  "distressed": {
+    "base": "helpless",
+    "level": 2,
+    "name": "distressed"
+  },
+  "helpless": {
+    "base": "helpless",
+    "level": 2,
+    "name": "helpless"
+  },
+  "disappointed": {
+    "base": "helpless",
+    "level": 2,
+    "name": "disappointed"
+  },
+  "lonely": {
+    "base": "helpless",
+    "level": 2,
+    "name": "lonely"
+  },
+  "paralyzed": {
+    "base": "helpless",
+    "level": 3,
+    "name": "paralyzed"
+  },
+  "useless": {
+    "base": "helpless",
+    "level": 3,
+    "name": "useless"
+  },
+  "tired": {
+    "base": "indifferent",
+    "level": 1,
+    "name": "tired"
+  },
+  "sluggish": {
+    "base": "indifferent",
+    "level": 1,
+    "name": "sluggish"
+  },
+  "weary": {
+    "base": "indifferent",
+    "level": 2,
+    "name": "weary"
+  },
+  "bored": {
+    "base": "indifferent",
+    "level": 2,
+    "name": "bored"
+  },
+  "indifferent": {
+    "base": "indifferent",
+    "level": 3,
+    "name": "indifferent"
+  },
+  "uncaring": {
+    "base": "indifferent",
+    "level": 3,
+    "name": "uncaring"
+  },
+  "anxious": {
+    "base": "afraid",
+    "level": 1,
+    "name": "anxious"
+  },
+  "nervous": {
+    "base": "afraid",
+    "level": 1,
+    "name": "nervous"
+  },
+  "worried": {
+    "base": "afraid",
+    "level": 1,
+    "name": "worried"
+  },
+  "timid": {
+    "base": "afraid",
+    "level": 1,
+    "name": "timid"
+  },
+  "wary": {
+    "base": "afraid",
+    "level": 1,
+    "name": "wary"
+  },
+  "defensive": {
+    "base": "afraid",
+    "level": 1,
+    "name": "defensive"
+  },
+  "guarded": {
+    "base": "afraid",
+    "level": 1,
+    "name": "guarded"
+  },
+  "afraid": {
+    "base": "afraid",
+    "level": 2,
+    "name": "afraid"
+  },
+  "fearful": {
+    "base": "afraid",
+    "level": 2,
+    "name": "fearful"
+  },
+  "alarmed": {
+    "base": "afraid",
+    "level": 2,
+    "name": "alarmed"
+  },
+  "scared": {
+    "base": "afraid",
+    "level": 2,
+    "name": "scared"
+  },
+  "cowardly": {
+    "base": "afraid",
+    "level": 2,
+    "name": "cowardly"
+  },
+  "insecure": {
+    "base": "afraid",
+    "level": 2,
+    "name": "insecure"
+  },
+  "troubled": {
+    "base": "afraid",
+    "level": 2,
+    "name": "troubled"
+  },
+  "terrified": {
+    "base": "afraid",
+    "level": 3,
+    "name": "terrified"
+  },
+  "petrified": {
+    "base": "afraid",
+    "level": 3,
+    "name": "petrified"
+  },
+  "paranoid": {
+    "base": "afraid",
+    "level": 3,
+    "name": "paranoid"
+  },
+  "aching": {
+    "base": "hurt",
+    "level": 1,
+    "name": "aching"
+  },
+  "miffed": {
+    "base": "hurt",
+    "level": 1,
+    "name": "miffed"
+  },
+  "withdrawn": {
+    "base": "hurt",
+    "level": 1,
+    "name": "withdrawn"
+  },
+  "slighted": {
+    "base": "hurt",
+    "level": 1,
+    "name": "slighted"
+  },
+  "pained": {
+    "base": "hurt",
+    "level": 2,
+    "name": "pained"
+  },
+  "rejected": {
+    "base": "hurt",
+    "level": 2,
+    "name": "rejected"
+  },
+  "insulted": {
+    "base": "hurt",
+    "level": 2,
+    "name": "insulted"
+  },
+  "distant": {
+    "base": "hurt",
+    "level": 2,
+    "name": "distant"
+  },
+  "crushed": {
+    "base": "hurt",
+    "level": 3,
+    "name": "crushed"
+  },
+  "indignant": {
+    "base": "hurt",
+    "level": 3,
+    "name": "indignant"
+  },
+  "tearful": {
+    "base": "sad",
+    "level": 1,
+    "name": "tearful"
+  },
+  "remorseful": {
+    "base": "sad",
+    "level": 1,
+    "name": "remorseful"
+  },
+  "sullen": {
+    "base": "sad",
+    "level": 1,
+    "name": "sullen"
+  },
+  "fragile": {
+    "base": "sad",
+    "level": 1,
+    "name": "fragile"
+  },
+  "wistful": {
+    "base": "sad",
+    "level": 1,
+    "name": "wistful"
+  },
+  "sorrowful": {
+    "base": "sad",
+    "level": 2,
+    "name": "sorrowful"
+  },
+  "unhappy": {
+    "base": "sad",
+    "level": 2,
+    "name": "unhappy"
+  },
+  "mournful": {
+    "base": "sad",
+    "level": 2,
+    "name": "mournful"
+  },
+  "nostalgic": {
+    "base": "sad",
+    "level": 2,
+    "name": "nostalgic"
+  },
+  "melancholy": {
+    "base": "sad",
+    "level": 2,
+    "name": "melancholy"
+  },
+  "anguished": {
+    "base": "sad",
+    "level": 3,
+    "name": "anguished"
+  },
+  "devastated": {
+    "base": "sad",
+    "level": 3,
+    "name": "devastated"
+  },
+  "serious": {
+    "base": "judgmental",
+    "level": 1,
+    "name": "serious"
+  },
+  "stern": {
+    "base": "judgmental",
+    "level": 1,
+    "name": "stern"
+  },
+  "judgmental": {
+    "base": "judgmental",
+    "level": 2,
+    "name": "judgmental"
+  },
+  "proud": {
+    "base": "judgmental",
+    "level": 2,
+    "name": "proud"
+  },
+  "combative": {
+    "base": "judgmental",
+    "level": 3,
+    "name": "combative"
+  },
+  "satisfied": {
+    "base": "open",
+    "level": 1,
+    "name": "satisfied"
+  },
+  "interested": {
+    "base": "interested",
+    "level": 2,
+    "name": "interested"
+  },
+  "confident": {
+    "base": "open",
+    "level": 2,
+    "name": "confident"
+  },
+  "receptive": {
+    "base": "open",
+    "level": 2,
+    "name": "receptive"
+  },
+  "accepting": {
+    "base": "open",
+    "level": 2,
+    "name": "accepting"
+  },
+  "present": {
+    "base": "open",
+    "level": 2,
+    "name": "present"
+  },
+  "empathetic": {
+    "base": "open",
+    "level": 2,
+    "name": "empathetic"
+  },
+  "friendly": {
+    "base": "open",
+    "level": 2,
+    "name": "friendly"
+  },
+  "open": {
+    "base": "open",
+    "level": 2,
+    "name": "open"
+  },
+  "free": {
+    "base": "open",
+    "level": 3,
+    "name": "free"
+  },
+  "sensitive": {
+    "base": "loving",
+    "level": 1,
+    "name": "sensitive"
+  },
+  "attracted": {
+    "base": "loving",
+    "level": 1,
+    "name": "attracted"
+  },
+  "humble": {
+    "base": "loving",
+    "level": 1,
+    "name": "humble"
+  },
+  "loving": {
+    "base": "loving",
+    "level": 2,
+    "name": "loving"
+  },
+  "tender": {
+    "base": "loving",
+    "level": 2,
+    "name": "tender"
+  },
+  "warm": {
+    "base": "loving",
+    "level": 2,
+    "name": "warm"
+  },
+  "gracious": {
+    "base": "loving",
+    "level": 2,
+    "name": "gracious"
+  },
+  "kindly": {
+    "base": "loving",
+    "level": 2,
+    "name": "kindly"
+  },
+  "grateful": {
+    "base": "loving",
+    "level": 2,
+    "name": "grateful"
+  },
+  "devoted": {
+    "base": "loving",
+    "level": 3,
+    "name": "devoted"
+  },
+  "passionate": {
+    "base": "loving",
+    "level": 3,
+    "name": "passionate"
+  },
+  "thankful": {
+    "base": "happy",
+    "level": 1,
+    "name": "thankful"
+  },
+  "statisfied": {
+    "base": "happy",
+    "level": 1,
+    "name": "statisfied"
+  },
+  "glad": {
+    "base": "happy",
+    "level": 1,
+    "name": "glad"
+  },
+  "cheerful": {
+    "base": "happy",
+    "level": 1,
+    "name": "cheerful"
+  },
+  "mellow": {
+    "base": "happy",
+    "level": 1,
+    "name": "mellow"
+  },
+  "happy": {
+    "base": "happy",
+    "level": 2,
+    "name": "happy"
+  },
+  "delighted": {
+    "base": "happy",
+    "level": 2,
+    "name": "delighted"
+  },
+  "gleeful": {
+    "base": "happy",
+    "level": 2,
+    "name": "gleeful"
+  },
+  "jovial": {
+    "base": "happy",
+    "level": 2,
+    "name": "jovial"
+  },
+  "blissful": {
+    "base": "happy",
+    "level": 3,
+    "name": "blissful"
+  },
+  "joyous": {
+    "base": "happy",
+    "level": 3,
+    "name": "joyous"
+  },
+  "overjoyed": {
+    "base": "happy",
+    "level": 3,
+    "name": "overjoyed"
+  },
+  "ecstatic": {
+    "base": "happy",
+    "level": 3,
+    "name": "ecstatic"
+  },
+  "elated": {
+    "base": "happy",
+    "level": 3,
+    "name": "elated"
+  },
+  "jubilant": {
+    "base": "happy",
+    "level": 3,
+    "name": "jubilant"
+  },
+  "euphoric": {
+    "base": "happy",
+    "level": 3,
+    "name": "euphoric"
+  },
+  "rapturous": {
+    "base": "happy",
+    "level": 3,
+    "name": "rapturous"
+  },
+  "curious": {
+    "base": "interested",
+    "level": 1,
+    "name": "curious"
+  },
+  "attentive": {
+    "base": "interested",
+    "level": 1,
+    "name": "attentive"
+  },
+  "observant": {
+    "base": "interested",
+    "level": 1,
+    "name": "observant"
+  },
+  "thoughtful": {
+    "base": "interested",
+    "level": 2,
+    "name": "thoughtful"
+  },
+  "focused": {
+    "base": "interested",
+    "level": 2,
+    "name": "focused"
+  },
+  "fascinated": {
+    "base": "interested",
+    "level": 3,
+    "name": "fascinated"
+  },
+  "intrigued": {
+    "base": "interested",
+    "level": 3,
+    "name": "intrigued"
+  },
+  "absorbed": {
+    "base": "interested",
+    "level": 3,
+    "name": "absorbed"
+  },
+  "amazed": {
+    "base": "interested",
+    "level": 3,
+    "name": "amazed"
+  },
+  "playful": {
+    "base": "alive",
+    "level": 1,
+    "name": "playful"
+  },
+  "optimistic": {
+    "base": "alive",
+    "level": 1,
+    "name": "optimistic"
+  },
+  "alive": {
+    "base": "alive",
+    "level": 2,
+    "name": "alive"
+  },
+  "energetic": {
+    "base": "alive",
+    "level": 2,
+    "name": "energetic"
+  },
+  "liberated": {
+    "base": "alive",
+    "level": 3,
+    "name": "liberated"
+  },
+  "frisky": {
+    "base": "alive",
+    "level": 3,
+    "name": "frisky"
+  },
+  "spirited": {
+    "base": "alive",
+    "level": 3,
+    "name": "spirited"
+  },
+  "thrilled": {
+    "base": "alive",
+    "level": 3,
+    "name": "thrilled"
+  },
+  "wonderful": {
+    "base": "alive",
+    "level": 3,
+    "name": "wonderful"
+  },
+  "excited": {
+    "base": "alive",
+    "level": 3,
+    "name": "excited"
+  },
+  "aroused": {
+    "base": "alive",
+    "level": 3,
+    "name": "aroused"
+  },
+  "keen": {
+    "base": "positive",
+    "level": 1,
+    "name": "keen"
+  },
+  "earnest": {
+    "base": "positive",
+    "level": 1,
+    "name": "earnest"
+  },
+  "hopeful": {
+    "base": "positive",
+    "level": 1,
+    "name": "hopeful"
+  },
+  "positive": {
+    "base": "positive",
+    "level": 2,
+    "name": "positive"
+  },
+  "eager": {
+    "base": "positive",
+    "level": 2,
+    "name": "eager"
+  },
+  "inspired": {
+    "base": "positive",
+    "level": 2,
+    "name": "inspired"
+  },
+  "upbeat": {
+    "base": "positive",
+    "level": 2,
+    "name": "upbeat"
+  },
+  "motivated": {
+    "base": "positive",
+    "level": 2,
+    "name": "motivated"
+  },
+  "brave": {
+    "base": "positive",
+    "level": 3,
+    "name": "brave"
+  },
+  "daring": {
+    "base": "positive",
+    "level": 3,
+    "name": "daring"
+  },
+  "exuberant": {
+    "base": "positive",
+    "level": 3,
+    "name": "exuberant"
+  },
+  "good": {
+    "base": "peaceful",
+    "level": 1,
+    "name": "good"
+  },
+  "quiet": {
+    "base": "peaceful",
+    "level": 1,
+    "name": "quiet"
+  },
+  "clear": {
+    "base": "peaceful",
+    "level": 1,
+    "name": "clear"
+  },
+  "okay": {
+    "base": "peaceful",
+    "level": 1,
+    "name": "okay"
+  },
+  "fine": {
+    "base": "peaceful",
+    "level": 1,
+    "name": "fine"
+  },
+  "peaceful": {
+    "base": "peaceful",
+    "level": 2,
+    "name": "peaceful"
+  },
+  "calm": {
+    "base": "peaceful",
+    "level": 2,
+    "name": "calm"
+  },
+  "content": {
+    "base": "peaceful",
+    "level": 2,
+    "name": "content"
+  },
+  "certain": {
+    "base": "peaceful",
+    "level": 2,
+    "name": "certain"
+  },
+  "carefree": {
+    "base": "peaceful",
+    "level": 2,
+    "name": "carefree"
+  },
+  "placid": {
+    "base": "peaceful",
+    "level": 2,
+    "name": "placid"
+  },
+  "relaxed": {
+    "base": "peaceful",
+    "level": 3,
+    "name": "relaxed"
+  },
+  "serene": {
+    "base": "peaceful",
+    "level": 3,
+    "name": "serene"
+  },
+  "radiant": {
+    "base": "peaceful",
+    "level": 3,
+    "name": "radiant"
+  },
+  "reflective": {
+    "base": "peaceful",
+    "level": 3,
+    "name": "reflective"
+  },
+  "centered": {
+    "base": "peaceful",
+    "level": 3,
+    "name": "centered"
+  },
+  "secure": {
+    "base": "strong",
+    "level": 1,
+    "name": "secure"
+  },
+  "composed": {
+    "base": "strong",
+    "level": 1,
+    "name": "composed"
+  },
+  "sane": {
+    "base": "strong",
+    "level": 1,
+    "name": "sane"
+  },
+  "sure": {
+    "base": "strong",
+    "level": 2,
+    "name": "sure"
+  },
+  "honest": {
+    "base": "strong",
+    "level": 2,
+    "name": "honest"
+  },
+  "dynamic": {
+    "base": "strong",
+    "level": 3,
+    "name": "dynamic"
+  },
+  "determined": {
+    "base": "strong",
+    "level": 3,
+    "name": "determined"
+  },
+  "excellent": {
+    "base": "strong",
+    "level": 3,
+    "name": "excellent"
+  },
+  "energized": {
+    "base": "strong",
+    "level": 3,
+    "name": "energized"
+  }
+}

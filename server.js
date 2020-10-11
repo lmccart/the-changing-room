@@ -1,41 +1,53 @@
+const fs = require('fs');
+let curEmotion;
+
 const express = require('express');
 const app = express();
 const http = require('http').createServer(app);
 const io = require('socket.io')(http);
-app.use('/', express.static('areas'))
+app.use('/', express.static('areas'));
 
+// LOGGING
 const log4js = require("log4js");
-
 log4js.configure({
   appenders: {
-    emotionLogs: { type: 'file', filename: 'emotion.log' },
-    chatLogs: { type: 'file', filename: 'chat.log' },
-    consoleLogs: { type: 'file', filename: 'console.log' },
+    chatLogs: { type: 'file', filename: 'logs/chat.log', daysToKeep: 1, pattern: 'yy-M-dd.log'  },
+    consoleLogs: { type: 'file', filename: 'logs/console.log', daysToKeep: 1, pattern: 'yy-M-dd.log' },
     console: { type: 'console' }
   },
   categories: {
-    emotion: { appenders: ['emotionLogs'], level: 'ALL' },
     chat: { appenders: ['chatLogs'], level: 'ALL' },
     default: { appenders: ['console', 'consoleLogs'], level: 'ALL' }
   }
 });
-
-
 const console = log4js.getLogger();
-const emotionLogger = log4js.getLogger('emotion');
 const chatLogger = log4js.getLogger('chat');
 
+// DATA INIT
+const emotions = JSON.parse(fs.readFileSync('all-emotions.json')); // read all emotions
+const emotionName = fs.readFileSync('current.txt', {encoding:'utf8', flag:'r'}); 
+curEmotion = emotions[emotionName];
+console.debug('current emotion: ' + JSON.stringify(curEmotion));
+
+
+// SOCKET
 io.on('connection', (socket) => {
   console.debug('user connected: ' + socket.id);
+  socket.emit('emotion:update', curEmotion);
   socket.on('disconnect', () => { console.debug('user disconnected: ' + socket.id); });
 
-  socket.on('emotion update', function(msg){
-    io.emit('emotion update', msg);
-    console.debug(msg);
-    emotionLogger.info(msg);
+  socket.on('emotion:pick', function(emotionName){
+    curEmotion = emotions[emotionName];
+    io.emit('emotion:update', curEmotion);
+    console.debug(curEmotion);
+    fs.writeFileSync('current.txt', emotionName);
   });
 });
 
+// SERVER SETUP
+app.get('/emotions', (req, res) => {
+  res.json(emotions);
+})
 
 http.listen(3000, () => {
   console.debug('listening on *:3000');
