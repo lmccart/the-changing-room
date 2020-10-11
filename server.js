@@ -29,7 +29,6 @@ const emotionName = fs.readFileSync('current.txt', {encoding:'utf8', flag:'r'});
 curEmotion = emotions[emotionName];
 console.debug('current emotion: ' + JSON.stringify(curEmotion));
 
-
 // SOCKET
 io.on('connection', (socket) => {
   console.debug('user connected: ' + socket.id);
@@ -45,10 +44,5 @@ io.on('connection', (socket) => {
 });
 
 // SERVER SETUP
-app.get('/emotions', (req, res) => {
-  res.json(emotions);
-})
-
-http.listen(3000, () => {
-  console.debug('listening on *:3000');
-});
+app.get('/emotions', (req, res) => { res.json(emotions); });
+http.listen(3000, () => { console.debug('listening on *:3000'); });
