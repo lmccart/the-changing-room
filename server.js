@@ -3,7 +3,6 @@ const express = require('express');
 const app = express();
 const http = require('http').createServer(app);
 const io = require('socket.io')(http);
-app.use('/', express.static('areas'));
 
 let curEmotion;
 
@@ -41,8 +40,14 @@ io.on('connection', (socket) => {
     console.debug(curEmotion);
     fs.writeFileSync('current.txt', emotionName);
   });
+
+  socket.on('chat:send', function(msg){
+    // called by area 05 when user hits "send" on a chat message
+    // message data gets modified based on emotion edit rules, and emitted to all clients on 05-convo1 page
+  });
 });
 
 // SERVER SETUP
+app.use('/', express.static('areas'));
 app.get('/emotions', (req, res) => { res.json(emotions); });
 http.listen(3000, () => { console.debug('listening on *:3000'); });
