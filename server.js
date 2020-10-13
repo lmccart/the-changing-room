@@ -1,18 +1,18 @@
 const fs = require('fs');
-let curEmotion;
-
 const express = require('express');
 const app = express();
 const http = require('http').createServer(app);
 const io = require('socket.io')(http);
 app.use('/', express.static('areas'));
 
+let curEmotion;
+
 // LOGGING
 const log4js = require("log4js");
 log4js.configure({
   appenders: {
-    chatLogs: { type: 'file', filename: 'logs/chat.log', daysToKeep: 1, pattern: 'yy-M-dd.log'  },
-    consoleLogs: { type: 'file', filename: 'logs/console.log', daysToKeep: 1, pattern: 'yy-M-dd.log' },
+    chatLogs: { type: 'file', filename: 'logs/chat.log', daysToKeep: 1, pattern: 'yy-MM-dd.log'  },
+    consoleLogs: { type: 'file', filename: 'logs/console.log', daysToKeep: 1, pattern: 'yy-MM-dd.log' },
     console: { type: 'console' }
   },
   categories: {

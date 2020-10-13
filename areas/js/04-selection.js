@@ -1,19 +1,16 @@
-let emotions;
 let curEmotion;
 const socket = io();
 socket.on('emotion:update', updateEmotion);
-let obj = {};
 
 $('#emotions').change(pickEmotion);
 
 $.getJSON('/emotions', (data) => {
   console.log(data);
-  emotions = data;
-  populatePicker();
+  populatePicker(data);
 });
 
-function populatePicker() {
-  for (item in emotions) {
+function populatePicker(data) {
+  for (item in data) {
     $('#emotions').append($('<option>', {
       value: item,
       text: item
@@ -37,5 +34,6 @@ function updateEmotion(msg) {
 }
 
 function updateInterface() {
+  $('#debug-info').text('CURRENT EMOTION: ' + curEmotion.name + ' (base: ' + curEmotion.base + ', level: ' + curEmotion.level +')')
   $('#emotions').val(curEmotion.name);
 }
