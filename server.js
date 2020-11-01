@@ -4,6 +4,8 @@ const app = express();
 const http = require('http').createServer(app);
 const io = require('socket.io')(http);
 
+const Sound = require('./sound');
+
 let curEmotion;
 
 // LOGGING
@@ -39,6 +41,8 @@ io.on('connection', (socket) => {
     io.emit('emotion:update', curEmotion);
     console.debug(curEmotion);
     fs.writeFileSync('current.txt', emotionName);
+
+    Sound.playEmotion(curEmotion);
   });
 
   socket.on('chat:send', function(msg){
