@@ -9,6 +9,7 @@ DeviceDiscovery((device) => {
   console.log('found device at ' + device.host)
   const newDevice = new Sonos(device.host)
   newDevice.setPlayMode('REPEAT_ONE');
+  // newDevice.setPlayMode('CROSSFADE');
   newDevice.getAllGroups().then(groups => {
     let id;
     groups.forEach(group => {
@@ -18,6 +19,7 @@ DeviceDiscovery((device) => {
     });
   });
   newDevice.stop();
+  console.log(newDevice)
 });
 
 const playEmotion = (emotion) => {
