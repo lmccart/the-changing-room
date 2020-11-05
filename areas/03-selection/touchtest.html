@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head> </head>
+  <body>
+    <style>
+      body {
+        background-color: powderblue;
+        padding: 0px;
+        margin: 0px;
+      }
+
+
+      .scroll {
+        font-size: 4em;
+        overflow: auto;
+        padding: 20px;
+        border: 2px solid black;
+        height: 100vh;
+      }
+
+      #nav {
+        position: fixed;
+        top: 40px;
+        left: 40px;
+        width: 300px;
+        height: 100px;
+        background-color: white;
+        border: 2px solid black;
+        padding: 10px;
+        display: flex;
+        align-items: center;
+        z-index: 1000;
+      }
+
+      #nav button {
+        height: 50px;
+        margin: 20px;
+      }
+
+      .wrapper {
+        position: fixed;
+        width: 100vw;
+      }
+
+
+
+      #wrapper_joined {
+        font-size: 4em;
+        display: none;
+      }
+
+      #wrapper_separate {
+        display: flex;
+      }
+
+      .emotion {
+        border: 1px solid gray;
+      }
+    </style>
+
+    <div id="app">
+      <div id="nav">
+        <button id="mode_joined" v-on:click="joinedmode">joined</button>
+        <button id="mode_separate" v-on:click="separatemode">separate</button>
+      </div>
+
+      <div id="wrapper_separate" class="wrapper">
+        <div class="scroll" id="scroll1">
+          "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+          eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
+          minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+          aliquip ex ea commodo consequat. Duis aute irure dolor in
+          reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
+          pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
+          culpa qui officia deserunt mollit anim id est laborum." "Lorem ipsum
+          dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+          incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+          quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
+          commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
+          velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint
+          occaecat cupidatat non proident, sunt in culpa qui officia deserunt
+          mollit anim id est laborum."" Lorem ipsum dolor sit amet, consectetur
+          adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
+          magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation
+          ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute
+          irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
+          fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident,
+          sunt in culpa qui officia deserunt mollit anim id est laborum."" Lorem
+          ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+          tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+          veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex
+          ea commodo consequat. Duis aute irure dolor in reprehenderit in
+          voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur
+          sint occaecat cupidatat non proident, sunt in culpa qui officia
+          deserunt mollit anim id est laborum."" Lorem ipsum dolor sit amet,
+          consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
+          labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
+          exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+          Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
+          dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+          proident, sunt in culpa qui officia deserunt mollit anim id est
+          laborum."
+        </div>
+        <div class="scroll" id="scroll2">
+          " Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+          eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
+          minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+          aliquip ex ea commodo consequat. Duis aute irure dolor in
+          reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
+          pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
+          culpa qui officia deserunt mollit anim id est laborum."" nnLorem ipsum
+          dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+          incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+          quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
+          commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
+          velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint
+          occaecat cupidatat non proident, sunt in culpa qui officia deserunt
+          mollit anim id est laborum."" Lorem ipsum dolor sit amet, consectetur
+          adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
+          magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation
+          ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute
+          irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
+          fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident,
+          sunt in culpa qui officia deserunt mollit anim id est laborum."" Lorem
+          ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+          tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+          veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex
+          ea commodo consequat. Duis aute irure dolor in reprehenderit in
+          voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur
+          sint occaecat cupidatat non proident, sunt in culpa qui officia
+          deserunt mollit anim id est laborum."" Lorem ipsum dolor sit amet,
+          consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
+          labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
+          exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+          Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
+          dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+          proident, sunt in culpa qui officia deserunt mollit anim id est
+          laborum."
+        </div>
+      </div>
+
+      <div class="wrapper" id="wrapper_joined">
+        <div class="scroll" id="scroll1">
+          <div class="emotion" v-for="(emotionval, emotion) in emotions">
+            {{ emotion }}
+          </div>
+        </div>
+      </div>
+    </div>
+    <!--
+    <h1>Multiscreen Touch Test for OCA</h1>
+
+    <section id='debug'>
+      AREA: <span id='debug-area'>03 selection</span>
+      <div id='debug-info'></div>
+    </section>
+
+    <select name='emotions' id='emotions'></select>
+-->
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/jquery-3.5.1.min.js"></script>
+    <script src="/js/shared.js"></script>
+    <script src="/js/03-selection.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.12/vue.min.js"></script>
+    <script>
+      var apiURL = "/emotions";
+      app = new Vue({
+        el: "#app",
+        data: {
+          emotions: null,
+        },
+        created: function() {
+          this.fetchData();
+        },
+        methods: {
+          fetchData: function() {
+            fetch(apiURL)
+              .then(response => response.json())
+              .then(data => { this.emotions = data })
+          },
+          joinedmode: function() {
+            $("#wrapper_joined").fadeIn(1000);
+            $("#wrapper_separate").fadeOut(1000);
+          },
+          separatemode: function() {
+            $("#wrapper_joined").fadeOut(1000);
+            $("#wrapper_separate").fadeIn(1000);
+          }
+        }
+      });
+    </script>
+  </body>
+</html>
