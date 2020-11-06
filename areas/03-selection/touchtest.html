@@ -141,7 +141,7 @@
 
       <div class="wrapper" id="wrapper_joined">
         <div class="scroll" id="scroll1">
-          <div class="emotion" v-for="(emotionval, emotion) in emotions">
+          <div class="emotion" v-on:click="separatemode" v-for="(emotionval, emotion) in emotions">
             {{ emotion }}
           </div>
         </div>
@@ -188,6 +188,35 @@
           }
         }
       });
+
+
+      //timer for if the panels are not being used, go back to joinedmode
+      function resetInterval() {
+        clearInterval(timer);
+        var timer = setTimeout(function() {
+          console.log("restarted interval");
+          active = false
+          app.joinedmode()
+         }, 7000); 
+      }
+
+      var seperate_panel1 = document.getElementById("scroll1")
+      var seperate_panel2 = document.getElementById("scroll2")
+      var active = false
+      seperate_panel1.onscroll = function (e) {
+        // called when the window is scrolled.
+        if (active == false) {
+          active = true
+          resetInterval()
+        }
+      }
+      seperate_panel2.onscroll = function (e) {  
+        // called when the window is scrolled.
+        if (active == false) {
+          active = true
+          resetInterval()
+        }
+      }
     </script>
   </body>
 </html>
