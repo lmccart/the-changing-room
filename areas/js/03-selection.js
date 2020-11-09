@@ -14,7 +14,8 @@ $.getJSON('/emotions', (data) => {
 });
 
 function populatePicker(data) {
-  for (item in data) {
+  for (const item in data) {
+    console.log("item:",item)
     $('#emotions').append($('<option>', {
       value: item,
       text: item
