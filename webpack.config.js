@@ -1,5 +1,6 @@
-const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
   entry: {
@@ -19,9 +20,10 @@ module.exports = {
     rules: [
     {
       test: /\.s(a|c)ss$/,
+      sideEffects: true,
       use: [
-        {loader: 'style-loader'},
-        {loader: 'css-loader'},
+        MiniCssExtractPlugin.loader,
+        'css-loader',
         {
           loader: 'sass-loader',
           options: {
@@ -32,6 +34,9 @@ module.exports = {
     }]
   },
   plugins: [
+  new MiniCssExtractPlugin({
+    filename: 'css/[name].[contenthash].css',
+  }),
   new HtmlWebpackPlugin({  
     filename: '00-intro/index.html',
     template: './areas/00-intro/index.html',
