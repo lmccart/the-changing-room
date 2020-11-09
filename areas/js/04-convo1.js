@@ -1,3 +1,7 @@
+// style and js imports
+import '../css/04-convo1.scss';
+import './shared.js';
+
 let emotions;
 let curEmotion;
 const socket = io();

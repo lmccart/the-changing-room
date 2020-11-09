@@ -1,3 +1,7 @@
+// style and js imports
+import '../css/03-selection.scss';
+import './shared.js';
+
 let curEmotion;
 const socket = io();
 socket.on('emotion:update', updateEmotion);
