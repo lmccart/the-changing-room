@@ -19,12 +19,12 @@ This is an overview of the different areas and the text content included in each
 * [03_selection_intro.txt](03_selection_intro.txt)
 
 ## 04 Convo Room 1
-Narrative mode rotates in every 5 minutes. Chat conversation with word substitutions.
+Narrative mode rotates in every 5 minutes. Chat conversation with word substitutions (EMOTION swapped out for EMOTION-subs).
 * [04_chat_intro.txt](04_chat_intro.txt)
 * [04_substitutions.tsv](04_substitutions.tsv)
 
 ## 05 Convo Room 2
-* Large text directions while two people sit in conversation.
+* Large text directions while two people sit in conversation. Directions may be display one at a time (EMOTION-0 only) or two at a time (EMOTION-0 and EMOTION-1).
 * Tempo/animation of directions could vary based on emotion.
 * [05_directions.tsv](05_directions.tsv)
 
