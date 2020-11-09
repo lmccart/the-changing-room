@@ -9,7 +9,7 @@ This is an overview of the different areas and the text content included in each
 * [01_reflection.tsv](01_reflection.tsv)
 
 ## 02 Reflection Room
-* Begins with directed meditation (corresponds to Inside section) via spoken computer voice. Partway through, eases into memory space, with snippets of text and photos.
+* Begins with directed meditation via spoken computer voice. Partway through, eases into memory space, with snippets of text and photos.
 * Tempo/animation of memory sequence could vary based on emotion.
 * [02_meditation.txt](02_meditation.txt) + [02_memories.tsv](02_memories.tsv)
 
