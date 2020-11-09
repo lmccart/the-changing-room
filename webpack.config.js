@@ -6,6 +6,7 @@ const webpack = require('webpack');
 const hotMiddlewareScript = 'webpack-hot-middleware/client?path=/__webpack_hmr&timeout=20000&reload=true';
 
 module.exports = {
+  mode: 'development',
   entry: {
     intro: ['./areas/js/00-intro.js', hotMiddlewareScript],
     faces: ['./areas/js/01-faces.js', hotMiddlewareScript],

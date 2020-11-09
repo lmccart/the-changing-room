@@ -14,7 +14,8 @@ const webpackConfig = require('./webpack.config');
 const compiler = webpack(webpackConfig);
 
 app.use(require("webpack-dev-middleware")(compiler, {
-  publicPath: webpackConfig.output.publicPath
+  publicPath: webpackConfig.output.publicPath,
+  writeToDisk: true,
 }));
 
 app.use(require("webpack-hot-middleware")(compiler, {

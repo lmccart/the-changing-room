@@ -4,7 +4,7 @@
 1. Install [nodejs](https://nodejs.org/)
 2. Clone respository: https://github.com/lmccart/the-changing-room.git
 3. Install dependencies: `npm install`
-4. Start server: `node server.js`
+4. Start server and webpack watcher: `npm start`
 5. Individual areas can be visited at the following paths:
    - http://localhost:3000/00-intro
    - http://localhost:3000/01-faces
@@ -19,6 +19,7 @@
 * `logs/` holds all console and chat logs. Log files are rolled over daily. [log4js-node](https://github.com/log4js-node/log4js-node) handles the logging.
 * `automate/` holds script files for installation boot. [multibrowse](https://github.com/foxxyz/multibrowse) is used to open full-screen browser windows over multiple monitor setups.
 * `server.js` is the main server file
+* `dist/` holds the served html/js/css files after they have been compiled by webpack.
 
 ## Overview
 * This software is designed to work without outside internet connection. Server and all clients will be on the same LAN.
