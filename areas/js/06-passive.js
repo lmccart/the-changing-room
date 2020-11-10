@@ -12,9 +12,12 @@ function updateEmotion(msg) {
     curEmotion = msg;
     console.log('emotion has been updated to: ' + msg.name + ' (base: ' + msg.base + ', level: ' + msg.level +')');
     updateInterface();
+    showLoadingOverlay(curEmotion.name);
+    updateInterface();
   }
 }
 
 function updateInterface() {
   $('#debug-info').text('CURRENT EMOTION: ' + curEmotion.name + ' (base: ' + curEmotion.base + ', level: ' + curEmotion.level +')')
+  setTimeout(hideLoadingOverlay, 2000);
 }
