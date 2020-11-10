@@ -1,4 +1,5 @@
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const CopyPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const webpack = require('webpack');
@@ -41,6 +42,11 @@ module.exports = {
   plugins: [
     new webpack.ProvidePlugin({
       $: 'jquery',
+    }),
+    new CopyPlugin({
+      patterns: [
+        { from: './static', to: './static' },
+      ],
     }),
     new MiniCssExtractPlugin({
       filename: 'css/[name].css',

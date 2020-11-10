@@ -16,11 +16,14 @@
 
 ## Repository Structure
 * `areas/` holds all served files related to the 7 different areas of the installation.
-  * `areas/js/shared.js` includes some helper functions that get used on multiple pages.
+  - `areas/js/shared.js` includes some helper functions that get used on multiple pages.
+  - `areas/js/lib/` contains extra script files imported by the main area scripts.
 * `logs/` holds all console and chat logs. Log files are rolled over daily. [log4js-node](https://github.com/log4js-node/log4js-node) handles the logging.
 * `automate/` holds script files for installation boot. [multibrowse](https://github.com/foxxyz/multibrowse) is used to open full-screen browser windows over multiple monitor setups.
-* `server.js` is the main server file
 * `dist/` holds the served html/js/css files after they have been compiled by webpack.
+* `static/` holds static files that get copied into the `dist` folder (images, txt, etc).
+  - These files can be reached by URL in html, css, js `/static/filename`.
+* `server.js` is the main server file
 
 
 ## Overview
