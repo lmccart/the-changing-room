@@ -1,3 +1,7 @@
+// style and js imports
+import '../css/03-selection.scss';
+import './shared.js';
+
 let curEmotion;
 const socket = io();
 socket.on('emotion:update', updateEmotion);
@@ -10,7 +14,7 @@ $.getJSON('/emotions', (data) => {
 });
 
 function populatePicker(data) {
-  for (item in data) {
+  for (const item in data) {
     $('#emotions').append($('<option>', {
       value: item,
       text: item

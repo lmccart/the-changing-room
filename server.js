@@ -8,6 +8,20 @@ const Sound = require('./sound');
 
 let curEmotion;
 
+// Webpack setup for hot reloading dev environment
+const webpack = require('webpack');
+const webpackConfig = require('./webpack.config');
+const compiler = webpack(webpackConfig);
+
+app.use(require("webpack-dev-middleware")(compiler, {
+  publicPath: webpackConfig.output.publicPath,
+  writeToDisk: true,
+}));
+
+app.use(require("webpack-hot-middleware")(compiler, {
+  path: '/__webpack_hmr', heartbeat: 10 * 1000
+}));
+
 // LOGGING
 const log4js = require("log4js");
 log4js.configure({
@@ -52,6 +66,6 @@ io.on('connection', (socket) => {
 });
 
 // SERVER SETUP
-app.use('/', express.static('areas'));
+app.use('/', express.static('dist'));
 app.get('/emotions', (req, res) => { res.json(emotions); });
 http.listen(3000, () => { console.debug('listening on *:3000'); });

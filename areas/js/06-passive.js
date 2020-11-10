@@ -1,3 +1,7 @@
+// style and js imports
+import '../css/06-passive.scss';
+import './shared.js';
+
 let emotions;
 let curEmotion;
 const socket = io();

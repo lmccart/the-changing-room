@@ -1,3 +1,7 @@
+// style and js imports
+import '../css/02-reflection.scss';
+import './shared.js';
+
 let emotions;
 let curEmotion;
 const socket = io();
