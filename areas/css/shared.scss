@@ -1,3 +1,38 @@
 body {
   background: aliceblue;
 }
+
+#debug {
+  position: fixed;
+  bottom: 1vh;
+  right: 1vw;
+  z-index: 1000;
+
+  background: lime;
+  text-align: right;
+}
+
+#loading {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 100;
+
+  background: purple;
+  width: 100vw;
+  height: 100vh;
+
+  display: none;
+  justify-content: center;
+  align-items: center;
+
+  &.show {
+    display: flex;
+  } 
+   
+  h1 {
+    color: white;
+    font-size: 2em;
+    text-transform: capitalize;
+  }
+}
