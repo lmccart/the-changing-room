@@ -7,6 +7,14 @@ window.showLoadingOverlay = (newEmotion) => {
   // newEmotion should be a string
   $('#loading-emotion').text(newEmotion);
   $('#loading').addClass('show');
+
+
+  // Eventually this way of closing the loading
+  // screen should be made opt-in, so in case
+  // a page has to do a lot of setup that takes
+  // longer than 2 seconds, it can use the 
+  // `hideLoadingOverlay` function on its own
+  setTimeout(hideLoadingOverlay, 2000);
 }
 
 window.hideLoadingOverlay =  () => {
