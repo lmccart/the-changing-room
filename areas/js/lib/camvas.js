@@ -10,13 +10,14 @@ The above copyright notice and this permission notice shall be included in all c
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-// The function takes a canvas context and a `drawFunc` function.
-// `drawFunc` receives two parameters, the video and the time since
-// the last time it was called.
-export function camvas(ctx, callback) {
+// The function takes a canvas context, `drawFunc` function, 
+// a video stream and the target fps for updating the canvas
+export function camvas(ctx, callback, stream, targetFps) {
   var self = this
   this.ctx = ctx
   this.callback = callback
+
+  let fps = targetFps || 30;
 
   // We can't `new Video()` yet, so we'll resort to the vintage
   // "hidden div" hack for dynamic loading.
@@ -36,31 +37,35 @@ export function camvas(ctx, callback) {
   streamContainer.appendChild(this.video)
   document.body.appendChild(streamContainer)
 
-  // The callback happens when we are starting to stream the video.
-  navigator.mediaDevices.getUserMedia({video: true, audio: false}).then(function(stream) {
-    // Yay, now our webcam input is treated as a normal video and
-    // we can start having fun
-    self.video.srcObject = stream
-    // Let's start drawing the canvas!
-    self.update()
-  }, function(err) {
-    throw err
-  })
-
   // As soon as we can draw a new frame on the canvas, we call the `draw` function 
   // we passed as a parameter.
   this.update = function() {
-  var self = this
+    var self = this
     var last = Date.now()
     var loop = function() {
-      // For some effects, you might want to know how much time is passed
-      // since the last frame; that's why we pass along a Delta time `dt`
-      // variable (expressed in milliseconds)
-      var dt = Date.now - last
-      self.callback(self.video, dt)
-      last = Date.now()
-      requestAnimationFrame(loop) 
+      setTimeout(()=> {
+        self.callback(self.video)
+        requestAnimationFrame(loop) 
+      }, 1000 / targetFps) // second value is ideal fps 
     }
     requestAnimationFrame(loop) 
-  } 
+  }
+
+  if (stream) {
+    // use external stream
+    self.video.srcObject = stream
+    // Let's start drawing the canvas!
+    self.update()
+  } else {
+    // The callback happens when we are starting to stream the video.
+    navigator.mediaDevices.getUserMedia({video: { width: 1280, height: 720 }, audio: false}).then(function(stream) {
+      // Yay, now our webcam input is treated as a normal video and
+      // we can start having fun
+      self.video.srcObject = stream
+      // Let's start drawing the canvas!
+      self.update()
+    }, function(err) {
+      throw err
+    })
+  }
 }

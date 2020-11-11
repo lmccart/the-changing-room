@@ -10,9 +10,11 @@
       <div id='debug-info'></div>
     </section>
 
-    <section class="main">
-      <input type="button" value="Start real-time face detection" id="start-button">
-      <canvas width="640" height="480"></canvas>
+    <section class="main" id="video-parent">
+      <div id="video-cover">
+        video is hidden
+      </div>
+      <video id="face-stream" muted autoplay></video>
     </section>
     
     <section id="loading">
