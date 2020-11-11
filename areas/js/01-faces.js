@@ -88,7 +88,7 @@ if (navigator.mediaDevices.getUserMedia) {
   navigator.mediaDevices.getUserMedia({ video: { width: 1280, height: 720 } })
     .then(function (stream) {
       videoEl[0].srcObject = stream;
-      new camvas(ctx, processfn, stream);
+      new camvas(ctx, processfn, stream, 10); // 10 here is the target fps for checking for faces
     })
     .catch(function (err) {
       console.log("Error:", err);
