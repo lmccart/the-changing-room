@@ -1,7 +1,7 @@
 # The Changing Room 2.0
 
 ## Setup
-1. Install [nodejs](https://nodejs.org/)
+1. Install [nodejs](https://nodejs.org/) (version 10.16 or newer)
 2. Clone respository: https://github.com/lmccart/the-changing-room.git
 3. Install dependencies: `npm install`
 4. Start server and webpack watcher: `npm start`
