@@ -1,1 +1,82 @@
 @import './shared.scss';
+
+body {
+	background-color: powderblue;
+	padding: 0px;
+	margin: 0px;
+}
+
+#nav {
+	position: fixed;
+	top: 40px;
+	left: 40px;
+	width: 300px;
+	height: 100px;
+	background-color: white;
+	border: 2px solid black;
+	padding: 10px;
+	display: flex;
+	align-items: center;
+	z-index: 1000;
+	button {
+		height: 50px;
+		margin: 20px;
+	}
+}
+
+.scroll {
+	padding: 20px;
+	height: 100vh;
+	box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+}
+
+.wrapper {
+	position: fixed;
+	width: 100vw;
+}
+
+#wrapper_joined {
+	font-size: 4em;
+	display: none;
+	overflow-y: scroll;
+	overflow-x: hidden;
+	::-webkit-scrollbar {
+		-webkit-appearance: none;
+		width: 25px;
+		border-left: 1px solid black;
+	}
+	::-webkit-scrollbar-thumb {
+		background-color: rgba(0, 0, 0, .5);
+		box-shadow: 0 0 1px rgba(255, 255, 255, .5);
+	}
+	.scroll {
+		font-size: 2.5em;
+	}
+	.emotion:active {
+		color: #fff;
+	}
+}
+
+#wrapper_separate {
+	display: flex;
+	::-webkit-scrollbar-thumb {
+		background-color: none;
+		box-shadow: 0;
+	}
+	::-webkit-scrollbar {
+		-webkit-appearance: none;
+		width: 0;
+		border: none;
+	}
+	.scroll {
+		border: 2px solid black;
+		font-size: 3em;
+		overflow-y: scroll;
+	}
+}
+
+
+
+
