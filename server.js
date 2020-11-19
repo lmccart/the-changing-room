@@ -1,3 +1,4 @@
+require('dotenv').config();
 const fs = require('fs');
 const express = require('express');
 const app = express();
@@ -5,6 +6,7 @@ const http = require('http').createServer(app);
 const io = require('socket.io')(http);
 
 const Sound = require('./sound');
+const Lights = require('./lights');
 
 let curEmotion;
 
@@ -57,6 +59,7 @@ io.on('connection', (socket) => {
     fs.writeFileSync('current.txt', emotionName);
 
     Sound.playEmotion(curEmotion);
+    Lights.playEmotion(curEmotion);
   });
 
   socket.on('chat:send', function(msg){

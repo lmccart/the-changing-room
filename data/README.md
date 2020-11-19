@@ -9,9 +9,9 @@ This is an overview of the different areas and the text content included in each
 * [01_reflection.tsv](01_reflection.tsv)
 
 ## 02 Reflection Room
-* Begins with directed meditation via spoken computer voice. Partway through, eases into memory space, with snippets of text and photos.
+* Begins with directed meditation spelled out over screens. Partway through, eases into memory space, with snippets of text and photos.
 * Tempo/animation of memory sequence could vary based on emotion.
-* [02_meditation.txt](02_meditation.txt) + [02_memories.tsv](02_memories.tsv)
+* [02_meditation.txt](02_meditation.txt) + [02_meditation_emotion_specific.tsv](02_meditation_emotion_specific.tsv) + [02_memories.tsv](02_memories.tsv)
 
 ## 03 Emotion Selection
 * Narrative mode rotates in every 5 minutes.
@@ -24,7 +24,7 @@ Narrative mode rotates in every 5 minutes. Chat conversation with word substitut
 * [04_substitutions.tsv](04_substitutions.tsv)
 
 ## 05 Convo Room 2
-* Large text directions while two people sit in conversation. Directions may be display one at a time (EMOTION-0 only) or two at a time (EMOTION-0 and EMOTION-1).
+* Large text directions while two people sit in conversation.
 * Tempo/animation of directions could vary based on emotion.
 * [05_directions.tsv](05_directions.tsv)
 
