@@ -35,10 +35,14 @@ function PopupFactory (emotionObj) {
   // expects emotionObj to be the standard emotion data object we are using
   const parentEl = $('.main')[0];
   const factoryThis = this;
+<<<<<<< HEAD
 
   // note that the destruction rate is set in each individual popup for a little randomness
   const popupRate = 7500 / emotionObj.level // base rate of 7.5 seconds, gets faster with higher emotion level
   const overLapAllowance = 0.60 // allows 60% overlap when a new element is created
+=======
+  const popupRate = 9500 / emotionObj.level // level 3 = ~1.5 seconds
+>>>>>>> 020a8c029bdabae8fd2f04093f4c36b5bd9eb235
 
   factoryThis.emotion = emotionObj.name;
   factoryThis.activeElements = [];
