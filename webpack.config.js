@@ -29,11 +29,16 @@ module.exports = {
       sideEffects: true,
       use: [
         MiniCssExtractPlugin.loader,
-        'css-loader',
+        {
+          loader: 'css-loader',
+          options: {
+            url: false,
+          }
+        },
         {
           loader: 'sass-loader',
           options: {
-            sourceMap: true
+            sourceMap: true,
           }
         }
       ]

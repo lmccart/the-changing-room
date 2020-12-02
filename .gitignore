@@ -4,3 +4,4 @@ logs/*
 automate/multibrowse-source/*
 areas/sounds/*
 dist/
+static/fonts/*

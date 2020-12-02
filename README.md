@@ -4,8 +4,9 @@
 1. Install [nodejs](https://nodejs.org/) (version 10.16 or newer)
 2. Clone respository: https://github.com/lmccart/the-changing-room.git
 3. Install dependencies: `npm install`
-4. Start server and webpack watcher: `npm start`
-5. Individual areas can be visited at the following paths:
+4. Add font files to `static/fonts/`
+5. Start server and webpack watcher: `npm start`
+6. Individual areas can be visited at the following paths:
    - http://localhost:3000/00-intro
    - http://localhost:3000/01-faces
    - http://localhost:3000/02-reflection
@@ -23,6 +24,7 @@
 * `dist/` holds the served html/js/css files after they have been compiled by webpack.
 * `static/` holds static files that get copied into the `dist` folder (images, txt, etc).
   - These files can be reached by URL in html, css, js `/static/filename`.
+  - Fonts are located in `static/fonts/` and are ignored by git, so you will need to add them (message sam if you need the link to the files)
 * `server.js` is the main server file
 
 
@@ -32,6 +34,9 @@
 * All emotions are stored in all-emotions.json and loaded by the server. The server keeps track of `curEmotion` and writes this to `current.txt` on each emotion change so it persists between server restarts.
 * Emotions are selected in `04-selection`. On selection, a message is sent to the server who updates its internal tracking and emits this updated emotion to all clients.
 * Sound runs through Sonos using [node-sonos](https://github.com/bencevans/node-sonos#readme). If no Sonos speakers are found, software should still run.
+
+## Global variables
+- `window.baseColors` or `baseColors` correspond to the data in `data/colors.json` can be used like `basecolors[curEmotion.base][0]` which is `#ff0000`
 
 ## References
 * https://github.com/peter-murray/node-hue-api#readme
