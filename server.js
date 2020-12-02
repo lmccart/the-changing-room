@@ -70,5 +70,6 @@ io.on('connection', (socket) => {
 
 // SERVER SETUP
 app.use('/', express.static('dist'));
+app.use('/data', express.static('data'));
 app.get('/emotions', (req, res) => { res.json(emotions); });
 http.listen(3000, () => { console.debug('listening on *:3000'); });
