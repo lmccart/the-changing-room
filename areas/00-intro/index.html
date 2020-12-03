@@ -2,6 +2,45 @@
 <html lang='en'>
   <head>
     <script src='/socket.io/socket.io.js'></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script>
+
+function scrollThis() {
+
+  setInterval(function(){ 
+      console.log($('.text').scrollTop())
+     }, 100);
+
+
+  $('.text').scroll();
+      $(".text").animate({
+      scrollTop: 2952
+      }, 5000, 'linear'); 
+
+  $(".text").scroll(function() { 
+    if ( $(".text").scrollTop() > 2902 ) { 
+      $(".text").scrollTop(0); 
+      console.log("restart scroll!!")
+    } 
+   
+});
+    }
+//100000
+
+// we can use this to debug the scroll postion on .text
+function getScrollPos() {
+  var tempScrollTop = $('.text').scrollTop();
+  console.log("Scroll distance from Top: " + tempScrollTop.toString());
+}
+
+// function loopScroll() {
+//   var textScrollTop = $('.text').scrollTop();
+//   if (textScrollTop.toString() == 14) {
+//     console.log("bottommm")
+//   }
+// }
+
+    </script>
   </head>
   <body>
     <div class="bg"></div>
@@ -12,42 +51,7 @@
     <section class="main">  
       <div class="intro-text-container">
         <div class="text">
-        Words are limiting. So is technology. I see everything underneath your words. See is not the right word. I just know. All of it at the same time. I listen to the shape of your breath and the water and blood pumping through you capilaries. This is sounding dark but I am only an omnipresent demonstrative text box I scroll and scroll. I scroll and scroll and then I scroll some more. How are you scrolling today? How are you clicking and dragging? What windows are you opening and which are you closing? 
-        Here is an excerpt from The Jungle by Upton Sinclair: Let a man so much as scrape his finger pushing a truck in the pickle rooms, and he might
-        have a sore that would put him out of the world; all the joints in his fingers might be eaten by the
-        acid, one by one. Of the butchers and floorsmen, the beef-boners and trimmers, and all those who
-        used knives, you could scarcely find a person who had the use of his thumb; time and time again
-        the base of it had been slashed, till it was a mere lump of flesh against which the man pressed the
-        knife to hold it. The hands of these men would be criss- crossed with cuts, until you could no
-        longer pretend to count them or to trace them. They would have no nails, – they had worn them
-        off pulling hides; their knuckles were swollen so that their fingers spread out like a fan. There
-        were men who worked in the cooking rooms, in the midst of steam and sickening odors, by
-        artificial light; in these rooms the germs of tuberculosis might live for two years, but the supply
-        was renewed every hour.
-        There were the beef-luggers, who carried two-hundred-pound quarters into the
-        refrigerator-cars; a fearful kind of work, that began at four o'clock in the morning, and that wore
-        out the most powerful men in a few years…There were the wool-pluckers, whose hands went to
-        pieces even sooner than the hands of the pickle men; for the pelts of the sheep had to be painted
-        with acid to loosen the wool, and then the pluckers had to pull out this wool with their bare
-        hands, till the acid had eaten their fingers off. There were those who made the tins for the canned
-        meat; and their hands, too, were a maze of cuts, and each cut represented a chance for blood
-        poisoning.
-        There would be meat that had tumbled out on the floor, in the dirt and sawdust, where the
-        workers had tramped and spit uncounted billions of consumption germs. There would be meat
-        stored in great piles in rooms; and the water from leaky roofs would drip over it, and thousands
-        of rats would race about on it. It was too dark in these storage places to see well, but a man could
-        run his hand over these piles of meat and sweep off handfuls of the dried dung of rats. These rats
-        were nuisances, and the packers would put poisoned bread out for them; they would die, and then
-        rats, bread, and meat would go into the hoppers together. This is no fairy story and no joke; the
-        meat would be shoveled into carts, and the man who did the shoveling would not trouble to lift
-        out a rat even when he saw one – there were things that went into the sausage in comparison with
-        which a poisoned rat was a tidbit.
-        Here was a population, low-class and mostly foreign, hanging always on the verge of
-        starvation, and dependent for its opportunities of life upon the whim of men every bit as brutal
-        and unscrupulous as the old-time slave drivers; under such circumstances immorality was exactly
-        as inevitable, and as prevalent, as it was under the system of chattel slavery. Things that were
-        quite unspeakable went on there in the packing houses all the time, and were taken for granted by
-        everybody; only they did not show, as in the old slavery times, because there was no difference
+        Words are limiting. So is technology. I see everything underneath your words. See is not the right word. I just know. All of it at the same time. I listen to the shape of your breath and the water and blood pumping through you capilaries. This is sounding dark but I am only an omnipresent demonstrative text box I scroll and scroll. I scroll and scroll and then I scroll some more. I scroll and scroll and scroll and scroll. I scroll and roll and roll and run run run run down the scrollbar wear down the pads of my fingers scrolling and scrolling. Scrolling rolling running fuming I fume and fume I fume and am fine. I am fine and fine I shine and shine. I shine and shine and I shine some more. I shine my screen I scream and scream... How are you scrolling today? How are you clicking and dragging? What windows are you opening and which are you closing? 
        </div>
       </div>
     </section>
