@@ -2,6 +2,7 @@
 import '../css/03-selection.scss';
 import './shared.js';
 
+// EMOTION HANDLING
 let curEmotion;
 const socket = io();
 socket.on('emotion:update', updateEmotion);
@@ -22,10 +23,8 @@ function updateInterface() {
 }
 
 
-
-
-var apiURL_emotions = "/emotions";
-
+// VUE
+const apiURL_emotions = "/emotions";
 var app;
 app = new Vue({
   el: "#app",
@@ -55,6 +54,17 @@ app = new Vue({
   }
 });
 
+
+// VARIABLES
+const seperate_panel1 = document.getElementById("scroll1");
+const seperate_panel2 = document.getElementById("scroll2");
+const seperate_panel3 = document.getElementById("scroll3");
+const seperate_panel4 = document.getElementById("scroll4");
+const sel_txt_url = 'data/03_selection_intro.txt';
+
+let sel_intro_content;
+let active = false;
+
 //timer for if the panels are not being used, go back to joinedmode
 //timer does not start until touched
 function resetInterval() {
@@ -65,10 +75,6 @@ function resetInterval() {
     app.joinedmode()
    }, 7000); 
 }
-
-var seperate_panel1 = document.getElementById("scroll1")
-var seperate_panel2 = document.getElementById("scroll2")
-var active = false
 seperate_panel1.onscroll = function (e) {
   // called when the window is scrolled.
   if (active == false) {
@@ -76,11 +82,60 @@ seperate_panel1.onscroll = function (e) {
     resetInterval()
   }
 }
-seperate_panel2.onscroll = function (e) {  
+seperate_panel2.onscroll = function (e) {
   // called when the window is scrolled.
   if (active == false) {
     active = true
     resetInterval()
+  }
+}
+seperate_panel3.onscroll = function (e) {
+  // called when the window is scrolled.
+  if (active == false) {
+    active = true
+    resetInterval()
+  }
+}
+seperate_panel4.onscroll = function (e) {
+  // called when the window is scrolled.
+  if (active == false) {
+    active = true
+    resetInterval()
+  }
+}
+
+
+
+
+fetch(sel_txt_url)
+  .then(response => response.text())
+  .then(text => sel_intro_content = text)
+  .then(() => selection_txt_parse(sel_intro_content))
+
+
+const num_sents_panels = 3;
+function selection_txt_parse(sel_intro_content) {
+  let sel_intro_sent = sel_intro_content.match( /[^\.!\?]+[\.!\?]+/g );
+  const panel_array = new Array(Math.ceil(sel_intro_sent.length / num_sents_panels))
+    .fill()
+    .map(_ => sel_intro_sent.splice(0, num_sents_panels))
+  console.log(panel_array)
+  for(var i = 0; i < panel_array.length; i++) {
+      var sentences = panel_array[i];
+      for(var j = 0; j < sentences.length; j++) {
+          if(i == 0) {
+            seperate_panel1.firstChild.innerHTML +=  sentences[j]
+          }
+          if(i == 1) {
+            seperate_panel2.firstChild.innerHTML +=  sentences[j]
+          }
+          if(i == 2) {
+            seperate_panel3.firstChild.innerHTML +=  sentences[j]
+          }
+          if(i == 3) {
+            seperate_panel4.firstChild.innerHTML +=  sentences[j]
+          }
+      }
   }
 }
 
