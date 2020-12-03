@@ -2,7 +2,6 @@
 <html lang='en'>
   <head>
     <script src='/socket.io/socket.io.js'></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.12/vue.min.js"></script>
   </head>
   <body>
 
@@ -10,14 +9,8 @@
       AREA: <span id='debug-area'>03 selection</span>
       <div id='debug-info'></div>
     </section>
-    <!-- <select name='emotions' id='emotions'></select> -->
 
     <div id="app">
-      <div id="nav">
-        <button id="mode_joined" v-on:click="joinedmode">joined</button>
-        <button id="mode_separate" v-on:click="separatemode">separate</button>
-      </div>
-
       <div id="wrapper_separate" class="wrapper">
         <div class="scroll" id="scroll1"><div class="scroll_text"></div></div>
         <div class="scroll" id="scroll2"><div class="scroll_text"></div></div>
@@ -26,10 +19,10 @@
       </div>
 
       <div class="wrapper" id="wrapper_joined">
-        <div class="scroll" id="scroll1">
-          <div class="emotion" v-on:click="separatemode(emotion)" v-for="(emotionval, emotion) in emotions">
+        <div class="scroll" id="scroll_joined">
+          <!-- <div class="emotion" v-on:click="separatemode(emotion)" v-for="(emotionval, emotion) in emotions">
             {{ emotion }}
-          </div>
+          </div> -->
         </div>
       </div>
 
