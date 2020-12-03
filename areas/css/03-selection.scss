@@ -25,11 +25,15 @@ body {
 }
 
 .scroll {
+	width: 25%;
 	padding: 20px;
 	height: 100vh;
 	box-sizing: border-box;
 	-webkit-box-sizing: border-box;
 	-moz-box-sizing: border-box;
+	.scroll_text {
+		width: 1px;
+	}
 }
 
 .wrapper {
@@ -72,7 +76,7 @@ body {
 	}
 	.scroll {
 		border: 2px solid black;
-		font-size: 3em;
+		font-size: 2.5em;
 		overflow-y: scroll;
 	}
 }
