@@ -20,3 +20,4 @@ function updateEmotion(msg) {
 function updateInterface() {
   $('#debug-info').text('CURRENT EMOTION: ' + curEmotion.name + ' (base: ' + curEmotion.base + ', level: ' + curEmotion.level +')')
 }
+
