@@ -14,7 +14,7 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    overflow: hidden;
+    // overflow: hidden;
 }
 
 .text
@@ -25,6 +25,7 @@
    font-weight: 700;
    font-style: italic;
    padding: 1em;
+//    scroll-behavior: smooth;
 }
 
 ::-webkit-scrollbar {
