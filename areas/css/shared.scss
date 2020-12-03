@@ -26,7 +26,9 @@ body {
   left: 0;
   z-index: 100;
 
-  background: purple;
+
+  backdrop-filter: blur(5px);
+
   width: 100vw;
   height: 100vh;
 
@@ -40,7 +42,29 @@ body {
    
   h1 {
     color: white;
-    font-size: 2em;
+    font-size: 6vmax;
+    line-height: 0.8;
     text-transform: capitalize;
+    font-style: italic;
+  }
+
+  #loading-title:after {
+    content: '\00A0\00A0\00A0';
+    animation: showDots 1s linear infinite;
+  }
+
+  @keyframes showDots {
+    0% {
+      content: '\00A0\00A0\00A0';
+    }
+    33% {
+      content: '.\00A0\00A0';
+    }
+    66% {
+      content: '..\00A0';
+    }
+    100% {
+      content: '...';
+    }
   }
 }
