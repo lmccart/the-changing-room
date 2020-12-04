@@ -33,6 +33,7 @@ body {
 	-moz-box-sizing: border-box;
 	.scroll_text {
 		width: 1px;
+		margin-top: 40px;
 	}
 }
 
@@ -58,6 +59,9 @@ body {
 	.scroll {
 		font-size: 2.5em;
 	}
+	.emotion {
+		text-transform: capitalize;
+	}
 	.emotion:active {
 		color: #fff;
 	}
@@ -76,7 +80,7 @@ body {
 	}
 	.scroll {
 		border: 2px solid black;
-		font-size: 2.5em;
+		font-size: 2.1em;
 		overflow-y: scroll;
 	}
 }

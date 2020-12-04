@@ -29,12 +29,15 @@ const seperate_panel2 = document.getElementById("scroll2");
 const seperate_panel3 = document.getElementById("scroll3");
 const seperate_panel4 = document.getElementById("scroll4");
 const sel_txt_url = '/data/03_selection_intro.txt';
+const emotion_color_url = '/data/colors.json';
 const apiURL_emotions = "/emotions";
 
 let sel_intro_content;
 let emotions;
+let emotions_colors;
 let active = false;
 
+// MODES
 function joinedmode() {
   $("#wrapper_joined").fadeIn(1000);
   $("#wrapper_separate").fadeOut(1000);
@@ -43,48 +46,16 @@ function seperatemode(emotionName) {
   socket.emit('emotion:pick', emotionName);
   $("#wrapper_joined").fadeOut(1000);
   $("#wrapper_separate").fadeIn(1000);
-}
-
-//timer for if the panels are not being used, go back to joinedmode
-//timer does not start until touched
-function resetInterval() {
-  clearInterval(timer);
-  var timer = setTimeout(function() {
-    console.log("restarted interval");
-    active = false
-    joinedmode()
-   }, 7000); 
-}
-seperate_panel1.onscroll = function (e) {
-  // called when the window is scrolled.
-  if (active == false) {
-    active = true
-    resetInterval()
-  }
-}
-seperate_panel2.onscroll = function (e) {
-  // called when the window is scrolled.
-  if (active == false) {
-    active = true
-    resetInterval()
-  }
-}
-seperate_panel3.onscroll = function (e) {
-  // called when the window is scrolled.
-  if (active == false) {
-    active = true
-    resetInterval()
-  }
-}
-seperate_panel4.onscroll = function (e) {
-  // called when the window is scrolled.
-  if (active == false) {
-    active = true
-    resetInterval()
-  }
+  //start auto scrolling in 2 seconds
+  setTimeout(function() { scroll_panels(); }, 2000);
 }
 
 
+
+// READ IN EMOTIONS COLOR JSON
+fetch(emotion_color_url)
+  .then(response => response.json())
+  .then(data => { emotions_colors = data;})
 // READ IN EMOTION JSON
 fetch(apiURL_emotions)
   .then(response => response.json())
@@ -101,12 +72,13 @@ fetch(apiURL_emotions)
         $("#scroll_joined").append($emotion_div)
     }
   })
-
 // READ IN SELECTION TEXT
 fetch(sel_txt_url)
   .then(response => response.text())
   .then(text => sel_intro_content = text)
   .then(() => selection_txt_parse(sel_intro_content))
+
+
 
 // PARSING SELECTION TEXT TO PANELS
 const num_sents_panels = 3;
@@ -133,4 +105,79 @@ function selection_txt_parse(sel_intro_content) {
       }
   }
 }
+
+
+
+// SCROLLING
+//timer starts when panel1 reaches bottom, go back to joinedmode
+function resetInterval() {
+  clearInterval(timer);
+  var timer = setTimeout(function() {
+    console.log("restarted interval");
+    active = false
+    joinedmode()
+   }, 9000); 
+}
+
+// $("#wrapper_separate .scroll").scroll(function(e) {
+//   if ($(this).is(':animated')) {
+//       console.log('scroll happen by animate');
+//   } else if (e.originalEvent) {
+//       // scroll happen manual scroll
+//       console.log('scroll happen manual scroll');
+//       $("html, body").stop()
+//   } else {
+//       // scroll happen by call
+//       console.log('scroll happen by call');
+//   }
+// });
+
+//stop auto scroll
+$(seperate_panel1).on("mousedown wheel DOMMouseScroll mousewheel keyup touchmove", function(){
+     $(seperate_panel1).stop();
+})
+$(seperate_panel2).on("mousedown wheel DOMMouseScroll mousewheel keyup touchmove", function(){
+     $(seperate_panel2).stop();
+})
+$(seperate_panel3).on("mousedown wheel DOMMouseScroll mousewheel keyup touchmove", function(){
+     $(seperate_panel3).stop();
+})
+$(seperate_panel4).on("mousedown wheel DOMMouseScroll mousewheel keyup touchmove", function(){
+     $(seperate_panel4).stop();
+})
+
+// auto scrolling
+function scroll_panels() {
+  $(seperate_panel1).animate({scrollTop: $('.scroll').prop("scrollHeight")}, 40000, function(){
+      $(seperate_panel1).off("scroll mousedown wheel DOMMouseScroll mousewheel keyup touchmove");
+  });
+  setTimeout(function() {
+    $(seperate_panel2).animate({scrollTop: $('.scroll').prop("scrollHeight")}, 38000, function(){
+        $(seperate_panel2).off("scroll mousedown wheel DOMMouseScroll mousewheel keyup touchmove");
+    });
+  }, 1500);
+  setTimeout(function() {
+     $(seperate_panel3).animate({scrollTop: $('.scroll').prop("scrollHeight")}, 42000, function(){
+         $(seperate_panel3).off("scroll mousedown wheel DOMMouseScroll mousewheel keyup touchmove");
+     });
+  }, 3000);
+  setTimeout(function() {
+     $(seperate_panel4).animate({scrollTop: $('.scroll').prop("scrollHeight")}, 40000, function(){
+         $(seperate_panel4).off("scroll mousedown wheel DOMMouseScroll mousewheel keyup touchmove");
+     });
+  }, 3700);
+  //when panel 2 reaches bottom
+  $(function($) {
+      $(seperate_panel2).on('scroll', function() {
+          if($(this).scrollTop() + $(this).innerHeight() >= $(this)[0].scrollHeight) {
+            console.log("end reached")
+            resetInterval()
+          }
+      })
+  });
+}
+
+
+// START autoscroll on page load
+setTimeout(function() { scroll_panels(); }, 3000);
 
