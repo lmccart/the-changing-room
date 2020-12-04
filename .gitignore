@@ -5,3 +5,8 @@ automate/multibrowse-source/*
 areas/sounds/*
 dist/
 static/fonts/*
+static/images/*/*.jpg
+static/images/*/*.jpeg
+static/images/*/*.JPG
+static/images/*/*.JPEG
+static/images/*/*.png

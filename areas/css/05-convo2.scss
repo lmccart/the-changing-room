@@ -1,1 +1,96 @@
 @import './shared.scss';
+
+body {
+  background: blue;
+}
+
+#convo-loading {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 100;
+
+
+  backdrop-filter: blur(5px);
+
+  width: 100vw;
+  height: 100vh;
+
+  display: none;
+  justify-content: center;
+  align-items: center;
+
+  &.show {
+    display: flex;
+  } 
+
+  h1 {
+    color: white;
+    font-size: 2em;
+  }
+
+  .bar-container {
+    position: relative;
+  }
+
+  .loading-bar {
+    border: 2px solid white;
+
+    position: absolute;
+    bottom: -10px;
+    left: 0;
+    right: 0;
+
+    height: 30px;
+
+    &:before {
+      content: '';
+      position: absolute;
+      top: 2px;
+      bottom: 2px;
+      right: 100%;
+      left: 2px;
+
+      background: white;
+
+      animation: barFill 4s linear infinite;
+    }
+  }
+}
+
+@keyframes barFill {
+  0% {
+    right: 100%;
+  }
+  100% {
+    right: 2px;
+  }
+}
+
+.main {
+  width: 100vw;
+  height: 100vh;
+
+  padding: 4vmax;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .instruction-container {
+    width: 100%;
+    height: 100%;
+    border: 2px solid white;
+
+    display: flex;
+    align-items: center;
+
+    #instruction {
+      font-size: 6em;
+      color: white;
+
+      width: 90%;
+      margin: 0 auto;
+    }
+  }
+}
