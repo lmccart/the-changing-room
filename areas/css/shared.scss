@@ -1,9 +1,28 @@
 @import './fonts.scss';
 
+body, html {
+  height: 100%;
+  margin: 0;
+}
+
 body {
   font-family: 'Favorit Mono', monospace;
   background: aliceblue;
-  margin: 0;
+  margin: 0; 
+}
+
+.bg {
+  filter: blur(10px);
+  /* The image used */  background-image: url("https://d2w9rnfcy7mm78.cloudfront.net/5009285/original_815c93068f89c6ec1ed8e0f46e152437.jpg?1568300985?bc=0");
+
+
+  /* Full height */
+  height: 100%; 
+
+  /* Center and scale the image nicely */
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 * {
@@ -22,7 +41,7 @@ body {
 
 #loading {
   position: fixed;
-  top: 0;
+  top: 0;   
   left: 0;
   z-index: 100;
 
