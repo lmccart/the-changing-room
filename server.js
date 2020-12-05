@@ -72,4 +72,29 @@ io.on('connection', (socket) => {
 app.use('/', express.static('dist'));
 app.use('/data', express.static('data'));
 app.get('/emotions', (req, res) => { res.json(emotions); });
+
+// responds with array of image urls for base emotion
+app.get('/images/:baseEmotion/manifest', (req, res) => {
+  const baseEmotion = req.params.baseEmotion;
+  fs.readdir(`./static/images/${baseEmotion}`, (err,files) => {
+    if(err) {
+      console.log(err);
+      res.status(500).send(err.message);
+    };
+
+    // get rid of hidden files (.DS_STORE, etc)
+    const imageFiles = files.filter(item => !(/(^|\/)\.[^\/\.]/g).test(item));
+
+    // URL client can use to get the image in css or img src attribute
+    const staticURLPrefix = `/static/images/${baseEmotion}/`;
+
+    const finalURLs = [];
+    imageFiles.forEach(file => {
+      finalURLs.push(staticURLPrefix + encodeURI(file));
+    })
+
+    res.status(200).send(JSON.stringify(finalURLs));
+  });
+});
+
 http.listen(3000, () => { console.debug('listening on *:3000'); });
