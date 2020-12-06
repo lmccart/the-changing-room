@@ -53,7 +53,10 @@ function scrollThis() {
     if ($(".text").scrollTop() >= ($('.text')[0].scrollHeight - ($('.text')[0].clientHeight + 5))) {
       console.log("restart scroll!!")
       $(".text").stop();
-      $(".text").scrollTop(0);
+      // $(".text").scrollTop(0);
+      $(".text").animate({
+        scrollTop: 0
+      }, 3000, 'linear');
 
       $(".text").animate({
         scrollTop: scrollBottom
@@ -62,6 +65,6 @@ function scrollThis() {
   });
 }
 
-
+// 95000
 
 
