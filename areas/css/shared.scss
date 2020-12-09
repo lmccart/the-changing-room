@@ -87,3 +87,19 @@ body {
     }
   }
 }
+
+// This class is useful as a base for the 'window' look we use a lot
+.window {
+  position: relative;
+  
+  background: white;
+  border: 2px solid black;
+  padding: 2em;
+
+  &:after {
+    content: '✕';
+    position: absolute;
+    top: 2%;
+    right: 2%;
+  }
+}

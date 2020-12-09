@@ -63,8 +63,10 @@ io.on('connection', (socket) => {
   });
 
   socket.on('chat:send', function(msg){
-    // called by area 05 when user hits "send" on a chat message
-    // message data gets modified based on emotion edit rules, and emitted to all clients on 05-convo1 page
+    // called by area 04 when user hits "send" on a chat message
+    // message data gets modified based on emotion edit rules, and emitted to all clients on 04-convo1 page
+    // TODO implement text modification
+    io.emit('chat:new', msg);
   });
 });
 
