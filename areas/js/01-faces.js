@@ -21,7 +21,7 @@ function updateEmotion(msg) {
     console.log('emotion has been updated to: ' + msg.name + ' (base: ' + msg.base + ', level: ' + msg.level + ')');
 
     showLoadingOverlay(curEmotion.name);
-    
+    $(".text-container").css("visibility", "hidden");
     updateInterface();
   }
 }
