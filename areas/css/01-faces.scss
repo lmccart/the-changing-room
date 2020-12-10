@@ -32,14 +32,15 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  // overflow: hidden;
+  visibility: hidden;
+  overflow: hidden;
 }
 
 .textbox
 {
  height: 100%;
  width: 100%;
- font-size: 7em;
+ font-size: 2em;
  overflow: auto;
  font-weight: 700;
  font-style: italic;
