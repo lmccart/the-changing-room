@@ -3,6 +3,10 @@ import '../css/01-faces.scss';
 import './shared.js';
 import {camvas} from './lib/camvas.js';
 import {pico} from './lib/pico.js';
+import {textfill} from './lib/jquery.textfill.js';
+
+
+
 
 // EMOTION HANDLING
 let emotions;
@@ -23,8 +27,14 @@ function updateEmotion(msg) {
 
 function updateInterface() {
   $('#debug-info').text('CURRENT EMOTION: ' + curEmotion.name + ' (base: ' + curEmotion.base + ', level: ' + curEmotion.level +')')
+  // jQuery(".textbox").fitText(-5);
+  $(function() {
+    $('.textbox').textfill({
+        maxFontPixels: 400
+    });
+});
 }
-
+  
 // VIDEO AND FACE HANDLING
 
 // VARIABLES

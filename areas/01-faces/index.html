@@ -2,9 +2,10 @@
 <html lang='en'>
   <head>
     <script src='/socket.io/socket.io.js'></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
   </head>
   <body>
-
+ 
     <section id='debug'>
       AREA: <span id='debug-area'>01 faces</span>
       <div id='debug-info'></div>
@@ -14,7 +15,13 @@
       <div id="video-cover">
         video is hidden
       </div>
+
       <video id="face-stream" muted autoplay></video>
+      <div class="text-container">
+        <div class="textbox">
+          <span>When did you first realize that you can't trust yourself?</span>
+       </div>
+      </div>
     </section>
     
     <section id="loading">
