@@ -1,10 +1,11 @@
 @import './shared.scss';
 
 .main {
-    border: 1px solid green;
+    // border: 1px solid green;
 }
 
 .intro-text-container {
+    visibility: hidden;
     border: 1px solid black;
     width: 70vw;
     display: block;

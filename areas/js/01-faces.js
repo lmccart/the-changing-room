@@ -1,8 +1,12 @@
 // style and js imports
 import '../css/01-faces.scss';
 import './shared.js';
-import {camvas} from './lib/camvas.js';
-import {pico} from './lib/pico.js';
+import { camvas } from './lib/camvas.js';
+import { pico } from './lib/pico.js';
+import { textfill } from './lib/jquery.textfill.js';
+
+
+
 
 // EMOTION HANDLING
 let emotions;
@@ -14,15 +18,21 @@ socket.on('emotion:update', updateEmotion);
 function updateEmotion(msg) {
   if (!curEmotion || curEmotion.name !== msg.name) {
     curEmotion = msg;
-    console.log('emotion has been updated to: ' + msg.name + ' (base: ' + msg.base + ', level: ' + msg.level +')');
+    console.log('emotion has been updated to: ' + msg.name + ' (base: ' + msg.base + ', level: ' + msg.level + ')');
 
     showLoadingOverlay(curEmotion.name);
+    $(".text-container").css("visibility", "hidden");
     updateInterface();
   }
 }
 
 function updateInterface() {
-  $('#debug-info').text('CURRENT EMOTION: ' + curEmotion.name + ' (base: ' + curEmotion.base + ', level: ' + curEmotion.level +')')
+  $('#debug-info').text('CURRENT EMOTION: ' + curEmotion.name + ' (base: ' + curEmotion.base + ', level: ' + curEmotion.level + ')')
+
+  // resize font-size dynamically based on how much text
+  $('.textbox').textfill({
+    maxFontPixels: 400
+  });
 }
 
 // VIDEO AND FACE HANDLING
@@ -75,8 +85,8 @@ canvas.setAttribute('height', 720);
 // face detection code based on https://nenadmarkus.com/p/picojs-intro/demo/
 
 // setup Pico face detector with cascade data
-fetch(cascadeurl).then(function(response) {
-  response.arrayBuffer().then(function(buffer) {
+fetch(cascadeurl).then(function (response) {
+  response.arrayBuffer().then(function (buffer) {
     const bytes = new Int8Array(buffer);
     facefinderClassifyRegion = pico.unpack_cascade(bytes);
     console.log('* cascade loaded');
@@ -97,10 +107,10 @@ if (navigator.mediaDevices.getUserMedia) {
 
 
 const rgba_to_grayscale = (rgba, nrows, ncols) => {
-  const gray = new Uint8Array(nrows*ncols);
-  for(let r=0; r<nrows; ++r)
-    for(let c=0; c<ncols; ++c)
-      gray[r*ncols + c] = (2*rgba[r*4*ncols+4*c+0]+7*rgba[r*4*ncols+4*c+1]+1*rgba[r*4*ncols+4*c+2])/10;
+  const gray = new Uint8Array(nrows * ncols);
+  for (let r = 0; r < nrows; ++r)
+    for (let c = 0; c < ncols; ++c)
+      gray[r * ncols + c] = (2 * rgba[r * 4 * ncols + 4 * c + 0] + 7 * rgba[r * 4 * ncols + 4 * c + 1] + 1 * rgba[r * 4 * ncols + 4 * c + 2]) / 10;
   return gray;
 }
 
@@ -128,22 +138,24 @@ const processfn = (video) => {
   dets = pico.cluster_detections(dets, 0.2); // set IoU threshold to 0.2
 
   let faceFound = false;
-  for(let i=0; i<dets.length; ++i){
+  for (let i = 0; i < dets.length; ++i) {
     // check the detection score
     // if it's above the threshold increment watchdog
     // (the constant 50.0 is empirical: other cascades might require a different one)
-    if(dets[i][3]>50.0) {
+    if (dets[i][3] > 50.0) {
       faceFound = true
     }
   }
 
   // if watchdog is > 20 that means a face has been detected for 2 seconds
   if (faceFound) {
-   watchdog = watchdog < 0 ? 0 : watchdog + 1;
+    watchdog = watchdog < 0 ? 0 : watchdog + 1;
 
     if (watchdog > (delaySeconds * 10)) {
       // remove cover
+      
       coverEl.hide();
+      $(".text-container").css("visibility", "visible");
     }
   } else {
     watchdog = watchdog > 0 ? 0 : watchdog - 1;
@@ -151,7 +163,8 @@ const processfn = (video) => {
     if (watchdog < -(delaySeconds * 10)) {
       // cover
       coverEl.show();
+      $(".text-container").css("visibility", "hidden");
+
     }
   }
 }
-  

@@ -9,6 +9,7 @@
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "jquery": "^3.5.1",
+    "jquery-textfill": "^0.6.0",
     "log4js": "^6.3.0",
     "node-hue-api": "^4.0.9",
     "papaparse": "^5.3.0",

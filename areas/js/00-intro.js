@@ -14,7 +14,7 @@ function updateEmotion(msg) {
   if (!curEmotion || curEmotion.name !== msg.name) {
     curEmotion = msg;
     console.log('emotion has been updated to: ' + msg.name + ' (base: ' + msg.base + ', level: ' + msg.level + ')');
-
+    $(".intro-text-container").css("visibility", "hidden");
     showLoadingOverlay(curEmotion.name);
     updateInterface();
   }
@@ -30,6 +30,7 @@ function updateInterface() {
 
 
 function scrollThis() {
+  $(".intro-text-container").css("visibility", "visible");
   console.log("scrollThis")
   ////prints out scroll pos
   // setInterval(function(){ 
