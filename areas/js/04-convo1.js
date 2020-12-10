@@ -16,7 +16,8 @@ const pauseOnMessageTime = 3000; // 3s
 const introEl = $('#intro-text');
 const chatForm = $('#chat-form');
 const chatInput = $('#chat-input');
-const chatViewer = $('#chat-viewer');
+const messageViewerContainer = $('#message-container');
+const messageViewer = $('#chat-viewer');
 
 socket.on('emotion:update', updateEmotion);
 socket.on('chat:new', handleNewMessage);
@@ -70,27 +71,33 @@ function sendMessage () {
 
 // sets chat back to initial state
 function resetChat () {
+  console.log('resetting chat');
   chatForm.css('display', 'none');
   chatInput.val('');
-  chatViewer.css('display', 'none');
-  chatViewer.empty();
+  messageViewerContainer.css('display', 'none');
+  messageViewer.empty();
   introEl.text(`${introPreText}${curEmotion.name}${introPostText}`);
   introEl.css('display', 'block'); 
 }
 
 function startResetTimeout () {
-  console.log('resetting timeout');
   clearTimeout(uiResetTimeout);
   uiResetTimeout = setTimeout(resetChat, resetWaitTime);
 }
 
 function showChatInput () {
-  chatViewer.css('display', 'none'); 
-  chatViewer.empty();
+  messageViewerContainer.css('display', 'none'); 
+  messageViewer.empty();
   introEl.css('display', 'none');
   chatInput.val('');
   chatForm.css('display', 'block');
   chatInput.focus(); 
+}
+
+function showMessageViewer () {
+  introEl.css('display', 'none');
+  chatForm.css('display', 'none');
+  messageViewerContainer.css('display', 'block');
 }
 
 function updateEmotion(msg) {
@@ -107,9 +114,7 @@ function updateInterface() {
 }
 
 function handleNewMessage (newMessage) {
-  introEl.css('display', 'none');
-  chatForm.css('display', 'none');
-  chatViewer.css('display', 'block');
+  showMessageViewer();
 
   const speechMessage = new SpeechSynthesisUtterance(newMessage);
   speechSynthesis.speak(speechMessage);
@@ -122,9 +127,7 @@ function typeMessageByWord (string, iteration) {
     
     // Prevent our code executing if there are no letters left
     if (iteration === words.length) {
-
         setTimeout(() => { 
-          startResetTimeout();
           showChatInput();
         }, pauseOnMessageTime)
         return;
@@ -133,8 +136,9 @@ function typeMessageByWord (string, iteration) {
     setTimeout(function() {
         // Set the instruction to the current text + the next character
         // whilst incrementing the iteration variable
-        $('#chat-viewer').text( $('#chat-viewer').text() + ' ' + words[iteration++] );
-        
+        messageViewer.text( messageViewer.text() + ' ' + words[iteration++] );
+        messageViewer.animate({ scrollTop: messageViewer[0].scrollHeight}, 1);
+        startResetTimeout();
         // Re-trigger our function
         typeMessageByWord(string, iteration);
     }, typingSpeed);

@@ -51,11 +51,21 @@ form#chat-form {
   }
 }
 
-#chat-viewer {
+#message-container {
   display: none;
 
   width: 80vw;
-  min-height: 80vh;
+  height: 80vh;
 
-  font-size: 4em;
+  font-size: 3em;
+
+  #chat-viewer {
+    height: 100%;
+    overflow-y: scroll;
+  }
+}
+
+::-webkit-scrollbar {
+  width: 0px;  /* Remove scrollbar space */
+  background: transparent;  /* Optional: just make scrollbar invisible */
 }
