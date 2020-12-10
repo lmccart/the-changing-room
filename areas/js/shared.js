@@ -1,3 +1,7 @@
+// this allows for us to do blob.text() 
+// which safari doesn't support natively
+import { Blob } from 'blob-polyfill';
+
 document.title = $('#debug-area').text();
 console.log($('#debug-area').text())
 
