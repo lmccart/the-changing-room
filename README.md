@@ -44,6 +44,8 @@
 - `window.baseColors` or `baseColors` correspond to the data in `data/colors.json` can be used like `basecolors[curEmotion.base][0]` which is `#ff0000`
 
 ## `areas/js/lib` functions and helpers
+- can generally be used by importing like so:
+    + `import { getImgUrls, addSvgFilterForElement } from './lib/imageColorUtils.js';`
 - `imageColorUtils.js`
     + `getImgUrls (baseEmotion)` a function that returns an array of image urls for a certain base emotion
         - used like `const imageURLs = await getImgUrls('angry');`
