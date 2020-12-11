@@ -77,12 +77,13 @@ app.get('/emotions', (req, res) => { res.json(emotions); });
 
 // responds with array of image urls for base emotion
 app.get('/images/:baseEmotion/manifest', (req, res) => {
-  const baseEmotion = req.params.baseEmotion;
-  fs.readdir(`./static/images/${baseEmotion}`, (err,files) => {
-    if(err) {
-      console.log(err);
-      res.status(500).send(err.message);
-    };
+  try {
+    const baseEmotion = req.params.baseEmotion;
+
+    if (!baseEmotion) {
+      throw new Error('No emotion in url');
+    }
+    const files = fs.readdirSync(`./static/images/${baseEmotion}`)
 
     // get rid of hidden files (.DS_STORE, etc)
     const imageFiles = files.filter(item => !(/(^|\/)\.[^\/\.]/g).test(item));
@@ -96,7 +97,11 @@ app.get('/images/:baseEmotion/manifest', (req, res) => {
     })
 
     res.status(200).send(JSON.stringify(finalURLs));
-  });
+
+  } catch (err) {
+    console.log(err);
+    res.status(400).send(err.message);
+  }
 });
 
 http.listen(3000, () => { console.debug('listening on *:3000'); });
