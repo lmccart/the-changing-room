@@ -28,11 +28,6 @@ async function updateInterface() {
   }
 }
 
-function getImgUrls (baseEmotion) {
-  return fetch(`/images/${baseEmotion}/manifest`)
-          .then(res => res.json());
-} 
-
 // add elements at random, with a multiplier based on a single digit integer
 // elements should self destruct, and not overlap too much with current objects on screen
 // elements can be images, short text and single word emotion label
