@@ -1,4 +1,5 @@
 // style and js imports
+import $ from 'jquery';
 import '../css/04-convo1.scss';
 import './shared.js';
 

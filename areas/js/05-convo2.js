@@ -1,4 +1,5 @@
 // style and js imports
+import $ from 'jquery';
 import Papa from 'papaparse';
 
 import '../css/05-convo2.scss';

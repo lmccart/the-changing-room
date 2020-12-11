@@ -42,12 +42,16 @@ module.exports = {
           }
         }
       ]
+    },
+    {
+      test: require.resolve("jquery"),
+      loader: "expose-loader",
+      options: {
+        exposes: ["$", "jQuery"],
+      },
     }]
   },
   plugins: [
-    new webpack.ProvidePlugin({
-      $: 'jquery',
-    }),
     new CopyPlugin({
       patterns: [
         { from: './static', to: './static' },

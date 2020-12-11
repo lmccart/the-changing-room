@@ -4,12 +4,23 @@
   position: fixed;
   top: 0;
   left: 0;
-  padding: 2em 3em;
+  padding: 0;
   border: 1px solid;
   background: blanchedalmond;
+
+  img {
+    display: block;
+    max-height: 50vh;
+  }
 }
 
 .main {
   width: 100vw;
   height: 100vh;
+
+  overflow: hidden;
+}
+
+svg {
+  display: none;
 }
