@@ -1,9 +1,10 @@
 // style and js imports
+import $ from 'jquery';
 import '../css/01-faces.scss';
 import './shared.js';
 import { camvas } from './lib/camvas.js';
 import { pico } from './lib/pico.js';
-import { textfill } from './lib/jquery.textfill.js';
+import 'fancy-textfill/es2015/jquery.plugin';
 
 
 
@@ -30,8 +31,8 @@ function updateInterface() {
   $('#debug-info').text('CURRENT EMOTION: ' + curEmotion.name + ' (base: ' + curEmotion.base + ', level: ' + curEmotion.level + ')')
 
   // resize font-size dynamically based on how much text
-  $('.textbox').textfill({
-    maxFontPixels: 400
+  $('.textbox').fancyTextFill({
+    maxFontSize: 400
   });
 }
 

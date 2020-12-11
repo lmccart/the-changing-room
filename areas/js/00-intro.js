@@ -1,4 +1,5 @@
 // style and js imports
+import $ from 'jquery';
 import '../css/00-intro.scss';
 import './shared.js';
 

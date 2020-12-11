@@ -1,4 +1,5 @@
 // style and js imports
+import $ from 'jquery';
 import '../css/02-reflection.scss';
 import './shared.js';
 

@@ -1,6 +1,10 @@
 // style and js imports
+import $ from 'jquery';
+import 'imagesloaded';
+
 import '../css/06-passive.scss';
 import './shared.js';
+import { getImgUrls, addSvgFilterForElement } from './lib/imageColorUtils.js';
 
 let emotions;
 let curEmotion;
@@ -23,9 +27,10 @@ function updateEmotion(msg) {
 async function updateInterface() {
   $('#debug-info').text('CURRENT EMOTION: ' + curEmotion.name + ' (base: ' + curEmotion.base + ', level: ' + curEmotion.level +')')
   imgURLs = await getImgUrls(curEmotion.base);
-  if (!popupFactory || popupFactory.emotion !== curEmotion.name) {
-    popupFactory = new PopupFactory(curEmotion);
+  if (popupFactory) {
+    popupFactory.cleanup();
   }
+  popupFactory = new PopupFactory(curEmotion);
 }
 
 // add elements at random, with a multiplier based on a single digit integer
@@ -34,12 +39,13 @@ async function updateInterface() {
 
 function PopupFactory (emotionObj) {
   // expects emotionObj to be the standard emotion data object we are using
-  const parentEl = $('.main')[0];
+  const parentEl = $('.main');
   const factoryThis = this;
 
   // note that the destruction rate is set in each individual popup for a little randomness
-  const popupRate = 7500 / emotionObj.level // base rate of 7.5 seconds, gets faster with higher emotion level
-  const overLapAllowance = 0.60 // allows 60% overlap when a new element is created
+  const popupRate = 7500 / emotionObj.level; // base rate of 7.5 seconds, gets faster with higher emotion level
+  const minDisplayTime = 2;// minimum time a popup shows on screen
+  const overLapAllowance = 0.60; // allows 60% overlap when a new element is created
 
   factoryThis.emotion = emotionObj.name;
   factoryThis.activeElements = [];
@@ -55,6 +61,7 @@ function PopupFactory (emotionObj) {
   factoryThis.cleanup = () => {
     // remove all popups
     parentEl.empty();
+    clearInterval(creationInterval);
   }
 
   factoryThis.getPercentOverlap = (existingEl, newEl) => {
@@ -86,32 +93,66 @@ function PopupFactory (emotionObj) {
 
   function PopupEl (multiplier) {
     const hasImage = true; // should be a random chance either true or false
-    const hasText = true; // should be a random chance either true or false
+    const hasText = false; // should be a random chance either true or false
     const childThis = this;
     childThis.id = Math.floor(Math.random() * 1000000);
-    childThis.$element = $(`<div class="popup window" id=${childThis.id}>${childThis.id} — ${factoryThis.emotion} — With a test string</div>`);
+    childThis.$element = $(`<div class="popup window" id=${childThis.id}>${childThis.id} — ${factoryThis.emotion}</div>`);
     
     // hide it so we can calculate it's position
     childThis.$element.css('visibility', 'hidden');
 
+    if (hasImage) {
+      // attach a color modified image
+      const imageURL = imgURLs[Math.floor(Math.random() * imgURLs.length)];
+      const imgEl = $(`<img src="${imageURL}">`);
+      addSvgFilterForElement(imgEl, window.baseColors[curEmotion.base]);
+      childThis.$element.append(imgEl);
+    }
+
     // append just the element, which is the first item in a jquery object's array
     parentEl.append(childThis.$element[0]);
 
-    // set the initial position
-    const randomXY = factoryThis.getRandomPosition(childThis.$element);
-    childThis.$element.css('top', randomXY[0]);
-    childThis.$element.css('left', randomXY[1]);
-
-    for (var i = factoryThis.activeElements.length - 1; i >= 0; i--) {
-      const testEl = factoryThis.activeElements[i];
-      const overlapPercent = factoryThis.getPercentOverlap(testEl.$element, childThis.$element);
-
-      if (overlapPercent > overLapAllowance) {
-        // get new position values
+    if (hasImage) {
+      // we need to wait for the image to load before we measure it
+      childThis.$element.imagesLoaded(() => {
+        // set the initial position
         const randomXY = factoryThis.getRandomPosition(childThis.$element);
         childThis.$element.css('top', randomXY[0]);
         childThis.$element.css('left', randomXY[1]);
+
+        for (var i = factoryThis.activeElements.length - 1; i >= 0; i--) {
+          const testEl = factoryThis.activeElements[i];
+          const overlapPercent = factoryThis.getPercentOverlap(testEl.$element, childThis.$element);
+
+          if (overlapPercent > overLapAllowance) {
+            // get new position values
+            const randomXY = factoryThis.getRandomPosition(childThis.$element);
+            childThis.$element.css('top', randomXY[0]);
+            childThis.$element.css('left', randomXY[1]);
+          }
+        }
+
+        childThis.$element.css('visibility', 'visible');
+      })
+    } else {
+      // set the initial position
+      const randomXY = factoryThis.getRandomPosition(childThis.$element);
+      childThis.$element.css('top', randomXY[0]);
+      childThis.$element.css('left', randomXY[1]);
+
+      for (var i = factoryThis.activeElements.length - 1; i >= 0; i--) {
+        const testEl = factoryThis.activeElements[i];
+        const overlapPercent = factoryThis.getPercentOverlap(testEl.$element, childThis.$element);
+
+        if (overlapPercent > overLapAllowance) {
+          // get new position values
+          const randomXY = factoryThis.getRandomPosition(childThis.$element);
+          childThis.$element.css('top', randomXY[0]);
+          childThis.$element.css('left', randomXY[1]);
+        }
       }
+
+      childThis.$element.css('visibility', 'visible');
     }
 
     childThis.destroy = () => {
@@ -122,16 +163,13 @@ function PopupFactory (emotionObj) {
       factoryThis.removeEl(childThis.id);
     }
 
-    // append just the element, which is the first item in a jquery object's array
-    childThis.$element.css('visibility', 'visible');
-
-    const destroyRate = popupRate * ((Math.random() * 2) * emotionObj.level);
+    const destroyRate = minDisplayTime + popupRate * ((Math.random() * 2) * emotionObj.level);
 
 
     setTimeout(childThis.destroy, destroyRate);
   }
 
-  setInterval(() => {
+  const creationInterval = setInterval(() => {
     // create a new element every so often
     const newEl = new PopupEl(emotionObj.level);
 
