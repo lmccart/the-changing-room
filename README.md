@@ -40,8 +40,11 @@
 - `/emotions` GET - returns all emotions as JSON object
 - `/images/:baseEmotion/manifest` GET - returns array of image urls for a base emotion (angry, sad, strong, etc)
 
-## Global variables
+## Global variables / functions
 - `window.baseColors` or `baseColors` correspond to the data in `data/colors.json` can be used like `basecolors[curEmotion.base][0]` which is `#ff0000`
+- `getImgUrls (baseEmotion)` a function that returns an array of image urls for a certain base emotion
+    + used like `const imageURLs = await getImgUrls('angry');`
+    + or `getImgUrls('angry').then(imageURLs => {do whatever u want here})`
 
 ## References
 * https://github.com/peter-murray/node-hue-api#readme

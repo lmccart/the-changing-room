@@ -4,6 +4,7 @@ import './shared.js';
 
 let emotions;
 let curEmotion;
+let imgURLs = [];
 const socket = io();
 socket.on('emotion:update', updateEmotion);
 
@@ -19,9 +20,9 @@ function updateEmotion(msg) {
   }
 }
 
-function updateInterface() {
+async function updateInterface() {
   $('#debug-info').text('CURRENT EMOTION: ' + curEmotion.name + ' (base: ' + curEmotion.base + ', level: ' + curEmotion.level +')')
-
+  imgURLs = await getImgUrls(curEmotion.base);
   if (!popupFactory || popupFactory.emotion !== curEmotion.name) {
     popupFactory = new PopupFactory(curEmotion);
   }
@@ -84,9 +85,11 @@ function PopupFactory (emotionObj) {
   }
 
   function PopupEl (multiplier) {
+    const hasImage = true; // should be a random chance either true or false
+    const hasText = true; // should be a random chance either true or false
     const childThis = this;
     childThis.id = Math.floor(Math.random() * 1000000);
-    childThis.$element = $(`<div class="popup" id=${childThis.id}>${childThis.id} — ${factoryThis.emotion} — With a test string</div>`);
+    childThis.$element = $(`<div class="popup window" id=${childThis.id}>${childThis.id} — ${factoryThis.emotion} — With a test string</div>`);
     
     // hide it so we can calculate it's position
     childThis.$element.css('visibility', 'hidden');

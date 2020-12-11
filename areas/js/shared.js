@@ -37,3 +37,11 @@ window.hideLoadingOverlay =  () => {
 if (module.hot) {
   module.hot.accept();
 }
+
+// returns array of image URLs for base emotion
+// used like const imageURLs = await getImgUrls('angry');
+// or getImgUrls('angry').then(imageURLs => {do whatever u want here})
+function getImgUrls (baseEmotion) {
+  return fetch(`/images/${baseEmotion}/manifest`)
+          .then(res => res.json());
+} 
