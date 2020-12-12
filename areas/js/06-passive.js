@@ -105,7 +105,7 @@ function PopupFactory (emotionObj) {
       // attach a color modified image
       const imageURL = imgURLs[Math.floor(Math.random() * imgURLs.length)];
       const imgEl = $(`<img src="${imageURL}">`);
-      addSvgFilterForElement(imgEl, window.baseColors[curEmotion.base]);
+      addSvgFilterForElement(imgEl, window.baseColors[curEmotion.base][emotionObj.level-1]);
       childThis.$element.append(imgEl);
     }
 
