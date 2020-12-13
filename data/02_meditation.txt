@@ -13,3 +13,8 @@ What does the weight of the air feel like here?
 Who is here with you? 
 [PERSON]
 What do you want to tell them?
+
+Now there are more people joining you.
+They all feel the same as you.
+What does it feel like to be among them?
+Listen. What are they saying?
