@@ -34,6 +34,7 @@ body {
 	.scroll_text {
 		width: 1px;
 		margin-top: 40px;
+		line-height: 1.5em;
 	}
 }
 
@@ -44,7 +45,7 @@ body {
 
 #wrapper_joined {
 	font-size: 4em;
-	display: none;
+	display: block;
 	overflow-y: scroll;
 	overflow-x: hidden;
 	::-webkit-scrollbar {
@@ -62,13 +63,17 @@ body {
 	.emotion {
 		text-transform: capitalize;
 	}
-	.emotion:active {
-		color: #fff;
+	.selected_emotion {
+		-moz-transition: all .8s ease-in;
+		-o-transition: all .8s ease-in;
+		-webkit-transition: all .8s ease-in;
+		transition: all .8s ease-in;
+		color: #fff !important; 
 	}
 }
 
 #wrapper_separate {
-	display: flex;
+	display: none;
 	::-webkit-scrollbar-thumb {
 		background-color: none;
 		box-shadow: 0;
