@@ -21,7 +21,7 @@ if (lights) {
 const playEmotion = (emotion) => {
   if (!lights) return;
   
-  let hex = colors[emotion.base][0];
+  let hex = colors[emotion.base][emotion.level][0];
   let cie = hex2cie(hex);
   console.log(cie);
 
