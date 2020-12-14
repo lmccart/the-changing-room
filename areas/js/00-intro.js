@@ -41,9 +41,9 @@ function scrollThis() {
   let scrollBottom = $(".text").prop("scrollHeight")
   console.log(scrollBottom)
 
-  $(".text").animate({
-    scrollTop: scrollBottom
-  }, 95000, 'linear');
+  // $(".text").animate({
+  //   scrollTop: scrollBottom
+  // }, 95000, 'linear');
 
   $(".text").scroll(function () {
     // console.log("top",  $('.text').scrollTop())

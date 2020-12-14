@@ -74,12 +74,10 @@ const seperate_panel2 = document.getElementById("scroll2");
 const seperate_panel3 = document.getElementById("scroll3");
 const seperate_panel4 = document.getElementById("scroll4");
 const sel_txt_url = '/data/03_selection_intro.txt';
-const emotion_color_url = '/data/colors.json';
 const apiURL_emotions = "/emotions";
 
 let sel_intro_content;
 let emotions;
-let emotions_colors;
 let active = false;
 
 // MODES
@@ -87,31 +85,44 @@ function joinedmode() {
   $("#wrapper_joined").fadeIn(1000);
   $("#wrapper_separate").fadeOut(1000);
 }
-function seperatemode(emotionName) {
+function seperatemode(elm, emotionName, base_emotion) {
   socket.emit('emotion:pick', emotionName);
-  $("#wrapper_joined").fadeOut(1000);
-  $("#wrapper_separate").fadeIn(1000);
-  //start auto scrolling in 2 seconds
-  setTimeout(function() { scroll_panels(); }, 2000);
+  $(".emotion").removeClass("selected_emotion");
+  //transition to font color to selected emotion
+  let emotion_colors = baseColors[base_emotion]
+  let emotion_colors_str = "#"+emotion_colors[0]
+  $(elm).css("color", emotion_colors_str)
+  //transition to font color to white
+  setTimeout(function() {
+      $(elm).addClass("selected_emotion")
+  }, 5000);
+  setTimeout(function() {
+    $("#wrapper_joined").fadeOut(1000);
+    $("#wrapper_separate").css("display","flex");
+    //scroll to top (NOT WORKING) ---------------------------------
+    $("#scroll1 .scroll_text").scrollTop(0);
+    $("#scroll2").scrollTop(0);
+    $("#scroll3").scrollTop(0);
+    $("#scroll4").scrollTop(0);
+    $("#wrapper_separate").fadeIn(1000);
+     //start auto scroll
+    scroll_panels();
+  }, 7000);
 }
 
 
-
-// READ IN EMOTIONS COLOR JSON
-fetch(emotion_color_url)
-  .then(response => response.json())
-  .then(data => { emotions_colors = data;})
 // READ IN EMOTION JSON
 fetch(apiURL_emotions)
   .then(response => response.json())
   .then(data => { 
     emotions = data;
     for (let emotion in emotions) {
+        let base_emotion = emotions[emotion].base
         let $emotion_div = $("<div>", {
           "class": "emotion", 
           text: `${emotion}`,
           "click": function() {
-            seperatemode(`${emotion}`)
+            seperatemode(this,`${emotion}`, base_emotion)
           }
         });
         $("#scroll_joined").append($emotion_div)
@@ -122,7 +133,6 @@ fetch(sel_txt_url)
   .then(response => response.text())
   .then(text => sel_intro_content = text)
   .then(() => selection_txt_parse(sel_intro_content))
-
 
 
 // PARSING SELECTION TEXT TO PANELS
@@ -164,18 +174,20 @@ function resetInterval() {
    }, 9000); 
 }
 
-// $("#wrapper_separate .scroll").scroll(function(e) {
-//   if ($(this).is(':animated')) {
-//       console.log('scroll happen by animate');
-//   } else if (e.originalEvent) {
-//       // scroll happen manual scroll
-//       console.log('scroll happen manual scroll');
-//       $("html, body").stop()
-//   } else {
-//       // scroll happen by call
-//       console.log('scroll happen by call');
-//   }
-// });
+$("#wrapper_separate .scroll").scroll(function(e) {
+  if ($(this).is(':animated')) {
+      console.log('scroll happen by animate');
+  } else if (e.originalEvent) {
+      // scroll happen manual scroll
+      // console.log('scroll happen manual scroll');
+      const elm = "#"+e["currentTarget"]["id"]
+      $(elm).animate({scrollTop: $(".scroll").prop("scrollHeight")}, 600000, 'linear');
+      $("html, body").stop()
+  } else {
+      // scroll happen by call
+      console.log('scroll happen by call');
+  }
+});
 
 //stop auto scroll
 $(seperate_panel1).on("mousedown wheel DOMMouseScroll mousewheel keyup touchmove", function(){
@@ -193,36 +205,28 @@ $(seperate_panel4).on("mousedown wheel DOMMouseScroll mousewheel keyup touchmove
 
 // auto scrolling
 function scroll_panels() {
-  $(seperate_panel1).animate({scrollTop: $('.scroll').prop("scrollHeight")}, 40000, function(){
-      $(seperate_panel1).off("scroll mousedown wheel DOMMouseScroll mousewheel keyup touchmove");
-  });
   setTimeout(function() {
-    $(seperate_panel2).animate({scrollTop: $('.scroll').prop("scrollHeight")}, 38000, function(){
-        $(seperate_panel2).off("scroll mousedown wheel DOMMouseScroll mousewheel keyup touchmove");
+    $("#scroll1").animate({scrollTop: 9086}, 600000, 'linear');
+    setTimeout(function() {
+      $("#scroll2").animate({scrollTop: 9086}, 600000, 'linear');
+    }, 1500);
+    setTimeout(function() {
+      $("#scroll3").animate({scrollTop: 9086}, 650000, 'linear');
+    }, 3000);
+    setTimeout(function() {
+      $("#scroll4").animate({scrollTop: 9086}, 600000, 'linear');
+    }, 1700);
+    //when panel 2 reaches bottom
+    $(function($) {
+        $(seperate_panel2).on('scroll', function() {
+            if($(this).scrollTop() + $(this).innerHeight() >= $(this)[0].scrollHeight) {
+              resetInterval()
+            }
+        })
     });
-  }, 1500);
-  setTimeout(function() {
-     $(seperate_panel3).animate({scrollTop: $('.scroll').prop("scrollHeight")}, 42000, function(){
-         $(seperate_panel3).off("scroll mousedown wheel DOMMouseScroll mousewheel keyup touchmove");
-     });
-  }, 3000);
-  setTimeout(function() {
-     $(seperate_panel4).animate({scrollTop: $('.scroll').prop("scrollHeight")}, 40000, function(){
-         $(seperate_panel4).off("scroll mousedown wheel DOMMouseScroll mousewheel keyup touchmove");
-     });
-  }, 3700);
-  //when panel 2 reaches bottom
-  $(function($) {
-      $(seperate_panel2).on('scroll', function() {
-          if($(this).scrollTop() + $(this).innerHeight() >= $(this)[0].scrollHeight) {
-            console.log("end reached")
-            resetInterval()
-          }
-      })
-  });
+  }, 100);
 }
 
 
 // START autoscroll on page load
-setTimeout(function() { scroll_panels(); }, 3000);
-
+// scroll_panels();
