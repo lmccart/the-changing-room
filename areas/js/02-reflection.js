@@ -73,44 +73,102 @@ function loadData(cb) {
 //////////////////////
 
 
+
+function fadeInText() {
+  return new Promise(function(resolve, reject) {
+
+    $("#meditation_text").fadeIn(1000, () => {
+      console.log("pop in text!"); 
+      // TODO
+      resolve();
+    });
+
+  })
+
+}
+
+
+//////////////////////
+//
 function startMeditation() {
   return new Promise(function(resolve, reject) {
 
-    var interval = 1000;
-    var counter = 0;
 
 
-    function getPhrase(counter) {
-      var text = dataMeditations[counter]
+    function generateMeditationTexts() {
 
-/*      for(let k in dataMeditationEmotions) {
-        console.log(k);
-      } */
+      var thisDataMeditationInserts = dataMeditationEmotions[curEmotion.name];
 
-      return text;
-
+      return dataMeditations.map((m) => {
+        var newm = m;
+        for(let k in thisDataMeditationInserts) {
+          newm = newm.replace(`[${k}]`, thisDataMeditationInserts[k]);
+        }
+        return newm;
+      });
     }
+
+    var texts = generateMeditationTexts();
 
     function displayPhrase(counter) {
-      var medtext = getPhrase(counter)
-
-
+      var medtext = texts[counter]
       $("#meditation_text").text(medtext)
+
+      // TODO:animation stuff
     }
+
+    //////////
+
+    var interval = 100;
+    var counter = 0;
 
     setInterval(function() {
 
-      // do stuff
       displayPhrase(counter);
 
       counter += 1;
-      if(counter >= 5) { resolve() }
+      if(counter >= texts.length) { resolve() }
     }, interval);
 
 
 
   })
 }
+
+//////////////////////////
+
+function fadeOutText() {
+  return new Promise(function(resolve, reject) {
+
+    $("#meditation_text").fadeOut(1000, () => {
+      console.log("pop out text!"); 
+      // TODO
+      resolve();
+    });
+
+  })
+
+}
+
+
+
+
+//////////////////////////
+
+function startMemories() {
+  return new Promise(function(resolve, reject) {
+
+    console.log("start memories!")
+    setTimeout(() => {
+      console.log("end memories!")
+      // TODO
+      resolve();
+    }, 1000);
+
+  })
+
+}
+
 
 
 
@@ -120,17 +178,32 @@ function startMeditation() {
 
 $(document).ready(function() {
 
-  loadData(() => {
-    console.log("Data loaded!");
+  setTimeout(function() { // TODO temporary only until we figure out emotion loading 
+
+    loadData(() => {
+      console.log("Data loaded!");
 
 
-    startMeditation()
-      .then(res => {
-        console.log(res);
-      });
+      var repeat = function() {
+        playloop();
+      }
 
-    console.log(dataMeditations);
-    console.log(dataMeditationEmotions);
-  });
+      var playloop = function() {
+        fadeInText()
+          .then(res => startMeditation())
+          .then(res => fadeOutText())
+          .then(res => startMemories())
+          .then(res => {
+            repeat();
+          });
+        }
+
+      repeat();
+
+      console.log(dataMeditations);
+      console.log(dataMeditationEmotions);
+    });
+
+  }, 1000);
 
 });
