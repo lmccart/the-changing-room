@@ -184,6 +184,7 @@ $(document).ready(function() {
       console.log("Data loaded!");
 
 
+      // THIS IS WHERE THE MAGIC IS
       var play = function() {
         fadeInText()
           .then(res => startMeditation())
