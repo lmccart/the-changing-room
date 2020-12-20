@@ -24,7 +24,7 @@ socket.on('emotion:update', updateEmotion);
 socket.on('chat:new', handleNewMessage);
 
 // get intro text
-fetch('/data/04_chat_intro.txt')
+fetch('/data/04_convo1_intro.txt')
   .then(res => res.blob())
   .then(blob => blob.text())
   .then(text => {
