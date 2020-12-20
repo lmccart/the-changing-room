@@ -1,1 +1,47 @@
 @import './shared.scss';
+
+section.main {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  right: 0px;
+  bottom: 0px;
+}
+
+.fs {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  right: 0px;
+  bottom: 0px;
+}
+
+.fullscreen_container {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  right: 0px;
+  bottom: 0px;
+}
+
+#background_container {
+
+  .purple-overlay {
+    background: url(https://i.imgur.com/RzIdG40.png); /* TODO CHANGE */
+    background-color: rgba(255, 0, 150, 0.3);
+    background-blend-mode: multiply;
+  }
+}
+
+#meditation_text {
+  /* TODO: font */
+  z-index: 100;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 4px solid white;
+  margin: 30px;
+  font-size: 4em;
+  font-weight: bold;
+  color: white;
+}
