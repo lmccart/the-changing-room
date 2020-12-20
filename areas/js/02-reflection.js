@@ -49,15 +49,18 @@ function loadData(cb) {
     skipEmptyLines: 'greedy',
     complete: function(results) {
       const rawResults = results.data;
-      // the data comes in as [{angry: 'string', sad: 'string'}, ...]
-      // I (sam) think it should be {angry: ['string', 'string'], sad:['string', 'string']...}
+      // the data comes in as [{ "EMOTION": "annoyed", " BODY AREA": "Feel that...", ...} ...]
+      // I (dan) think it should be { "annoyed": { "BODY AREA": 'string, "PERSON": 'string' } ... }
+      console.log(rawResults);
       const reordered = {};
-      const keys = Object.keys(rawResults[0]);
-      keys.forEach(key => reordered[key.trim()] = []);
 
       for (var i = 0; i < rawResults.length; i++) {
-        const resultRow = rawResults[i];
-        keys.forEach((key) => resultRow[key].trim().length > 0 && reordered[key.trim()].push(resultRow[key]));
+        let thisrow = rawResults[i]
+
+        var newrow = {};
+        Object.keys(thisrow).forEach((key) => { newrow[key.trim()] = thisrow[key]; })
+
+        reordered[thisrow["EMOTION"].trim()] = newrow;
       }
       dataMeditationEmotions = reordered;
       dataLoaded += 1;
@@ -101,7 +104,7 @@ function startMeditation() {
       displayPhrase(counter);
 
       counter += 1;
-      if(counter >= list.length) { resolve() }
+      if(counter >= 5) { resolve() }
     }, interval);
 
 
