@@ -184,21 +184,17 @@ $(document).ready(function() {
       console.log("Data loaded!");
 
 
-      var repeat = function() {
-        playloop();
-      }
-
-      var playloop = function() {
+      var play = function() {
         fadeInText()
           .then(res => startMeditation())
           .then(res => fadeOutText())
           .then(res => startMemories())
           .then(res => {
-            repeat();
+            play();
           });
         }
 
-      repeat();
+      play();
 
       console.log(dataMeditations);
       console.log(dataMeditationEmotions);
