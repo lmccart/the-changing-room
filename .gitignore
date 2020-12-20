@@ -10,3 +10,5 @@ static/images/*/*.jpeg
 static/images/*/*.JPG
 static/images/*/*.JPEG
 static/images/*/*.png
+*.swp
+*.cache
