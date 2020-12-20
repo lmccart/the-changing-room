@@ -34,12 +34,14 @@ section.main {
 }
 
 #meditation_text {
+  /* TODO: font */
   z-index: 100;
   display: flex;
   justify-content: center;
   align-items: center;
-  color: white;
-  font-size: 4em;
   border: 4px solid white;
   margin: 30px;
+  font-size: 4em;
+  font-weight: bold;
+  color: white;
 }

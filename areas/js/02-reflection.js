@@ -22,6 +22,9 @@ function updateInterface() {
   $('#debug-info').text('CURRENT EMOTION: ' + curEmotion.name + ' (base: ' + curEmotion.base + ', level: ' + curEmotion.level +')')
 }
 
+
+///////////////////////////
+
 var dataMeditations;
 var dataMeditationEmotions;
 
@@ -64,17 +67,67 @@ function loadData(cb) {
 }
 
 
+//////////////////////
+
+
+function startMeditation() {
+  return new Promise(function(resolve, reject) {
+
+    var interval = 1000;
+    var counter = 0;
+
+
+    function getPhrase(counter) {
+      var text = dataMeditations[counter]
+
+/*      for(let k in dataMeditationEmotions) {
+        console.log(k);
+      } */
+
+      return text;
+
+    }
+
+    function displayPhrase(counter) {
+      var medtext = getPhrase(counter)
+
+
+      $("#meditation_text").text(medtext)
+    }
+
+    setInterval(function() {
+
+      // do stuff
+      displayPhrase(counter);
+
+      counter += 1;
+      if(counter >= list.length) { resolve() }
+    }, interval);
+
+
+
+  })
+}
+
+
+
 
 //////////// MAIN ///////////////
 //
-loadData(() => {
-  console.log("Data loaded!");
-  console.log(dataMeditations);
-  console.log(dataMeditationEmotions);
-});
 
 $(document).ready(function() {
 
+  loadData(() => {
+    console.log("Data loaded!");
 
+
+    startMeditation()
+      .then(res => {
+        console.log(res);
+      });
+
+    console.log(dataMeditations);
+    console.log(dataMeditationEmotions);
+  });
 
 });
