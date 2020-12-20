@@ -42,7 +42,7 @@ const chatLogger = log4js.getLogger('chat');
 
 // DATA INIT
 const emotions = JSON.parse(fs.readFileSync('all-emotions.json')); // read all emotions
-const emotionName = fs.readFileSync('current.txt', {encoding:'utf8', flag:'r'}); 
+const emotionName = fs.readFileSync('current.txt', {encoding:'utf8', flag:'r'}).replace(/\s/g, '');  // remove whitespace
 curEmotion = emotions[emotionName];
 console.debug('current emotion: ' + JSON.stringify(curEmotion));
 
