@@ -5,7 +5,7 @@ const app = express();
 const http = require('http').createServer(app);
 const io = require('socket.io')(http);
 
-const Sound = require('./sound');
+const Sound = require('./sound/sound');
 const Lights = require('./lights');
 
 let curEmotion;
