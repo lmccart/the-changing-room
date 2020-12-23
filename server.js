@@ -104,4 +104,4 @@ app.get('/images/:baseEmotion/manifest', (req, res) => {
   }
 });
 
-http.listen(3000, () => { console.debug('listening on *:3000'); });
+http.listen(process.env.PORT || 3000, () => { console.debug('listening on *:3000'); });
