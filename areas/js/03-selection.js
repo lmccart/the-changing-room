@@ -90,12 +90,17 @@ function seperatemode(elm, emotionName, base_emotion) {
   $(".emotion").removeClass("selected_emotion");
   //transition to font color to selected emotion
   let emotion_colors = baseColors[base_emotion]
-  let emotion_colors_str = "#"+emotion_colors[0]
-  $(elm).css("color", emotion_colors_str)
+  let emotion_colors_str = emotion_colors[0]
+  console.log(emotion_colors_str)
+  $(elm).fadeIn("slow", function() {
+    $(this).css("color", "#"+emotion_colors[0][0]);
+  });
   //transition to font color to white
   setTimeout(function() {
-      $(elm).addClass("selected_emotion")
-  }, 5000);
+      $(elm).fadeIn("slow", function() {
+        $(this).addClass("selected_emotion")
+      });
+  }, 4000);
   setTimeout(function() {
     $("#wrapper_joined").fadeOut(1000);
     $("#wrapper_separate").css("display","flex");

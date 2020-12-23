@@ -48,6 +48,7 @@ body {
 	display: block;
 	overflow-y: scroll;
 	overflow-x: hidden;
+	background: radial-gradient(#ebdce1, #a5ade1);
 	::-webkit-scrollbar {
 		-webkit-appearance: none;
 		width: 25px;
@@ -59,9 +60,15 @@ body {
 	}
 	.scroll {
 		font-size: 2.5em;
+		width: 100%;
 	}
 	.emotion {
 		text-transform: capitalize;
+		transition: opacity 1000 ease-in-out;
+	}
+	.selected_emotion_color {
+  		-webkit-background-clip: text;
+  		-webkit-text-fill-color: transparent;
 	}
 	.selected_emotion {
 		-moz-transition: all .8s ease-in;
@@ -74,6 +81,7 @@ body {
 
 #wrapper_separate {
 	display: none;
+	background: radial-gradient(#ebdce1, #a5ade1);
 	::-webkit-scrollbar-thumb {
 		background-color: none;
 		box-shadow: 0;
@@ -85,7 +93,7 @@ body {
 	}
 	.scroll {
 		border: 2px solid white;
-		font-size: 2.1em;
+		font-size: 2.2em;
 		overflow-y: scroll;
 	}
 }
