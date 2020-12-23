@@ -71,8 +71,8 @@ io.on('connection', (socket) => {
 });
 
 // SERVER SETUP
-app.use('/', express.static(__dirname + 'dist'));
-app.use('/data', express.static(__dirname + 'data'));
+app.use('/', express.static('dist'));
+app.use('/data', express.static('data'));
 app.get('/emotions', (req, res) => { res.json(emotions); });
 
 // responds with array of image urls for base emotion
