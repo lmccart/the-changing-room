@@ -3,7 +3,8 @@
   "version": "0.1.0",
   "scripts": {
     "start": "node server.js",
-    "build": "./node_modules/.bin/webpack"
+    "build": "./node_modules/.bin/webpack",
+    "heroku-postbuild": "webpack -p"
   },
   "dependencies": {
     "blob-polyfill": "^4.0.20200601",
