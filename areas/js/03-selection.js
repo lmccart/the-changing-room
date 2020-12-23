@@ -104,7 +104,7 @@ function seperatemode(elm, emotionName, base_emotion) {
   setTimeout(function() {
     $("#wrapper_joined").fadeOut(1000);
     $("#wrapper_separate").css("display","flex");
-    //scroll to top (NOT WORKING) ---------------------------------
+    //scroll to top (NOT WORKING) ------------
     $("#scroll1 .scroll_text").scrollTop(0);
     $("#scroll2").scrollTop(0);
     $("#scroll3").scrollTop(0);
