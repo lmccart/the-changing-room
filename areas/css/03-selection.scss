@@ -25,7 +25,7 @@ body {
 }
 
 .scroll {
-	width: 25%;
+	width: 33.3%;
 	padding: 20px;
 	height: 100vh;
 	box-sizing: border-box;
@@ -49,6 +49,8 @@ body {
 	overflow-y: scroll;
 	overflow-x: hidden;
 	background: radial-gradient(#ebdce1, #a5ade1);
+	transition-property: all;
+    transition-duration: 10s;
 	::-webkit-scrollbar {
 		-webkit-appearance: none;
 		width: 25px;
@@ -64,7 +66,8 @@ body {
 	}
 	.emotion {
 		text-transform: capitalize;
-		transition: opacity 1000 ease-in-out;
+		transition-property: all;
+    	transition-duration: 5s;
 	}
 	.selected_emotion_color {
   		-webkit-background-clip: text;
@@ -76,6 +79,9 @@ body {
 		-webkit-transition: all .8s ease-in;
 		transition: all .8s ease-in;
 		color: #fff !important; 
+	}
+	.blackText {
+		color: #000;
 	}
 }
 
@@ -92,8 +98,8 @@ body {
 		border: none;
 	}
 	.scroll {
-		border: 2px solid white;
-		font-size: 2.2em;
+		border: 2px solid #000;
+		font-size: 3.65em;
 		overflow-y: scroll;
 	}
 }
