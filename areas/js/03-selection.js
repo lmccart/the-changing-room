@@ -72,35 +72,37 @@ function pickEmotion() {
 const seperate_panel1 = document.getElementById("scroll1");
 const seperate_panel2 = document.getElementById("scroll2");
 const seperate_panel3 = document.getElementById("scroll3");
-const seperate_panel4 = document.getElementById("scroll4");
 const sel_txt_url = '/data/03_selection_intro.txt';
 const apiURL_emotions = "/emotions";
-
 let sel_intro_content;
 let emotions;
 let active = false;
 
-// MODES
+////////////////// MODES
 function joinedmode() {
   $("#wrapper_joined").fadeIn(1000);
   $("#wrapper_separate").fadeOut(1000);
 }
 function seperatemode(elm, emotionName, base_emotion) {
   socket.emit('emotion:pick', emotionName);
+  $(".emotion").removeAttr( 'style' );
   $(".emotion").removeClass("selected_emotion");
-  //transition to font color to selected emotion
+  //transition to font color to selected emotion colors
   let emotion_colors = baseColors[base_emotion]
-  let emotion_colors_str = emotion_colors[0]
-  console.log(emotion_colors_str)
-  $(elm).fadeIn("slow", function() {
-    $(this).css("color", "#"+emotion_colors[0][0]);
+  let emotion_colors_str1 = "#"+emotion_colors[0][0]
+  let emotion_colors_str2 = "#"+emotion_colors[0][1]
+  $(elm).fadeIn("10000", function() {
+    $(this).css("color", emotion_colors_str1);
+    $("#wrapper_joined").css({background:"-webkit-radial-gradient(" + emotion_colors_str1 + "," + emotion_colors_str2 + ")"});
   });
   //transition to font color to white
   setTimeout(function() {
       $(elm).fadeIn("slow", function() {
         $(this).addClass("selected_emotion")
       });
-  }, 4000);
+      //start auto scroll
+      scroll_panels();
+  }, 5100);
   setTimeout(function() {
     $("#wrapper_joined").fadeOut(1000);
     $("#wrapper_separate").css("display","flex");
@@ -108,15 +110,13 @@ function seperatemode(elm, emotionName, base_emotion) {
     $("#scroll1 .scroll_text").scrollTop(0);
     $("#scroll2").scrollTop(0);
     $("#scroll3").scrollTop(0);
-    $("#scroll4").scrollTop(0);
     $("#wrapper_separate").fadeIn(1000);
-     //start auto scroll
-    scroll_panels();
-  }, 7000);
+    $("#wrapper_separate").css("background","-webkit-radial-gradient(" + emotion_colors_str1 + "," + emotion_colors_str2 + ")");
+  }, 6000);
 }
 
 
-// READ IN EMOTION JSON
+////////////////// READ IN EMOTION JSON
 fetch(apiURL_emotions)
   .then(response => response.json())
   .then(data => { 
@@ -133,14 +133,14 @@ fetch(apiURL_emotions)
         $("#scroll_joined").append($emotion_div)
     }
   })
-// READ IN SELECTION TEXT
+////////////////// READ IN SELECTION TEXT
 fetch(sel_txt_url)
   .then(response => response.text())
   .then(text => sel_intro_content = text)
   .then(() => selection_txt_parse(sel_intro_content))
 
 
-// PARSING SELECTION TEXT TO PANELS
+////////////////// PARSING SELECTION TEXT TO PANELS
 const num_sents_panels = 3;
 function selection_txt_parse(sel_intro_content) {
   let sel_intro_sent = sel_intro_content.match( /[^\.!\?]+[\.!\?]+/g );
@@ -159,16 +159,13 @@ function selection_txt_parse(sel_intro_content) {
           if(i == 2) {
             seperate_panel3.firstChild.innerHTML +=  sentences[j]
           }
-          if(i == 3) {
-            seperate_panel4.firstChild.innerHTML +=  sentences[j]
-          }
       }
   }
 }
 
 
 
-// SCROLLING
+////////////////// SCROLLING
 //timer starts when panel1 reaches bottom, go back to joinedmode
 function resetInterval() {
   clearInterval(timer);
@@ -204,9 +201,6 @@ $(seperate_panel2).on("mousedown wheel DOMMouseScroll mousewheel keyup touchmove
 $(seperate_panel3).on("mousedown wheel DOMMouseScroll mousewheel keyup touchmove", function(){
      $(seperate_panel3).stop();
 })
-$(seperate_panel4).on("mousedown wheel DOMMouseScroll mousewheel keyup touchmove", function(){
-     $(seperate_panel4).stop();
-})
 
 // auto scrolling
 function scroll_panels() {
@@ -218,9 +212,6 @@ function scroll_panels() {
     setTimeout(function() {
       $("#scroll3").animate({scrollTop: 9086}, 650000, 'linear');
     }, 3000);
-    setTimeout(function() {
-      $("#scroll4").animate({scrollTop: 9086}, 600000, 'linear');
-    }, 1700);
     //when panel 2 reaches bottom
     $(function($) {
         $(seperate_panel2).on('scroll', function() {
@@ -229,9 +220,8 @@ function scroll_panels() {
             }
         })
     });
-  }, 100);
+  }, 0);
 }
 
 
-// START autoscroll on page load
-// scroll_panels();
+joinedmode()
