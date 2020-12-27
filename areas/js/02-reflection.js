@@ -79,11 +79,11 @@ function loadData(cb) {
 
 
 
-function fadeInText() {
+function fadeInMeditation() {
   return new Promise(function(resolve, reject) {
 
     $("#meditation_text").fadeIn(1000, () => {
-      console.log("pop in text!"); 
+      console.log("=== fade in meditation");
       // TODO
       resolve();
     });
@@ -141,18 +141,32 @@ function startMeditation() {
 
 //////////////////////////
 
-function fadeOutText() {
+function fadeOutMeditation() {
   return new Promise(function(resolve, reject) {
     if(triggerResetEmotion) { reject("emotionReset");  } // exit anim loop if emotion is reset
 
     $("#meditation_text").fadeOut(1000, () => {
-      console.log("pop out text!"); 
+      console.log("==== fade out meditation!"); 
       // TODO
       resolve();
     });
 
   })
 
+}
+
+
+//////////////////////
+
+
+
+function fadeInMemories() {
+  return new Promise(function(resolve, reject) {
+    $("#memory_container").fadeIn(1000, () => {
+      console.log("==== fade in memories!")
+      resolve();
+    });
+  })
 }
 
 
@@ -164,9 +178,8 @@ function startMemories() {
   return new Promise(function(resolve, reject) {
     if(triggerResetEmotion) { reject("emotionReset");  } // exit anim loop if emotion is reset
 
-    console.log("start memories!")
     setTimeout(() => {
-      console.log("end memories!")
+      console.log("==== start memories!")
       // TODO
       resolve();
     }, 1000);
@@ -174,6 +187,21 @@ function startMemories() {
   })
 
 }
+
+
+//////////////////////////
+
+function fadeOutMemories() {
+  return new Promise(function(resolve, reject) {
+    $("#memory_container").fadeOut(1000, () => {
+      console.log("==== fade outmemories!")
+      resolve();
+    });
+
+  })
+
+}
+
 
 
 
@@ -188,16 +216,18 @@ function clearAndInit() {
   // THIS IS WHERE THE MAGIC IS
 var playLoop = function() {
   clearAndInit();
-  fadeInText()
+  fadeInMeditation()
     .then(res => startMeditation())
-    .then(res => fadeOutText())
+    .then(res => fadeOutMeditation())
+    .then(res => fadeInMemories())
     .then(res => startMemories())
+    .then(res => fadeOutMemories())
     .then(res => {
       playLoop();
     })
     .catch(error => {
       console.log("ALERT: ", error);
-      resetPlay();
+      if(error == "emotionReset") { resetPlay(); }
     });
 }
 
@@ -207,9 +237,10 @@ function resetPlay() {
   // TODO: DO RESET STUFF HERE
   console.log("===== we are resetting play");
 
-  triggerResetEmotion = false;
-
-  playLoop();
+  if(triggerResetEmotion) {
+    triggerResetEmotion = false;
+    playLoop();
+  }
 
 }
 
@@ -218,14 +249,12 @@ function resetPlay() {
 
 $(document).ready(function() {
 
-  setTimeout(function() { // TODO temporary only until we figure out emotion loading 
-
+  setTimeout(function() { 
     loadData(() => {
       console.log("Data loaded!");
       dataLoaded = true;
       playLoop();
     });
-
   }, 1000);
 
 });
