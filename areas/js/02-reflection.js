@@ -206,7 +206,6 @@ function queueEvents(timeline) {
   timeMarker += 1000;
 
   timeline.add({ time: timeMarker, event: function () { 
-    console.log("mc fde outfaein");
     $("#meditation_container").fadeOut(500);
   } });
 
@@ -215,16 +214,6 @@ function queueEvents(timeline) {
 
   timeline.add({ time: timeMarker, event: function () { 
     $("#memory_container").fadeIn(500);
-    console.log("faein");
-  } });
-
-  // TODO FIGURE OUT WHY ONLY ONE OF THESE FIRES 
-  
-  timeMarker += 1000;
-
-  timeline.add({ time: timeMarker, event: function () { 
-    $("#memory_container").fadeIn(500);
-    console.log("faein");
   } });
 
 
