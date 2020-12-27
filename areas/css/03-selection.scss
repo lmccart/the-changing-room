@@ -25,7 +25,7 @@ body {
 }
 
 .scroll {
-	width: 25%;
+	width: 33.3%;
 	padding: 20px;
 	height: 100vh;
 	box-sizing: border-box;
@@ -48,6 +48,9 @@ body {
 	display: block;
 	overflow-y: scroll;
 	overflow-x: hidden;
+	background: radial-gradient(#ebdce1, #a5ade1);
+	transition-property: all;
+    transition-duration: 10s;
 	::-webkit-scrollbar {
 		-webkit-appearance: none;
 		width: 25px;
@@ -59,9 +62,16 @@ body {
 	}
 	.scroll {
 		font-size: 2.5em;
+		width: 100%;
 	}
 	.emotion {
 		text-transform: capitalize;
+		transition-property: all;
+    	transition-duration: 5s;
+	}
+	.selected_emotion_color {
+  		-webkit-background-clip: text;
+  		-webkit-text-fill-color: transparent;
 	}
 	.selected_emotion {
 		-moz-transition: all .8s ease-in;
@@ -70,10 +80,14 @@ body {
 		transition: all .8s ease-in;
 		color: #fff !important; 
 	}
+	.blackText {
+		color: #000;
+	}
 }
 
 #wrapper_separate {
 	display: none;
+	background: radial-gradient(#ebdce1, #a5ade1);
 	::-webkit-scrollbar-thumb {
 		background-color: none;
 		box-shadow: 0;
@@ -84,8 +98,8 @@ body {
 		border: none;
 	}
 	.scroll {
-		border: 2px solid white;
-		font-size: 2.1em;
+		border: 2px solid #000;
+		font-size: 3.65em;
 		overflow-y: scroll;
 	}
 }

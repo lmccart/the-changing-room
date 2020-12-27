@@ -20,7 +20,7 @@ This is an overview of the different areas and the text content included in each
 
 ## 04 Convo Room 1
 Narrative mode rotates in every 5 minutes. Chat conversation with word substitutions (EMOTION swapped out for EMOTION-subs).
-* [04_chat_intro.txt](04_chat_intro.txt)
+* [04_chat_intro.txt](04_convo1_intro.txt)
 * [04_substitutions.tsv](04_substitutions.tsv)
 
 ## 05 Convo Room 2

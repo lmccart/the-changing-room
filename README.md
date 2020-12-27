@@ -41,7 +41,7 @@
 - `/images/:baseEmotion/manifest` GET - returns array of image urls for a base emotion (angry, sad, strong, etc)
 
 ## Global variables
-- `window.baseColors` or `baseColors` correspond to the data in `data/colors.json` can be used like `basecolors[curEmotion.base][0]` which is `#ff0000`
+- `window.baseColors` or `baseColors` correspond to the data in `data/colors.json` can be used like `basecolors[curEmotion.base][0]` which is `["a6588d", "ffffff"]`
 
 ## `areas/js/lib` functions and helpers
 - can generally be used by importing like so:

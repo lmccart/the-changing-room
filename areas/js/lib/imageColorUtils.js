@@ -57,6 +57,16 @@ export function hexToRgb(hex, returnFractionalValue) {
   } : null;
 }
 
+// returns 'white' or 'black' for a hexcolor, depending on the contrast
+export function getTextColorForBackground(hexcolor){
+    hexcolor = hexcolor.replace("#", "");
+    var r = parseInt(hexcolor.substr(0,2),16);
+    var g = parseInt(hexcolor.substr(2,2),16);
+    var b = parseInt(hexcolor.substr(4,2),16);
+    var yiq = ((r*299)+(g*587)+(b*114))/1000;
+    return (yiq >= 140) ? 'black' : 'white';
+}
+
 
 // this function adds an svg element to the document that
 // has a multitone treatment, and sets css of the $imgEl 
