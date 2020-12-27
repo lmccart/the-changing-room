@@ -3,6 +3,7 @@ import $ from 'jquery';
 import Papa from 'papaparse';
 import '../css/02-reflection.scss';
 import './shared.js';
+import Timeline from './Timeline.js';
 
 let emotions;
 let curEmotion;
@@ -79,11 +80,11 @@ function loadData(cb) {
 
 
 
-function fadeInText() {
+function fadeInMeditation() {
   return new Promise(function(resolve, reject) {
 
     $("#meditation_text").fadeIn(1000, () => {
-      console.log("pop in text!"); 
+      console.log("=== fade in meditation");
       // TODO
       resolve();
     });
@@ -141,18 +142,32 @@ function startMeditation() {
 
 //////////////////////////
 
-function fadeOutText() {
+function fadeOutMeditation(interval) {
   return new Promise(function(resolve, reject) {
     if(triggerResetEmotion) { reject("emotionReset");  } // exit anim loop if emotion is reset
 
-    $("#meditation_text").fadeOut(1000, () => {
-      console.log("pop out text!"); 
+    $("#meditation_text").fadeOut(interval, () => {
+      console.log("==== fade out meditation!"); 
       // TODO
       resolve();
     });
 
   })
 
+}
+
+
+//////////////////////
+
+
+
+function fadeInMemories() {
+  return new Promise(function(resolve, reject) {
+    $("#memory_container").fadeIn(1000, () => {
+      console.log("==== fade in memories!")
+      resolve();
+    });
+  })
 }
 
 
@@ -164,9 +179,8 @@ function startMemories() {
   return new Promise(function(resolve, reject) {
     if(triggerResetEmotion) { reject("emotionReset");  } // exit anim loop if emotion is reset
 
-    console.log("start memories!")
     setTimeout(() => {
-      console.log("end memories!")
+      console.log("==== start memories!")
       // TODO
       resolve();
     }, 1000);
@@ -174,6 +188,21 @@ function startMemories() {
   })
 
 }
+
+
+//////////////////////////
+
+function fadeOutMemories(interval) {
+  return new Promise(function(resolve, reject) {
+    $("#memory_container").fadeOut(interval, () => {
+      console.log("==== fade outmemories!")
+      resolve();
+    });
+
+  })
+
+}
+
 
 
 
@@ -185,19 +214,22 @@ function clearAndInit() {
 
 
 
-  // THIS IS WHERE THE MAGIC IS
+
+// THIS IS WHERE THE MAGIC LOOP IS
 var playLoop = function() {
   clearAndInit();
-  fadeInText()
+  fadeInMeditation()
     .then(res => startMeditation())
-    .then(res => fadeOutText())
+    .then(res => fadeOutMeditation(1000))
+    .then(res => fadeInMemories())
     .then(res => startMemories())
+    .then(res => fadeOutMemories(1000))
     .then(res => {
       playLoop();
     })
     .catch(error => {
       console.log("ALERT: ", error);
-      resetPlay();
+      if(error == "emotionReset") { resetPlay(); }
     });
 }
 
@@ -207,9 +239,15 @@ function resetPlay() {
   // TODO: DO RESET STUFF HERE
   console.log("===== we are resetting play");
 
-  triggerResetEmotion = false;
-
-  playLoop();
+  if(triggerResetEmotion) {
+/*
+ TODO 
+ * fadeOutMemories(0)
+      .then(res => fadeOutMeditation(0)) 
+      .catch(error => {})  */
+    triggerResetEmotion = false;
+    playLoop();
+  }
 
 }
 
@@ -218,14 +256,25 @@ function resetPlay() {
 
 $(document).ready(function() {
 
-  setTimeout(function() { // TODO temporary only until we figure out emotion loading 
-
+  setTimeout(function() { 
     loadData(() => {
       console.log("Data loaded!");
       dataLoaded = true;
       playLoop();
     });
-
   }, 1000);
+
+
+  let t = new Timeline({ loop: true, duration: 5000, interval: 100 });
+
+  t.add({ time: 0, event: function () { console.log("STARTbliop"); } });
+  t.add({ time: 1000, event: function () { console.log("bliop"); } });
+  t.add({ time: 2000, event: function () { console.log("boop"); } });
+  t.add({ time: 4000, event: function () { console.log("bloooiop"); } });
+
+  t.start({ callback: function() { console.log("we're done!!!");}  })
+
+  window.t = t;
+
 
 });

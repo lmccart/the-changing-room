@@ -45,3 +45,10 @@ section.main {
   font-weight: bold;
   color: white;
 }
+
+#memory_container {
+  background-color: purple;
+  opacity: 0.4;
+  z-index: 200;
+  display: none;
+}
