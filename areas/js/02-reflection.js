@@ -201,6 +201,7 @@ function queueEvents(timeline) {
   
 
   ///////// MEDITATION FADES OUT
+  //
 
   timeMarker += 1000;
 
