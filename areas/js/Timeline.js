@@ -3,7 +3,7 @@
 
 USAGE
  
-  let t = new Timeline({ loop: true, duration: 5000 });
+  let t = new Timeline({ loop: true, duration: 5000, interval: 100 });
 
   t.add({ time: 1000, event: function () { console.log("bliop"); } });
   t.add({ time: 2000, event: function () { console.log("boop"); } });
