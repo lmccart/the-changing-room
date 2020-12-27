@@ -85,177 +85,6 @@ function loadData(cb) {
 
 
 
-function fadeInMeditation() {
-  return new Promise(function(resolve, reject) {
-
-    $("#meditation_container").fadeIn(1000, () => {
-      console.log("=== fade in meditation");
-      // TODO
-      resolve();
-    });
-
-  })
-
-}
-
-
-//////////////////////
-//
-function startMeditation() {
-  return new Promise(function(resolve, reject) {
-
-
-
-    function generateMeditationTexts() {
-
-      var thisDataMeditationInserts = dataMeditationEmotions[curEmotion.name];
-
-      return dataMeditations.map((m) => {
-        var newm = m;
-        for(let k in thisDataMeditationInserts) {
-          newm = newm.replace(`[${k}]`, thisDataMeditationInserts[k]);
-        }
-        return newm;
-      });
-    }
-
-    var texts = generateMeditationTexts();
-
-    function displayPhrase(counter) {
-      var medtext = texts[counter]
-      $("#meditation_container").text(medtext)
-    }
-
-    //////////
-
-    var interval = 300;
-    var counter = 0;
-
-    setInterval(function() {
-
-      displayPhrase(counter);
-      if(triggerResetEmotion) { reject("emotionReset");  } // exit anim loop if emotion is reset
-
-      counter += 1;
-      if(counter >= texts.length) { resolve() }
-    }, interval);
-
-
-
-  })
-}
-
-//////////////////////////
-
-function fadeOutMeditation(interval) {
-  return new Promise(function(resolve, reject) {
-    if(triggerResetEmotion) { reject("emotionReset");  } // exit anim loop if emotion is reset
-
-    $("#meditation_text").fadeOut(interval, () => {
-      console.log("==== fade out meditation!"); 
-      // TODO
-      resolve();
-    });
-
-  })
-
-}
-
-
-//////////////////////
-
-
-
-function fadeInMemories() {
-  return new Promise(function(resolve, reject) {
-    $("#memory_container").fadeIn(1000, () => {
-      console.log("==== fade in memories!")
-      resolve();
-    });
-  })
-}
-
-
-
-
-//////////////////////////
-
-function startMemories() {
-  return new Promise(function(resolve, reject) {
-    if(triggerResetEmotion) { reject("emotionReset");  } // exit anim loop if emotion is reset
-
-    setTimeout(() => {
-      console.log("==== start memories!")
-      // TODO
-      resolve();
-    }, 1000);
-
-  })
-
-}
-
-
-//////////////////////////
-
-function fadeOutMemories(interval) {
-  return new Promise(function(resolve, reject) {
-    $("#memory_container").fadeOut(interval, () => {
-      console.log("==== fade outmemories!")
-      resolve();
-    });
-
-  })
-
-}
-
-
-
-
-/////////////////////////
-
-function clearAndInit() {
-  console.log("clearAndInit");
-}
-
-
-
-
-// THIS IS WHERE THE MAGIC LOOP IS
-var playLoop = function() {
-  clearAndInit();
-  fadeInMeditation()
-    .then(res => startMeditation())
-    .then(res => fadeOutMeditation(1000))
-    .then(res => fadeInMemories())
-    .then(res => startMemories())
-    .then(res => fadeOutMemories(1000))
-    .then(res => {
-      playLoop();
-    })
-    .catch(error => {
-      console.log("ALERT: ", error);
-      if(error == "emotionReset") { resetPlay(); }
-    });
-}
-
-
-function resetPlay() {
-
-  // TODO: DO RESET STUFF HERE
-  console.log("===== we are resetting play");
-
-  if(triggerResetEmotion) {
-/*
- TODO 
- * fadeOutMemories(0)
-      .then(res => fadeOutMeditation(0)) 
-      .catch(error => {})  */
-    triggerResetEmotion = false;
-    playLoop();
-  }
-
-}
-
 
 function generateMeditationTexts() {
 
@@ -274,17 +103,45 @@ function generateMeditationTexts() {
 
 function generateMemories() {
 
-  return ["yup", "nope"]
+  return [
+    { 
+      type: "image",
+      url: "https://i.imgur.com/Y3QNok5.png"
+    },
+    { 
+      type: "text",
+      text: "I feel like I'm just pouring all of my energy into a void."
+    }
+  ]
 
 }
 
 function displayMeditationPhrase(opts) {
+  // opts: { text: mt, fadeIn: 100, fadeOut: 100 };
   $("#meditation_container")
     .fadeOut(opts.fadeOut, function() {
       $(this)
         .text(opts.text)
         .fadeIn(opts.fadeIn);
     })
+}
+
+function displayMemory(opts) {
+  //{ data: mem, fadeIn: 100, fadeOut: 100 };
+  let memdiv = $("<div class='memory'></div>")
+
+  let memory = opts.data;
+ 
+  if(memory.type == "text") {
+    memdiv.text(memory.text)
+  } else { 
+    memdiv.text(memory.url)
+  } 
+
+  console.log("appending to memocontainer");
+
+  $("#memory_container")
+    .append(memdiv)
 }
 
 /////////////////////////////////
@@ -295,13 +152,14 @@ function resetHTML() {
 }
 
 function queueEvents(timeline) {
+  window.timeline = timeline;
 
 
   var timeMarker = 0;
 
-  ///////// MEDITATIONS
+  ///////// QUEUE MEDITATIONS
   
-  let meditation_interval = 300;
+  let meditation_interval = 30;
 
   let mts = generateMeditationTexts();
 
@@ -317,17 +175,35 @@ function queueEvents(timeline) {
   });
   
 
-  ///////// Meditation Fades Out
+  ///////// MEDITATION FADES OUT
 
   timeMarker += 1000;
 
   timeline.add({ time: timeMarker, event: function () { 
-    $("#meditation_container").fadeOut(500);
+    console.log("mc fde outfaein");
+    $("#meditation_container").fadeOut(50);
   } });
+
 
   timeMarker += 1000;
 
-  ///////// MEMORIES
+  timeline.add({ time: timeMarker, event: function () { 
+    $("#memory_container").fadeIn(500);
+    console.log("faein");
+  } });
+
+  // TODO FIGURE OUT WHY ONE OF THESE FIRES 
+  
+  timeMarker += 1000;
+
+  timeline.add({ time: timeMarker, event: function () { 
+    $("#memory_container").fadeIn(500);
+    console.log("faein");
+  } });
+
+
+
+  ///////// QUEUE MEMORIES
 
   let mems = generateMemories();
   let memory_interval = 300;
@@ -335,8 +211,7 @@ function queueEvents(timeline) {
   mems.forEach((mem, i) => {
 
     timeline.add({ time: timeMarker, event: function () { 
-      console.log(mem); 
-//      displayMeditationPhrase({ text: mt, fadeIn: 100, fadeOut: 100 });
+      displayMemory({ data: mem, fadeIn: 100, fadeOut: 100 });
     } });
 
     timeMarker += memory_interval;
