@@ -11,6 +11,10 @@ USAGE
 
   t.start({ callback: function() { console.log("we're done!!!");}  })
 
+  t.stop();
+
+  t.reset();
+
 
 */
 
