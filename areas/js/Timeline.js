@@ -39,6 +39,10 @@ class Timeline {
     this.timeline[opts.time] = opts;
   }
 
+  setDuration(duration) {
+    this.duration = duration;
+  }
+
   reset() {
     this.completed_events = {};
     this.startTime = Date.now();

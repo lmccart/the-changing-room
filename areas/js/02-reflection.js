@@ -111,14 +111,22 @@ function generateMemories() {
     { 
       type: "text",
       text: "I feel like I'm just pouring all of my energy into a void."
-    }
+    },
+    { 
+      type: "image",
+      url: "https://i.imgur.com/Y3QNok5.png"
+    },
+    { 
+      type: "text",
+      text: "I don't know what's happening now. I felt like I had been slowly dying over months, years maybe."
+    },
   ]
 
 }
 
 function displayMeditationPhrase(opts) {
   // opts: { text: mt, fadeIn: 100, fadeOut: 100 };
-  $("#meditation_container")
+  $("#meditation_text")
     .fadeOut(opts.fadeOut, function() {
       $(this)
         .text(opts.text)
@@ -127,27 +135,37 @@ function displayMeditationPhrase(opts) {
 }
 
 function displayMemory(opts) {
-  //{ data: mem, fadeIn: 100, fadeOut: 100 };
-  let memdiv = $("<div class='memory'></div>")
-
+  //{ data: mem, top: ~, left: ~, fadeIn: 100, fadeOut: 100 };
+  let memdiv;
   let memory = opts.data;
  
   if(memory.type == "text") {
+    memdiv = $("<div></div>");
+    memdiv.addClass("text");
     memdiv.text(memory.text)
-  } else { 
-    memdiv.text(memory.url)
   } 
+  if(memory.type == "image") {
+    memdiv = $("<img></img>");
+    memdiv.addClass("image");
+    memdiv.attr("src", memory.url);
+  } 
+
+  memdiv.addClass("memory");
+  memdiv.top = opts.top;
+  memdiv.css({ top:  opts.top, left: opts.left });
 
   console.log("appending to memocontainer");
 
-  $("#memory_container")
-    .append(memdiv)
+  memdiv
+    .hide()
+    .appendTo("#memory_container")
+    .fadeIn(opts.fadeIn);
 }
 
 /////////////////////////////////
 
 function resetHTML() {
-  $("#meditation_container").empty();
+  $("#meditation_text").empty();
   $("#memory_container").empty();
 }
 
@@ -157,9 +175,16 @@ function queueEvents(timeline) {
 
   var timeMarker = 0;
 
+  timeline.add({ time: timeMarker, event: function () { 
+    $("#meditation_container").fadeIn(500);
+    console.log("TIMELINE STARTING");
+  } });
+
+
+
   ///////// QUEUE MEDITATIONS
   
-  let meditation_interval = 30;
+  let meditation_interval = 1000;
 
   let mts = generateMeditationTexts();
 
@@ -167,7 +192,7 @@ function queueEvents(timeline) {
 
     timeline.add({ time: timeMarker, event: function () { 
       console.log(mt); 
-      displayMeditationPhrase({ text: mt, fadeIn: 100, fadeOut: 100 });
+      displayMeditationPhrase({ text: mt, fadeIn: 200, fadeOut: 200 });
     } });
 
     timeMarker += meditation_interval;
@@ -181,7 +206,7 @@ function queueEvents(timeline) {
 
   timeline.add({ time: timeMarker, event: function () { 
     console.log("mc fde outfaein");
-    $("#meditation_container").fadeOut(50);
+    $("#meditation_container").fadeOut(500);
   } });
 
 
@@ -192,7 +217,7 @@ function queueEvents(timeline) {
     console.log("faein");
   } });
 
-  // TODO FIGURE OUT WHY ONE OF THESE FIRES 
+  // TODO FIGURE OUT WHY ONLY ONE OF THESE FIRES 
   
   timeMarker += 1000;
 
@@ -206,12 +231,20 @@ function queueEvents(timeline) {
   ///////// QUEUE MEMORIES
 
   let mems = generateMemories();
-  let memory_interval = 300;
+  let memory_interval = 1000;
 
   mems.forEach((mem, i) => {
 
     timeline.add({ time: timeMarker, event: function () { 
-      displayMemory({ data: mem, fadeIn: 100, fadeOut: 100 });
+
+      displayMemory({
+        data: mem,
+        fadeIn: 500,
+        fadeOut: 500,
+        left: `${ Math.random() * 80 }vw`,
+        top: `${ Math.random() * 80 }vh`
+      })
+
     } });
 
     timeMarker += memory_interval;
@@ -219,6 +252,19 @@ function queueEvents(timeline) {
   });
  
   
+  timeMarker += 1000;
+
+  timeline.add({ time: timeMarker, event: function () { 
+    $("#meditation_text").empty();
+    $("#memory_container").fadeOut(1000, function() {
+      $(this).empty();
+    });
+  } });
+
+  timeMarker += 1000;
+
+  timeline.setDuration(timeMarker); // LOOP
+
 
 }
 

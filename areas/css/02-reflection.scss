@@ -47,23 +47,25 @@ section.main {
 }
 
 #memory_container {
-  background-color: purple;
-  opacity: 0.4;
   z-index: 200;
   display: none;
 }
 
 .memory {
   position: absolute;
-  width: 300px;
-  height: 300px;
-  top: 30px;
-  left: 30px;
+  max-width: 300px;
   border: 6px solid #010e77;
-  background-color: white;
   display: flex;
   align-items: center;
-  padding: 10px;
-  font-size: 2em;
-  word-break: break-all;
+
+  &.text {
+    padding: 10px;
+    background-color: white;
+    font-size: 2em;
+    word-break: break-all;
+  }
+
+  &.image {
+    padding: 0px;
+  }
 }
