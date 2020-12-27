@@ -8,6 +8,10 @@ import Timeline from './Timeline.js';
 let emotions;
 let curEmotion;
 
+
+
+
+
 var triggerResetEmotion = false; // this is a global variable that every function checks to trigger a reset emotion. it's not the most elegant, but in this event-based loop, seems appropriate.
 
 const socket = io();
@@ -24,6 +28,7 @@ function updateEmotion(msg) {
 }
 
 function updateInterface() {
+  resetTimeline();
   triggerResetEmotion = true;
   $('#debug-info').text('CURRENT EMOTION: ' + curEmotion.name + ' (base: ' + curEmotion.base + ', level: ' + curEmotion.level +')')
 }
@@ -83,7 +88,7 @@ function loadData(cb) {
 function fadeInMeditation() {
   return new Promise(function(resolve, reject) {
 
-    $("#meditation_text").fadeIn(1000, () => {
+    $("#meditation_container").fadeIn(1000, () => {
       console.log("=== fade in meditation");
       // TODO
       resolve();
@@ -118,7 +123,7 @@ function startMeditation() {
 
     function displayPhrase(counter) {
       var medtext = texts[counter]
-      $("#meditation_text").text(medtext)
+      $("#meditation_container").text(medtext)
     }
 
     //////////
@@ -252,29 +257,132 @@ function resetPlay() {
 }
 
 
+function generateMeditationTexts() {
+
+  let thisDataMeditationInserts = dataMeditationEmotions[curEmotion.name];
+
+  return dataMeditations
+    .map((m) => {
+      let newm = m;
+      for(let k in thisDataMeditationInserts) {
+        newm = newm.replace(`[${k}]`, thisDataMeditationInserts[k]);
+      }
+      return newm;
+    })
+    .filter((m) => { return m != ""; });
+}
+
+function generateMemories() {
+
+  return ["yup", "nope"]
+
+}
+
+function displayMeditationPhrase(opts) {
+  $("#meditation_container")
+    .fadeOut(opts.fadeOut, function() {
+      $(this)
+        .text(opts.text)
+        .fadeIn(opts.fadeIn);
+    })
+}
+
+/////////////////////////////////
+
+function resetHTML() {
+  $("#meditation_container").empty();
+  $("#memory_container").empty();
+}
+
+function queueEvents(timeline) {
+
+
+  var timeMarker = 0;
+
+  ///////// MEDITATIONS
+  
+  let meditation_interval = 300;
+
+  let mts = generateMeditationTexts();
+
+  mts.forEach((mt, i) => {
+
+    timeline.add({ time: timeMarker, event: function () { 
+      console.log(mt); 
+      displayMeditationPhrase({ text: mt, fadeIn: 100, fadeOut: 100 });
+    } });
+
+    timeMarker += meditation_interval;
+
+  });
+  
+
+  ///////// Meditation Fades Out
+
+  timeMarker += 1000;
+
+  timeline.add({ time: timeMarker, event: function () { 
+    $("#meditation_container").fadeOut(500);
+  } });
+
+  timeMarker += 1000;
+
+  ///////// MEMORIES
+
+  let mems = generateMemories();
+  let memory_interval = 300;
+
+  mems.forEach((mem, i) => {
+
+    timeline.add({ time: timeMarker, event: function () { 
+      console.log(mem); 
+//      displayMeditationPhrase({ text: mt, fadeIn: 100, fadeOut: 100 });
+    } });
+
+    timeMarker += memory_interval;
+
+  });
+ 
+  
+
+}
+
+
+function resetTimeline() {
+
+  if(!dataLoaded) {
+    // wait until data is loaded
+    setTimeout(resetTimeline, 1000);
+    return;
+  }
+
+  console.log("Resetting timeline");
+ 
+  let timeline = new Timeline({ loop: true, duration: 50000, interval: 100 });
+
+  resetHTML();
+
+  queueEvents(timeline);
+
+  timeline.start();
+ 
+}
+
+
+/////////////////////////////////
+/////////////////////////////////
+/////////////////////////////////
 //////////// MAIN ///////////////
-
-$(document).ready(function() {
-
-  setTimeout(function() { 
-    loadData(() => {
-      console.log("Data loaded!");
-      dataLoaded = true;
-      playLoop();
-    });
-  }, 1000);
+/////////////////////////////////
+/////////////////////////////////
+/////////////////////////////////
 
 
-  let t = new Timeline({ loop: true, duration: 5000, interval: 100 });
-
-  t.add({ time: 0, event: function () { console.log("STARTbliop"); } });
-  t.add({ time: 1000, event: function () { console.log("bliop"); } });
-  t.add({ time: 2000, event: function () { console.log("boop"); } });
-  t.add({ time: 4000, event: function () { console.log("bloooiop"); } });
-
-  t.start({ callback: function() { console.log("we're done!!!");}  })
-
-  window.t = t;
-
-
+loadData(() => {
+  console.log("Data loaded!");
+  dataLoaded = true;
 });
+
+// resetTimeline(); this is already called by updateEmotion() upon pageload;
+
+
