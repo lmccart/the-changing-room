@@ -21,8 +21,7 @@ function updateEmotion(msg) {
     curEmotion = msg;
     console.log('emotion has been updated to: ' + msg.name + ' (base: ' + msg.base + ', level: ' + msg.level + ')');
 
-    showLoadingOverlay(curEmotion.name);
-    $(".text-container").css("visibility", "hidden");
+    $(".textbox").css("visibility", "hidden");
     updateInterface();
   }
 }
@@ -52,11 +51,13 @@ const heightRatio = currentHeight / ipadHeight;
 const update_memory = pico.instantiate_detection_memory(5); // use the detecions of the last 5 frames
 const videoEl = $('#face-stream');
 const videoParentEl = $("#video-parent");
+const typingSpeed = 100;
 
 let facefinderClassifyRegion;
 let videoWidth;
 let videoHeight;
 let watchdog = 0; // used to delay showing/hiding video
+let spellOut = false; // used to determine when to animate text
 
 // set video dimensions to ipad ratio
 // this is mostly for development and will
@@ -156,7 +157,16 @@ const processfn = (video) => {
       // remove cover
       
       coverEl.hide();
-      $(".text-container").css("visibility", "visible");
+      $(".textbox").css("visibility", "visible");
+      if (spellOut == false) {
+        spellOut = true;
+        console.log("flip spell out switch")
+        typeInstruction("When did you first realize...");
+      } else {
+        console.log("do nothing?")
+      }
+
+      
     }
   } else {
     watchdog = watchdog > 0 ? 0 : watchdog - 1;
@@ -164,8 +174,39 @@ const processfn = (video) => {
     if (watchdog < -(delaySeconds * 10)) {
       // cover
       coverEl.show();
-      $(".text-container").css("visibility", "hidden");
+      $(".textbox").css("visibility", "hidden");
 
+      if (spellOut == true) {
+        spellOut = false;
+        console.log("switch off")
+        $( "#spellbox" ).empty();
+      } else {
+        console.log("do nothing?")
+      }
     }
   }
+}
+
+
+function typeInstruction(string, iteration) {
+  var iteration = iteration || 0;
+  
+  // Prevent our code executing if there are no letters left
+  if (iteration === string.length) {
+
+      setTimeout(() => { 
+        showConvoLoading();
+        $('#spellbox').empty();
+      }, pauseOnInstructionTime)
+      return;
+  }
+  
+  setTimeout(function() {
+      // Set the instruction to the current text + the next character
+      // whilst incrementing the iteration variable
+      $('#spellbox').text( $('#spellbox').text() + string[iteration++] );
+      
+      // Re-trigger our function
+      typeInstruction(string, iteration);
+  }, typingSpeed);
 }
