@@ -1,12 +1,12 @@
 // style and js imports
 import $ from 'jquery';
+import { getTextColorForBackground } from './lib/imageColorUtils.js';
 import '../css/04-convo1.scss';
 import './shared.js';
 
 let emotions;
 let curEmotion = '';
-let introPreText = '';
-let introPostText = '';
+let introText = '';
 let uiResetTimeout;
 let resetWaitTime = 10000 // 10s
 const socket = io();
@@ -24,15 +24,11 @@ socket.on('emotion:update', updateEmotion);
 socket.on('chat:new', handleNewMessage);
 
 // get intro text
-fetch('/data/04_chat_intro.txt')
+fetch('/data/04_convo1_intro.txt')
   .then(res => res.blob())
   .then(blob => blob.text())
   .then(text => {
-    const text1 = text.split('[');
-    const text2 = text.split(']');
-    introPreText = text1[0];
-    introPostText = text2[1];
-
+    introText = text
     resetChat();
   })
 
@@ -77,7 +73,7 @@ function resetChat () {
   chatInput.val('');
   messageViewerContainer.css('display', 'none');
   messageViewer.empty();
-  introEl.text(`${introPreText}${curEmotion.name}${introPostText}`);
+  introEl.text(introText);
   introEl.css('display', 'block'); 
 }
 
@@ -111,6 +107,10 @@ function updateEmotion(msg) {
 
 function updateInterface() {
   resetChat();
+  const colors = window.baseColors[curEmotion.base][curEmotion.level-1];
+  const textColor = getTextColorForBackground(colors[1]);
+  $('body').css('color', textColor);
+  $('body').css('background', `radial-gradient(#${colors[0]},#${colors[1]})`);
   $('#debug-info').text('CURRENT EMOTION: ' + curEmotion.name + ' (base: ' + curEmotion.base + ', level: ' + curEmotion.level +')')
 }
 
