@@ -9,7 +9,7 @@ USAGE
   t.add({ time: 2000, event: function () { console.log("boop"); } });
   t.add({ time: 4000, event: function () { console.log("bloooiop"); } });
 
-  t.start({ interval: 100, callback: function() { console.log("we're done!!!");}  })
+  t.start({ callback: function() { console.log("we're done!!!");}  })
 
 
 */
@@ -22,10 +22,11 @@ class Timeline {
     // { loop: true|false, duration: ms }
     this.timeline = {};
     this.completed_events = {};
-    this.status = "stopped";
-    this.startTime = null;
+    this.interval = opts.interval;
     this.loop = opts.loop;
     this.duration = opts.duration;
+    this.status = "stopped";
+    this.startTime = null;
   }
 
   add(opts) {
@@ -39,11 +40,8 @@ class Timeline {
     this.startTime = Date.now();
   }
 
-  play() {
-    if(this.status == "stopped") {
-      reset();
-    }
-    this.status = "playing";
+  stop() {
+    this.status = "stopped";
   }
 
   _play_uncompleted() {
@@ -63,16 +61,21 @@ class Timeline {
   }
 
   start(opts) {
-    // opts = { interval: 50, callback: fn() }
+    // opts = { callback: fn() }
     var self = this;
+
     this.reset();
-    console.log("starting");
+    this.status = "playing";
+
     var loopUpdate = function() {
       setTimeout(function() {
+        if(self.status == "stopped") { return; }
         self.update();
 
         let msPastDuration = Date.now() - Number(self.startTime) - Number(self.duration);
+
         if(msPastDuration < 0) {
+          // we're still within the timeline
           loopUpdate();
         } else {
           // we're past timeline duration!
@@ -86,7 +89,7 @@ class Timeline {
           }
         }
 
-      }, opts.interval)
+      }, self.interval)
     };
     loopUpdate();
   }

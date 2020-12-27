@@ -265,13 +265,16 @@ $(document).ready(function() {
   }, 1000);
 
 
-  let t = new Timeline({ loop: true, duration: 5000 });
+  let t = new Timeline({ loop: true, duration: 5000, interval: 100 });
 
+  t.add({ time: 0, event: function () { console.log("STARTbliop"); } });
   t.add({ time: 1000, event: function () { console.log("bliop"); } });
   t.add({ time: 2000, event: function () { console.log("boop"); } });
   t.add({ time: 4000, event: function () { console.log("bloooiop"); } });
 
-  t.start({ interval: 100, callback: function() { console.log("we're done!!!");}  })
+  t.start({ callback: function() { console.log("we're done!!!");}  })
+
+  window.t = t;
 
 
 });
