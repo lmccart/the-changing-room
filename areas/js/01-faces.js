@@ -36,12 +36,12 @@ function updateInterface() {
   $('.textbox').fancyTextFill({
     maxFontSize: 400
   });
-  
+
   $('.textbox-dummy').fancyTextFill({
-    maxFontSize: 400 
+    maxFontSize: 400
   });
 
- 
+
 
   // $('#spellbox').css("font-size", fontSize + "px");
   // fontSize = $("#dummy").css('font-size');
@@ -168,7 +168,7 @@ const processfn = (video) => {
 
     if (watchdog > (delaySeconds * 10)) {
       // remove cover
-      
+
       coverEl.hide();
       $(".textbox").css("visibility", "visible");
       if (spellOut == false) {
@@ -179,7 +179,7 @@ const processfn = (video) => {
         console.log("do nothing?")
       }
 
-      
+
     }
   } else {
     watchdog = watchdog > 0 ? 0 : watchdog - 1;
@@ -192,7 +192,7 @@ const processfn = (video) => {
       if (spellOut == true) {
         spellOut = false;
         console.log("switch off")
-        $( "#spellbox" ).empty();
+        $("#spellbox").empty();
       } else {
         console.log("do nothing?")
       }
@@ -205,23 +205,23 @@ function typeInstruction(string, iteration) {
   var iteration = iteration || 0;
   let fontSize = $("#dummy").css('font-size');
   console.log(fontSize)
-  $('#spellbox').css("font-size", fontSize );
+  $('#spellbox').css("font-size", fontSize);
   // Prevent our code executing if there are no letters left
   if (iteration === string.length) {
 
-      setTimeout(() => { 
-        showConvoLoading();
-        $('#spellbox').empty();
-      }, pauseOnInstructionTime)
-      return;
+    setTimeout(() => {
+      showConvoLoading();
+      $('#spellbox').empty();
+    }, pauseOnInstructionTime)
+    return;
   }
-  
-  setTimeout(function() {
-      // Set the instruction to the current text + the next character
-      // whilst incrementing the iteration variable
-      $('#spellbox').text( $('#spellbox').text() + string[iteration++] );
-      
-      // Re-trigger our function
-      typeInstruction(string, iteration);
+
+  setTimeout(function () {
+    // Set the instruction to the current text + the next character
+    // whilst incrementing the iteration variable
+    $('#spellbox').text($('#spellbox').text() + string[iteration++]);
+
+    // Re-trigger our function
+    typeInstruction(string, iteration);
   }, typingSpeed);
 }
