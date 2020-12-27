@@ -6,8 +6,12 @@ import './shared.js';
 
 let emotions;
 let curEmotion;
+
+var triggerResetEmotion = false; // this is a global variable that every function checks to trigger a reset emotion. it's not the most elegant, but in this event-based loop, seems appropriate.
+
 const socket = io();
 socket.on('emotion:update', updateEmotion);
+var dataLoaded = false;
 
 function updateEmotion(msg) {
   if (!curEmotion || curEmotion.name !== msg.name) {
@@ -19,6 +23,7 @@ function updateEmotion(msg) {
 }
 
 function updateInterface() {
+  triggerResetEmotion = true;
   $('#debug-info').text('CURRENT EMOTION: ' + curEmotion.name + ' (base: ' + curEmotion.base + ', level: ' + curEmotion.level +')')
 }
 
@@ -113,18 +118,17 @@ function startMeditation() {
     function displayPhrase(counter) {
       var medtext = texts[counter]
       $("#meditation_text").text(medtext)
-
-      // TODO:animation stuff
     }
 
     //////////
 
-    var interval = 100;
+    var interval = 300;
     var counter = 0;
 
     setInterval(function() {
 
       displayPhrase(counter);
+      if(triggerResetEmotion) { reject("emotionReset");  } // exit anim loop if emotion is reset
 
       counter += 1;
       if(counter >= texts.length) { resolve() }
@@ -139,6 +143,7 @@ function startMeditation() {
 
 function fadeOutText() {
   return new Promise(function(resolve, reject) {
+    if(triggerResetEmotion) { reject("emotionReset");  } // exit anim loop if emotion is reset
 
     $("#meditation_text").fadeOut(1000, () => {
       console.log("pop out text!"); 
@@ -157,6 +162,7 @@ function fadeOutText() {
 
 function startMemories() {
   return new Promise(function(resolve, reject) {
+    if(triggerResetEmotion) { reject("emotionReset");  } // exit anim loop if emotion is reset
 
     console.log("start memories!")
     setTimeout(() => {
@@ -171,10 +177,44 @@ function startMemories() {
 
 
 
+/////////////////////////
+
+function clearAndInit() {
+  console.log("clearAndInit");
+}
+
+
+
+  // THIS IS WHERE THE MAGIC IS
+var playLoop = function() {
+  clearAndInit();
+  fadeInText()
+    .then(res => startMeditation())
+    .then(res => fadeOutText())
+    .then(res => startMemories())
+    .then(res => {
+      playLoop();
+    })
+    .catch(error => {
+      console.log("ALERT: ", error);
+      resetPlay();
+    });
+}
+
+
+function resetPlay() {
+
+  // TODO: DO RESET STUFF HERE
+  console.log("===== we are resetting play");
+
+  triggerResetEmotion = false;
+
+  playLoop();
+
+}
 
 
 //////////// MAIN ///////////////
-//
 
 $(document).ready(function() {
 
@@ -182,23 +222,8 @@ $(document).ready(function() {
 
     loadData(() => {
       console.log("Data loaded!");
-
-
-      // THIS IS WHERE THE MAGIC IS
-      var play = function() {
-        fadeInText()
-          .then(res => startMeditation())
-          .then(res => fadeOutText())
-          .then(res => startMemories())
-          .then(res => {
-            play();
-          });
-        }
-
-      play();
-
-      console.log(dataMeditations);
-      console.log(dataMeditationEmotions);
+      dataLoaded = true;
+      playLoop();
     });
 
   }, 1000);
