@@ -3,6 +3,7 @@ import $ from 'jquery';
 import Papa from 'papaparse';
 import '../css/02-reflection.scss';
 import './shared.js';
+import Timeline from './Timeline.js';
 
 let emotions;
 let curEmotion;
@@ -141,11 +142,11 @@ function startMeditation() {
 
 //////////////////////////
 
-function fadeOutMeditation() {
+function fadeOutMeditation(interval) {
   return new Promise(function(resolve, reject) {
     if(triggerResetEmotion) { reject("emotionReset");  } // exit anim loop if emotion is reset
 
-    $("#meditation_text").fadeOut(1000, () => {
+    $("#meditation_text").fadeOut(interval, () => {
       console.log("==== fade out meditation!"); 
       // TODO
       resolve();
@@ -191,9 +192,9 @@ function startMemories() {
 
 //////////////////////////
 
-function fadeOutMemories() {
+function fadeOutMemories(interval) {
   return new Promise(function(resolve, reject) {
-    $("#memory_container").fadeOut(1000, () => {
+    $("#memory_container").fadeOut(interval, () => {
       console.log("==== fade outmemories!")
       resolve();
     });
@@ -213,15 +214,16 @@ function clearAndInit() {
 
 
 
-  // THIS IS WHERE THE MAGIC IS
+
+// THIS IS WHERE THE MAGIC LOOP IS
 var playLoop = function() {
   clearAndInit();
   fadeInMeditation()
     .then(res => startMeditation())
-    .then(res => fadeOutMeditation())
+    .then(res => fadeOutMeditation(1000))
     .then(res => fadeInMemories())
     .then(res => startMemories())
-    .then(res => fadeOutMemories())
+    .then(res => fadeOutMemories(1000))
     .then(res => {
       playLoop();
     })
@@ -238,6 +240,11 @@ function resetPlay() {
   console.log("===== we are resetting play");
 
   if(triggerResetEmotion) {
+/*
+ TODO 
+ * fadeOutMemories(0)
+      .then(res => fadeOutMeditation(0)) 
+      .catch(error => {})  */
     triggerResetEmotion = false;
     playLoop();
   }
@@ -256,5 +263,15 @@ $(document).ready(function() {
       playLoop();
     });
   }, 1000);
+
+
+  let t = new Timeline({ loop: true, duration: 5000 });
+
+  t.add({ time: 1000, event: function () { console.log("bliop"); } });
+  t.add({ time: 2000, event: function () { console.log("boop"); } });
+  t.add({ time: 4000, event: function () { console.log("bloooiop"); } });
+
+  t.start({ interval: 100, callback: function() { console.log("we're done!!!");}  })
+
 
 });
