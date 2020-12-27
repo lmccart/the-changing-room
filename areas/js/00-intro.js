@@ -31,6 +31,14 @@ function updateInterface() {
 
 
 function scrollThis() {
+fetch('/data/00_intro.txt')
+  .then(res => res.blob())
+  .then(blob => blob.text())
+  .then(text => {
+    const introText = text;
+    console.log(introText)
+    $(".text").text(introText);
+})
   $(".intro-text-container").css("visibility", "visible");
   console.log("scrollThis")
   ////prints out scroll pos
@@ -39,11 +47,13 @@ function scrollThis() {
   //    }, 100);
 
   let scrollBottom = $(".text").prop("scrollHeight")
+  const scrollFast = 20000;
+  const scrollSlow = 3000;
   console.log(scrollBottom)
 
   $(".text").animate({
     scrollTop: scrollBottom
-  }, 95000, 'linear');
+  }, scrollFast, 'linear');
 
   $(".text").scroll(function () {
     // console.log("top",  $('.text').scrollTop())
@@ -58,11 +68,11 @@ function scrollThis() {
       // $(".text").scrollTop(0);
       $(".text").animate({
         scrollTop: 0
-      }, 3000, 'linear');
+      }, scrollSlow, 'linear');
 
       $(".text").animate({
         scrollTop: scrollBottom
-      }, 95000, 'linear');
+      }, scrollFast, 'linear');
     }
   });
 }
