@@ -33,7 +33,7 @@ section.main {
   }
 }
 
-#meditation_text {
+#meditation_container {
   /* TODO: font */
   z-index: 100;
   display: flex;
@@ -47,8 +47,25 @@ section.main {
 }
 
 #memory_container {
-  background-color: purple;
-  opacity: 0.4;
   z-index: 200;
   display: none;
+}
+
+.memory {
+  position: absolute;
+  max-width: 300px;
+  border: 6px solid #010e77;
+  display: flex;
+  align-items: center;
+
+  &.text {
+    padding: 10px;
+    background-color: white;
+    font-size: 2em;
+    word-break: break-all;
+  }
+
+  &.image {
+    padding: 0px;
+  }
 }
