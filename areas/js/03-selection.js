@@ -70,6 +70,7 @@ function updateInterface() {
 const seperate_panel1 = document.getElementById("scroll1");
 const seperate_panel2 = document.getElementById("scroll2");
 const seperate_panel3 = document.getElementById("scroll3");
+const handIndicator = $('#hand-indicator');
 const sel_txt_url = '/data/03_selection_intro.txt';
 const apiURL_emotions = "/emotions";
 const wrapper_joined = $("#wrapper_joined")
@@ -132,21 +133,21 @@ function joinedmode() {
   $("#wrapper_separate").fadeOut(1000);
   scrollDown(wrapper_joined);
 }
-//restart auto scrolling after 1 second
-var timer;
+//restart auto scrolling after 4 seconds
+let timer;
 function joinedTimer() {
-    var sec = 10
+    var sec = 10;
     clearInterval(timer);
     timer = setInterval(function() { 
-    $('#timer').text(sec--);
+    sec--;
     if (sec == -1) {
       clearInterval(timer);
       scrollDown(wrapper_joined) 
      } 
-    }, 100);
+    }, 400);
 }
 //stop auto scroll on manual scroll
-$("#wrapper_joined").on("mousedown wheel DOMMouseScroll mousewheel keyup touchmove", function(){
+$("#wrapper_joined").on("wheel DOMMouseScroll mousewheel keyup touchmove", function(){
   $("#wrapper_joined").stop();
   joinedTimer()
 })
@@ -155,10 +156,10 @@ function scrollDown(el) {
   let scrollBottom = el.prop("scrollHeight")
   el.animate({
       scrollTop: el.get(0).scrollHeight
-  }, 210000, function() {
+  }, 210000, 'linear', function() {
       scrollUp(el)
   });
-};
+}; 
 // auto scroll up
 function scrollUp(el) {
   el.animate({
@@ -171,16 +172,24 @@ function scrollUp(el) {
 
 
 
-////////////////// SEPERATE MODE
+////////////////// TRANSITION INTO SEPERATE MODE
 function seperatemode(elm, emotionName, base_emotion) {
   socket.emit('emotion:pick', emotionName);
   $(".emotion").removeAttr( 'style' );
   $(".emotion").removeClass("selected_emotion");
-  //transition to font color to selected emotion colors
+  //get color of selected emotion colors
   let emotion_colors = baseColors[base_emotion]
   let emotion_colors_str1 = "#"+emotion_colors[0][0]
   let emotion_colors_str2 = "#"+emotion_colors[0][1]
   $(elm).fadeIn("1000", function() {
+    //scroll emotion to center of screen
+    const elHeight = $(elm).height();
+    const currentPosition = $(elm).offset().top;
+    const currentScroll = wrapper_joined.scrollTop();
+    const middle = $(window).height() / 2;
+    const scrollVal = currentScroll + (currentPosition - middle + (elHeight / 2));
+    wrapper_joined.animate({scrollTop: scrollVal}, 1000, 'linear');
+    //transition to color of selected emotion colors
     $(this).css("color", emotion_colors_str1);
     $("#wrapper_joined").css({background:"-webkit-radial-gradient(" + emotion_colors_str1 + "," + emotion_colors_str2 + ")"});
   });
@@ -189,8 +198,8 @@ function seperatemode(elm, emotionName, base_emotion) {
       $(elm).fadeIn("slow", function() {
         $(this).addClass("selected_emotion")
       });
-      //start auto scroll
-      scroll_panels();
+      //start auto scroll for seperate panels
+      scroll_seperate_panels();
   }, 1000);
   setTimeout(function() {
     $("#wrapper_joined").fadeOut(1000);
@@ -199,6 +208,32 @@ function seperatemode(elm, emotionName, base_emotion) {
     $("#wrapper_separate").css("background","-webkit-radial-gradient(" + emotion_colors_str1 + "," + emotion_colors_str2 + ")");
   }, 6000);
 }
+
+
+function moveHand() {
+  // move hand to random position
+
+  var h = $(window).height() - handIndicator.height();
+  var w = $(window).width() - handIndicator.width();
+  
+  var nh = Math.floor(Math.random() * h);
+  var nw = Math.floor(Math.random() * w);
+  
+  handIndicator.css({top: `${nh}px`, left: `${nw}px`})
+
+  // then show hand
+  handIndicator
+    .fadeIn(1000)
+    .fadeOut(1000)
+    .fadeIn(1000)
+    .fadeOut(1000)
+    .fadeIn(1000)
+    .fadeOut(1000)
+    .fadeIn(1000)
+    .fadeOut(1000);
+}
+
+
 
 ////////////////// SCROLLING
 //timer starts when panel1 reaches bottom, go back to joinedmode
@@ -211,53 +246,39 @@ function seperatemode(elm, emotionName, base_emotion) {
 //    }, 9000); 
 // }
 
-// $("#wrapper_separate .scroll").scroll(function(e) {
-//   if ($(this).is(':animated')) {
-//       console.log('scroll happen by animate');
-//   } else if (e.originalEvent) {
-//       // scroll happen manual scroll
-//       // console.log('scroll happen manual scroll');
-//       const elm = "#"+e["currentTarget"]["id"]
-//       $(elm).animate({scrollTop: $(".scroll").prop("scrollHeight")}, 600000, 'linear');
-//       $("html, body").stop()
-//   } else {
-//       // scroll happen by call
-//       console.log('scroll happen by call');
-//   }
-// });
+// detect manual scroll
+$("#wrapper_separate .scroll").scroll(function(e) {
+  if (e.originalEvent) {
+      joinedmode()
+  }
+});
 
-// //stop auto scroll
-// $(seperate_panel1).on("mousedown wheel DOMMouseScroll mousewheel keyup touchmove", function(){
-//      $(seperate_panel1).stop();
-// })
-// $(seperate_panel2).on("mousedown wheel DOMMouseScroll mousewheel keyup touchmove", function(){
-//      $(seperate_panel2).stop();
-// })
-// $(seperate_panel3).on("mousedown wheel DOMMouseScroll mousewheel keyup touchmove", function(){
-//      $(seperate_panel3).stop();
-// })
+// auto scrolling
+function scroll_seperate_panels() {
+  setTimeout(function() {
+    $(seperate_panel1).animate({scrollTop: 9086}, 600000, 'linear');
+    setTimeout(function() {
+      $(seperate_panel2).animate({scrollTop: 9086}, 600000, 'linear');
+    }, 1500);
+    setTimeout(function() {
+      $(seperate_panel3).animate({scrollTop: 9086}, 650000, 'linear');
+    }, 3000);
+    //when panel #2 reaches bottom
+    $(function($) {
+        $(seperate_panel2).on('scroll', function() {
+            if($(this).scrollTop() + $(this).innerHeight() >= $(this)[0].scrollHeight) {
+              resetInterval()
+            }
+        })
+    });
+  }, 0);
+}
 
-// // auto scrolling
-// function scroll_panels() {
-//   setTimeout(function() {
-//     $(seperate_panel1).animate({scrollTop: 9086}, 600000, 'linear');
-//     setTimeout(function() {
-//       $(seperate_panel2).animate({scrollTop: 9086}, 600000, 'linear');
-//     }, 1500);
-//     setTimeout(function() {
-//       $(seperate_panel3).animate({scrollTop: 9086}, 650000, 'linear');
-//     }, 3000);
-//     //when panel 2 reaches bottom
-//     $(function($) {
-//         $(seperate_panel2).on('scroll', function() {
-//             if($(this).scrollTop() + $(this).innerHeight() >= $(this)[0].scrollHeight) {
-//               resetInterval()
-//             }
-//         })
-//     });
-//   }, 0);
-// }
-
+//initial pause for screen load
 setTimeout(function() {
   joinedmode()
 }, 2000);
+
+setInterval(() => {
+  moveHand()
+}, 30000);

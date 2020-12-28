@@ -5,9 +5,6 @@ body {
 	padding: 0px;
 	margin: 0px;
 }
-#selection_room {
-	cursor:url('../../data/pointer.png'), move;
-}
 #nav {
 	position: fixed;
 	top: 40px;
@@ -24,6 +21,14 @@ body {
 		height: 50px;
 		margin: 20px;
 	}
+}
+
+#hand-indicator {
+  display: none;
+  position: fixed;
+
+  width: 10vw;
+  transform: rotateZ(-30deg);
 }
 
 .scroll {
