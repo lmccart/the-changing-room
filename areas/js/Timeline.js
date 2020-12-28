@@ -1,3 +1,5 @@
+import { nanoid } from 'nanoid';
+
 /* 
  
 
@@ -36,7 +38,12 @@ class Timeline {
   add(opts) {
     // opts looks like: 
     // { time: milliseconds_from_start, event: function }
-    this.timeline[opts.time] = { event: opts.event };
+    this.timeline[nanoid(10)] = opts;
+
+  }
+
+  setDuration(duration) {
+    this.duration = duration;
   }
 
   reset() {
@@ -52,7 +59,7 @@ class Timeline {
     let curtime = Date.now();
 
     for(const k in this.timeline) {
-      if((curtime > Number(k) + this.startTime) && !(k in this.completed_events)) {
+      if((curtime >= Number(this.timeline[k].time) + this.startTime) && !(k in this.completed_events)) {
         this.timeline[k].event();
         this.completed_events[k] = true;
       }
