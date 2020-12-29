@@ -264,19 +264,25 @@ setInterval(() => {
 ////////////////// POINTER
 function moveHand() {
   // move hand to random position
-  var h = $(window).height() - handIndicator.height();
-  var w = $(window).width() - handIndicator.width();
-  var nh = Math.floor(Math.random() * h);
-  var nw = Math.floor(Math.random() * w);
+  const i = Math.floor(Math.random()*3); // ensure hand does not bridge screens
+  const panelWidth = $(window).width()/3;
+  const nw = i * panelWidth + (Math.random() * (panelWidth - handIndicator.width()));
+  
+  const h = $(window).height() - handIndicator.height();
+  const nh = Math.floor(Math.random() * h);
+  
   handIndicator.css({top: `${nh}px`, left: `${nw}px`})
   // then show hand
   handIndicator
-    .fadeIn(1000)
-    .fadeOut(1000)
-    .fadeIn(1000)
-    .fadeOut(1000)
-    .fadeIn(1000)
-    .fadeOut(1000)
-    .fadeIn(1000)
-    .fadeOut(1000);
+    .fadeIn(0)
+    .delay(700)
+    .fadeOut(0)
+    .delay(700)
+    .fadeIn(0)
+    .delay(700)
+    .fadeOut(0)
+    .delay(700)
+    .fadeIn(0)
+    .delay(700)
+    .fadeOut(0)
 }
