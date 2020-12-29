@@ -2,7 +2,9 @@
 node_modules/*
 logs/*
 automate/multibrowse-source/*
-areas/sounds/*
+sound/sounds/*
+sound/recordings/*
+
 dist/
 static/fonts/*
 static/images/*/*.jpg
