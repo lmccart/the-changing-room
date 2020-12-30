@@ -5,7 +5,6 @@ body {
 	padding: 0px;
 	margin: 0px;
 }
-
 #nav {
 	position: fixed;
 	top: 40px;
@@ -22,6 +21,14 @@ body {
 		height: 50px;
 		margin: 20px;
 	}
+}
+
+#hand-indicator {
+  display: none;
+  position: fixed;
+
+  width: 10vw;
+  transform: rotateZ(-30deg);
 }
 
 .scroll {
@@ -45,12 +52,10 @@ body {
 
 #wrapper_joined {
 	font-size: 4em;
-	display: block;
+	display: none;
 	overflow-y: scroll;
 	overflow-x: hidden;
 	background: radial-gradient(#ebdce1, #a5ade1);
-	transition-property: all;
-    transition-duration: 10s;
 	::-webkit-scrollbar {
 		-webkit-appearance: none;
 		width: 25px;
@@ -67,7 +72,7 @@ body {
 	.emotion {
 		text-transform: capitalize;
 		transition-property: all;
-    	transition-duration: 5s;
+    	transition-duration: 2s;
 	}
 	.selected_emotion_color {
   		-webkit-background-clip: text;
