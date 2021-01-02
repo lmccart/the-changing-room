@@ -5,7 +5,7 @@ const app = express();
 const http = require('http').createServer(app);
 const io = require('socket.io')(http);
 
-const Sound = require('./sound');
+const Sound = require('./sound/sound');
 const Lights = require('./lights');
 
 let curEmotion;
@@ -104,4 +104,4 @@ app.get('/images/:baseEmotion/manifest', (req, res) => {
   }
 });
 
-http.listen(3000, () => { console.debug('listening on *:3000'); });
+http.listen(process.env.PORT || 3000, () => { console.debug('listening on *:3000'); });
