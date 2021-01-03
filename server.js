@@ -8,6 +8,10 @@ const io = require('socket.io')(http);
 const Sound = require('./sound/sound');
 const Lights = require('./lights');
 
+const { getChatSubData } = require('./fileUtils');
+let chatSubs;
+getChatSubData().then(data => chatSubs = data).catch(err => console.log('error', err));
+
 let curEmotion;
 
 // Webpack setup for hot reloading dev environment
@@ -64,9 +68,22 @@ io.on('connection', (socket) => {
 
   socket.on('chat:send', function(msg){
     // called by area 04 when user hits "send" on a chat message
-    // message data gets modified based on emotion edit rules, and emitted to all clients on 04-convo1 page
-    // TODO implement text modification
-    io.emit('chat:new', msg);
+    const wordsToSubArray = chatSubs[curEmotion.base]
+    const subArray = chatSubs[`${curEmotion.base}-subs`];
+
+    // splits message into array of words, spaces and punctuation marks
+    const msgWordArray = msg.split(/([\.!\?\,\-])|([\s])/g);
+    let modifiedMsg = '';
+    for (let index = 0; index < msgWordArray.length; index++) {
+      const currentWord = msgWordArray[index];
+      const matchedIndex = wordsToSubArray.findIndex(word => word === currentWord);
+      
+      if (matchedIndex >= 0) {
+        msgWordArray[index] = subArray[matchedIndex];
+      }
+    }
+    modifiedMsg = msgWordArray.join('');
+    io.emit('chat:new', modifiedMsg);
   });
 });
 
