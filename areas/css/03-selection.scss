@@ -58,6 +58,7 @@ body {
 	overflow-y: scroll;
 	overflow-x: hidden;
 	background: radial-gradient(#ebdce1, #a5ade1);
+	border: 3px solid black;
 	::-webkit-scrollbar {
 		-webkit-appearance: none;
 		width: 25px;
@@ -112,4 +113,19 @@ body {
 
 
 
+::-webkit-scrollbar {
+	width: 22px;
+}
+  
+/* Track */
+::-webkit-scrollbar-track {
+	// background: #f1f1f1; 
+	border-left: 3px solid black;
+	width: 30px;
+}
 
+/* Handle */
+::-webkit-scrollbar-thumb {
+	background: black; 
+	height: 180px;
+}

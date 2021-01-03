@@ -172,6 +172,13 @@ function scrollDown(el) {
       scrollUp(el)
   });
 }; 
+function scrollDown_seperate(el, num) {
+  el.animate({
+      scrollTop: num
+  }, 990000, 'linear', function() {
+      scrollUp(el)
+  });
+}; 
 // auto scroll up
 function scrollUp(el) {
   el.animate({
@@ -240,19 +247,20 @@ $(seperate_panel3).on("click wheel DOMMouseScroll mousewheel keyup touchmove", f
 // auto scrolling
 function scroll_seperate_panels() {
   setTimeout(function() {
-      scrollDown($("#scroll1"))
+    scrollDown_seperate($("#scroll1"), 13000)
     setTimeout(function() {
-      scrollDown($("#scroll2"))
+      scrollDown_seperate($("#scroll2"), 20000)
     }, 1500);
     setTimeout(function() {
-      scrollDown($("#scroll3"))
-    }, 3000);
+      scrollDown_seperate($("#scroll3"), 18000)
+    }, 3100);
   }, 0);
 }
 
 //initial pause for screen load
 setTimeout(function() {
   joinedmode()
+  // seperatemode()
 }, 2000);
 
 setInterval(() => {
