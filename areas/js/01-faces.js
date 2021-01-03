@@ -175,9 +175,7 @@ const processfn = (video) => {
         spellOut = true;
         console.log("flip spell out switch")
         typeInstruction(emotionalMessage);
-      } else {
-        console.log("do nothing?")
-      }
+      } 
 
 
     }
@@ -193,9 +191,7 @@ const processfn = (video) => {
         spellOut = false;
         console.log("switch off")
         $("#spellbox").empty();
-      } else {
-        console.log("do nothing?")
-      }
+      } 
     }
   }
 }
@@ -208,11 +204,6 @@ function typeInstruction(string, iteration) {
   $('#spellbox').css("font-size", fontSize);
   // Prevent our code executing if there are no letters left
   if (iteration === string.length) {
-
-    setTimeout(() => {
-      showConvoLoading();
-      $('#spellbox').empty();
-    }, pauseOnInstructionTime)
     return;
   }
 
