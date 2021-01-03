@@ -210,9 +210,8 @@ function typeInstruction(string, iteration) {
   if (iteration === string.length) {
 
     setTimeout(() => {
-      showConvoLoading();
       $('#spellbox').empty();
-    }, pauseOnInstructionTime)
+    })
     return;
   }
 
