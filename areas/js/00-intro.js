@@ -5,13 +5,15 @@ import './shared.js';
 
 let emotions;
 let curEmotion;
+let introText;
 const socket = io();
 socket.on('emotion:update', updateEmotion);
 
-
+getIntroText();
 
 
 function updateEmotion(msg) {
+  console.log("updateEmotion")
   if (!curEmotion || curEmotion.name !== msg.name) {
     curEmotion = msg;
     console.log('emotion has been updated to: ' + msg.name + ' (base: ' + msg.base + ', level: ' + msg.level + ')');
@@ -22,61 +24,58 @@ function updateEmotion(msg) {
 }
 
 function updateInterface() {
+  console.log("updateInterface")
   $('#debug-info').text('CURRENT EMOTION: ' + curEmotion.name + ' (base: ' + curEmotion.base + ', level: ' + curEmotion.level + ')')
-  setTimeout(function () { scrollThis(); }, 3000);
+  scrollThis();
 
 }
 
 // window.scrollThis = () => {}
 
-
-function scrollThis() {
-fetch('/data/00_intro.txt')
-  .then(res => res.blob())
-  .then(blob => blob.text())
-  .then(text => {
-    const introText = text;
-    console.log(introText)
-    $(".text").text(introText);
-})
-  $(".intro-text-container").css("visibility", "visible");
-  console.log("scrollThis")
-  ////prints out scroll pos
-  // setInterval(function(){ 
-  //     console.log($('.text').scrollTop())
-  //    }, 100);
-
-  let scrollBottom = $(".text").prop("scrollHeight")
-  const scrollFast = 20000;
-  const scrollSlow = 3000;
-  console.log(scrollBottom)
-
-  $(".text").animate({
-    scrollTop: scrollBottom
-  }, scrollFast, 'linear');
-
-  $(".text").scroll(function () {
-    // console.log("top",  $('.text').scrollTop())
-    // console.log("bottom", scrollBottom)
-    // console.log("scrollheight", $('.text')[0].scrollHeight)
-    // console.log("scrolltop", $('.text')[0].scrollTop)
-    // console.log("clientheight", $('.text')[0].clientHeight)
-
-    if ($(".text").scrollTop() >= ($('.text')[0].scrollHeight - ($('.text')[0].clientHeight + 5))) {
-      console.log("restart scroll!!")
-      $(".text").stop();
-      // $(".text").scrollTop(0);
-      $(".text").animate({
-        scrollTop: 0
-      }, scrollSlow, 'linear');
-
-      $(".text").animate({
-        scrollTop: scrollBottom
-      }, scrollFast, 'linear');
-    }
-  });
+function getIntroText() {
+  fetch('/data/00_intro.txt')
+    .then(res => res.blob())
+    .then(blob => blob.text())
+    .then(text => {
+      introText = text;
+      console.log(introText)
+      $(".text").text(introText);
+    })
 }
 
-// 95000
+function scrollThis() {
+  console.log("scrollThis")
+  $(".text").scrollTop(0);
+  $(".text").stop();
+  console.log(introText)
+  const scrollFast = 3000;
+  const scrollSlow = 20000;
+
+  setTimeout(function () {
+    $(".intro-text-container").css("visibility", "visible");
+
+
+
+    $(".text").animate({
+      scrollTop: $(".text").prop("scrollHeight")
+    }, scrollSlow, 'linear', function () {
+      console.log("Complete");
+      setTimeout(function () {
+        $(".text").animate({
+          scrollTop: 0
+        }, scrollFast, 'linear', function () {
+          console.log("Complete at the top");
+          scrollThis();
+        });
+
+      }, 3000);
+
+    });
+  }, 2000);
+
+
+}
+
+
 
 
