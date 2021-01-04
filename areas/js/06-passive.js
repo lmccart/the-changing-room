@@ -1,24 +1,61 @@
 // style and js imports
 import $ from 'jquery';
 import 'imagesloaded';
+import Papa from 'papaparse';
 
 import '../css/06-passive.scss';
 import './shared.js';
-import { getImgUrls, addSvgFilterForElement } from './lib/imageColorUtils.js';
+import { getImgUrls, addSvgFilterForElement, getTextColorForBackground } from './lib/imageColorUtils.js';
 
-let emotions;
 let curEmotion;
 let imgURLs = [];
+let backgroundInterval;
+let popupFactory; // used to reference the function that produces popups
 const socket = io();
 socket.on('emotion:update', updateEmotion);
 
-let popupFactory;
+// get potential strings and save them to a global variable
+window.emotionStrings = [];
+Papa.parse("/data/05_directions.tsv", {
+  download: true,
+  header: true,
+  skipEmptyLines: 'greedy',
+  complete: function(results) {
+    const rawResults = results.data;
+    const reordered = {};
+    const keys = Object.keys(rawResults[0]);
+    keys.forEach(key => reordered[key] = []);
+
+    for (var i = 0; i < rawResults.length; i++) {
+      const resultRow = rawResults[i];
+      keys.forEach(key => resultRow[key].trim().length > 0 && reordered[key].push(resultRow[key]));
+    }
+    window.emotionStrings.push(reordered);
+  }
+});
+
+Papa.parse("/data/01_reflections.tsv", {
+  download: true,
+  header: true,
+  skipEmptyLines: 'greedy',
+  complete: function(results) {
+    const rawResults = results.data;
+    const reordered = {};
+    const keys = Object.keys(rawResults[0]);
+    keys.forEach(key => reordered[key] = []);
+
+    for (var i = 0; i < rawResults.length; i++) {
+      const resultRow = rawResults[i];
+      keys.forEach(key => resultRow[key].trim().length > 0 && reordered[key].push(resultRow[key]));
+    }
+    window.emotionStrings.push(reordered);
+  }
+});
 
 function updateEmotion(msg) {
   if (!curEmotion || curEmotion.name !== msg.name) {
     curEmotion = msg;
     console.log('emotion has been updated to: ' + msg.name + ' (base: ' + msg.base + ', level: ' + msg.level +')');
-    updateInterface();
     showLoadingOverlay(curEmotion.name);
     updateInterface();
   }
@@ -31,6 +68,14 @@ async function updateInterface() {
     popupFactory.cleanup();
   }
   popupFactory = new PopupFactory(curEmotion);
+
+  if (backgroundInterval) {
+    clearInterval(backgroundInterval);
+  } 
+  $('body').css('background-image', `url(${imgURLs[Math.floor(Math.random() * imgURLs.length)]})`);
+  backgroundInterval = setInterval(() => {
+    $('body').css('background-image', `url(${imgURLs[Math.floor(Math.random() * imgURLs.length)]})`)
+  }, (15000 / (1.6 ** curEmotion.level)));
 }
 
 // add elements at random, with a multiplier based on a single digit integer
@@ -43,9 +88,11 @@ function PopupFactory (emotionObj) {
   const factoryThis = this;
 
   // note that the destruction rate is set in each individual popup for a little randomness
-  const popupRate = 7500 / emotionObj.level; // base rate of 7.5 seconds, gets faster with higher emotion level
-  const minDisplayTime = 2;// minimum time a popup shows on screen
+  const emotionLevelMultiplier = 2 ** emotionObj.level; // exponential scale
+  const popupRate = 4500 / emotionLevelMultiplier; // base rate of ~3 seconds, gets faster with higher emotion level
+  const minDisplayTime = 6000;// minimum time a popup shows on screen
   const overLapAllowance = 0.60; // allows 60% overlap when a new element is created
+  const colors = window.baseColors[curEmotion.base][emotionObj.level-1];
 
   factoryThis.emotion = emotionObj.name;
   factoryThis.activeElements = [];
@@ -92,20 +139,59 @@ function PopupFactory (emotionObj) {
   }
 
   function PopupEl (multiplier) {
-    const hasImage = true; // should be a random chance either true or false
-    const hasText = false; // should be a random chance either true or false
     const childThis = this;
+    const destroyRate = minDisplayTime + ((Math.random() * 4000));
     childThis.id = Math.floor(Math.random() * 1000000);
-    childThis.$element = $(`<div class="popup window" id=${childThis.id}>${childThis.id} — ${factoryThis.emotion}</div>`);
-    
+
+    // there are 4 types of popups: 
+    // 0 image -> just an image
+    // 1 image + text -> an image with text overlay
+    // 2 text -> just text
+    // 3 label -> just the label asset, which is an image
+
+    const type = Math.floor(Math.random() * 4); // generates random number between 0 - 3;
+    const hasImage = type !== 2; // should be a random chance either true or false
+    const stringFallback = 'There is nothing you are afraid of.'; // used if string retrieval fails for some reason
+    childThis.$element = $(`<div class="popup window ${type === 3 && 'label'}" id=${childThis.id}></div>`);
+
+    // set up the colors
+    childThis.$element.css('background', `#${colors[1]}`);
+    childThis.$element.css('color', `#${colors[0]}`);
+
     // hide it so we can calculate it's position
     childThis.$element.css('visibility', 'hidden');
 
-    if (hasImage) {
+    if (type === 0 || type === 1) {
       // attach a color modified image
       const imageURL = imgURLs[Math.floor(Math.random() * imgURLs.length)];
       const imgEl = $(`<img src="${imageURL}">`);
       addSvgFilterForElement(imgEl, window.baseColors[curEmotion.base][emotionObj.level-1]);
+      childThis.$element.append(imgEl);
+    }
+
+    if (type === 1 || type === 2) {
+      // insert some text
+      // window.emotionStings is an array of objects with a length of 2
+      const selectedData = window.emotionStrings[Math.floor(Math.random() * 2)][curEmotion.base];
+      const string = selectedData[Math.floor(Math.random() * selectedData.length)] || stringFallback;
+      const textEl = $(`<p class=${type === 1 ? 'text' : 'solo text'}>${string}</p>`);
+
+      if (type === 1) {
+        // set text color based on color to make it easier to read
+        const textColor = getTextColorForBackground(colors[0]);
+        childThis.$element.css('color', textColor);
+
+        // set border color to match text on just text elements
+        childThis.$element.css('border-color', `#${colors[0]}`);
+      } 
+
+      childThis.$element.append(textEl);
+    }
+
+    if (type === 3) {
+      // set label image
+      const imageURL = `/static/06-passive/${curEmotion.base}/label.jpg`;
+      const imgEl = $(`<img class='label' src="${imageURL}">`);
       childThis.$element.append(imgEl);
     }
 
@@ -156,15 +242,11 @@ function PopupFactory (emotionObj) {
     }
 
     childThis.destroy = () => {
-      console.log('removing pop up id:', childThis.id);
       // remove element from dom and from currentElement array
       childThis.$element.remove();
 
       factoryThis.removeEl(childThis.id);
     }
-
-    const destroyRate = minDisplayTime + popupRate * ((Math.random() * 2) * emotionObj.level);
-
 
     setTimeout(childThis.destroy, destroyRate);
   }

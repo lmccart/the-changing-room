@@ -4,24 +4,25 @@ body {
 	background-color: powderblue;
 	padding: 0px;
 	margin: 0px;
+	font-weight: 500;
 }
-#nav {
-	position: fixed;
-	top: 40px;
-	left: 40px;
-	width: 300px;
-	height: 100px;
-	background-color: white;
-	border: 2px solid black;
-	padding: 10px;
-	display: flex;
-	align-items: center;
-	z-index: 1000;
-	button {
-		height: 50px;
-		margin: 20px;
-	}
-}
+// #nav {
+// 	position: fixed;
+// 	top: 40px;
+// 	left: 40px;
+// 	width: 300px;
+// 	height: 100px;
+// 	background-color: white;
+// 	border: 2px solid black;
+// 	padding: 10px;
+// 	display: flex;
+// 	align-items: center;
+// 	z-index: 1000;
+// 	button {
+// 		height: 50px;
+// 		margin: 20px;
+// 	}
+// }
 
 #hand-indicator {
   display: none;
@@ -33,7 +34,7 @@ body {
 
 .scroll {
 	width: 33.3%;
-	padding: 20px;
+	padding: 2vw;
 	height: 100vh;
 	box-sizing: border-box;
 	-webkit-box-sizing: border-box;
@@ -41,7 +42,7 @@ body {
 	.scroll_text {
 		width: 1px;
 		margin-top: 40px;
-		line-height: 1.5em;
+		line-height: 1.3em;
 	}
 }
 
@@ -51,11 +52,13 @@ body {
 }
 
 #wrapper_joined {
-	font-size: 4em;
+	font-size: 13.2vw;
+	line-height: 1.25em;
 	display: none;
 	overflow-y: scroll;
 	overflow-x: hidden;
 	background: radial-gradient(#ebdce1, #a5ade1);
+	border: 3px solid black;
 	::-webkit-scrollbar {
 		-webkit-appearance: none;
 		width: 25px;
@@ -66,7 +69,6 @@ body {
 		box-shadow: 0 0 1px rgba(255, 255, 255, .5);
 	}
 	.scroll {
-		font-size: 2.5em;
 		width: 100%;
 	}
 	.emotion {
@@ -103,12 +105,27 @@ body {
 		border: none;
 	}
 	.scroll {
-		border: 2px solid #000;
-		font-size: 3.65em;
+		border: 1px solid #000;
+		font-size: 4vw;
 		overflow-y: scroll;
 	}
 }
 
 
 
+::-webkit-scrollbar {
+	width: 22px;
+}
+  
+/* Track */
+::-webkit-scrollbar-track {
+	// background: #f1f1f1; 
+	border-left: 3px solid black;
+	width: 30px;
+}
 
+/* Handle */
+::-webkit-scrollbar-thumb {
+	background: black; 
+	height: 180px;
+}
