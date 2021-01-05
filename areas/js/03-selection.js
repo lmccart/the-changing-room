@@ -7,6 +7,7 @@ import './shared.js';
 let curEmotion;
 const socket = io();
 socket.on('emotion:update', updateEmotion);
+$('#wrapper_separate').hide();
 
 function updateEmotion(msg) {
   console.log(msg)
