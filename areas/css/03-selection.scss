@@ -1,7 +1,6 @@
 @import './shared.scss';
 
 body {
-	background-color: powderblue;
 	padding: 0px;
 	margin: 0px;
 	font-weight: 500;
@@ -53,15 +52,13 @@ body {
 
 #wrapper_joined {
 	font-size: 13.2vw;
-	line-height: 1.25em;
-	display: none;
+	line-height: 1.2em;
+	display: flex;
 	overflow-y: scroll;
 	overflow-x: hidden;
-	background: radial-gradient(#ebdce1, #a5ade1);
-	border: 3px solid black;
 	::-webkit-scrollbar {
 		-webkit-appearance: none;
-		width: 25px;
+		width: 1.8vw;
 		border-left: 1px solid black;
 	}
 	::-webkit-scrollbar-thumb {
@@ -93,20 +90,18 @@ body {
 }
 
 #wrapper_separate {
-	display: none;
-	background: radial-gradient(#ebdce1, #a5ade1);
+	display: flex;;
 	::-webkit-scrollbar-thumb {
 		background-color: none;
 		box-shadow: 0;
 	}
 	::-webkit-scrollbar {
 		-webkit-appearance: none;
-		width: 0;
-		border: none;
+		display: none;
 	}
 	.scroll {
 		border: 1px solid #000;
-		font-size: 4vw;
+		font-size: 3vw;
 		overflow-y: scroll;
 	}
 }
@@ -114,14 +109,13 @@ body {
 
 
 ::-webkit-scrollbar {
-	width: 22px;
+	width: 2vw;
 }
   
 /* Track */
 ::-webkit-scrollbar-track {
 	// background: #f1f1f1; 
-	border-left: 3px solid black;
-	width: 30px;
+	border-left: .15vw solid black;
 }
 
 /* Handle */
