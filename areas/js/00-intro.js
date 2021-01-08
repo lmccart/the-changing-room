@@ -3,43 +3,44 @@ import $ from 'jquery';
 import '../css/00-intro.scss';
 import './shared.js';
 
-let emotions;
+/* VARIABLES */
+const scroll_up_time = 5000;
+const scroll_down_time = 30000;
+const scroll_pause_time = 3000;
+
 let curEmotion;
-let introText;
-const socket = io();
+
+let socket = io();
 socket.on('emotion:update', updateEmotion);
 
 getIntroText();
-
 
 function updateEmotion(msg) {
   console.log("updateEmotion")
   if (!curEmotion || curEmotion.name !== msg.name) {
     curEmotion = msg;
     console.log('emotion has been updated to: ' + msg.name + ' (base: ' + msg.base + ', level: ' + msg.level + ')');
-    $(".intro-text-container").css("visibility", "hidden");
-    showLoadingOverlay(curEmotion.name);
     updateInterface();
+
+    $(".intro-text-container").css("visibility", "hidden");
+    showLoadingOverlay(curEmotion.name, function() {
+      $(".intro-text-container").css("visibility", "visible");
+      scrollThis();
+    });
   }
 }
 
 function updateInterface() {
   console.log("updateInterface")
   $('#debug-info').text('CURRENT EMOTION: ' + curEmotion.name + ' (base: ' + curEmotion.base + ', level: ' + curEmotion.level + ')')
-  scrollThis();
-
 }
-
-// window.scrollThis = () => {}
 
 function getIntroText() {
   fetch('/data/00_intro.txt')
     .then(res => res.blob())
     .then(blob => blob.text())
     .then(text => {
-      introText = text;
-      console.log(introText)
-      $(".text").text(introText);
+      $(".text").text(text);
     })
 }
 
@@ -47,31 +48,22 @@ function scrollThis() {
   console.log("scrollThis")
   $(".text").scrollTop(0);
   $(".text").stop();
-  console.log(introText)
-  const scrollFast = 3000;
-  const scrollSlow = 20000;
 
-  setTimeout(function () {
-    $(".intro-text-container").css("visibility", "visible");
-
-
-
+  setTimeout(function() {
     $(".text").animate({
       scrollTop: $(".text").prop("scrollHeight")
-    }, scrollSlow, 'linear', function () {
+    }, scroll_down_time, 'linear', function () {
       console.log("Complete");
       setTimeout(function () {
         $(".text").animate({
           scrollTop: 0
-        }, scrollFast, 'linear', function () {
+        }, scroll_up_time, 'linear', function () {
           console.log("Complete at the top");
           scrollThis();
         });
-
-      }, 3000);
-
+      }, scroll_pause_time);
     });
-  }, 2000);
+  }, scroll_pause_time);
 
 
 }
