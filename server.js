@@ -66,14 +66,13 @@ io.on('connection', (socket) => {
     Lights.playEmotion(curEmotion);
   });
 
-  socket.on('chat:send', function(msg){
+  socket.on('chat:send', function(data){
     // called by area 04 when user hits "send" on a chat message
     const wordsToSubArray = chatSubs[curEmotion.base]
     const subArray = chatSubs[`${curEmotion.base}-subs`];
 
     // splits message into array of words, spaces and punctuation marks
-    const msgWordArray = msg.split(/([\.!\?\,\-])|([\s])/g);
-    let modifiedMsg = '';
+    const msgWordArray = data.original.split(/([\.!\?\,\-])|([\s])/g);
     for (let index = 0; index < msgWordArray.length; index++) {
       const currentWord = msgWordArray[index];
       const matchedIndex = wordsToSubArray.findIndex(word => word === currentWord);
@@ -82,8 +81,8 @@ io.on('connection', (socket) => {
         msgWordArray[index] = subArray[matchedIndex];
       }
     }
-    modifiedMsg = msgWordArray.join('');
-    io.emit('chat:new', modifiedMsg);
+    data.modified = msgWordArray.join('');
+    io.emit('chat:new', data);
   });
 });
 

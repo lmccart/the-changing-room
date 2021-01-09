@@ -68,3 +68,29 @@ User: Venessa Castagnoli 2, Pwd: OCA2020
 * OCA3 MacPro will be driving the 4 touch-screen monitors.
 User: Venessa Castagnoli 3, Pwd: OCA2020
 * OCA4 (TBD Mac) will be driving the 2 projections in the Conversation Room 2
+
+
+### Mac Setup
+**This is in progress**
+1. System Prefs
+   * Desktop background
+   * Screensaver / Sleep OFF
+   * Do Not Disturb ON
+   * Software Updates OFF
+   * Default Browser CHROME
+2. Setup software and tools
+   * Install Chrome
+   * Install [nodejs](https://nodejs.org/) (version 10.16 or newer)
+   * Install [VS Code](https://code.visualstudio.com/)
+   * [Add key to GitHub](https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/adding-a-new-ssh-key-to-your-github-account)
+   * Clone respository: `git clone git@github.com:lmccart/the-changing-room.git`
+   * Install dependencies: `cd the-changing-room && npm install`
+   * Add [font files](https://drive.google.com/drive/u/0/folders/0B8UbelTCwVpIMS1paHVPNVZpZkk) to `static/fonts/`
+   * Add [image files](https://drive.google.com/file/d/1SsSHYPwk1jwX-A4SABYmn7RZQqwPsv2_/view?usp=sharing) to `static/images/` (should look like `static/images/angry/image file name.jpg`)
+3. Setup startup tasks
+   * `sudo bash /automate/setup-multibrowse.sh`
+   * `python /automate/multibrowse-source/multibrowse.py URL URL URL` (https://github.com/foxxyz/multibrowse)
+   * Copy startup script to Desktop
+     * Script will (1) if needed, start node, (2) start browser with multibrowse
+   * Setup launch tasks / keep alive?
+     * Run script
