@@ -8,40 +8,133 @@ import Timeline from './Timeline.js';
 let emotions;
 let curEmotion;
 
+var dataMeditations;
+var dataMeditationEmotions;
+var dataMemories;
+var timeline;
+var imageList = [];
+var preloadedImages = [] // kept here to preload images; without this, some browsers might clear cache & unload images
+var dataLoaded = false;
+
+
+////////////// MEDITATION TIMINGS /////////////
+
+
+// The timeline starts.
+
+// We pause before meditation starts,
+let meditations_fadein_pause = 1000; 
+
+// and slowly, the meditation fades in.
+let meditations_fadein_duration = 500; 
+
+//////// The meditation starts.
+
+// Each meditation text plays at this interval,
+let meditation_interval = 5000;
+
+// and fades in,
+let each_meditation_fadein_duration = 500;
+
+// and fades out.
+let each_meditation_fadeout_duration = 500;
+
+// (But for [BODY AREA] and [PERSON], at indices 6 and 12 in the text,
+let meditation_long_indices = [6, 12];
+// there are longer intervals, and we take our time.)
+let meditation_long_interval = 10000;
+
+//////// The meditation is over.
+
+// We have a brief pause, 
+let meditations_fadeout_pause = 1000;
+
+// Then meditation fades out,
+let meditations_fadeout_duration = 500;
+
+// and we pause.
+let memories_fadein_pause = 1000;
+
+// Then, memories fade in.
+let memories_fadein_duration = 500;
+
+//////// The memory sequence starts.
+
+// Each memory arrives at this interval,
+let memory_interval = 1000;
+
+// and fades in
+let each_memory_fadein_duration = 500;
+
+// and fades out.
+let each_memory_fadeout_duration = 500;
+
+/////// The memories are over.
+
+// We pause before memory fades out
+let memories_fadeout_pause = 1000;
+
+// All memories fade out, slowly.
+let memories_fadeout_duration = 1000;
+
+// Finally,
+// we pause before we end the timeline
+let timeline_end_pause = 1000;
+
+// and then we start it 
+// all
+// over 
+// again.
+
+///////////////////////////////////////////////
 
 
 
-
-var triggerResetEmotion = false; // this is a global variable that every function checks to trigger a reset emotion. it's not the most elegant, but in this event-based loop, seems appropriate.
 
 const socket = io();
 socket.on('emotion:update', updateEmotion);
-var dataLoaded = false;
 
 function updateEmotion(msg) {
   if (!curEmotion || curEmotion.name !== msg.name) {
     curEmotion = msg;
     console.log('emotion has been updated to: ' + msg.name + ' (base: ' + msg.base + ', level: ' + msg.level +')');
     showLoadingOverlay(curEmotion.name);
-    updateInterface();
+    updateImageList(() => {
+        console.log(imageList);
+        updateInterface();
+    });
   }
 }
 
 function updateInterface() {
   resetTimeline();
-  triggerResetEmotion = true;
   $('#debug-info').text('CURRENT EMOTION: ' + curEmotion.name + ' (base: ' + curEmotion.base + ', level: ' + curEmotion.level +')')
 }
 
 
 ///////////////////////////
 
-var dataMeditations;
-var dataMeditationEmotions;
+function updateImageList(cb) {
 
+  fetch(`/images/${curEmotion.base}/manifest`)
+    .then(res => res.blob())
+    .then(blob => blob.text())
+    .then(text => { 
+      imageList = JSON.parse(text);
+
+      preloadedImages = [];
+      imageList.forEach(url => {
+        let img = new Image();
+        img.src = url;
+        preloadedImages.push(img)
+      });
+      cb(text);
+    });
+
+}
 
 function loadData(cb) {
-  var dataLoaded = -2; // this is a bit hacky but simpler than Promises.all
+  var dataLoaded = -3; // this is a bit hacky but simpler than Promises.all
 
   fetch('/data/02_meditation.txt')
     .then(res => res.blob())
@@ -53,7 +146,6 @@ function loadData(cb) {
     })
 
 
-  // tweaked from 04-convo1.js
   Papa.parse("/data/02_meditation_emotion_specific.tsv", {
     download: true,
     header: true,
@@ -78,6 +170,37 @@ function loadData(cb) {
       if(dataLoaded == 0) { cb(); }
     }
   });
+
+
+  Papa.parse("/data/02_memories.tsv", {
+    download: true,
+    header: true,
+    skipEmptyLines: 'greedy',
+    complete: function(results) {
+      const rawResults = results.data;
+      // the data comes in as [{ "afraid": "One time this..", "alive": "one day...", ...} ...]
+      // I (dan) think it should be { "annoyed": [ "One time", ...], "alive": ["one day", ..] /// 
+      const reordered = {};
+
+      for (var i = 0; i < rawResults.length; i++) {
+        let thisrow = rawResults[i]
+
+        var newrow = {};
+        Object.keys(thisrow).forEach((key) => { 
+          key = key.trim();
+          if(key != "" && thisrow[key].trim() != "") {
+            if(reordered[key] == undefined) { reordered[key] = []; }
+            reordered[key].push(thisrow[key]);
+          }
+        })
+      }
+      dataMemories = reordered;
+      dataLoaded += 1;
+      if(dataLoaded == 0) { cb(); }
+    }
+  });
+
+
 }
 
 
@@ -103,24 +226,23 @@ function generateMeditationTexts() {
 
 function generateMemories() {
 
-  return [
-    { 
-      type: "image",
-      url: "https://i.imgur.com/Y3QNok5.png"
-    },
-    { 
+  var memories = [];
+
+  dataMemories[curEmotion.base].forEach(m => {
+    memories.push({ 
       type: "text",
-      text: "I feel like I'm just pouring all of my energy into a void."
-    },
-    { 
+      text: m,
+    });
+  });
+
+  imageList.forEach(m => {
+    memories.push({
       type: "image",
-      url: "https://i.imgur.com/Y3QNok5.png"
-    },
-    { 
-      type: "text",
-      text: "I don't know what's happening now. I felt like I had been slowly dying over months, years maybe."
-    },
-  ]
+      url: m,
+    });
+  });
+
+  return memories;
 
 }
 
@@ -154,7 +276,6 @@ function displayMemory(opts) {
   memdiv.top = opts.top;
   memdiv.css({ top:  opts.top, left: opts.left });
 
-  console.log("appending to memocontainer");
 
   memdiv
     .hide()
@@ -164,9 +285,15 @@ function displayMemory(opts) {
 
 /////////////////////////////////
 
-function resetHTML() {
-  $("#meditation_text").empty();
-  $("#memory_container").empty();
+function resetHTML(cb) {
+  $("#meditation_text").fadeOut(1000, function() {
+    $(this).empty();
+    $(this).fadeIn(1000);
+  });
+  $("#memory_container").fadeOut(1000, function() {
+    $(this).empty();
+    $(this).fadeIn(1000);
+  });
 }
 
 function queueEvents(timeline) {
@@ -175,8 +302,10 @@ function queueEvents(timeline) {
 
   var timeMarker = 0;
 
+  timeMarker += meditations_fadein_pause;
+
   timeline.add({ time: timeMarker, event: function () { 
-    $("#meditation_container").fadeIn(500);
+    $("#meditation_container").fadeIn(meditations_fadein_duration);
     console.log("TIMELINE STARTING");
   } });
 
@@ -184,18 +313,21 @@ function queueEvents(timeline) {
 
   ///////// QUEUE MEDITATIONS
   
-  let meditation_interval = 1000;
-
   let mts = generateMeditationTexts();
 
   mts.forEach((mt, i) => {
 
+
     timeline.add({ time: timeMarker, event: function () { 
       console.log(mt); 
-      displayMeditationPhrase({ text: mt, fadeIn: 200, fadeOut: 200 });
+      displayMeditationPhrase({ text: mt, fadeIn: each_meditation_fadein_duration, fadeOut: each_meditation_fadeout_duration});
     } });
 
-    timeMarker += meditation_interval;
+    if(meditation_long_indices.includes(i)) { 
+      timeMarker += meditation_long_interval;
+    } else {
+      timeMarker += meditation_interval;
+    }
 
   });
   
@@ -203,17 +335,17 @@ function queueEvents(timeline) {
   ///////// MEDITATION FADES OUT
   //
 
-  timeMarker += 1000;
+  timeMarker += meditations_fadeout_pause;
 
   timeline.add({ time: timeMarker, event: function () { 
-    $("#meditation_container").fadeOut(500);
+    $("#meditation_container").fadeOut(meditations_fadeout_duration);
   } });
 
 
-  timeMarker += 1000;
+  timeMarker += memories_fadein_pause;
 
   timeline.add({ time: timeMarker, event: function () { 
-    $("#memory_container").fadeIn(500);
+    $("#memory_container").fadeIn(memories_fadein_duration);
   } });
 
 
@@ -221,7 +353,6 @@ function queueEvents(timeline) {
   ///////// QUEUE MEMORIES
 
   let mems = generateMemories();
-  let memory_interval = 1000;
 
   mems.forEach((mem, i) => {
 
@@ -229,9 +360,9 @@ function queueEvents(timeline) {
 
       displayMemory({
         data: mem,
-        fadeIn: 500,
-        fadeOut: 500,
-        left: `${ Math.random() * 80 }vw`,
+        fadeIn: each_memory_fadein_duration,
+        fadeOut: each_memory_fadeout_duration,
+        left: `${ Math.random() * 80 }vw`, // TODO: better sizing
         top: `${ Math.random() * 80 }vh`
       })
 
@@ -242,16 +373,16 @@ function queueEvents(timeline) {
   });
  
   
-  timeMarker += 1000;
+  timeMarker += memories_fadeout_pause;
 
   timeline.add({ time: timeMarker, event: function () { 
     $("#meditation_text").empty();
-    $("#memory_container").fadeOut(1000, function() {
+    $("#memory_container").fadeOut(memories_fadeout_duration, function() {
       $(this).empty();
     });
   } });
 
-  timeMarker += 1000;
+  timeMarker += timeline_end_pause;
 
   timeline.setDuration(timeMarker); // LOOP
 
@@ -269,7 +400,11 @@ function resetTimeline() {
 
   console.log("Resetting timeline");
  
-  let timeline = new Timeline({ loop: true, duration: 50000, interval: 100 });
+  if(timeline === undefined) {
+    timeline = new Timeline({ loop: true, duration: 50000, interval: 100 });
+  } else {
+    timeline.clear();
+  }
 
   resetHTML();
 

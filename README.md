@@ -5,7 +5,7 @@
 2. Clone respository: https://github.com/lmccart/the-changing-room.git
 3. Install dependencies: `npm install`
 4. Add font files to `static/fonts/`
-5. Add [image files](https://drive.google.com/file/d/1SsSHYPwk1jwX-A4SABYmn7RZQqwPsv2_/view?usp=sharing) to `static/images/` (should look like `static/image/angry/image file name.jpg`)
+5. Add [image files](https://drive.google.com/file/d/1SsSHYPwk1jwX-A4SABYmn7RZQqwPsv2_/view?usp=sharing) to `static/images/` (should look like `static/images/angry/image file name.jpg`)
 5. Start server and webpack watcher: `npm start`
 6. Individual areas can be visited at the following paths:
    - http://localhost:3000/00-intro
