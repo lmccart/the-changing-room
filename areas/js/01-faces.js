@@ -12,6 +12,7 @@ import 'fancy-textfill/es2015/jquery.plugin';
 // EMOTION HANDLING
 let emotions;
 let curEmotion;
+let emotionalMessage = "When did you first realize that you can't trust yourself?";
 const socket = io();
 
 socket.on('emotion:update', updateEmotion);
@@ -20,9 +21,10 @@ function updateEmotion(msg) {
   if (!curEmotion || curEmotion.name !== msg.name) {
     curEmotion = msg;
     console.log('emotion has been updated to: ' + msg.name + ' (base: ' + msg.base + ', level: ' + msg.level + ')');
+    emotionalMessage
+    $('#dummy').text(emotionalMessage);
 
-    showLoadingOverlay(curEmotion.name);
-    $(".text-container").css("visibility", "hidden");
+    $(".textbox").css("visibility", "hidden");
     updateInterface();
   }
 }
@@ -34,6 +36,16 @@ function updateInterface() {
   $('.textbox').fancyTextFill({
     maxFontSize: 400
   });
+
+  $('.textbox-dummy').fancyTextFill({
+    maxFontSize: 400
+  });
+
+
+
+  // $('#spellbox').css("font-size", fontSize + "px");
+  // fontSize = $("#dummy").css('font-size');
+
 }
 
 // VIDEO AND FACE HANDLING
@@ -52,11 +64,13 @@ const heightRatio = currentHeight / ipadHeight;
 const update_memory = pico.instantiate_detection_memory(5); // use the detecions of the last 5 frames
 const videoEl = $('#face-stream');
 const videoParentEl = $("#video-parent");
+const typingSpeed = 60;
 
 let facefinderClassifyRegion;
 let videoWidth;
 let videoHeight;
 let watchdog = 0; // used to delay showing/hiding video
+let spellOut = false; // used to determine when to animate text
 
 // set video dimensions to ipad ratio
 // this is mostly for development and will
@@ -154,9 +168,16 @@ const processfn = (video) => {
 
     if (watchdog > (delaySeconds * 10)) {
       // remove cover
-      
+
       coverEl.hide();
-      $(".text-container").css("visibility", "visible");
+      $(".textbox").css("visibility", "visible");
+      if (spellOut == false) {
+        spellOut = true;
+        console.log("flip spell out switch")
+        typeInstruction(emotionalMessage);
+      } 
+
+
     }
   } else {
     watchdog = watchdog > 0 ? 0 : watchdog - 1;
@@ -164,8 +185,34 @@ const processfn = (video) => {
     if (watchdog < -(delaySeconds * 10)) {
       // cover
       coverEl.show();
-      $(".text-container").css("visibility", "hidden");
+      $(".textbox").css("visibility", "hidden");
 
+      if (spellOut == true) {
+        spellOut = false;
+        console.log("switch off")
+        $("#spellbox").empty();
+      } 
     }
   }
+}
+
+
+function typeInstruction(string, iteration) {
+  var iteration = iteration || 0;
+  let fontSize = $("#dummy").css('font-size');
+  console.log(fontSize)
+  $('#spellbox').css("font-size", fontSize);
+  // Prevent our code executing if there are no letters left
+  if (iteration === string.length) {
+    return;
+  }
+
+  setTimeout(function () {
+    // Set the instruction to the current text + the next character
+    // whilst incrementing the iteration variable
+    $('#spellbox').text($('#spellbox').text() + string[iteration++]);
+
+    // Re-trigger our function
+    typeInstruction(string, iteration);
+  }, typingSpeed);
 }

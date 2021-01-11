@@ -7,6 +7,7 @@ import './shared.js';
 let curEmotion;
 const socket = io();
 socket.on('emotion:update', updateEmotion);
+$('#wrapper_separate').hide();
 
 function updateEmotion(msg) {
   console.log(msg)
@@ -36,26 +37,26 @@ function updateInterface() {
 // "`-0-0-'"`-0-0-'"`-0-0-'./o--000'"`-0-0-'"`-0-0-'"`-0-0-'"`-0-0-'"`-0-0-'"`-0-0-' 
 // 
 
-$('#emotions').change(pickEmotion);
+// $('#emotions').change(pickEmotion);
 
-$.getJSON('/emotions', (data) => {
-  console.log(data);
-  populatePicker(data);
-});
+// $.getJSON('/emotions', (data) => {
+//   console.log(data);
+//   populatePicker(data);
+// });
 
-function populatePicker(data) {
-  for (let item in data) {
-    $('#emotions').append($('<option>', {
-      value: item,
-      text: item
-    }));
-  }
-}
+// function populatePicker(data) {
+//   for (let item in data) {
+//     $('#emotions').append($('<option>', {
+//       value: item,
+//       text: item
+//     }));
+//   }
+// }
 
-function pickEmotion() {
-  let emotionName = $('#emotions').val();
-  socket.emit('emotion:pick', emotionName);
-}
+// function pickEmotion() {
+//   let emotionName = $('#emotions').val();
+//   socket.emit('emotion:pick', emotionName);
+// }
 
 // 
 //    ___    _  _     ___              ___     ___     ___    _   _    ___   
@@ -66,162 +67,257 @@ function pickEmotion() {
 // "`-0-0-'"`-0-0-'"`-0-0-'./o--000'"`-0-0-'"`-0-0-'"`-0-0-'"`-0-0-'"`-0-0-' 
 // 
 
-
-
 // VARIABLES
-const seperate_panel1 = document.getElementById("scroll1");
-const seperate_panel2 = document.getElementById("scroll2");
-const seperate_panel3 = document.getElementById("scroll3");
+const num_panels = 4;
+const separate_panels = [];
+for (let i=0; i<num_panels; i++) {
+  separate_panels.push(document.getElementById("scroll"+i));
+}
+
+const handIndicator = $('#hand-indicator');
 const sel_txt_url = '/data/03_selection_intro.txt';
 const apiURL_emotions = "/emotions";
 let sel_intro_content;
 let emotions;
-let active = false;
 
-////////////////// MODES
-function joinedmode() {
-  $("#wrapper_joined").fadeIn(1000);
-  $("#wrapper_separate").fadeOut(1000);
-}
-function seperatemode(elm, emotionName, base_emotion) {
-  socket.emit('emotion:pick', emotionName);
-  $(".emotion").removeAttr( 'style' );
-  $(".emotion").removeClass("selected_emotion");
-  //transition to font color to selected emotion colors
-  let emotion_colors = baseColors[base_emotion]
-  let emotion_colors_str1 = "#"+emotion_colors[0][0]
-  let emotion_colors_str2 = "#"+emotion_colors[0][1]
-  $(elm).fadeIn("10000", function() {
-    $(this).css("color", emotion_colors_str1);
-    $("#wrapper_joined").css({background:"-webkit-radial-gradient(" + emotion_colors_str1 + "," + emotion_colors_str2 + ")"});
-  });
-  //transition to font color to white
-  setTimeout(function() {
-      $(elm).fadeIn("slow", function() {
-        $(this).addClass("selected_emotion")
-      });
-      //start auto scroll
-      scroll_panels();
-  }, 5100);
-  setTimeout(function() {
-    $("#wrapper_joined").fadeOut(1000);
-    $("#wrapper_separate").css("display","flex");
-    //scroll to top (NOT WORKING) ---------------------------------
-    $("#scroll1 .scroll_text").scrollTop(0);
-    $("#scroll2").scrollTop(0);
-    $("#scroll3").scrollTop(0);
-    $("#wrapper_separate").fadeIn(1000);
-    $("#wrapper_separate").css("background","-webkit-radial-gradient(" + emotion_colors_str1 + "," + emotion_colors_str2 + ")");
-  }, 6000);
-}
+let timer;
+let timer_to_idle;
+let idle_timeout = 10;
+let scroll_timeout = 3;
+let seperate_scroll_down_time = 200000;
+let scroll_down_time = 990000;
+let scroll_up_time = 9000;
 
+let hand_interval;
+let hand_blink_time = 700;
+let hand_delay = 30000;
+
+let fade_time = 1000;
+let load_delay = 2000;
 
 ////////////////// READ IN EMOTION JSON
 fetch(apiURL_emotions)
   .then(response => response.json())
   .then(data => { 
     emotions = data;
-    for (let emotion in emotions) {
-        let base_emotion = emotions[emotion].base
-        let $emotion_div = $("<div>", {
-          "class": "emotion", 
-          text: `${emotion}`,
-          "click": function() {
-            seperatemode(this,`${emotion}`, base_emotion)
-          }
-        });
-        $("#scroll_joined").append($emotion_div)
-    }
-  })
+
+    Object.keys(emotions)
+    .sort()
+    .forEach(function(emotion, i) {
+      let base_emotion = emotions[emotion].base
+      let emotion_div = $("<div>", {
+        "id": `option-${emotion}`,
+        "class": "emotion", 
+        text: `${emotion}`,
+        "click": function() {
+          clickedmode(`${emotion}`, base_emotion)
+        }
+      });
+      $("#scroll_joined").append(emotion_div);
+    });
+  });
 ////////////////// READ IN SELECTION TEXT
 fetch(sel_txt_url)
   .then(response => response.text())
   .then(text => sel_intro_content = text)
   .then(() => selection_txt_parse(sel_intro_content))
-
-
 ////////////////// PARSING SELECTION TEXT TO PANELS
-const num_sents_panels = 3;
 function selection_txt_parse(sel_intro_content) {
   let sel_intro_sent = sel_intro_content.match( /[^\.!\?]+[\.!\?]+/g );
+  let num_sents_panels = Math.ceil(sel_intro_sent.length / num_panels);
   const panel_array = new Array(Math.ceil(sel_intro_sent.length / num_sents_panels))
     .fill()
     .map(_ => sel_intro_sent.splice(0, num_sents_panels))
   for(var i = 0; i < panel_array.length; i++) {
       var sentences = panel_array[i];
-      for(var j = 0; j < sentences.length; j++) {
-          if(i == 0) {
-            seperate_panel1.firstChild.innerHTML +=  sentences[j]
-          }
-          if(i == 1) {
-            seperate_panel2.firstChild.innerHTML +=  sentences[j]
-          }
-          if(i == 2) {
-            seperate_panel3.firstChild.innerHTML +=  sentences[j]
-          }
+      for(let j = 0; j < sentences.length; j++) {
+        separate_panels[i].firstChild.innerHTML += sentences[j];
       }
   }
 }
 
 
 
-////////////////// SCROLLING
-//timer starts when panel1 reaches bottom, go back to joinedmode
-function resetInterval() {
-  clearInterval(timer);
-  var timer = setTimeout(function() {
-    console.log("restarted interval");
-    active = false
-    joinedmode()
-   }, 9000); 
+////////////////// JOINED MODE
+function joinedmode() {
+  $("#wrapper_joined").stop().fadeIn(fade_time, function() {
+    scrollToEmotion(curEmotion.name, curEmotion.base);
+  });
+  // $("#wrapper_joined").css("display","flex");
+  $("#wrapper_separate").fadeOut(fade_time);
+  joinedTimer();
 }
-
-$("#wrapper_separate .scroll").scroll(function(e) {
-  if ($(this).is(':animated')) {
-      console.log('scroll happen by animate');
-  } else if (e.originalEvent) {
-      // scroll happen manual scroll
-      // console.log('scroll happen manual scroll');
-      const elm = "#"+e["currentTarget"]["id"]
-      $(elm).animate({scrollTop: $(".scroll").prop("scrollHeight")}, 600000, 'linear');
-      $("html, body").stop()
-  } else {
-      // scroll happen by call
-      console.log('scroll happen by call');
-  }
+// restart auto scrolling, restart hand blink
+function joinedTimer() {
+  let sec = scroll_timeout;
+  let sec_to_idle = idle_timeout;
+  clearInterval(timer);
+  clearInterval(timer_to_idle);
+  timer = setInterval(function() { 
+    sec--;
+    console.log("seconds to scroll " + sec)
+    if (sec == -1) {
+      console.log("restart autoscroll")
+      clearInterval(timer);
+      scrollDown($("#wrapper_joined"))
+    }
+  }, 1000);
+  timer_to_idle = setInterval(function() {
+    sec_to_idle--;
+    console.log("seconds to idle " + sec_to_idle)
+    if (sec_to_idle == -1) {
+      clearInterval(timer_to_idle);
+      separatemode()
+    }
+  }, 1000);
+}
+//stop auto scroll on manual scroll, restart timers
+$("#wrapper_joined").on("click wheel DOMMouseScroll mousewheel keyup touchmove", function(e){
+  if (e.type !== 'click') $("#wrapper_joined").stop();
+  joinedTimer();
+  setHandInterval();
 });
 
-//stop auto scroll
-$(seperate_panel1).on("mousedown wheel DOMMouseScroll mousewheel keyup touchmove", function(){
-     $(seperate_panel1).stop();
-})
-$(seperate_panel2).on("mousedown wheel DOMMouseScroll mousewheel keyup touchmove", function(){
-     $(seperate_panel2).stop();
-})
-$(seperate_panel3).on("mousedown wheel DOMMouseScroll mousewheel keyup touchmove", function(){
-     $(seperate_panel3).stop();
-})
+// auto scroll down
+function scrollDown(el) {
+  el.animate({
+    scrollTop: el.get(0).scrollHeight
+  }, scroll_down_time, 'linear', function() {
+    scrollUp(el)
+  });
+}; 
+function scrollDown_separate(el, num) {
+  console.log(el.get(0).scrollHeight)
+  el.animate({
+    scrollTop: 4000
+  }, seperate_scroll_down_time,'linear', function() {
+    scrollUp(el)
+  });
+}; 
+// auto scroll up
+function scrollUp(el) {
+  el.animate({
+    scrollTop: 0
+  }, scroll_up_time, function() {
+    scrollDown(el);
+  });
+};
 
-// auto scrolling
-function scroll_panels() {
+
+
+
+////////////////// TRANSITION INTO SEPARATE MODE
+function clickedmode(emotion_name, base_emotion) {
+  socket.emit('emotion:pick', emotion_name);
+
+  $(".emotion").removeAttr( 'style' );
+  $(".emotion").removeClass("selected_emotion");
+  //get color of selected emotion colors
+  let emotion_colors = baseColors[base_emotion]
+  let emotion_colors_str1 = "#"+emotion_colors[0][0]
+  let emotion_colors_str2 = "#"+emotion_colors[0][1]
+
+  const elm = '#option-'+emotion_name;
+  $(elm).fadeIn(fade_time, function() {
+    scrollToEmotion(emotion_name, base_emotion);
+
+    //transition to color of selected emotion colors
+    $(this).css("color", emotion_colors_str1);
+    $("body").css({background:"-webkit-radial-gradient(" + emotion_colors_str1 + "," + emotion_colors_str2 + ")"});
+    $("#wrapper_joined").css({background:"-webkit-radial-gradient(" + emotion_colors_str1 + "," + emotion_colors_str2 + ")"});
+    $("#wrapper_separate").css({background:"-webkit-radial-gradient(" + emotion_colors_str1 + "," + emotion_colors_str2 + ")"});
+  });
+  
+  //transition to font color to white
   setTimeout(function() {
-    $("#scroll1").animate({scrollTop: 9086}, 600000, 'linear');
-    setTimeout(function() {
-      $("#scroll2").animate({scrollTop: 9086}, 600000, 'linear');
-    }, 1500);
-    setTimeout(function() {
-      $("#scroll3").animate({scrollTop: 9086}, 650000, 'linear');
-    }, 3000);
-    //when panel 2 reaches bottom
-    $(function($) {
-        $(seperate_panel2).on('scroll', function() {
-            if($(this).scrollTop() + $(this).innerHeight() >= $(this)[0].scrollHeight) {
-              resetInterval()
-            }
-        })
-    });
-  }, 0);
+    $(elm).addClass("selected_emotion")
+  }, fade_time);
 }
 
+function scrollToEmotion(emotion_name, base_emotion) {
+  console.log(emotion_name, base_emotion)
+  const elm = '#option-'+emotion_name;
+  const elHeight = $(elm).height() * 0.9;
+  const currentPosition = $(elm).offset().top;
+  const currentScroll = $("#wrapper_joined").scrollTop();
+  const middle = $(window).height() / 2;
+  const scrollVal = currentScroll + (currentPosition - middle + (elHeight / 2));
+  console.log(currentScroll, currentPosition, scrollVal)
+  $("#wrapper_joined").stop().animate({
+    scrollTop: scrollVal
+  }, 2000, 'linear');
+}
 
-joinedmode()
+////////////////// SEPARATE MODE
+function separatemode() {
+  $("#wrapper_joined").stop().fadeOut(fade_time);
+  $("#wrapper_joined").css("display","none");
+  $("#wrapper_separate").stop().fadeIn(fade_time);
+  $("#wrapper_separate").css("display","flex");
+  setTimeout(function() {
+    scroll_separate_panels()
+  }, 500);
+}
+
+// detect manual scroll
+$('#wrapper_separate .scroll').on("click wheel DOMMouseScroll mousewheel keyup touchmove", joinedmode);
+
+// auto scrolling
+function scroll_separate_panels() {
+  setTimeout(function() {
+    scrollDown_separate($("#scroll0"), 13000);
+  }, 0);
+  setTimeout(function() {
+    scrollDown_separate($("#scroll1"), 13000);
+  }, 0);
+  setTimeout(function() {
+    scrollDown_separate($("#scroll2"), 20000);
+  }, 1500);
+  setTimeout(function() {
+    scrollDown_separate($("#scroll3"), 18000);
+  }, 3100);  
+}
+
+//initial pause for screen load
+setTimeout(function() {
+  // clickedmode(curEmotion.name, curEmotion.base); // init with current emotion
+  // joinedTimer();
+  separatemode()
+
+  setHandInterval();
+}, load_delay);
+
+////////////////// POINTER
+
+// this function restarts 30s timer, called each time there's any interaction
+function setHandInterval() {
+  if (hand_interval) clearInterval(hand_interval);
+  handIndicator.finish().fadeOut(0);
+  hand_interval = setInterval(moveHand, hand_delay);
+}
+
+function moveHand() {
+  // move hand to random position
+  const i = Math.floor(Math.random()*num_panels); // ensure hand does not bridge screens
+  const panelWidth = $(window).width()/num_panels;
+  const nw = i * panelWidth + (Math.random() * (panelWidth - handIndicator.width()));
+  
+  const h = $(window).height() - handIndicator.height();
+  const nh = Math.floor(Math.random() * h);
+  
+  handIndicator.css({top: `${nh}px`, left: `${nw}px`})
+  // then show hand
+  handIndicator
+    .finish()
+    .fadeIn(0)
+    .delay(hand_blink_time)
+    .fadeOut(0)
+    .delay(hand_blink_time)
+    .fadeIn(0)
+    .delay(hand_blink_time)
+    .fadeOut(0)
+    .delay(hand_blink_time)
+    .fadeIn(0)
+    .delay(hand_blink_time)
+    .fadeOut(0)
+}

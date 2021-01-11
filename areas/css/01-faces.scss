@@ -23,7 +23,7 @@
 
 
 .text-container {
-  border: 1px solid white;
+  border: 5px solid white;
   width: 85vw;
   display: block;
   margin: 0;
@@ -32,21 +32,69 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  visibility: hidden;
   overflow: hidden;
 }
 
 .textbox
 {
- height: 100%;
- width: 100%;
- font-size: 2em;
- overflow: auto;
- font-weight: 700;
- font-style: italic;
- padding: 1em;
- color: white;
- overflow: hidden;
- display: block
-//    scroll-behavior: smooth;
+  height: 100%;
+  width: 100%;
+  overflow: auto;
+  font-weight: 700;
+  font-style: italic;
+  color: white;
+  overflow: hidden;
+  display: flex;
+  text-align: left;
+  padding: 50px;
+  align-items: center;
+}
+
+.textbox-dummy {
+  position: absolute;
+  text-align: left;
+  top: 0px;
+  height: 100%;
+  width: 100%;
+  overflow: auto;
+  font-weight: 700;
+  font-style: italic;
+  color: pink;
+  overflow: hidden;
+  padding: 50px;
+  opacity: 0;
+}
+
+#spellbox {
+  display: block;
+}
+
+
+
+
+#mdiv {
+  width: 25px;
+  height: 25px;
+  float: right;
+  margin-right: 65px;
+  margin-top: 35px;
+  position: absolute;
+  display: block;
+  right: 0px;
+}
+
+.mdiv {
+  height: 100px;
+  width: 5px;
+  background-color: white;
+  transform: rotate(45deg);
+  Z-index: 3;
+}
+
+.md {
+  height: 100px;
+  width: 5px;
+  background-color: white;
+  transform: rotate(90deg);
+  Z-index: 2;
 }

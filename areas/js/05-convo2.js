@@ -4,9 +4,12 @@ import Papa from 'papaparse';
 
 import '../css/05-convo2.scss';
 import './shared.js';
+import { getImgUrls, addSvgFilterForElement, getTextColorForBackground } from './lib/imageColorUtils.js';
 
-let emotions;
 let curEmotion;
+let imgURLs = [];
+let initTimeout;
+let typeTimeout;
 const socket = io();
 socket.on('emotion:update', updateEmotion);
 const typingSpeed = 200; // milliseconds
@@ -17,13 +20,18 @@ function updateEmotion(msg) {
   if (!curEmotion || curEmotion.name !== msg.name) {
     curEmotion = msg;
     console.log('emotion has been updated to: ' + msg.name + ' (base: ' + msg.base + ', level: ' + msg.level +')');
-    showConvoLoading();
     updateInterface();
   }
 }
 
-function updateInterface() {
+async function updateInterface() {
   $('#debug-info').text('CURRENT EMOTION: ' + curEmotion.name + ' (base: ' + curEmotion.base + ', level: ' + curEmotion.level +')')
+  showLoadingOverlay(curEmotion.name, showConvoLoading);
+  imgURLs = await getImgUrls(curEmotion.base);
+  reset();
+  $('svg').remove();
+  addSvgFilterForElement($('#background-1'), window.baseColors[curEmotion.base][curEmotion.level-1]);
+  addSvgFilterForElement($('#background-2'), window.baseColors[curEmotion.base][curEmotion.level-1]);
 }
 
 Papa.parse("/data/05_directions.tsv", {
@@ -46,10 +54,35 @@ Papa.parse("/data/05_directions.tsv", {
   }
 });
 
+function switchBackgrounds() {
+  const bgToHide = $('#background-1').is(":visible") ? $('#background-1') : $('#background-2');
+  const bgToShow = $('#background-1').is(":visible") ? $('#background-2') : $('#background-1');
+  
+  const imgUrl = imgURLs[Math.floor(Math.random() * imgURLs.length)]
+  console.log(imgUrl);
+  bgToShow.css('background-image', `url(${imgUrl})`);
+  $('#loader').attr('src', imgUrl).on('load', function() {
+    console.log('loaded: ', imgUrl)
+    bgToShow.show();
+    bgToHide.hide();
+  });
+}
+
+function reset() {
+  clearTimeout(initTimeout);
+  clearTimeout(typeTimeout);
+  $('#instruction').empty();
+  $('#convo-loading').removeClass('show');
+}
+
 function showConvoLoading() {
   $('#convo-loading').addClass('show');
+  $('#instruction').empty();
+  clearTimeout(initTimeout);
 
-  setTimeout(() => {
+  switchBackgrounds();
+
+  initTimeout = setTimeout(() => {
     // hide loading bar
     $('#convo-loading').removeClass('show')
 
@@ -58,7 +91,7 @@ function showConvoLoading() {
 
     typeInstruction(instruction);
 
-    if (instructionArrayPosition === window.instructions[curEmotion.base].length) {
+    if (instructionArrayPosition === window.instructions[curEmotion.base].length - 1) {
       instructionArrayPosition = 0;
     } else {
       instructionArrayPosition ++;
@@ -79,7 +112,7 @@ function typeInstruction(string, iteration) {
         return;
     }
     
-    setTimeout(function() {
+    typeTimeout = setTimeout(function() {
         // Set the instruction to the current text + the next character
         // whilst incrementing the iteration variable
         $('#instruction').text( $('#instruction').text() + string[iteration++] );
