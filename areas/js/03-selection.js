@@ -84,6 +84,7 @@ let timer;
 let timer_to_idle;
 let idle_timeout = 10;
 let scroll_timeout = 3;
+let seperate_scroll_down_time = 200000;
 let scroll_down_time = 990000;
 let scroll_up_time = 9000;
 
@@ -186,9 +187,10 @@ function scrollDown(el) {
   });
 }; 
 function scrollDown_separate(el, num) {
+  console.log(el.get(0).scrollHeight)
   el.animate({
-    scrollTop: num
-  }, scroll_down_time, 'linear', function() {
+    scrollTop: 4000
+  }, seperate_scroll_down_time,'linear', function() {
     scrollUp(el)
   });
 }; 
@@ -249,10 +251,12 @@ function scrollToEmotion(emotion_name, base_emotion) {
 ////////////////// SEPARATE MODE
 function separatemode() {
   $("#wrapper_joined").stop().fadeOut(fade_time);
-  // $("#wrapper_joined").css("display","none");
+  $("#wrapper_joined").css("display","none");
   $("#wrapper_separate").stop().fadeIn(fade_time);
-  // $("#wrapper_separate").css("display","flex");
-  scroll_separate_panels()
+  $("#wrapper_separate").css("display","flex");
+  setTimeout(function() {
+    scroll_separate_panels()
+  }, 500);
 }
 
 // detect manual scroll
@@ -276,8 +280,10 @@ function scroll_separate_panels() {
 
 //initial pause for screen load
 setTimeout(function() {
-  clickedmode(curEmotion.name, curEmotion.base); // init with current emotion
-  joinedTimer();
+  // clickedmode(curEmotion.name, curEmotion.base); // init with current emotion
+  // joinedTimer();
+  separatemode()
+
   setHandInterval();
 }, load_delay);
 
