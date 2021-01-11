@@ -14,12 +14,85 @@ var dataMemories;
 var timeline;
 var imageList = [];
 var preloadedImages = [] // kept here to preload images; without this, some browsers might clear cache & unload images
+var dataLoaded = false;
+
+
+////////////// MEDITATION TIMINGS /////////////
+
+
+// The timeline starts.
+
+// We pause before meditation starts,
+let meditations_fadein_pause = 1000; 
+
+// and slowly, the meditation fades in.
+let meditations_fadein_duration = 500; 
+
+//////// The meditation starts.
+
+// Each meditation text plays at this interval,
+let meditation_interval = 5000;
+
+// and fades in,
+let each_meditation_fadein_duration = 500;
+
+// and fades out.
+let each_meditation_fadeout_duration = 500;
+
+// (But for [BODY AREA] and [PERSON], at indices 6 and 12 in the text,
+let meditation_long_indices = [6, 12];
+// there are longer intervals, and we take our time.)
+let meditation_long_interval = 10000;
+
+//////// The meditation is over.
+
+// We have a brief pause, 
+let meditations_fadeout_pause = 1000;
+
+// Then meditation fades out,
+let meditations_fadeout_duration = 500;
+
+// and we pause.
+let memories_fadein_pause = 1000;
+
+// Then, memories fade in.
+let memories_fadein_duration = 500;
+
+//////// The memory sequence starts.
+
+// Each memory arrives at this interval,
+let memory_interval = 1000;
+
+// and fades in
+let each_memory_fadein_duration = 500;
+
+// and fades out.
+let each_memory_fadeout_duration = 500;
+
+/////// The memories are over.
+
+// We pause before memory fades out
+let memories_fadeout_pause = 1000;
+
+// All memories fade out, slowly.
+let memories_fadeout_duration = 1000;
+
+// Finally,
+// we pause before we end the timeline
+let timeline_end_pause = 1000;
+
+// and then we start it 
+// all
+// over 
+// again.
+
+///////////////////////////////////////////////
+
 
 
 
 const socket = io();
 socket.on('emotion:update', updateEmotion);
-var dataLoaded = false;
 
 function updateEmotion(msg) {
   if (!curEmotion || curEmotion.name !== msg.name) {
@@ -229,8 +302,10 @@ function queueEvents(timeline) {
 
   var timeMarker = 0;
 
+  timeMarker += meditations_fadein_pause;
+
   timeline.add({ time: timeMarker, event: function () { 
-    $("#meditation_container").fadeIn(500);
+    $("#meditation_container").fadeIn(meditations_fadein_duration);
     console.log("TIMELINE STARTING");
   } });
 
@@ -238,19 +313,21 @@ function queueEvents(timeline) {
 
   ///////// QUEUE MEDITATIONS
   
-  let meditation_interval = 3000;
-
   let mts = generateMeditationTexts();
 
   mts.forEach((mt, i) => {
 
+
     timeline.add({ time: timeMarker, event: function () { 
       console.log(mt); 
-      displayMeditationPhrase({ text: mt, fadeIn: 500, fadeOut: 500 });
+      displayMeditationPhrase({ text: mt, fadeIn: each_meditation_fadein_duration, fadeOut: each_meditation_fadeout_duration});
     } });
 
-    timeMarker += (mt.split(" ").length * 250);
-    timeMarker += meditation_interval;
+    if(meditation_long_indices.includes(i)) { 
+      timeMarker += meditation_long_interval;
+    } else {
+      timeMarker += meditation_interval;
+    }
 
   });
   
@@ -258,17 +335,17 @@ function queueEvents(timeline) {
   ///////// MEDITATION FADES OUT
   //
 
-  timeMarker += 1000;
+  timeMarker += meditations_fadeout_pause;
 
   timeline.add({ time: timeMarker, event: function () { 
-    $("#meditation_container").fadeOut(500);
+    $("#meditation_container").fadeOut(meditations_fadeout_duration);
   } });
 
 
-  timeMarker += 1000;
+  timeMarker += memories_fadein_pause;
 
   timeline.add({ time: timeMarker, event: function () { 
-    $("#memory_container").fadeIn(500);
+    $("#memory_container").fadeIn(memories_fadein_duration);
   } });
 
 
@@ -276,7 +353,6 @@ function queueEvents(timeline) {
   ///////// QUEUE MEMORIES
 
   let mems = generateMemories();
-  let memory_interval = 1000;
 
   mems.forEach((mem, i) => {
 
@@ -284,8 +360,8 @@ function queueEvents(timeline) {
 
       displayMemory({
         data: mem,
-        fadeIn: 500,
-        fadeOut: 500,
+        fadeIn: each_memory_fadein_duration,
+        fadeOut: each_memory_fadeout_duration,
         left: `${ Math.random() * 80 }vw`, // TODO: better sizing
         top: `${ Math.random() * 80 }vh`
       })
@@ -297,16 +373,16 @@ function queueEvents(timeline) {
   });
  
   
-  timeMarker += 1000;
+  timeMarker += memories_fadeout_pause;
 
   timeline.add({ time: timeMarker, event: function () { 
     $("#meditation_text").empty();
-    $("#memory_container").fadeOut(1000, function() {
+    $("#memory_container").fadeOut(memories_fadeout_duration, function() {
       $(this).empty();
     });
   } });
 
-  timeMarker += 1000;
+  timeMarker += timeline_end_pause;
 
   timeline.setDuration(timeMarker); // LOOP
 
