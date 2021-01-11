@@ -212,9 +212,15 @@ function displayMemory(opts) {
 
 /////////////////////////////////
 
-function resetHTML() {
-  $("#meditation_text").empty();
-  $("#memory_container").empty();
+function resetHTML(cb) {
+  $("#meditation_text").fadeOut(1000, function() {
+    $(this).empty();
+    $(this).fadeIn(1000);
+  });
+  $("#memory_container").fadeOut(1000, function() {
+    $(this).empty();
+    $(this).fadeIn(1000);
+  });
 }
 
 function queueEvents(timeline) {
