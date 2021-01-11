@@ -1,7 +1,30 @@
-@import './shared.scss';
+@import "./shared.scss";
 
-body {
-  background: blue;
+.backgrounds {
+  overflow: hidden;
+}
+
+.backgrounds div {
+  display: block;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1;
+  background-position: center;
+  background-size: cover;
+}
+
+svg {
+  display: none;
+}
+
+#loader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  visibility: hidden;
 }
 
 #convo-loading {
@@ -9,7 +32,6 @@ body {
   top: 0;
   left: 0;
   z-index: 100;
-
 
   backdrop-filter: blur(5px);
 
@@ -22,7 +44,7 @@ body {
 
   &.show {
     display: flex;
-  } 
+  }
 
   h1 {
     color: white;
@@ -44,7 +66,7 @@ body {
     height: 30px;
 
     &:before {
-      content: '';
+      content: "";
       position: absolute;
       top: 2px;
       bottom: 2px;
@@ -68,6 +90,9 @@ body {
 }
 
 .main {
+  position: relative;
+  z-index: 5;
+
   width: 100vw;
   height: 100vh;
 
