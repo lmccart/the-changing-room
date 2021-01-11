@@ -15,6 +15,7 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+    z-index: 100;
     // overflow: hidden;
 }
 
@@ -32,17 +33,29 @@
 ::-webkit-scrollbar {
     width: 22px;
   }
-  
+
   /* Track */
   ::-webkit-scrollbar-track {
-    // background: #f1f1f1; 
+    // background: #f1f1f1;
     border-left: 3px solid black;
     width: 30px;
   }
-   
+
   /* Handle */
   ::-webkit-scrollbar-thumb {
-    background: black; 
+    background: black;
     height: 180px;
   }
-  
+
+
+  .backgrounds div {
+    display: block;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1;
+    background-position: center;
+    background-size: cover;
+}
