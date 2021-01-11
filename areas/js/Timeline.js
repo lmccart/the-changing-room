@@ -42,6 +42,12 @@ class Timeline {
 
   }
 
+  clear() {
+    this.timeline = {};
+    this.completed_events = {};
+    this.startTime = null;
+  }
+
   setDuration(duration) {
     this.duration = duration;
   }

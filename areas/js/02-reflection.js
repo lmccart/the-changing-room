@@ -8,8 +8,10 @@ import Timeline from './Timeline.js';
 let emotions;
 let curEmotion;
 
-
-
+var dataMeditations;
+var dataMeditationEmotions;
+var dataMemories;
+var timeline;
 
 
 var triggerResetEmotion = false; // this is a global variable that every function checks to trigger a reset emotion. it's not the most elegant, but in this event-based loop, seems appropriate.
@@ -36,12 +38,10 @@ function updateInterface() {
 
 ///////////////////////////
 
-var dataMeditations;
-var dataMeditationEmotions;
 
 
 function loadData(cb) {
-  var dataLoaded = -2; // this is a bit hacky but simpler than Promises.all
+  var dataLoaded = -3; // this is a bit hacky but simpler than Promises.all
 
   fetch('/data/02_meditation.txt')
     .then(res => res.blob())
@@ -53,7 +53,6 @@ function loadData(cb) {
     })
 
 
-  // tweaked from 04-convo1.js
   Papa.parse("/data/02_meditation_emotion_specific.tsv", {
     download: true,
     header: true,
@@ -78,6 +77,38 @@ function loadData(cb) {
       if(dataLoaded == 0) { cb(); }
     }
   });
+
+
+  Papa.parse("/data/02_memories.tsv", {
+    download: true,
+    header: true,
+    skipEmptyLines: 'greedy',
+    complete: function(results) {
+      const rawResults = results.data;
+      // the data comes in as [{ "afraid": "One time this..", "alive": "one day...", ...} ...]
+      // I (dan) think it should be { "annoyed": [ "One time", ...], "alive": ["one day", ..] /// 
+      const reordered = {};
+
+      for (var i = 0; i < rawResults.length; i++) {
+        let thisrow = rawResults[i]
+
+        var newrow = {};
+        Object.keys(thisrow).forEach((key) => { 
+          key = key.trim();
+          if(key != "" && thisrow[key].trim() != "") {
+            if(reordered[key] == undefined) { reordered[key] = []; }
+            reordered[key].push(thisrow[key]);
+          }
+        })
+      }
+      dataMemories = reordered;
+      dataLoaded += 1;
+      if(dataLoaded == 0) { cb(); }
+    }
+  });
+
+
+
 }
 
 
@@ -102,6 +133,18 @@ function generateMeditationTexts() {
 }
 
 function generateMemories() {
+
+  var memories = [];
+  console.log(dataMemories);
+
+  console.log(dataMemories[curEmotion.base]);
+
+  return dataMemories[curEmotion.base].map(m => {
+    return { 
+      type: "text",
+      text: m,
+    };
+  });
 
   return [
     { 
@@ -269,7 +312,11 @@ function resetTimeline() {
 
   console.log("Resetting timeline");
  
-  let timeline = new Timeline({ loop: true, duration: 50000, interval: 100 });
+  if(timeline === undefined) {
+    timeline = new Timeline({ loop: true, duration: 50000, interval: 100 });
+  } else {
+    timeline.clear();
+  }
 
   resetHTML();
 
