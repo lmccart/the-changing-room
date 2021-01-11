@@ -238,7 +238,7 @@ function queueEvents(timeline) {
 
   ///////// QUEUE MEDITATIONS
   
-  let meditation_interval = 5000;
+  let meditation_interval = 3000;
 
   let mts = generateMeditationTexts();
 
@@ -249,6 +249,7 @@ function queueEvents(timeline) {
       displayMeditationPhrase({ text: mt, fadeIn: 500, fadeOut: 500 });
     } });
 
+    timeMarker += (mt.split(" ").length * 250);
     timeMarker += meditation_interval;
 
   });
