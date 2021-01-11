@@ -4,22 +4,33 @@
     <script src='/socket.io/socket.io.js'></script>
   </head>
   <body>
-
+    <div class='backgrounds'>
+      <div id='background-1'></div>
+      <div id='background-2'></div>
+      <img id='loader'/>
+    </div>
     <section id='debug'>
       AREA: <span id='debug-area'>05 convo2</span>
       <div id='debug-info'></div>
     </section>
 
-    <section class="main">
+    <section class='main'>
       <div class='instruction-container'>
-        <div id="instruction"></div>
+        <div id='instruction'></div>
       </div>
     </section>
     
-    <section id="convo-loading">
-      <div class="bar-container">
+    <section id='convo-loading'>
+      <div class='bar-container'>
         <h1>Next instruction coming up shortly...</h1>
-        <div class="loading-bar"></div>
+        <div class='loading-bar'></div>
+      </div>
+    </section>
+
+    <section id="loading">
+      <div>
+        <h1 id="loading-title">Loading</h1>
+        <h1 id="loading-emotion"></h1>
       </div>
     </section>
   </body>

@@ -450,27 +450,27 @@
     "name": "devastated"
   },
   "serious": {
-    "base": "judgmental",
+    "base": "judgemental",
     "level": 1,
     "name": "serious"
   },
   "stern": {
-    "base": "judgmental",
+    "base": "judgemental",
     "level": 1,
     "name": "stern"
   },
-  "judgmental": {
-    "base": "judgmental",
+  "judgemental": {
+    "base": "judgemental",
     "level": 2,
-    "name": "judgmental"
+    "name": "judgemental"
   },
   "proud": {
-    "base": "judgmental",
+    "base": "judgemental",
     "level": 2,
     "name": "proud"
   },
   "combative": {
-    "base": "judgmental",
+    "base": "judgemental",
     "level": 3,
     "name": "combative"
   },

@@ -5,8 +5,12 @@ const app = express();
 const http = require('http').createServer(app);
 const io = require('socket.io')(http);
 
-const Sound = require('./sound');
+const Sound = require('./sound/sound');
 const Lights = require('./lights');
+
+const { getChatSubData } = require('./fileUtils');
+let chatSubs;
+getChatSubData().then(data => chatSubs = data).catch(err => console.log('error', err));
 
 let curEmotion;
 
@@ -62,11 +66,23 @@ io.on('connection', (socket) => {
     Lights.playEmotion(curEmotion);
   });
 
-  socket.on('chat:send', function(msg){
+  socket.on('chat:send', function(data){
     // called by area 04 when user hits "send" on a chat message
-    // message data gets modified based on emotion edit rules, and emitted to all clients on 04-convo1 page
-    // TODO implement text modification
-    io.emit('chat:new', msg);
+    const wordsToSubArray = chatSubs[curEmotion.base]
+    const subArray = chatSubs[`${curEmotion.base}-subs`];
+
+    // splits message into array of words, spaces and punctuation marks
+    const msgWordArray = data.original.split(/([\.!\?\,\-])|([\s])/g);
+    for (let index = 0; index < msgWordArray.length; index++) {
+      const currentWord = msgWordArray[index];
+      const matchedIndex = wordsToSubArray.findIndex(word => word === currentWord);
+      
+      if (matchedIndex >= 0) {
+        msgWordArray[index] = subArray[matchedIndex];
+      }
+    }
+    data.modified = msgWordArray.join('');
+    io.emit('chat:new', data);
   });
 });
 
@@ -104,4 +120,4 @@ app.get('/images/:baseEmotion/manifest', (req, res) => {
   }
 });
 
-http.listen(3000, () => { console.debug('listening on *:3000'); });
+http.listen(process.env.PORT || 3000, () => { console.debug('listening on *:3000'); });

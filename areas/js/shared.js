@@ -15,7 +15,7 @@ fetch('/data/colors.json').then(res => {
 
 // Helper Functions
 
-window.showLoadingOverlay = (newEmotion) => {
+window.showLoadingOverlay = (newEmotion, cb) => {
   // newEmotion should be a string
   $('#loading-emotion').text(newEmotion);
   $('#loading').addClass('show');
@@ -26,7 +26,12 @@ window.showLoadingOverlay = (newEmotion) => {
   // a page has to do a lot of setup that takes
   // longer than 2 seconds, it can use the 
   // `hideLoadingOverlay` function on its own
-  setTimeout(hideLoadingOverlay, 2000);
+  setTimeout(function() {
+    hideLoadingOverlay();
+    if (typeof cb === 'function') cb();
+  }, 2000);
+
+
 }
 
 window.hideLoadingOverlay =  () => {

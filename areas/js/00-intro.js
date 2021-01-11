@@ -3,70 +3,71 @@ import $ from 'jquery';
 import '../css/00-intro.scss';
 import './shared.js';
 
-let emotions;
+/* VARIABLES */
+const scroll_up_time = 5000;
+const scroll_down_time = 30000;
+const scroll_pause_time = 3000;
+
 let curEmotion;
-const socket = io();
+
+let socket = io();
 socket.on('emotion:update', updateEmotion);
 
-
-
+getIntroText();
 
 function updateEmotion(msg) {
+  console.log("updateEmotion")
   if (!curEmotion || curEmotion.name !== msg.name) {
     curEmotion = msg;
     console.log('emotion has been updated to: ' + msg.name + ' (base: ' + msg.base + ', level: ' + msg.level + ')');
-    $(".intro-text-container").css("visibility", "hidden");
-    showLoadingOverlay(curEmotion.name);
     updateInterface();
+
+    $(".intro-text-container").css("visibility", "hidden");
+    showLoadingOverlay(curEmotion.name, function() {
+      $(".intro-text-container").css("visibility", "visible");
+      scrollThis();
+    });
   }
 }
 
 function updateInterface() {
+  console.log("updateInterface")
   $('#debug-info').text('CURRENT EMOTION: ' + curEmotion.name + ' (base: ' + curEmotion.base + ', level: ' + curEmotion.level + ')')
-  setTimeout(function () { scrollThis(); }, 3000);
-
 }
 
-// window.scrollThis = () => {}
-
+function getIntroText() {
+  fetch('/data/00_intro.txt')
+    .then(res => res.blob())
+    .then(blob => blob.text())
+    .then(text => {
+      $(".text").text(text);
+    })
+}
 
 function scrollThis() {
-  $(".intro-text-container").css("visibility", "visible");
   console.log("scrollThis")
-  ////prints out scroll pos
-  // setInterval(function(){ 
-  //     console.log($('.text').scrollTop())
-  //    }, 100);
+  $(".text").scrollTop(0);
+  $(".text").stop();
 
-  let scrollBottom = $(".text").prop("scrollHeight")
-  console.log(scrollBottom)
+  setTimeout(function() {
+    $(".text").animate({
+      scrollTop: $(".text").prop("scrollHeight")
+    }, scroll_down_time, 'linear', function () {
+      console.log("Complete");
+      setTimeout(function () {
+        $(".text").animate({
+          scrollTop: 0
+        }, scroll_up_time, 'linear', function () {
+          console.log("Complete at the top");
+          scrollThis();
+        });
+      }, scroll_pause_time);
+    });
+  }, scroll_pause_time);
 
-  // $(".text").animate({
-  //   scrollTop: scrollBottom
-  // }, 95000, 'linear');
 
-  $(".text").scroll(function () {
-    // console.log("top",  $('.text').scrollTop())
-    // console.log("bottom", scrollBottom)
-    // console.log("scrollheight", $('.text')[0].scrollHeight)
-    // console.log("scrolltop", $('.text')[0].scrollTop)
-    // console.log("clientheight", $('.text')[0].clientHeight)
-
-    if ($(".text").scrollTop() >= ($('.text')[0].scrollHeight - ($('.text')[0].clientHeight + 5))) {
-      console.log("restart scroll!!")
-      $(".text").stop();
-      // $(".text").scrollTop(0);
-      $(".text").animate({
-        scrollTop: 0
-      }, 3000, 'linear');
-
-      $(".text").animate({
-        scrollTop: scrollBottom
-      }, 95000, 'linear');
-    }
-  });
 }
 
-// 95000
+
 
 

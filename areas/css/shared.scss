@@ -93,13 +93,14 @@ body {
   position: relative;
   
   background: white;
-  border: 2px solid black;
+  border: 0.2vw solid black;
   padding: 2em;
 
   &:after {
     content: '✕';
     position: absolute;
-    top: 2%;
-    right: 2%;
+    top: 0.85em;
+    right: 1em;
+    font-style: normal;
   }
 }
