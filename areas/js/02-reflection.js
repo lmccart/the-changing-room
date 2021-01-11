@@ -12,9 +12,10 @@ var dataMeditations;
 var dataMeditationEmotions;
 var dataMemories;
 var timeline;
+var imageList = [];
+var preloadedImages = [] // kept here to preload images; without this, some browsers might clear cache & unload images
 
 
-var triggerResetEmotion = false; // this is a global variable that every function checks to trigger a reset emotion. it's not the most elegant, but in this event-based loop, seems appropriate.
 
 const socket = io();
 socket.on('emotion:update', updateEmotion);
@@ -25,20 +26,39 @@ function updateEmotion(msg) {
     curEmotion = msg;
     console.log('emotion has been updated to: ' + msg.name + ' (base: ' + msg.base + ', level: ' + msg.level +')');
     showLoadingOverlay(curEmotion.name);
-    updateInterface();
+    updateImageList(() => {
+        console.log(imageList);
+        updateInterface();
+    });
   }
 }
 
 function updateInterface() {
   resetTimeline();
-  triggerResetEmotion = true;
   $('#debug-info').text('CURRENT EMOTION: ' + curEmotion.name + ' (base: ' + curEmotion.base + ', level: ' + curEmotion.level +')')
 }
 
 
 ///////////////////////////
 
+function updateImageList(cb) {
 
+  fetch(`/images/${curEmotion.base}/manifest`)
+    .then(res => res.blob())
+    .then(blob => blob.text())
+    .then(text => { 
+      imageList = JSON.parse(text);
+
+      preloadedImages = [];
+      imageList.forEach(url => {
+        let img = new Image();
+        img.src = url;
+        preloadedImages.push(img)
+      });
+      cb(text);
+    });
+
+}
 
 function loadData(cb) {
   var dataLoaded = -3; // this is a bit hacky but simpler than Promises.all
@@ -108,7 +128,6 @@ function loadData(cb) {
   });
 
 
-
 }
 
 
@@ -135,35 +154,22 @@ function generateMeditationTexts() {
 function generateMemories() {
 
   var memories = [];
-  console.log(dataMemories);
 
-  console.log(dataMemories[curEmotion.base]);
-
-  return dataMemories[curEmotion.base].map(m => {
-    return { 
+  dataMemories[curEmotion.base].forEach(m => {
+    memories.push({ 
       type: "text",
       text: m,
-    };
+    });
   });
 
-  return [
-    { 
+  imageList.forEach(m => {
+    memories.push({
       type: "image",
-      url: "https://i.imgur.com/Y3QNok5.png"
-    },
-    { 
-      type: "text",
-      text: "I feel like I'm just pouring all of my energy into a void."
-    },
-    { 
-      type: "image",
-      url: "https://i.imgur.com/Y3QNok5.png"
-    },
-    { 
-      type: "text",
-      text: "I don't know what's happening now. I felt like I had been slowly dying over months, years maybe."
-    },
-  ]
+      url: m,
+    });
+  });
+
+  return memories;
 
 }
 
@@ -197,7 +203,6 @@ function displayMemory(opts) {
   memdiv.top = opts.top;
   memdiv.css({ top:  opts.top, left: opts.left });
 
-  console.log("appending to memocontainer");
 
   memdiv
     .hide()
@@ -274,7 +279,7 @@ function queueEvents(timeline) {
         data: mem,
         fadeIn: 500,
         fadeOut: 500,
-        left: `${ Math.random() * 80 }vw`,
+        left: `${ Math.random() * 80 }vw`, // TODO: better sizing
         top: `${ Math.random() * 80 }vh`
       })
 
