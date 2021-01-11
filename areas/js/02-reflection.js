@@ -238,7 +238,7 @@ function queueEvents(timeline) {
 
   ///////// QUEUE MEDITATIONS
   
-  let meditation_interval = 1000;
+  let meditation_interval = 5000;
 
   let mts = generateMeditationTexts();
 
@@ -246,7 +246,7 @@ function queueEvents(timeline) {
 
     timeline.add({ time: timeMarker, event: function () { 
       console.log(mt); 
-      displayMeditationPhrase({ text: mt, fadeIn: 200, fadeOut: 200 });
+      displayMeditationPhrase({ text: mt, fadeIn: 500, fadeOut: 500 });
     } });
 
     timeMarker += meditation_interval;
