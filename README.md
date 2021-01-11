@@ -21,7 +21,7 @@
   - `areas/js/shared.js` includes some helper functions that get used on multiple pages.
   - `areas/js/lib/` contains extra script files imported by the main area scripts.
 * `logs/` holds all console and chat logs. Log files are rolled over daily. [log4js-node](https://github.com/log4js-node/log4js-node) handles the logging.
-* `automate/` holds script files for installation boot. [multibrowse](https://github.com/foxxyz/multibrowse) is used to open full-screen browser windows over multiple monitor setups.
+* `install/` holds script files for installation boot. [multibrowse](https://github.com/foxxyz/multibrowse) is used to open full-screen browser windows over multiple monitor setups.
 * `dist/` holds the served html/js/css files after they have been compiled by webpack.
 * `static/` holds static files that get copied into the `dist` folder (images, txt, etc).
   - These files can be reached by URL in html, css, js `/static/filename`.
@@ -73,23 +73,26 @@ User: Venessa Castagnoli 3, Pwd: OCA2020
 ### Mac Setup
 **This is in progress**
 1. System Prefs
-   * Desktop background
-   * Screensaver / Sleep OFF
+   * Desktop background / Screensaver OFF
+   * Sleep / Display Off NEVER
    * Do Not Disturb ON
    * Software Updates OFF
    * Default Browser CHROME
+   * File Sharing, Screen Sharing, Remote Login ON (name computer OCAX)
 2. Setup software and tools
    * Install Chrome
    * Install [nodejs](https://nodejs.org/) (version 10.16 or newer)
    * Install [VS Code](https://code.visualstudio.com/)
    * [Add key to GitHub](https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/adding-a-new-ssh-key-to-your-github-account)
-   * Clone respository: `git clone git@github.com:lmccart/the-changing-room.git`
+   * Clone respository: `cd ~/Desktop && git clone git@github.com:lmccart/the-changing-room.git`
    * Install dependencies: `cd the-changing-room && npm install`
-   * Add [font files](https://drive.google.com/drive/u/0/folders/0B8UbelTCwVpIMS1paHVPNVZpZkk) to `static/fonts/`
+   * Add [font files](https://drive.google.com/file/d/1uY_hy7aX85moy8OlNFx_nO7liEZoGIL-/view?usp=sharing) to `static/fonts/` (should look like `static/fonts/ABC...`)
    * Add [image files](https://drive.google.com/file/d/1SsSHYPwk1jwX-A4SABYmn7RZQqwPsv2_/view?usp=sharing) to `static/images/` (should look like `static/images/angry/image file name.jpg`)
+   * Add [sound files](#)to `sounds/` (should look like `sounds/all-areas` and `sounds/02-reflection`)
+   * Copy `install/TCR-LOCATIONS.txt` to Desktop
 3. Setup startup tasks
-   * `sudo bash /automate/setup-multibrowse.sh`
-   * `python /automate/multibrowse-source/multibrowse.py URL URL URL` (https://github.com/foxxyz/multibrowse)
+   * `sudo bash /install/setup-multibrowse.sh`
+   * `python /install/multibrowse-source/multibrowse.py URL URL URL` (https://github.com/foxxyz/multibrowse)
    * Copy startup script to Desktop
      * Script will (1) if needed, start node, (2) start browser with multibrowse
    * Setup launch tasks / keep alive?
