@@ -3,6 +3,7 @@ import $ from 'jquery';
 import '../css/00-intro.scss';
 import './shared.js';
 import { getImgUrls, addSvgFilterForElement, getTextColorForBackground } from './lib/imageColorUtils.js';
+import { text } from 'express';
 
 /* VARIABLES */
 const scroll_up_time = 5000;
@@ -24,7 +25,7 @@ function updateEmotion(msg) {
     console.log('emotion has been updated to: ' + msg.name + ' (base: ' + msg.base + ', level: ' + msg.level + ')');
     updateInterface();
 
-    $(".intro-text-container").css("visibility", "hidden");
+    $(".intro-text-container").css('visibility', 'hidden');
 
   }
 }
@@ -38,9 +39,17 @@ async function updateInterface() {
   $('#debug-info').text('CURRENT EMOTION: ' + curEmotion.name + ' (base: ' + curEmotion.base + ', level: ' + curEmotion.level + ')')
   $('svg').remove();
   imgURLs = await getImgUrls(curEmotion.base);
-  addSvgFilterForElement($('#background-1'), window.baseColors[curEmotion.base][curEmotion.level-1]);
-  console.log(window.baseColors[curEmotion.base], "!!!!!!")
+  const colors = window.baseColors[curEmotion.base][curEmotion.level-1];
+  addSvgFilterForElement($('#background-1'), colors);
   updateBackground();
+
+  // const textColor = 'white';//getTextColorForBackground(colors[1]);
+  // console.log('TEXT COLOR '+textColor)
+  // // $('.intro-text-container').css('border-color', textColor);
+  // // $('::-webkit-scrollbar-thumb').css('background', textColor);
+  // // $('::-webkit-scrollbar-track').css('border-color', textColor);
+  // $('.text').css('color', textColor);
+  // $('#loading').css('color', textColor);
 
 }
 
