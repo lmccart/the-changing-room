@@ -29,6 +29,8 @@ module.exports = {
       sideEffects: true,
       use: [
         MiniCssExtractPlugin.loader,
+        { loader: 'eslint-loader'
+        },
         {
           loader: 'css-loader',
           options: {
