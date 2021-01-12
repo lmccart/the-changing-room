@@ -1,9 +1,7 @@
-// style and js imports
 import $ from 'jquery';
 import '../css/00-intro.scss';
 import './shared.js';
 import { getImgUrls, addSvgFilterForElement, getTextColorForBackground } from './lib/imageColorUtils.js';
-import { text } from 'express';
 
 /* VARIABLES */
 const scroll_up_time = 5000;
@@ -19,22 +17,20 @@ socket.on('emotion:update', updateEmotion);
 getIntroText();
 
 function updateEmotion(msg) {
-  console.log("updateEmotion")
+  console.log('updateEmotion')
   if (!curEmotion || curEmotion.name !== msg.name) {
     curEmotion = msg;
     console.log('emotion has been updated to: ' + msg.name + ' (base: ' + msg.base + ', level: ' + msg.level + ')');
     updateInterface();
-
-    $(".intro-text-container").css('visibility', 'hidden');
-
+    $('.intro-text-container').css('visibility', 'hidden');
   }
 }
 
 async function updateInterface() {
-  console.log("updateInterface")
+  console.log('updateInterface')
   showLoadingOverlay(curEmotion.name, function() {
-    $(".intro-text-container").css("visibility", "visible");
-    scrollThis();
+    $('.intro-text-container').css('visibility', 'visible');
+    scrollDown();
   });
   $('#debug-info').text('CURRENT EMOTION: ' + curEmotion.name + ' (base: ' + curEmotion.base + ', level: ' + curEmotion.level + ')')
   $('svg').remove();
@@ -43,14 +39,13 @@ async function updateInterface() {
   addSvgFilterForElement($('#background-1'), colors);
   updateBackground();
 
-  // const textColor = 'white';//getTextColorForBackground(colors[1]);
-  // console.log('TEXT COLOR '+textColor)
-  // // $('.intro-text-container').css('border-color', textColor);
-  // // $('::-webkit-scrollbar-thumb').css('background', textColor);
-  // // $('::-webkit-scrollbar-track').css('border-color', textColor);
-  // $('.text').css('color', textColor);
-  // $('#loading').css('color', textColor);
-
+  const textColor = getTextColorForBackground(colors[0]);
+  console.log(textColor)
+  $('body').removeClass();
+  $('body').addClass(textColor);
+  $('.intro-text-container').css('border-color', textColor);
+  $('.text').css('color', textColor);
+  $('#loading').css('color', textColor);
 }
 
 function updateBackground() {
@@ -68,30 +63,26 @@ function getIntroText() {
     .then(res => res.blob())
     .then(blob => blob.text())
     .then(text => {
-      $(".text").text(text);
+      $('.text').text(text);
     })
 }
 
-function scrollThis() {
-  console.log("scrollThis")
-  $(".text").scrollTop(0);
-  $(".text").stop();
-
+function scrollDown() {
+  console.log('scrollDown');
+  $('.text').scrollTop(0);
+  $('.text').stop();
   setTimeout(function() {
-    $(".text").animate({
-      scrollTop: $(".text").prop("scrollHeight")
-    }, scroll_down_time, 'linear', function () {
-      console.log("Complete");
-      setTimeout(function () {
-        $(".text").animate({
-          scrollTop: 0
-        }, scroll_up_time, 'linear', function () {
-          console.log("Complete at the top");
-          scrollThis();
-        });
-      }, scroll_pause_time);
-    });
+    $('.text').animate({
+      scrollTop: $('.text').prop('scrollHeight')
+    }, scroll_down_time, 'linear', scrollUp);
   }, scroll_pause_time);
-
-
 }
+
+function scrollUp() {
+  setTimeout(function() {
+    $('.text').animate({
+      scrollTop: 0
+    }, scroll_up_time, 'linear', scrollDown);
+  }, scroll_pause_time);
+}
+
