@@ -1,10 +1,13 @@
 import $ from 'jquery';
+import { getTextColorForBackground } from './lib/imageColorUtils.js';
 // this allows for us to do blob.text() 
 // which safari doesn't support natively
 import { Blob } from 'blob-polyfill';
 
+window.curEmotion;
+
 document.title = $('#debug-area').text();
-console.log($('#debug-area').text())
+console.log($('#debug-area').text());
 
 // getting colors from the data file
 fetch('/data/colors.json').then(res => {
@@ -16,8 +19,12 @@ fetch('/data/colors.json').then(res => {
 // Helper Functions
 
 window.showLoadingOverlay = (newEmotion, cb) => {
-  // newEmotion should be a string
-  $('#loading-emotion').text(newEmotion);
+
+  const colors = window.baseColors[newEmotion.base][newEmotion.level-1];
+  const textColor = getTextColorForBackground(colors[0], colors[1]);
+  $('#loading').css('color', textColor);
+
+  $('#loading-emotion').text(newEmotion.name);
   $('#loading').addClass('show');
 
 

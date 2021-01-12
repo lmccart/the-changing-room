@@ -31,7 +31,7 @@ function updateEmotion(msg) {
 
 async function updateInterface() {
   console.log("updateInterface")
-  showLoadingOverlay(curEmotion.name, function() {
+  showLoadingOverlay(curEmotion, function() {
     $(".intro-text-container").css("visibility", "visible");
     scrollThis();
   });
