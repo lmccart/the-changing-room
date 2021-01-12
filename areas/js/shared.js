@@ -1,7 +1,8 @@
 import $ from 'jquery';
 // this allows for us to do blob.text() 
 // which safari doesn't support natively
-import { Blob } from 'blob-polyfill';
+
+window.socket = io();
 
 document.title = $('#debug-area').text();
 console.log($('#debug-area').text())
@@ -11,6 +12,7 @@ fetch('/data/colors.json').then(res => {
   return res.json();
 }).then(colors => {
   window.baseColors = colors;
+  window.init();
 })
 
 // Helper Functions

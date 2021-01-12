@@ -11,10 +11,16 @@ const scroll_pause_time = 3000;
 let curEmotion;
 let imgURLs = [];
 
-let socket = io();
-socket.on('emotion:update', updateEmotion);
-
-getIntroText();
+window.init = () => {
+  socket.on('emotion:update', updateEmotion);
+  socket.emit('emotion:get');
+  fetch('/data/00_intro.txt')
+  .then(res => res.blob())
+  .then(blob => blob.text())
+  .then(text => {
+    $('.text').text(text);
+  });
+};
 
 function updateEmotion(msg) {
   console.log('updateEmotion')
@@ -36,11 +42,9 @@ async function updateInterface() {
   $('svg').remove();
   imgURLs = await getImgUrls(curEmotion.base);
   const colors = window.baseColors[curEmotion.base][curEmotion.level-1];
-  addSvgFilterForElement($('#background-1'), colors);
-  updateBackground();
+  updateBackground(colors);
 
-  const textColor = getTextColorForBackground(colors[0]);
-  console.log(textColor)
+  const textColor = getTextColorForBackground(colors[0], colors[1]);
   $('body').removeClass();
   $('body').addClass(textColor);
   $('.intro-text-container').css('border-color', textColor);
@@ -48,23 +52,16 @@ async function updateInterface() {
   $('#loading').css('color', textColor);
 }
 
-function updateBackground() {
+function updateBackground(colors) {
+  addSvgFilterForElement($('#background-1'), colors);
   const imgUrl = imgURLs[Math.floor(Math.random() * imgURLs.length)]
   console.log(imgUrl);
   $('#background-1').css('background-image', `url(${imgUrl})`);
+  $('#loader').attr('src', imgUrl).off();
   $('#loader').attr('src', imgUrl).on('load', function() {
     console.log('loaded: ', imgUrl)
     $('#background-1').show();
   });
-}
-
-function getIntroText() {
-  fetch('/data/00_intro.txt')
-    .then(res => res.blob())
-    .then(blob => blob.text())
-    .then(text => {
-      $('.text').text(text);
-    })
 }
 
 function scrollDown() {
