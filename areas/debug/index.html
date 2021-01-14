@@ -42,11 +42,11 @@
     </section>
 
     <script>
+let emotions;
+let curEmotion;
 const socket = io();
 socket.on('emotion:update', updateEmotion);
 
-let emotions;
-let curEmotion;
 fetch('/emotions')
   .then(response => response.json())
   .then(data => { 
@@ -66,7 +66,6 @@ fetch('/emotions')
       $('#emotion').append('<option value="'+emotion+'">'+emotion+'</option>');
       if (!bases.includes(base)) {
         bases.push(base);
-        console.log(bases)
       }
     });
     bases.sort().forEach((base, i) => {
@@ -81,7 +80,6 @@ $('#level').on('change', selectLevel);
 
 function selectEmotion() {
   let name = $('#emotion').val();
-  console.log(name)
   setEmotion(emotions[name]);
 }
 
@@ -98,16 +96,13 @@ function selectLevel() {
 }
 
 function pickRandom(base, level) {
-  console.log(base, level)
   let options = [];
   for (let e in emotions) {
     if (emotions[e].base === base && emotions[e].level === level) {
       options.push(emotions[e]);
     }
   }
-  console.log(options)
   let randomEmotion = options[Math.floor(Math.random() * options.length)];
-  console.log(randomEmotion)
   setEmotion(randomEmotion);
 }
 
@@ -127,7 +122,9 @@ function updateEmotion(msg) {
 
 function updateInterface() {
   $('#debug-info').text('CURRENT EMOTION: ' + curEmotion.name + ' (base: ' + curEmotion.base + ', level: ' + curEmotion.level +')')
-  $('#emotions').val(curEmotion.name);
+  $('#emotion').val(curEmotion.name);
+  $('#base').val(curEmotion.base);
+  $('#level').val(curEmotion.level);
 }
 
       

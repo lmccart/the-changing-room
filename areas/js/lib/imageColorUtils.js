@@ -40,7 +40,7 @@ export function getDimensions(url){
 export function getImgUrls (baseEmotion) {
   return fetch(`/images/${baseEmotion}/manifest`)
           .then(res => res.json());
-} 
+}
 
 // returns rgb values from hex in either fractional or normal form
 // to get fractional rgba values, pass in true as the second argument
