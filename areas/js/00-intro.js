@@ -33,10 +33,12 @@ function updateEmotion(msg) {
 }
 
 async function updateInterface() {
+
   console.log('updateInterface')
   showLoadingOverlay(curEmotion.name, function() {
     $('.intro-text-container').css('visibility', 'visible');
     scrollDown();
+
   });
   $('#debug-info').text('CURRENT EMOTION: ' + curEmotion.name + ' (base: ' + curEmotion.base + ', level: ' + curEmotion.level + ')')
   $('svg').remove();

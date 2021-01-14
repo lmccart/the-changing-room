@@ -93,6 +93,11 @@ function showMessageViewer() {
   introEl.hide();
   chatForm.hide();
   chatInput.trigger('blur'); // this doesn't work on iPad
+  // if (chatInput.is(':focus')) {
+  //   messageViewerContainer.addClass('compact');
+  // } else {
+  //   messageViewerContainer.removeClass('compact');
+  // }
   messageViewerContainer.show();
 }
 
@@ -105,9 +110,11 @@ function updateEmotion(msg) {
 }
 
 function updateInterface() {
+  showLoadingOverlay(curEmotion, function() {
+  });
   resetChat();
   const colors = window.baseColors[curEmotion.base][curEmotion.level-1];
-  const textColor = getTextColorForBackground(colors[1]);
+  const textColor = getTextColorForBackground(colors[0], colors[1]);
   $('body').css('color', textColor);
   $('body').css('background', `radial-gradient(#${colors[0]},#${colors[1]})`);
   $('#debug-info').text(screen.width+' '+screen.height);//CURRENT EMOTION: ' + curEmotion.name + ' (base: ' + curEmotion.base + ', level: ' + curEmotion.level +')')

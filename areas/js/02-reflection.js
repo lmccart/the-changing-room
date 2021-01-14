@@ -97,7 +97,7 @@ function updateEmotion(msg) {
   if (!curEmotion || curEmotion.name !== msg.name) {
     curEmotion = msg;
     console.log('emotion has been updated to: ' + msg.name + ' (base: ' + msg.base + ', level: ' + msg.level +')');
-    showLoadingOverlay(curEmotion.name);
+    showLoadingOverlay(curEmotion);
     updateImageList(() => {
         console.log(imageList);
         updateInterface();

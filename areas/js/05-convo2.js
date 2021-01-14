@@ -30,7 +30,7 @@ function updateEmotion(msg) {
 
 async function updateInterface() {
   $('#debug-info').text('CURRENT EMOTION: ' + curEmotion.name + ' (base: ' + curEmotion.base + ', level: ' + curEmotion.level +')')
-  showLoadingOverlay(curEmotion.name, showConvoLoading);
+  showLoadingOverlay(curEmotion, showConvoLoading);
   imgURLs = await getImgUrls(curEmotion.base);
   reset();
   $('svg').remove();
