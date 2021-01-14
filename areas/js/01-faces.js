@@ -6,16 +6,16 @@ import { camvas } from './lib/camvas.js';
 import { pico } from './lib/pico.js';
 import 'fancy-textfill/es2015/jquery.plugin';
 
-
-
-
 // EMOTION HANDLING
 let emotions;
 let curEmotion;
 let emotionalMessage = "When did you first realize that you can't trust yourself?";
-const socket = io();
 
-socket.on('emotion:update', updateEmotion);
+
+window.init = () => {
+  socket.on('emotion:update', updateEmotion);
+  socket.on('emotion:get');
+}
 
 function updateEmotion(msg) {
   if (!curEmotion || curEmotion.name !== msg.name) {

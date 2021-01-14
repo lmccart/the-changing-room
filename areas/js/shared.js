@@ -2,7 +2,8 @@ import $ from 'jquery';
 import { getTextColorForBackground } from './lib/imageColorUtils.js';
 // this allows for us to do blob.text() 
 // which safari doesn't support natively
-import { Blob } from 'blob-polyfill';
+
+window.socket = io();
 
 window.curEmotion;
 
@@ -14,6 +15,7 @@ fetch('/data/colors.json').then(res => {
   return res.json();
 }).then(colors => {
   window.baseColors = colors;
+  window.init();
 })
 
 // Helper Functions

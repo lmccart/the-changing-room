@@ -4,13 +4,11 @@ import { getTextColorForBackground } from './lib/imageColorUtils.js';
 import '../css/04-convo1.scss';
 import './shared.js';
 
-let emotions;
 let curEmotion = '';
 let introText = '';
 let uiResetTimeout;
 let resetWaitTime = 30 * 1000
 let socketid;
-const socket = io();
 const typingSpeed = 200; // milliseconds
 const pauseOnMessageTime = 3000; // 3s
 
@@ -21,38 +19,39 @@ const chatInput = $('#chat-input');
 const messageViewerContainer = $('#message-container');
 const messageViewer = $('#chat-viewer');
 
-
 socket.on('connect', function() { socketid = socket.id; });
-socket.on('emotion:update', updateEmotion);
-socket.on('chat:new', handleNewMessage);
 
-// get intro text
-fetch('/data/04_convo1_intro.txt')
-  .then(res => res.blob())
-  .then(blob => blob.text())
-  .then(text => {
-    introText = text
-    resetChat();
+window.init = () => {
+  // get intro text
+  fetch('/data/04_convo1_intro.txt')
+    .then(res => res.blob())
+    .then(blob => blob.text())
+    .then(text => {
+      introText = text;
+      socket.on('emotion:update', updateEmotion);
+      socket.on('chat:new', handleNewMessage);
+      socket.emit('emotion:get');
+    });
+  
+  enableAutoTTS();
+  
+  // set up intro tap listener
+  introEl.on('click', showChatInput);
+  
+  // set up submit listener
+  chatForm.submit(sendMessage);
+  
+  // listen for return key press (13) and send message
+  $(document).on('keydown', (e) => {
+    if(e.which === 13) {
+      sendMessage(e);
+    }
   });
-
-enableAutoTTS();
-
-// set up intro tap listener
-introEl.on('click', showChatInput);
-
-// set up submit listener
-chatForm.submit(sendMessage);
-
-// listen for return key press (13) and send message
-$(document).on('keydown', (e) => {
-  if(e.which === 13) {
-    sendMessage(e);
-  }
-});
-
-chatInput.on('focus', () => { $('#chat-submit').addClass('focused'); })
-// reset the timeout everytime the input changes
-chatInput.on('change', startResetTimeout)
+  
+  chatInput.on('focus', () => { $('#chat-submit').addClass('focused'); })
+  // reset the timeout everytime the input changes
+  chatInput.on('change', startResetTimeout);
+};
 
 function sendMessage(e) {
   e.preventDefault();

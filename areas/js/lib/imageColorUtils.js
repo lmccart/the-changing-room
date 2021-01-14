@@ -40,7 +40,7 @@ export function getDimensions(url){
 export function getImgUrls (baseEmotion) {
   return fetch(`/images/${baseEmotion}/manifest`)
           .then(res => res.json());
-} 
+}
 
 // returns rgb values from hex in either fractional or normal form
 // to get fractional rgba values, pass in true as the second argument
@@ -58,13 +58,17 @@ export function hexToRgb(hex, returnFractionalValue) {
 }
 
 // returns 'white' or 'black' for a hexcolor, depending on the contrast
-export function getTextColorForBackground(hexcolor){
-    hexcolor = hexcolor.replace("#", "");
-    var r = parseInt(hexcolor.substr(0,2),16);
-    var g = parseInt(hexcolor.substr(2,2),16);
-    var b = parseInt(hexcolor.substr(4,2),16);
-    var yiq = ((r*299)+(g*587)+(b*114))/1000;
-    return (yiq >= 140) ? 'black' : 'white';
+export function getTextColorForBackground(hexcolor0, hexColor1) {
+  let yiq = 0;
+  for (let a of arguments) {
+      const hex = a.replace("#", "");
+      const r = parseInt(hex.substr(0,2),16);
+      const g = parseInt(hex.substr(2,2),16);
+      const b = parseInt(hex.substr(4,2),16);
+      yiq += ((r*299)+(g*587)+(b*114))/1000;
+  }
+  yiq /= arguments.length;
+  return (yiq > 140) ? 'black' : 'white';
 }
 
 
