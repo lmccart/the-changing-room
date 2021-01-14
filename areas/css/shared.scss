@@ -39,6 +39,38 @@ body {
   text-align: right;
 }
 
+/* TEXT ETC COLORING */
+body.white ::-webkit-scrollbar-track {
+  border-color: white;
+}
+body.white ::-webkit-scrollbar-thumb {
+  border-color: white;
+  background: white;
+}
+body.black ::-webkit-scrollbar-track {
+  border-color: black;
+}
+body.black ::-webkit-scrollbar-thumb {
+  border-color: black;
+  background: black;
+}
+
+/* BACKGROUND LOADER */
+.backgrounds {
+  overflow: hidden;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+#loader {
+  width: 100%;
+  height: 100%;
+}
+
+/* LOADING SCREEN */
 #loading {
   position: fixed;
   top: 0;   
@@ -60,7 +92,6 @@ body {
   } 
    
   h1 {
-    color: white;
     font-size: 6vmax;
     line-height: 0.8;
     text-transform: capitalize;
