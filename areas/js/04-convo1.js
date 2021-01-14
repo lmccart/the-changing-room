@@ -7,7 +7,7 @@ import './shared.js';
 let curEmotion = '';
 let introText = '';
 let uiResetTimeout;
-let resetWaitTime = 30 * 1000
+let resetWaitTime = 30 * 1000;
 let socketid;
 const typingSpeed = 200; // milliseconds
 const pauseOnMessageTime = 3000; // 3s
@@ -19,7 +19,9 @@ const chatInput = $('#chat-input');
 const messageViewerContainer = $('#message-container');
 const messageViewer = $('#chat-viewer');
 
-socket.on('connect', function() { socketid = socket.id; });
+socket.on('connect', function() {
+  socketid = socket.id; 
+});
 
 window.init = () => {
   // get intro text
@@ -43,12 +45,14 @@ window.init = () => {
   
   // listen for return key press (13) and send message
   $(document).on('keydown', (e) => {
-    if(e.which === 13) {
+    if(e.which === 13) 
       sendMessage(e);
-    }
+    
   });
   
-  chatInput.on('focus', () => { $('#chat-submit').addClass('focused'); })
+  chatInput.on('focus', () => {
+    $('#chat-submit').addClass('focused'); 
+  });
   // reset the timeout everytime the input changes
   chatInput.on('change', startResetTimeout);
 };
@@ -126,9 +130,9 @@ function handleNewMessage(data) {
     const speechMessage = new SpeechSynthesisUtterance(data.modified);
     speechSynthesis.speak(speechMessage);
     typeMessageByWord(data.modified);
-  } else {
+  } else 
     typeMessageByWord(data.original);
-  }
+  
 }
 
 function typeMessageByWord(string, iteration) {
@@ -139,7 +143,7 @@ function typeMessageByWord(string, iteration) {
   if (iteration === words.length) {
     setTimeout(() => { 
       showChatInput();
-    }, pauseOnMessageTime)
+    }, pauseOnMessageTime);
     return;
   }
   
@@ -156,13 +160,13 @@ function typeMessageByWord(string, iteration) {
 
 // function for making sure text to speech is available on iOS Safari
 function enableAutoTTS() {
-  if (typeof window === 'undefined') {
+  if (typeof window === 'undefined') 
     return;
-  }
+  
   const isiOS = navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform);
-  if (!isiOS) {
+  if (!isiOS) 
     return;
-  }
+  
   const simulateSpeech = () => {
     const lecture = new SpeechSynthesisUtterance('hello');
     lecture.volume = 0;

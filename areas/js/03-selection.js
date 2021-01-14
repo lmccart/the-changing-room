@@ -16,9 +16,9 @@ let fade_time = 1000;
 let curEmotion;
 
 const separate_panels = [];
-for (let i=0; i<num_panels; i++) {
+for (let i=0; i<num_panels; i++) 
   separate_panels.push(document.getElementById('scroll'+i));
-}
+
 const handIndicator = $('#hand-indicator');
 const sel_txt_url = '/data/03_selection_intro.txt';
 const apiURL_emotions = '/emotions';
@@ -35,22 +35,22 @@ window.init = () => {
     .then(response => response.json())
     .then(data => { 
       emotions = data;
-      console.log(emotions)
+      console.log(emotions);
 
       Object.keys(emotions)
-      .sort()
-      .forEach(function(emotion, i) {
-        let base_emotion = emotions[emotion].base
-        let emotion_div = $('<div>', {
-          'id': `option-${emotion}`,
-          'class': 'emotion', 
-          text: `${emotion}`,
-          'click': function() {
-            socket.emit('emotion:pick', `${emotion}`)
-          }
+        .sort()
+        .forEach(function(emotion, i) {
+          let base_emotion = emotions[emotion].base;
+          let emotion_div = $('<div>', {
+            'id': `option-${emotion}`,
+            'class': 'emotion', 
+            text: `${emotion}`,
+            'click': function() {
+              socket.emit('emotion:pick', `${emotion}`);
+            }
+          });
+          $('#scroll_joined').append(emotion_div);
         });
-        $('#scroll_joined').append(emotion_div);
-      });
       socket.on('emotion:update', updateEmotion);
       socket.emit('emotion:get');
       separatemode();
@@ -61,14 +61,14 @@ window.init = () => {
   fetch(sel_txt_url)
     .then(response => response.text())
     .then(text => sel_intro_content = text)
-    .then(() => selection_txt_parse(sel_intro_content))
+    .then(() => selection_txt_parse(sel_intro_content));
 
   $('#wrapper_separate').hide();
 };
 
 function updateEmotion(msg) {
-  console.log('update emotion')
-  console.log(msg)
+  console.log('update emotion');
+  console.log(msg);
   if (!curEmotion || curEmotion.name !== msg.name) {
     curEmotion = msg;
     console.log('emotion has been updated to: ' + msg.name + ' (base: ' + msg.base + ', level: ' + msg.level +')');
@@ -77,22 +77,22 @@ function updateEmotion(msg) {
 }
 
 function updateInterface() {
-  $('#debug-info').text('CURRENT EMOTION: ' + curEmotion.name + ' (base: ' + curEmotion.base + ', level: ' + curEmotion.level +')')
+  $('#debug-info').text('CURRENT EMOTION: ' + curEmotion.name + ' (base: ' + curEmotion.base + ', level: ' + curEmotion.level +')');
   $('#emotions').val(curEmotion.name);
 
   $('.emotion').removeAttr( 'style' );
   $('.emotion').removeClass('selected_emotion');
   //get color of selected emotion colors
-  let emotion_colors = baseColors[curEmotion.base]
-  let emotion_colors_str1 = '#'+emotion_colors[0][0]
-  let emotion_colors_str2 = '#'+emotion_colors[0][1]
+  let emotion_colors = baseColors[curEmotion.base];
+  let emotion_colors_str1 = '#'+emotion_colors[0][0];
+  let emotion_colors_str2 = '#'+emotion_colors[0][1];
 
   const elm = '#option-'+curEmotion.name;
   $(elm).fadeIn(fade_time, function() {
     scrollToEmotion(curEmotion.name, curEmotion.base);
 
     //transition to color of selected emotion colors
-    console.log('setting colors')
+    console.log('setting colors');
     $(this).css('color', emotion_colors_str1);
     $('body').css({background:'-webkit-radial-gradient(' + emotion_colors_str1 + ',' + emotion_colors_str2 + ')'});
     $('#wrapper_joined').css({background:'-webkit-radial-gradient(' + emotion_colors_str1 + ',' + emotion_colors_str2 + ')'});
@@ -101,7 +101,7 @@ function updateInterface() {
   
   //transition to font color to white
   setTimeout(function() {
-    $(elm).addClass('selected_emotion')
+    $(elm).addClass('selected_emotion');
   }, fade_time);
 }
 
@@ -111,12 +111,12 @@ function selection_txt_parse(sel_intro_content) {
   let num_sents_panels = Math.ceil(sel_intro_sent.length / num_panels);
   const panel_array = new Array(Math.ceil(sel_intro_sent.length / num_sents_panels))
     .fill()
-    .map(_ => sel_intro_sent.splice(0, num_sents_panels))
-  for(var i = 0; i < panel_array.length; i++) {
-      var sentences = panel_array[i];
-      for(let j = 0; j < sentences.length; j++) {
-        separate_panels[i].firstChild.innerHTML += sentences[j];
-      }
+    .map(_ => sel_intro_sent.splice(0, num_sents_panels));
+  for (let i = 0; i < panel_array.length; i++) {
+    const sentences = panel_array[i];
+    for(let j = 0; j < sentences.length; j++) 
+      separate_panels[i].firstChild.innerHTML += sentences[j];
+    
   }
 }
 
@@ -137,19 +137,19 @@ function joinedTimer() {
   clearInterval(timer_to_idle);
   timer = setInterval(function() { 
     sec--;
-    console.log('seconds to scroll ' + sec)
+    console.log('seconds to scroll ' + sec);
     if (sec == -1) {
-      console.log('restart autoscroll')
+      console.log('restart autoscroll');
       clearInterval(timer);
-      scrollDown($('#wrapper_joined'))
+      scrollDown($('#wrapper_joined'));
     }
   }, 1000);
   timer_to_idle = setInterval(function() {
     sec_to_idle--;
-    console.log('seconds to idle ' + sec_to_idle)
+    console.log('seconds to idle ' + sec_to_idle);
     if (sec_to_idle == -1) {
       clearInterval(timer_to_idle);
-      separatemode()
+      separatemode();
     }
   }, 1000);
 }
@@ -165,7 +165,7 @@ function scrollDown(el, scroll_dur) {
   el.animate({
     scrollTop: el.get(0).scrollHeight
   }, dur, 'linear', function() {
-    scrollUp(el, scroll_dur)
+    scrollUp(el, scroll_dur);
   });
 }; 
 
@@ -181,14 +181,14 @@ function scrollUp(el, scroll_dur) {
 
 ////////////////// TRANSITION INTO SEPARATE MODE
 function scrollToEmotion(emotion_name, base_emotion) {
-  console.log(emotion_name, base_emotion)
+  console.log(emotion_name, base_emotion);
   const elm = '#option-'+emotion_name;
   const elHeight = $(elm).height() * 0.9;
   const currentPosition = $(elm).offset().top;
   const currentScroll = $('#wrapper_joined').scrollTop();
   const middle = $(window).height() / 2;
   const scrollVal = currentScroll + (currentPosition - middle + (elHeight / 2));
-  console.log(currentScroll, currentPosition, scrollVal)
+  console.log(currentScroll, currentPosition, scrollVal);
   $('#wrapper_joined').stop().animate({
     scrollTop: scrollVal
   }, 2000, 'linear');
@@ -201,7 +201,7 @@ function separatemode() {
   $('#wrapper_separate').stop().fadeIn(fade_time);
   $('#wrapper_separate').css('display','flex');
   setTimeout(function() {
-    scroll_separate_panels()
+    scroll_separate_panels();
   }, 500);
 }
 
@@ -243,7 +243,7 @@ function moveHand() {
   const h = $(window).height() - handIndicator.height();
   const nh = Math.floor(Math.random() * h);
   
-  handIndicator.css({top: `${nh}px`, left: `${nw}px`})
+  handIndicator.css({top: `${nh}px`, left: `${nw}px`});
   // then show hand
   handIndicator
     .finish()
@@ -257,7 +257,7 @@ function moveHand() {
     .delay(hand_blink_time)
     .fadeIn(0)
     .delay(hand_blink_time)
-    .fadeOut(0)
+    .fadeOut(0);
 }
 
 

@@ -15,15 +15,15 @@ window.init = () => {
   socket.on('emotion:update', updateEmotion);
   socket.emit('emotion:get');
   fetch('/data/00_intro.txt')
-  .then(res => res.blob())
-  .then(blob => blob.text())
-  .then(text => {
-    $('.text').text(text);
-  });
+    .then(res => res.blob())
+    .then(blob => blob.text())
+    .then(text => {
+      $('.text').text(text);
+    });
 };
 
 function updateEmotion(msg) {
-  console.log('updateEmotion')
+  console.log('updateEmotion');
   if (!curEmotion || curEmotion.name !== msg.name) {
     curEmotion = msg;
     console.log('emotion has been updated to: ' + msg.name + ' (base: ' + msg.base + ', level: ' + msg.level + ')');
@@ -34,13 +34,13 @@ function updateEmotion(msg) {
 
 async function updateInterface() {
 
-  console.log('updateInterface')
+  console.log('updateInterface');
   showLoadingOverlay(curEmotion, function() {
     $('.intro-text-container').css('visibility', 'visible');
     scrollDown();
 
   });
-  $('#debug-info').text('CURRENT EMOTION: ' + curEmotion.name + ' (base: ' + curEmotion.base + ', level: ' + curEmotion.level + ')')
+  $('#debug-info').text('CURRENT EMOTION: ' + curEmotion.name + ' (base: ' + curEmotion.base + ', level: ' + curEmotion.level + ')');
   $('svg').remove();
   imgURLs = await getImgUrls(curEmotion.base);
   const colors = window.baseColors[curEmotion.base][curEmotion.level-1];
@@ -56,12 +56,12 @@ async function updateInterface() {
 
 function updateBackground(colors) {
   addSvgFilterForElement($('#background-1'), colors);
-  const imgUrl = imgURLs[Math.floor(Math.random() * imgURLs.length)]
+  const imgUrl = imgURLs[Math.floor(Math.random() * imgURLs.length)];
   console.log(imgUrl);
   $('#background-1').css('background-image', `url(${imgUrl})`);
   $('#loader').attr('src', imgUrl).off();
   $('#loader').attr('src', imgUrl).on('load', function() {
-    console.log('loaded: ', imgUrl)
+    console.log('loaded: ', imgUrl);
     $('#background-1').show();
   });
 }

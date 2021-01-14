@@ -16,7 +16,7 @@ fetch('/data/colors.json').then(res => {
 }).then(colors => {
   window.baseColors = colors;
   window.init();
-})
+});
 
 // Helper Functions
 
@@ -41,14 +41,13 @@ window.showLoadingOverlay = (newEmotion, cb) => {
   }, 2000);
 
 
-}
+};
 
 window.hideLoadingOverlay =  () => {
   $('#loading').removeClass('show');
   $('#loading-emotion').empty();
-}
+};
 
 // for hot reloading
-if (module.hot) {
+if (module.hot) 
   module.hot.accept();
-}

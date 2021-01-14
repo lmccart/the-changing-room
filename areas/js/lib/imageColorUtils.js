@@ -24,22 +24,21 @@
 // used like const imageDims = await getDimensions('/static/images/confused/image.jpeg');
 // or getDimensions('/static/images/confused/image.jpeg').then(imageDims => {do whatever u want here})
 export function getDimensions(url){   
-    var img = new Image();
-    const dimensionsPromise = new Promise((res, rej) => {
-      img.addEventListener('load', () => {
-          res([img.naturalWidth, img.naturalHeight]);
-      });
-    })
-    img.src = url;
-    return dimensionsPromise;
+  const img = new Image();
+  const dimensionsPromise = new Promise((res, rej) => {
+    img.addEventListener('load', () => {
+      res([img.naturalWidth, img.naturalHeight]);
+    });
+  });
+  img.src = url;
+  return dimensionsPromise;
 }
 
 // returns array of image URLs for base emotion
 // used like const imageURLs = await getImgUrls('angry');
 // or getImgUrls('angry').then(imageURLs => {do whatever u want here})
 export function getImgUrls (baseEmotion) {
-  return fetch(`/images/${baseEmotion}/manifest`)
-          .then(res => res.json());
+  return fetch(`/images/${baseEmotion}/manifest`).then(res => res.json());
 }
 
 // returns rgb values from hex in either fractional or normal form
@@ -61,11 +60,11 @@ export function hexToRgb(hex, returnFractionalValue) {
 export function getTextColorForBackground(hexcolor0, hexColor1) {
   let yiq = 0;
   for (let a of arguments) {
-      const hex = a.replace('#', '');
-      const r = parseInt(hex.substr(0,2),16);
-      const g = parseInt(hex.substr(2,2),16);
-      const b = parseInt(hex.substr(4,2),16);
-      yiq += ((r*299)+(g*587)+(b*114))/1000;
+    const hex = a.replace('#', '');
+    const r = parseInt(hex.substr(0,2), 16);
+    const g = parseInt(hex.substr(2,2), 16);
+    const b = parseInt(hex.substr(4,2), 16);
+    yiq += ((r*299)+(g*587)+(b*114)) / 1000;
   }
   yiq /= arguments.length;
   return (yiq > 140) ? 'black' : 'white';
@@ -119,15 +118,15 @@ export function addSvgFilterForElement ($imgEl, arrayOfColors) {
       </filter>
     </svg>`;
 
-    // add avg filter to body
-    $('body').append(svg);
+  // add avg filter to body
+  $('body').append(svg);
 
-    // add css filter to image element
-    $imgEl.css('filter', `url(#${filterId})`)
+  // add css filter to image element
+  $imgEl.css('filter', `url(#${filterId})`);
 
-    // remove svg filter when image element is removed
-    // useful for pop up windows
-    $imgEl.on('remove', () => {
-      $(`#${svgId}`).remove();
-    })
+  // remove svg filter when image element is removed
+  // useful for pop up windows
+  $imgEl.on('remove', () => {
+    $(`#${svgId}`).remove();
+  });
 }

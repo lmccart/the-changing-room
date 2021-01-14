@@ -1,6 +1,10 @@
 {
   "parser": "babel-eslint",
   "rules": {
+    "brace-style": [2, "1tbs"],
+    "curly": [2, "multi"],
+    "indent": ["error", 2],
+    "semi": [2],
     "quotes": [2, "single"]
   }
 }

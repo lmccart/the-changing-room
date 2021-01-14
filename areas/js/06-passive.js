@@ -62,19 +62,19 @@ function updateEmotion(msg) {
 }
 
 async function updateInterface() {
-  $('#debug-info').text('CURRENT EMOTION: ' + curEmotion.name + ' (base: ' + curEmotion.base + ', level: ' + curEmotion.level +')')
+  $('#debug-info').text('CURRENT EMOTION: ' + curEmotion.name + ' (base: ' + curEmotion.base + ', level: ' + curEmotion.level +')');
   imgURLs = await getImgUrls(curEmotion.base);
-  if (popupFactory) {
+  if (popupFactory) 
     popupFactory.cleanup();
-  }
+  
   popupFactory = new PopupFactory(curEmotion);
 
-  if (backgroundInterval) {
+  if (backgroundInterval) 
     clearInterval(backgroundInterval);
-  } 
+   
   $('body').css('background-image', `url(${imgURLs[Math.floor(Math.random() * imgURLs.length)]})`);
   backgroundInterval = setInterval(() => {
-    $('body').css('background-image', `url(${imgURLs[Math.floor(Math.random() * imgURLs.length)]})`)
+    $('body').css('background-image', `url(${imgURLs[Math.floor(Math.random() * imgURLs.length)]})`);
   }, (15000 / (1.6 ** curEmotion.level)));
 }
 
@@ -100,16 +100,16 @@ function PopupFactory (emotionObj) {
   factoryThis.removeEl = (id) => {
     const index = factoryThis.activeElements.findIndex((element) => element.id = id);
 
-    if (index >= 0 ) {
+    if (index >= 0 ) 
       factoryThis.activeElements.splice(index, 1);
-    }
-  }
+    
+  };
 
   factoryThis.cleanup = () => {
     // remove all popups
     parentEl.empty();
     clearInterval(creationInterval);
-  }
+  };
 
   factoryThis.getPercentOverlap = (existingEl, newEl) => {
     const l1=existingEl.offset().left-8;
@@ -128,7 +128,7 @@ function PopupFactory (emotionObj) {
     const overlapPercent = overLapArea / (w2 * h2);
 
     return overlapPercent;
-  }
+  };
 
   factoryThis.getRandomPosition = ($element) => {
     const x = document.body.offsetHeight-$element.outerHeight();
@@ -136,7 +136,7 @@ function PopupFactory (emotionObj) {
     const randomX = Math.floor(Math.random()*x);
     const randomY = Math.floor(Math.random()*y);
     return [randomX,randomY];
-  }
+  };
 
   function PopupEl (multiplier) {
     const childThis = this;
@@ -198,7 +198,7 @@ function PopupFactory (emotionObj) {
     // append just the element, which is the first item in a jquery object's array
     parentEl.append(childThis.$element[0]);
 
-    if (hasImage) {
+    if (hasImage) 
       // we need to wait for the image to load before we measure it
       childThis.$element.imagesLoaded(() => {
         // set the initial position
@@ -219,8 +219,8 @@ function PopupFactory (emotionObj) {
         }
 
         childThis.$element.css('visibility', 'visible');
-      })
-    } else {
+      });
+    else {
       // set the initial position
       const randomXY = factoryThis.getRandomPosition(childThis.$element);
       childThis.$element.css('top', randomXY[0]);
@@ -246,7 +246,7 @@ function PopupFactory (emotionObj) {
       childThis.$element.remove();
 
       factoryThis.removeEl(childThis.id);
-    }
+    };
 
     setTimeout(childThis.destroy, destroyRate);
   }
@@ -255,7 +255,7 @@ function PopupFactory (emotionObj) {
     // create a new element every so often
     const newEl = new PopupEl(emotionObj.level);
 
-    factoryThis.activeElements.push(newEl)
+    factoryThis.activeElements.push(newEl);
   }, popupRate);
 }
 

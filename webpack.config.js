@@ -110,7 +110,8 @@ module.exports = {
       minify: false,
     }),
     new ESLintPlugin({
-      exclude: 'node_modules/'
+      exclude: 'node_modules/',
+      fix: true
     }),
     new CleanWebpackPlugin(),
     new webpack.HotModuleReplacementPlugin(),
