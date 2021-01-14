@@ -5,6 +5,7 @@ import './shared.js';
 import { camvas } from './lib/camvas.js';
 import { pico } from './lib/pico.js';
 import 'fancy-textfill/es2015/jquery.plugin';
+import { getTextColorForBackground } from './lib/imageColorUtils.js';
 
 // EMOTION HANDLING
 let emotions;
@@ -15,14 +16,21 @@ let emotionalMessage = "When did you first realize that you can't trust yourself
 window.init = () => {
   socket.on('emotion:update', updateEmotion);
   socket.on('emotion:get');
+  $('#dummy').text(emotionalMessage);
+    console.log(emotionalMessage, "!!!!")
+  $('.textbox-dummy').fancyTextFill({
+      maxFontSize: 400
+    });
+  
 }
 
 function updateEmotion(msg) {
   if (!curEmotion || curEmotion.name !== msg.name) {
     curEmotion = msg;
     console.log('emotion has been updated to: ' + msg.name + ' (base: ' + msg.base + ', level: ' + msg.level + ')');
-    emotionalMessage
+    
     $('#dummy').text(emotionalMessage);
+    console.log(emotionalMessage, "!!!!dummy")
 
     $(".textbox").css("visibility", "hidden");
     updateInterface();
@@ -32,19 +40,13 @@ function updateEmotion(msg) {
 function updateInterface() {
   $('#debug-info').text('CURRENT EMOTION: ' + curEmotion.name + ' (base: ' + curEmotion.base + ', level: ' + curEmotion.level + ')')
 
-  // resize font-size dynamically based on how much text
-  $('.textbox').fancyTextFill({
-    maxFontSize: 400
-  });
+//   const colors = window.baseColors[curEmotion.base][curEmotion.level-1];
 
-  $('.textbox-dummy').fancyTextFill({
-    maxFontSize: 400
-  });
-
+// $('.radialGradient').css('background', `radial-gradient(#${colors[0]},#${colors[1]})`);
 
 
   // $('#spellbox').css("font-size", fontSize + "px");
-  // fontSize = $("#dummy").css('font-size');
+
 
 }
 
