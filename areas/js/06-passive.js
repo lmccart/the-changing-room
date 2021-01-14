@@ -16,7 +16,7 @@ socket.on('emotion:update', updateEmotion);
 
 // get potential strings and save them to a global variable
 window.emotionStrings = [];
-Papa.parse("/data/05_directions.tsv", {
+Papa.parse('/data/05_directions.tsv', {
   download: true,
   header: true,
   skipEmptyLines: 'greedy',
@@ -34,7 +34,7 @@ Papa.parse("/data/05_directions.tsv", {
   }
 });
 
-Papa.parse("/data/01_reflections.tsv", {
+Papa.parse('/data/01_reflections.tsv', {
   download: true,
   header: true,
   skipEmptyLines: 'greedy',
@@ -152,7 +152,7 @@ function PopupFactory (emotionObj) {
     const type = Math.floor(Math.random() * 4); // generates random number between 0 - 3;
     const hasImage = type !== 2; // should be a random chance either true or false
     const stringFallback = 'There is nothing you are afraid of.'; // used if string retrieval fails for some reason
-    childThis.$element = $(`<div class="popup window ${type === 3 && 'label'}" id=${childThis.id}></div>`);
+    childThis.$element = $(`<div class='popup window ${type === 3 && 'label'}' id=${childThis.id}></div>`);
 
     // set up the colors
     childThis.$element.css('background', `#${colors[1]}`);
@@ -164,7 +164,7 @@ function PopupFactory (emotionObj) {
     if (type === 0 || type === 1) {
       // attach a color modified image
       const imageURL = imgURLs[Math.floor(Math.random() * imgURLs.length)];
-      const imgEl = $(`<img src="${imageURL}">`);
+      const imgEl = $(`<img src='${imageURL}'>`);
       addSvgFilterForElement(imgEl, window.baseColors[curEmotion.base][emotionObj.level-1]);
       childThis.$element.append(imgEl);
     }
@@ -191,7 +191,7 @@ function PopupFactory (emotionObj) {
     if (type === 3) {
       // set label image
       const imageURL = `/static/06-passive/${curEmotion.base}/label.jpg`;
-      const imgEl = $(`<img class='label' src="${imageURL}">`);
+      const imgEl = $(`<img class='label' src='${imageURL}'>`);
       childThis.$element.append(imgEl);
     }
 

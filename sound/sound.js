@@ -1,7 +1,7 @@
 const { DeviceDiscovery, Sonos } = require('sonos');
 
 const lookup = {
-  "Kitchen": 0
+  'Kitchen': 0
 };
 const areas = [];
 

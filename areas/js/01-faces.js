@@ -10,14 +10,14 @@ import { getTextColorForBackground } from './lib/imageColorUtils.js';
 // EMOTION HANDLING
 let emotions;
 let curEmotion;
-let emotionalMessage = "When did you first realize that you can't trust yourself?";
+let emotionalMessage = 'When did you first realize that you can\'t trust yourself?';
 
 
 window.init = () => {
   socket.on('emotion:update', updateEmotion);
   socket.on('emotion:get');
   $('#dummy').text(emotionalMessage);
-    console.log(emotionalMessage, "!!!!")
+    console.log(emotionalMessage, '!!!!')
   $('.textbox-dummy').fancyTextFill({
       maxFontSize: 400
     });
@@ -30,9 +30,9 @@ function updateEmotion(msg) {
     console.log('emotion has been updated to: ' + msg.name + ' (base: ' + msg.base + ', level: ' + msg.level + ')');
     
     $('#dummy').text(emotionalMessage);
-    console.log(emotionalMessage, "!!!!dummy")
+    console.log(emotionalMessage, '!!!!dummy')
 
-    $(".textbox").css("visibility", "hidden");
+    $('.textbox').css('visibility', 'hidden');
     updateInterface();
   }
 }
@@ -45,7 +45,7 @@ function updateInterface() {
 // $('.radialGradient').css('background', `radial-gradient(#${colors[0]},#${colors[1]})`);
 
 
-  // $('#spellbox').css("font-size", fontSize + "px");
+  // $('#spellbox').css('font-size', fontSize + 'px');
 
 
 }
@@ -55,7 +55,7 @@ function updateInterface() {
 // VARIABLES
 const canvas = document.createElement('canvas');
 const cascadeurl = '/static/facefinder_cascade.txt';
-const coverEl = $("#video-cover");
+const coverEl = $('#video-cover');
 const ctx = canvas.getContext('2d');
 const currentWidth = $(window).width();
 const currentHeight = $(window).height();
@@ -65,7 +65,7 @@ const ipadHeight = 2160;
 const heightRatio = currentHeight / ipadHeight;
 const update_memory = pico.instantiate_detection_memory(5); // use the detecions of the last 5 frames
 const videoEl = $('#face-stream');
-const videoParentEl = $("#video-parent");
+const videoParentEl = $('#video-parent');
 const typingSpeed = 60;
 
 let facefinderClassifyRegion;
@@ -118,7 +118,7 @@ if (navigator.mediaDevices.getUserMedia) {
       new camvas(ctx, processfn, stream, 10); // 10 here is the target fps for checking for faces
     })
     .catch(function (err) {
-      console.log("Error:", err);
+      console.log('Error:', err);
     });
 }
 
@@ -136,16 +136,16 @@ const processfn = (video) => {
   ctx.drawImage(video, 0, 0);
   var rgba = ctx.getImageData(0, 0, 1280, 720).data;
   const image = {
-    "pixels": rgba_to_grayscale(rgba, 720, 1280),
-    "nrows": 720,
-    "ncols": 1280,
-    "ldim": 1280
+    'pixels': rgba_to_grayscale(rgba, 720, 1280),
+    'nrows': 720,
+    'ncols': 1280,
+    'ldim': 1280
   }
   const params = {
-    "shiftfactor": 0.1, // move the detection window by 10% of its size
-    "minsize": 100,     // minimum size of a face
-    "maxsize": 1000,    // maximum size of a face
-    "scalefactor": 1.1  // for multiscale processing: resize the detection window by 10% when moving to the higher scale
+    'shiftfactor': 0.1, // move the detection window by 10% of its size
+    'minsize': 100,     // minimum size of a face
+    'maxsize': 1000,    // maximum size of a face
+    'scalefactor': 1.1  // for multiscale processing: resize the detection window by 10% when moving to the higher scale
   }
   // run the cascade over the frame and cluster the obtained detections
   // dets is an array that contains (r, c, s, q) quadruplets
@@ -172,10 +172,10 @@ const processfn = (video) => {
       // remove cover
 
       coverEl.hide();
-      $(".textbox").css("visibility", "visible");
+      $('.textbox').css('visibility', 'visible');
       if (spellOut == false) {
         spellOut = true;
-        console.log("flip spell out switch")
+        console.log('flip spell out switch')
         typeInstruction(emotionalMessage);
       } 
 
@@ -187,12 +187,12 @@ const processfn = (video) => {
     if (watchdog < -(delaySeconds * 10)) {
       // cover
       coverEl.show();
-      $(".textbox").css("visibility", "hidden");
+      $('.textbox').css('visibility', 'hidden');
 
       if (spellOut == true) {
         spellOut = false;
-        console.log("switch off")
-        $("#spellbox").empty();
+        console.log('switch off')
+        $('#spellbox').empty();
       } 
     }
   }
@@ -201,9 +201,9 @@ const processfn = (video) => {
 
 function typeInstruction(string, iteration) {
   var iteration = iteration || 0;
-  let fontSize = $("#dummy").css('font-size');
+  let fontSize = $('#dummy').css('font-size');
   console.log(fontSize)
-  $('#spellbox').css("font-size", fontSize);
+  $('#spellbox').css('font-size', fontSize);
   // Prevent our code executing if there are no letters left
   if (iteration === string.length) {
     return;

@@ -145,14 +145,14 @@ function loadData(cb) {
     })
 
 
-  Papa.parse("/data/02_meditation_emotion_specific.tsv", {
+  Papa.parse('/data/02_meditation_emotion_specific.tsv', {
     download: true,
     header: true,
     skipEmptyLines: 'greedy',
     complete: function(results) {
       const rawResults = results.data;
-      // the data comes in as [{ "EMOTION": "annoyed", " BODY AREA": "Feel that...", ...} ...]
-      // I (dan) think it should be { "annoyed": { "BODY AREA": 'string, "PERSON": 'string' } ... }
+      // the data comes in as [{ 'EMOTION': 'annoyed', ' BODY AREA': 'Feel that...', ...} ...]
+      // I (dan) think it should be { 'annoyed': { 'BODY AREA': 'string, 'PERSON': 'string' } ... }
       console.log(rawResults);
       const reordered = {};
 
@@ -162,7 +162,7 @@ function loadData(cb) {
         var newrow = {};
         Object.keys(thisrow).forEach((key) => { newrow[key.trim()] = thisrow[key]; })
 
-        reordered[thisrow["EMOTION"].trim()] = newrow;
+        reordered[thisrow['EMOTION'].trim()] = newrow;
       }
       dataMeditationEmotions = reordered;
       dataLoaded += 1;
@@ -171,14 +171,14 @@ function loadData(cb) {
   });
 
 
-  Papa.parse("/data/02_memories.tsv", {
+  Papa.parse('/data/02_memories.tsv', {
     download: true,
     header: true,
     skipEmptyLines: 'greedy',
     complete: function(results) {
       const rawResults = results.data;
-      // the data comes in as [{ "afraid": "One time this..", "alive": "one day...", ...} ...]
-      // I (dan) think it should be { "annoyed": [ "One time", ...], "alive": ["one day", ..] /// 
+      // the data comes in as [{ 'afraid': 'One time this..', 'alive': 'one day...', ...} ...]
+      // I (dan) think it should be { 'annoyed': [ 'One time', ...], 'alive': ['one day', ..] /// 
       const reordered = {};
 
       for (var i = 0; i < rawResults.length; i++) {
@@ -187,7 +187,7 @@ function loadData(cb) {
         var newrow = {};
         Object.keys(thisrow).forEach((key) => { 
           key = key.trim();
-          if(key != "" && thisrow[key].trim() != "") {
+          if(key != '' && thisrow[key].trim() != '') {
             if(reordered[key] == undefined) { reordered[key] = []; }
             reordered[key].push(thisrow[key]);
           }
@@ -220,7 +220,7 @@ function generateMeditationTexts() {
       }
       return newm;
     })
-    .filter((m) => { return m != ""; });
+    .filter((m) => { return m != ''; });
 }
 
 function generateMemories() {
@@ -229,14 +229,14 @@ function generateMemories() {
 
   dataMemories[curEmotion.base].forEach(m => {
     memories.push({ 
-      type: "text",
+      type: 'text',
       text: m,
     });
   });
 
   imageList.forEach(m => {
     memories.push({
-      type: "image",
+      type: 'image',
       url: m,
     });
   });
@@ -247,7 +247,7 @@ function generateMemories() {
 
 function displayMeditationPhrase(opts) {
   // opts: { text: mt, fadeIn: 100, fadeOut: 100 };
-  $("#meditation_text")
+  $('#meditation_text')
     .fadeOut(opts.fadeOut, function() {
       $(this)
         .text(opts.text)
@@ -260,36 +260,36 @@ function displayMemory(opts) {
   let memdiv;
   let memory = opts.data;
  
-  if(memory.type == "text") {
-    memdiv = $("<div></div>");
-    memdiv.addClass("text");
+  if(memory.type == 'text') {
+    memdiv = $('<div></div>');
+    memdiv.addClass('text');
     memdiv.text(memory.text)
   } 
-  if(memory.type == "image") {
-    memdiv = $("<img></img>");
-    memdiv.addClass("image");
-    memdiv.attr("src", memory.url);
+  if(memory.type == 'image') {
+    memdiv = $('<img></img>');
+    memdiv.addClass('image');
+    memdiv.attr('src', memory.url);
   } 
 
-  memdiv.addClass("memory");
+  memdiv.addClass('memory');
   memdiv.top = opts.top;
   memdiv.css({ top:  opts.top, left: opts.left });
 
 
   memdiv
     .hide()
-    .appendTo("#memory_container")
+    .appendTo('#memory_container')
     .fadeIn(opts.fadeIn);
 }
 
 /////////////////////////////////
 
 function resetHTML(cb) {
-  $("#meditation_text").fadeOut(1000, function() {
+  $('#meditation_text').fadeOut(1000, function() {
     $(this).empty();
     $(this).fadeIn(1000);
   });
-  $("#memory_container").fadeOut(1000, function() {
+  $('#memory_container').fadeOut(1000, function() {
     $(this).empty();
     $(this).fadeIn(1000);
   });
@@ -304,8 +304,8 @@ function queueEvents(timeline) {
   timeMarker += meditations_fadein_pause;
 
   timeline.add({ time: timeMarker, event: function () { 
-    $("#meditation_container").fadeIn(meditations_fadein_duration);
-    console.log("TIMELINE STARTING");
+    $('#meditation_container').fadeIn(meditations_fadein_duration);
+    console.log('TIMELINE STARTING');
   } });
 
 
@@ -337,14 +337,14 @@ function queueEvents(timeline) {
   timeMarker += meditations_fadeout_pause;
 
   timeline.add({ time: timeMarker, event: function () { 
-    $("#meditation_container").fadeOut(meditations_fadeout_duration);
+    $('#meditation_container').fadeOut(meditations_fadeout_duration);
   } });
 
 
   timeMarker += memories_fadein_pause;
 
   timeline.add({ time: timeMarker, event: function () { 
-    $("#memory_container").fadeIn(memories_fadein_duration);
+    $('#memory_container').fadeIn(memories_fadein_duration);
   } });
 
 
@@ -375,8 +375,8 @@ function queueEvents(timeline) {
   timeMarker += memories_fadeout_pause;
 
   timeline.add({ time: timeMarker, event: function () { 
-    $("#meditation_text").empty();
-    $("#memory_container").fadeOut(memories_fadeout_duration, function() {
+    $('#meditation_text').empty();
+    $('#memory_container').fadeOut(memories_fadeout_duration, function() {
       $(this).empty();
     });
   } });
@@ -397,7 +397,7 @@ function resetTimeline() {
     return;
   }
 
-  console.log("Resetting timeline");
+  console.log('Resetting timeline');
  
   if(timeline === undefined) {
     timeline = new Timeline({ loop: true, duration: 50000, interval: 100 });
@@ -424,7 +424,7 @@ function resetTimeline() {
 
 
 loadData(() => {
-  console.log("Data loaded!");
+  console.log('Data loaded!');
   dataLoaded = true;
 });
 

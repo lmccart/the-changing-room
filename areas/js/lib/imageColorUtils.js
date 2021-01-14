@@ -26,7 +26,7 @@
 export function getDimensions(url){   
     var img = new Image();
     const dimensionsPromise = new Promise((res, rej) => {
-      img.addEventListener("load", () => {
+      img.addEventListener('load', () => {
           res([img.naturalWidth, img.naturalHeight]);
       });
     })
@@ -61,7 +61,7 @@ export function hexToRgb(hex, returnFractionalValue) {
 export function getTextColorForBackground(hexcolor0, hexColor1) {
   let yiq = 0;
   for (let a of arguments) {
-      const hex = a.replace("#", "");
+      const hex = a.replace('#', '');
       const r = parseInt(hex.substr(0,2),16);
       const g = parseInt(hex.substr(2,2),16);
       const b = parseInt(hex.substr(4,2),16);
@@ -76,7 +76,7 @@ export function getTextColorForBackground(hexcolor0, hexColor1) {
 // has a multitone treatment, and sets css of the $imgEl 
 // (which is a jquery element) to use it as a filter
 // arrayOfColors must be an array of 2 or more hex colors:
-// ["7c4242", "584794", "608942"] ('#' infront of the color is optional)
+// ['7c4242', '584794', '608942'] ('#' infront of the color is optional)
 export function addSvgFilterForElement ($imgEl, arrayOfColors) {
   const filterId = 'filter' + (Math.floor(Math.random() * 1000000)).toString();
   const svgId = 'svg' + (Math.floor(Math.random() * 1000000)).toString();
@@ -96,25 +96,25 @@ export function addSvgFilterForElement ($imgEl, arrayOfColors) {
   }
 
   const svg = `
-    <svg id="${svgId}">
-      <filter id="${filterId}">
+    <svg id='${svgId}'>
+      <filter id='${filterId}'>
           <!-- Grab the SourceGraphic (implicit) and convert it to grayscale -->
-          <feColorMatrix type="matrix" values=".33 .33 .33 0 0
+          <feColorMatrix type='matrix' values='.33 .33 .33 0 0
                 .33 .33 .33 0 0
                 .33 .33 .33 0 0
-                0 0 0 1 0">
+                0 0 0 1 0'>
           </feColorMatrix>
-          <feComponentTransfer color-interpolation-filters="sRGB">
-            <feFuncR type="gamma" exponent="1.5" amplitude="1.3" offset="0"></feFuncR>
-            <feFuncG type="gamma" exponent="1.5" amplitude="1.3" offset="0"></feFuncG>
-            <feFuncB type="gamma" exponent="1.5" amplitude="1.3" offset="0"></feFuncB>
+          <feComponentTransfer color-interpolation-filters='sRGB'>
+            <feFuncR type='gamma' exponent='1.5' amplitude='1.3' offset='0'></feFuncR>
+            <feFuncG type='gamma' exponent='1.5' amplitude='1.3' offset='0'></feFuncG>
+            <feFuncB type='gamma' exponent='1.5' amplitude='1.3' offset='0'></feFuncB>
          </feComponentTransfer> 
   
           <!-- Map the grayscale result to the gradient map provided in tableValues -->
-          <feComponentTransfer color-interpolation-filters="sRGB">
-              <feFuncR type="table" tableValues="${redTableValue}"></feFuncR>
-              <feFuncG type="table" tableValues="${greenTableValue}"></feFuncG>
-              <feFuncB type="table" tableValues="${blueTableValue}"></feFuncB>
+          <feComponentTransfer color-interpolation-filters='sRGB'>
+              <feFuncR type='table' tableValues='${redTableValue}'></feFuncR>
+              <feFuncG type='table' tableValues='${greenTableValue}'></feFuncG>
+              <feFuncB type='table' tableValues='${blueTableValue}'></feFuncB>
           </feComponentTransfer>
       </filter>
     </svg>`;
@@ -127,7 +127,7 @@ export function addSvgFilterForElement ($imgEl, arrayOfColors) {
 
     // remove svg filter when image element is removed
     // useful for pop up windows
-    $imgEl.on("remove", () => {
+    $imgEl.on('remove', () => {
       $(`#${svgId}`).remove();
     })
 }

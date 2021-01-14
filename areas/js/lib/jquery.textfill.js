@@ -56,7 +56,7 @@
 		// Predefining the awesomeness
 
 		// Output arguments to the Debug console
-		// if "Debug Mode" is enabled
+		// if 'Debug Mode' is enabled
 		function _debug() {
 			if (!Opts.debug
 				||  typeof console       == 'undefined'

@@ -2,6 +2,7 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const ESLintPlugin = require('eslint-webpack-plugin');
 const webpack = require('webpack');
 
 const hotMiddlewareScript = 'webpack-hot-middleware/client?path=/__webpack_hmr&timeout=20000&reload=true';
@@ -29,8 +30,6 @@ module.exports = {
       sideEffects: true,
       use: [
         MiniCssExtractPlugin.loader,
-        { loader: 'eslint-loader'
-        },
         {
           loader: 'css-loader',
           options: {
@@ -46,10 +45,10 @@ module.exports = {
       ]
     },
     {
-      test: require.resolve("jquery"),
-      loader: "expose-loader",
+      test: require.resolve('jquery'),
+      loader: 'expose-loader',
       options: {
-        exposes: ["$", "jQuery"],
+        exposes: ['$', 'jQuery'],
       },
     }]
   },
@@ -109,6 +108,9 @@ module.exports = {
       template: './areas/debug/index.html',
       chunks: [''],
       minify: false,
+    }),
+    new ESLintPlugin({
+      exclude: 'node_modules/'
     }),
     new CleanWebpackPlugin(),
     new webpack.HotModuleReplacementPlugin(),

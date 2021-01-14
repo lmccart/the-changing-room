@@ -1,4 +1,4 @@
-@import "./shared.scss";
+@import './shared.scss';
 
 .backgrounds {
   overflow: hidden;
@@ -60,7 +60,7 @@ svg {
     right: 0;
     height: 1.7vw;
     &:before {
-      content: "";
+      content: '';
       position: absolute;
       top: .2vw;
       bottom: .2vw;

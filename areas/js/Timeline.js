@@ -7,11 +7,11 @@ USAGE
  
   let t = new Timeline({ loop: true, duration: 5000, interval: 100 });
 
-  t.add({ time: 1000, event: function () { console.log("bliop"); } });
-  t.add({ time: 2000, event: function () { console.log("boop"); } });
-  t.add({ time: 4000, event: function () { console.log("bloooiop"); } });
+  t.add({ time: 1000, event: function () { console.log('bliop'); } });
+  t.add({ time: 2000, event: function () { console.log('boop'); } });
+  t.add({ time: 4000, event: function () { console.log('bloooiop'); } });
 
-  t.start({ callback: function() { console.log("we're done!!!");}  })
+  t.start({ callback: function() { console.log('we're done!!!');}  })
 
   t.stop();
 
@@ -31,7 +31,7 @@ class Timeline {
     this.interval = opts.interval;
     this.loop = opts.loop;
     this.duration = opts.duration;
-    this.status = "stopped";
+    this.status = 'stopped';
     this.startTime = null;
   }
 
@@ -58,7 +58,7 @@ class Timeline {
   }
 
   stop() {
-    this.status = "stopped";
+    this.status = 'stopped';
   }
 
   _play_uncompleted() {
@@ -82,11 +82,11 @@ class Timeline {
     var self = this;
 
     this.reset();
-    this.status = "playing";
+    this.status = 'playing';
 
     var loopUpdate = function() {
       setTimeout(function() {
-        if(self.status == "stopped") { return; }
+        if(self.status == 'stopped') { return; }
         self.update();
 
         let msPastDuration = Date.now() - Number(self.startTime) - Number(self.duration);

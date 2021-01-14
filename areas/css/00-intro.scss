@@ -1,9 +1,5 @@
 @import './shared.scss';
 
-.main {
-    // border: 1px solid green;
-}
-
 .intro-text-container {
     visibility: hidden;
     border: .24vw solid black;
@@ -36,7 +32,6 @@
 
   /* Track */
   ::-webkit-scrollbar-track {
-    // background: #f1f1f1;
     border-left: .24vw solid black;
     width: 1.7vw;
   }
