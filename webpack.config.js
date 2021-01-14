@@ -15,7 +15,7 @@ module.exports = {
     selection: ['./areas/js/03-selection.js', hotMiddlewareScript],
     convo1: ['./areas/js/04-convo1.js', hotMiddlewareScript],
     convo2: ['./areas/js/05-convo2.js', hotMiddlewareScript],
-    passive: ['./areas/js/06-passive.js', hotMiddlewareScript],
+    passive: ['./areas/js/06-passive.js', hotMiddlewareScript]
   },
   output: {
     filename: 'js/[name].[contenthash].js',
@@ -102,6 +102,12 @@ module.exports = {
       filename: '06-passive/index.html',
       template: './areas/06-passive/index.html',
       chunks: ['passive'],
+      minify: false,
+    }),
+    new HtmlWebpackPlugin({  
+      filename: 'debug/index.html',
+      template: './areas/debug/index.html',
+      chunks: [''],
       minify: false,
     }),
     new CleanWebpackPlugin(),

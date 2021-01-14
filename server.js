@@ -65,6 +65,9 @@ io.on('connection', (socket) => {
     Sound.playEmotion(curEmotion);
     Lights.playEmotion(curEmotion);
   });
+  socket.on('emotion:get', function() {
+    socket.emit('emotion:update', curEmotion);
+  });
 
   socket.on('chat:send', function(data){
     // called by area 04 when user hits "send" on a chat message
@@ -84,6 +87,7 @@ io.on('connection', (socket) => {
     data.modified = msgWordArray.join('');
     io.emit('chat:new', data);
   });
+
 });
 
 // SERVER SETUP

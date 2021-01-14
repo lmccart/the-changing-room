@@ -88,17 +88,16 @@ let timeline_end_pause = 1000;
 
 ///////////////////////////////////////////////
 
-
-
-
-const socket = io();
-socket.on('emotion:update', updateEmotion);
+window.init = () => {
+  socket.on('emotion:update', updateEmotion);
+  // the stuff at the bottom should go in here, but I'm not touching it for now so as not to create merge conflicts since I know this section is in progress -LLM
+};
 
 function updateEmotion(msg) {
   if (!curEmotion || curEmotion.name !== msg.name) {
     curEmotion = msg;
     console.log('emotion has been updated to: ' + msg.name + ' (base: ' + msg.base + ', level: ' + msg.level +')');
-    showLoadingOverlay(curEmotion.name);
+    showLoadingOverlay(curEmotion);
     updateImageList(() => {
         console.log(imageList);
         updateInterface();

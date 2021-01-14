@@ -6,7 +6,7 @@
 
 .intro-text-container {
     visibility: hidden;
-    border: 3px solid black;
+    border: .24vw solid black;
     width: 70vw;
     display: block;
     margin: 0;
@@ -22,29 +22,29 @@
 .text
 {
    height: 100%;
-   font-size: 3.8em;
+   font-size: 3.5vw;
    overflow: auto;
    font-weight: 700;
    font-style: italic;
-   padding: 1em;
+   padding: 3.5vw;
 //    scroll-behavior: smooth;
 }
 
 ::-webkit-scrollbar {
-    width: 22px;
+    width: 1.7vw;
   }
 
   /* Track */
   ::-webkit-scrollbar-track {
     // background: #f1f1f1;
-    border-left: 3px solid black;
-    width: 30px;
+    border-left: .24vw solid black;
+    width: 1.7vw;
   }
 
   /* Handle */
   ::-webkit-scrollbar-thumb {
     background: black;
-    height: 180px;
+    height: 17vh;
   }
 
 

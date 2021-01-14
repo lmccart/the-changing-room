@@ -31,14 +31,12 @@ svg {
   position: fixed;
   top: 0;
   left: 0;
-  z-index: 100;
-
-  backdrop-filter: blur(5px);
+  z-index: 10;
 
   width: 100vw;
   height: 100vh;
 
-  display: none;
+  display: flex;
   justify-content: center;
   align-items: center;
 
@@ -47,35 +45,42 @@ svg {
   }
 
   h1 {
-    color: white;
-    font-size: 2em;
+    font-size: 1.8vw;
   }
 
   .bar-container {
     position: relative;
+    width: 40vw;
   }
 
-  .loading-bar {
-    border: 2px solid white;
-
+  #loading-bar {
     position: absolute;
-    bottom: -10px;
+    bottom: -0.49vw;
     left: 0;
     right: 0;
-
-    height: 30px;
-
+    height: 1.7vw;
     &:before {
       content: "";
       position: absolute;
-      top: 2px;
-      bottom: 2px;
+      top: .2vw;
+      bottom: .2vw;
       right: 100%;
-      left: 2px;
-
-      background: white;
-
+      left: .2vw;
       animation: barFill 4s linear infinite;
+    }
+  }
+
+  #loading-bar.black {
+    border: .2vw solid black;
+    &:before {
+      background: black;
+    }
+  }
+
+  #loading-bar.white {
+    border: .2vw solid white;
+    &:before {
+      background: white;
     }
   }
 }
@@ -85,7 +90,7 @@ svg {
     right: 100%;
   }
   100% {
-    right: 2px;
+    right: .2vw;
   }
 }
 
@@ -105,13 +110,13 @@ svg {
   .instruction-container {
     width: 100%;
     height: 100%;
-    border: 2px solid white;
+    border: .2vw solid white;
 
     display: flex;
     align-items: center;
 
     #instruction {
-      font-size: 6em;
+      font-size: 5vw;
       color: white;
 
       width: 90%;

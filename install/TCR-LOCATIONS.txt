@@ -1,0 +1,9 @@
+TCR LOCATIONS
+
+http://localhost:3000/00-intro
+http://localhost:3000/01-intro
+http://localhost:3000/02-faces
+http://localhost:3000/03-selection
+http://localhost:3000/04-convo1
+http://localhost:3000/05-convo2
+http://localhost:3000/06-passive

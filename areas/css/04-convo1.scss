@@ -57,9 +57,19 @@
 
     border: none;
     background: none;
+    outline: none;
   }
   input.focused {
     bottom: 60vh;
+  }
+  input[type='submit']{
+    cursor: pointer;
+  }
+  input:focus[type='submit'], input:active[type='submit'] {
+    color: white;
+  }
+  input:focus {
+    outline: none !important;
   }
 
 }
@@ -71,6 +81,11 @@
     height: 100%;
     overflow-y: scroll;
   }
+}
+
+#message-container.compact {
+  height: calc(50vh - 15vw);
+  margin-bottom: 50vh;
 }
 
 ::-webkit-scrollbar {
