@@ -22,7 +22,7 @@ fetch('/data/colors.json').then(res => {
 
 window.showLoadingOverlay = (newEmotion, cb) => {
 
-  const colors = window.baseColors[newEmotion.base][newEmotion.level-1];
+  const colors = window.baseColors[newEmotion.base][newEmotion.level - 1];
   const textColor = getTextColorForBackground(colors[0], colors[1]);
   $('#loading').css('color', textColor);
 

@@ -43,7 +43,7 @@ async function updateInterface() {
   $('#debug-info').text('CURRENT EMOTION: ' + curEmotion.name + ' (base: ' + curEmotion.base + ', level: ' + curEmotion.level + ')');
   $('svg').remove();
   imgURLs = await getImgUrls(curEmotion.base);
-  const colors = window.baseColors[curEmotion.base][curEmotion.level-1];
+  const colors = window.baseColors[curEmotion.base][curEmotion.level - 1];
   updateBackground(colors);
 
   const textColor = getTextColorForBackground(colors[0], colors[1]);

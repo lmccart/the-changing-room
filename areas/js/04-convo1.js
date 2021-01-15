@@ -45,7 +45,7 @@ window.init = () => {
   
   // listen for return key press (13) and send message
   $(document).on('keydown', (e) => {
-    if(e.which === 13) 
+    if (e.which === 13) 
       sendMessage(e);
     
   });
@@ -108,7 +108,7 @@ function showMessageViewer() {
 function updateEmotion(msg) {
   if (!curEmotion || curEmotion.name !== msg.name) {
     curEmotion = msg;
-    console.log('emotion has been updated to: ' + msg.name + ' (base: ' + msg.base + ', level: ' + msg.level +')');
+    console.log('emotion has been updated to: ' + msg.name + ' (base: ' + msg.base + ', level: ' + msg.level + ')');
     updateInterface();
   }
 }
@@ -117,11 +117,11 @@ function updateInterface() {
   showLoadingOverlay(curEmotion, function() {
   });
   resetChat();
-  const colors = window.baseColors[curEmotion.base][curEmotion.level-1];
+  const colors = window.baseColors[curEmotion.base][curEmotion.level - 1];
   const textColor = getTextColorForBackground(colors[0], colors[1]);
   $('body').css('color', textColor);
   $('body').css('background', `radial-gradient(#${colors[0]},#${colors[1]})`);
-  $('#debug-info').text(screen.width+' '+screen.height);//CURRENT EMOTION: ' + curEmotion.name + ' (base: ' + curEmotion.base + ', level: ' + curEmotion.level +')')
+  $('#debug-info').text(screen.width + ' ' + screen.height);//CURRENT EMOTION: ' + curEmotion.name + ' (base: ' + curEmotion.base + ', level: ' + curEmotion.level +')')
 }
 
 function handleNewMessage(data) {
@@ -150,7 +150,7 @@ function typeMessageByWord(string, iteration) {
   setTimeout(function() {
     // Set the instruction to the current text + the next character
     // whilst incrementing the iteration variable
-    messageViewer.text( messageViewer.text() + ' ' + words[iteration++] );
+    messageViewer.text(messageViewer.text() + ' ' + words[iteration++]);
     messageViewer.animate({ scrollTop: messageViewer[0].scrollHeight}, 1);
     startResetTimeout();
     // Re-trigger our function

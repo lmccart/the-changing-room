@@ -23,7 +23,7 @@
 // of an image url
 // used like const imageDims = await getDimensions('/static/images/confused/image.jpeg');
 // or getDimensions('/static/images/confused/image.jpeg').then(imageDims => {do whatever u want here})
-export function getDimensions(url){   
+export function getDimensions(url) {   
   const img = new Image();
   const dimensionsPromise = new Promise((res, rej) => {
     img.addEventListener('load', () => {
@@ -37,7 +37,7 @@ export function getDimensions(url){
 // returns array of image URLs for base emotion
 // used like const imageURLs = await getImgUrls('angry');
 // or getImgUrls('angry').then(imageURLs => {do whatever u want here})
-export function getImgUrls (baseEmotion) {
+export function getImgUrls(baseEmotion) {
   return fetch(`/images/${baseEmotion}/manifest`).then(res => res.json());
 }
 
@@ -64,7 +64,7 @@ export function getTextColorForBackground(hexcolor0, hexColor1) {
     const r = parseInt(hex.substr(0,2), 16);
     const g = parseInt(hex.substr(2,2), 16);
     const b = parseInt(hex.substr(4,2), 16);
-    yiq += ((r*299)+(g*587)+(b*114)) / 1000;
+    yiq += ((r * 299) + (g * 587) + (b * 114)) / 1000;
   }
   yiq /= arguments.length;
   return (yiq > 140) ? 'black' : 'white';
@@ -76,7 +76,7 @@ export function getTextColorForBackground(hexcolor0, hexColor1) {
 // (which is a jquery element) to use it as a filter
 // arrayOfColors must be an array of 2 or more hex colors:
 // ['7c4242', '584794', '608942'] ('#' infront of the color is optional)
-export function addSvgFilterForElement ($imgEl, arrayOfColors) {
+export function addSvgFilterForElement($imgEl, arrayOfColors) {
   const filterId = 'filter' + (Math.floor(Math.random() * 1000000)).toString();
   const svgId = 'svg' + (Math.floor(Math.random() * 1000000)).toString();
   let redTableValue = '';

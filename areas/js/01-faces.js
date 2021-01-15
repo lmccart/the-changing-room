@@ -102,8 +102,8 @@ canvas.setAttribute('height', 720);
 // face detection code based on https://nenadmarkus.com/p/picojs-intro/demo/
 
 // setup Pico face detector with cascade data
-fetch(cascadeurl).then(function (response) {
-  response.arrayBuffer().then(function (buffer) {
+fetch(cascadeurl).then(function(response) {
+  response.arrayBuffer().then(function(buffer) {
     const bytes = new Int8Array(buffer);
     facefinderClassifyRegion = pico.unpack_cascade(bytes);
     console.log('* cascade loaded');
@@ -113,11 +113,11 @@ fetch(cascadeurl).then(function (response) {
 // Load webcam and instantiate camvas script
 if (navigator.mediaDevices.getUserMedia) 
   navigator.mediaDevices.getUserMedia({ video: { width: 1280, height: 720 } })
-    .then(function (stream) {
+    .then(function(stream) {
       videoEl[0].srcObject = stream;
       new camvas(ctx, processfn, stream, 10); // 10 here is the target fps for checking for faces
     })
-    .catch(function (err) {
+    .catch(function(err) {
       console.log('Error:', err);
     });
 
@@ -173,7 +173,7 @@ const processfn = (video) => {
 
       coverEl.hide();
       $('.textbox').css('visibility', 'visible');
-      if (spellOut == false) {
+      if (spellOut === false) {
         spellOut = true;
         console.log('flip spell out switch');
         typeInstruction(emotionalMessage);
@@ -189,7 +189,7 @@ const processfn = (video) => {
       coverEl.show();
       $('.textbox').css('visibility', 'hidden');
 
-      if (spellOut == true) {
+      if (spellOut === true) {
         spellOut = false;
         console.log('switch off');
         $('#spellbox').empty();
@@ -209,7 +209,7 @@ function typeInstruction(string, iteration) {
     return;
   
 
-  setTimeout(function () {
+  setTimeout(function() {
     // Set the instruction to the current text + the next character
     // whilst incrementing the iteration variable
     $('#spellbox').text($('#spellbox').text() + string[iteration++]);

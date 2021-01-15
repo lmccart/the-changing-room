@@ -16,8 +16,8 @@ let fade_time = 1000;
 let curEmotion;
 
 const separate_panels = [];
-for (let i=0; i<num_panels; i++) 
-  separate_panels.push(document.getElementById('scroll'+i));
+for (let i = 0; i < num_panels; i++) 
+  separate_panels.push(document.getElementById('scroll' + i));
 
 const handIndicator = $('#hand-indicator');
 const sel_txt_url = '/data/03_selection_intro.txt';
@@ -71,23 +71,23 @@ function updateEmotion(msg) {
   console.log(msg);
   if (!curEmotion || curEmotion.name !== msg.name) {
     curEmotion = msg;
-    console.log('emotion has been updated to: ' + msg.name + ' (base: ' + msg.base + ', level: ' + msg.level +')');
+    console.log('emotion has been updated to: ' + msg.name + ' (base: ' + msg.base + ', level: ' + msg.level + ')');
     updateInterface();
   }
 }
 
 function updateInterface() {
-  $('#debug-info').text('CURRENT EMOTION: ' + curEmotion.name + ' (base: ' + curEmotion.base + ', level: ' + curEmotion.level +')');
+  $('#debug-info').text('CURRENT EMOTION: ' + curEmotion.name + ' (base: ' + curEmotion.base + ', level: ' + curEmotion.level + ')');
   $('#emotions').val(curEmotion.name);
 
-  $('.emotion').removeAttr( 'style' );
+  $('.emotion').removeAttr('style');
   $('.emotion').removeClass('selected_emotion');
   //get color of selected emotion colors
   let emotion_colors = baseColors[curEmotion.base];
-  let emotion_colors_str1 = '#'+emotion_colors[0][0];
-  let emotion_colors_str2 = '#'+emotion_colors[0][1];
+  let emotion_colors_str1 = '#' + emotion_colors[0][0];
+  let emotion_colors_str2 = '#' + emotion_colors[0][1];
 
-  const elm = '#option-'+curEmotion.name;
+  const elm = '#option-' + curEmotion.name;
   $(elm).fadeIn(fade_time, function() {
     scrollToEmotion(curEmotion.name, curEmotion.base);
 
@@ -107,14 +107,14 @@ function updateInterface() {
 
 ////////////////// PARSING SELECTION TEXT TO PANELS
 function selection_txt_parse(sel_intro_content) {
-  let sel_intro_sent = sel_intro_content.match( /[^\.!\?]+[\.!\?]+/g );
+  let sel_intro_sent = sel_intro_content.match(/[^\.!\?]+[\.!\?]+/g);
   let num_sents_panels = Math.ceil(sel_intro_sent.length / num_panels);
   const panel_array = new Array(Math.ceil(sel_intro_sent.length / num_sents_panels))
     .fill()
     .map(_ => sel_intro_sent.splice(0, num_sents_panels));
   for (let i = 0; i < panel_array.length; i++) {
     const sentences = panel_array[i];
-    for(let j = 0; j < sentences.length; j++) 
+    for (let j = 0; j < sentences.length; j++) 
       separate_panels[i].firstChild.innerHTML += sentences[j];
     
   }
@@ -138,7 +138,7 @@ function joinedTimer() {
   timer = setInterval(function() { 
     sec--;
     console.log('seconds to scroll ' + sec);
-    if (sec == -1) {
+    if (sec === -1) {
       console.log('restart autoscroll');
       clearInterval(timer);
       scrollDown($('#wrapper_joined'));
@@ -147,14 +147,14 @@ function joinedTimer() {
   timer_to_idle = setInterval(function() {
     sec_to_idle--;
     console.log('seconds to idle ' + sec_to_idle);
-    if (sec_to_idle == -1) {
+    if (sec_to_idle === -1) {
       clearInterval(timer_to_idle);
       separatemode();
     }
   }, 1000);
 }
 //stop auto scroll on manual scroll, restart timers
-$('#wrapper_joined').on('click wheel DOMMouseScroll mousewheel keyup touchmove', function(e){
+$('#wrapper_joined').on('click wheel DOMMouseScroll mousewheel keyup touchmove', function(e) {
   if (e.type !== 'click') $('#wrapper_joined').stop();
   joinedTimer();
   setHandInterval();
@@ -182,7 +182,7 @@ function scrollUp(el, scroll_dur) {
 ////////////////// TRANSITION INTO SEPARATE MODE
 function scrollToEmotion(emotion_name, base_emotion) {
   console.log(emotion_name, base_emotion);
-  const elm = '#option-'+emotion_name;
+  const elm = '#option-' + emotion_name;
   const elHeight = $(elm).height() * 0.9;
   const currentPosition = $(elm).offset().top;
   const currentScroll = $('#wrapper_joined').scrollTop();
@@ -236,8 +236,8 @@ function setHandInterval() {
 
 function moveHand() {
   // move hand to random position
-  const i = Math.floor(Math.random()*num_panels); // ensure hand does not bridge screens
-  const panelWidth = $(window).width()/num_panels;
+  const i = Math.floor(Math.random() * num_panels); // ensure hand does not bridge screens
+  const panelWidth = $(window).width() / num_panels;
   const nw = i * panelWidth + (Math.random() * (panelWidth - handIndicator.width()));
   
   const h = $(window).height() - handIndicator.height();

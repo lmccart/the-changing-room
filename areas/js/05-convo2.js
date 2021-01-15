@@ -23,18 +23,18 @@ window.init = () => {
 function updateEmotion(msg) {
   if (!curEmotion || curEmotion.name !== msg.name) {
     curEmotion = msg;
-    console.log('emotion has been updated to: ' + msg.name + ' (base: ' + msg.base + ', level: ' + msg.level +')');
+    console.log('emotion has been updated to: ' + msg.name + ' (base: ' + msg.base + ', level: ' + msg.level + ')');
     updateInterface();
   }
 }
 
 async function updateInterface() {
-  $('#debug-info').text('CURRENT EMOTION: ' + curEmotion.name + ' (base: ' + curEmotion.base + ', level: ' + curEmotion.level +')');
+  $('#debug-info').text('CURRENT EMOTION: ' + curEmotion.name + ' (base: ' + curEmotion.base + ', level: ' + curEmotion.level + ')');
   showLoadingOverlay(curEmotion, showConvoLoading);
   imgURLs = await getImgUrls(curEmotion.base);
   reset();
   $('svg').remove();
-  const colors = window.baseColors[curEmotion.base][curEmotion.level-1];
+  const colors = window.baseColors[curEmotion.base][curEmotion.level - 1];
   addSvgFilterForElement($('#background-1'), colors);
   addSvgFilterForElement($('#background-2'), colors);
   
@@ -105,7 +105,7 @@ function showConvoLoading() {
     // start typing instruction
     let lastInstruction = curInstruction;
     while (lastInstruction === curInstruction) 
-      curInstruction = Math.floor(Math.random()*instructions[curEmotion.base].length);
+      curInstruction = Math.floor(Math.random() * instructions[curEmotion.base].length);
     
     const instruction = instructions[curEmotion.base][curInstruction];
     typeInstruction(instruction);
@@ -128,7 +128,7 @@ function typeInstruction(string, iteration) {
   typeTimeout = setTimeout(function() {
     // Set the instruction to the current text + the next character
     // whilst incrementing the iteration variable
-    $('#instruction').text( $('#instruction').text() + string[iteration++] );
+    $('#instruction').text($('#instruction').text() + string[iteration++]);
     
     // Re-trigger our function
     typeInstruction(string, iteration);

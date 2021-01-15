@@ -96,7 +96,7 @@ window.init = () => {
 function updateEmotion(msg) {
   if (!curEmotion || curEmotion.name !== msg.name) {
     curEmotion = msg;
-    console.log('emotion has been updated to: ' + msg.name + ' (base: ' + msg.base + ', level: ' + msg.level +')');
+    console.log('emotion has been updated to: ' + msg.name + ' (base: ' + msg.base + ', level: ' + msg.level + ')');
     showLoadingOverlay(curEmotion);
     updateImageList(() => {
       console.log(imageList);
@@ -107,7 +107,7 @@ function updateEmotion(msg) {
 
 function updateInterface() {
   resetTimeline();
-  $('#debug-info').text('CURRENT EMOTION: ' + curEmotion.name + ' (base: ' + curEmotion.base + ', level: ' + curEmotion.level +')');
+  $('#debug-info').text('CURRENT EMOTION: ' + curEmotion.name + ' (base: ' + curEmotion.base + ', level: ' + curEmotion.level + ')');
 }
 
 
@@ -141,7 +141,7 @@ function loadData(cb) {
     .then(text => {
       dataMeditations = text.split(/\r?\n/);
       dataLoaded += 1;
-      if(dataLoaded == 0)  cb(); 
+      if (dataLoaded === 0)  cb(); 
     });
 
 
@@ -168,7 +168,7 @@ function loadData(cb) {
       }
       dataMeditationEmotions = reordered;
       dataLoaded += 1;
-      if(dataLoaded == 0)  cb(); 
+      if (dataLoaded === 0)  cb(); 
     }
   });
 
@@ -189,15 +189,15 @@ function loadData(cb) {
         var newrow = {};
         Object.keys(thisrow).forEach((key) => { 
           key = key.trim();
-          if(key != '' && thisrow[key].trim() != '') {
-            if(reordered[key] == undefined)  reordered[key] = []; 
+          if (key !== '' && thisrow[key].trim() !== '') {
+            if (!reordered[key])  reordered[key] = []; 
             reordered[key].push(thisrow[key]);
           }
         });
       }
       dataMemories = reordered;
       dataLoaded += 1;
-      if(dataLoaded == 0)  cb(); 
+      if (dataLoaded === 0)  cb(); 
     }
   });
 
@@ -217,13 +217,13 @@ function generateMeditationTexts() {
   return dataMeditations
     .map((m) => {
       let newm = m;
-      for(let k in thisDataMeditationInserts) 
+      for (let k in thisDataMeditationInserts) 
         newm = newm.replace(`[${k}]`, thisDataMeditationInserts[k]);
       
       return newm;
     })
     .filter((m) => {
-      return m != ''; 
+      return m !== ''; 
     });
 }
 
@@ -264,12 +264,12 @@ function displayMemory(opts) {
   let memdiv;
   let memory = opts.data;
  
-  if(memory.type == 'text') {
+  if (memory.type === 'text') {
     memdiv = $('<div></div>');
     memdiv.addClass('text');
     memdiv.text(memory.text);
   } 
-  if(memory.type == 'image') {
+  if (memory.type === 'image') {
     memdiv = $('<img></img>');
     memdiv.addClass('image');
     memdiv.attr('src', memory.url);
@@ -307,7 +307,7 @@ function queueEvents(timeline) {
 
   timeMarker += meditations_fadein_pause;
 
-  timeline.add({ time: timeMarker, event: function () { 
+  timeline.add({ time: timeMarker, event: function() { 
     $('#meditation_container').fadeIn(meditations_fadein_duration);
     console.log('TIMELINE STARTING');
   } });
@@ -321,12 +321,12 @@ function queueEvents(timeline) {
   mts.forEach((mt, i) => {
 
 
-    timeline.add({ time: timeMarker, event: function () { 
+    timeline.add({ time: timeMarker, event: function() { 
       console.log(mt); 
       displayMeditationPhrase({ text: mt, fadeIn: each_meditation_fadein_duration, fadeOut: each_meditation_fadeout_duration});
     } });
 
-    if(meditation_long_indices.includes(i))  
+    if (meditation_long_indices.includes(i))  
       timeMarker += meditation_long_interval;
     else 
       timeMarker += meditation_interval;
@@ -340,14 +340,14 @@ function queueEvents(timeline) {
 
   timeMarker += meditations_fadeout_pause;
 
-  timeline.add({ time: timeMarker, event: function () { 
+  timeline.add({ time: timeMarker, event: function() { 
     $('#meditation_container').fadeOut(meditations_fadeout_duration);
   } });
 
 
   timeMarker += memories_fadein_pause;
 
-  timeline.add({ time: timeMarker, event: function () { 
+  timeline.add({ time: timeMarker, event: function() { 
     $('#memory_container').fadeIn(memories_fadein_duration);
   } });
 
@@ -359,7 +359,7 @@ function queueEvents(timeline) {
 
   mems.forEach((mem, i) => {
 
-    timeline.add({ time: timeMarker, event: function () { 
+    timeline.add({ time: timeMarker, event: function() { 
 
       displayMemory({
         data: mem,
@@ -378,7 +378,7 @@ function queueEvents(timeline) {
   
   timeMarker += memories_fadeout_pause;
 
-  timeline.add({ time: timeMarker, event: function () { 
+  timeline.add({ time: timeMarker, event: function() { 
     $('#meditation_text').empty();
     $('#memory_container').fadeOut(memories_fadeout_duration, function() {
       $(this).empty();
@@ -395,7 +395,7 @@ function queueEvents(timeline) {
 
 function resetTimeline() {
 
-  if(!dataLoaded) {
+  if (!dataLoaded) {
     // wait until data is loaded
     setTimeout(resetTimeline, 1000);
     return;
@@ -403,7 +403,7 @@ function resetTimeline() {
 
   console.log('Resetting timeline');
  
-  if(timeline === undefined) 
+  if (timeline === undefined) 
     timeline = new Timeline({ loop: true, duration: 50000, interval: 100 });
   else 
     timeline.clear();
