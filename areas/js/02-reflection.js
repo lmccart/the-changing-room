@@ -141,7 +141,9 @@ function loadData(cb) {
     .then(text => {
       dataMeditations = text.split(/\r?\n/);
       dataLoaded += 1;
-      if (dataLoaded === 0)  cb(); 
+      if (dataLoaded === 0) {
+        cb(); 
+      } 
     });
 
 
@@ -168,7 +170,9 @@ function loadData(cb) {
       }
       dataMeditationEmotions = reordered;
       dataLoaded += 1;
-      if (dataLoaded === 0)  cb(); 
+      if (dataLoaded === 0) {
+        cb(); 
+      } 
     }
   });
 
@@ -190,14 +194,18 @@ function loadData(cb) {
         Object.keys(thisrow).forEach((key) => { 
           key = key.trim();
           if (key !== '' && thisrow[key].trim() !== '') {
-            if (!reordered[key])  reordered[key] = []; 
+            if (!reordered[key]) {
+              reordered[key] = []; 
+            } 
             reordered[key].push(thisrow[key]);
           }
         });
       }
       dataMemories = reordered;
       dataLoaded += 1;
-      if (dataLoaded === 0)  cb(); 
+      if (dataLoaded === 0) {
+        cb(); 
+      } 
     }
   });
 
@@ -217,8 +225,9 @@ function generateMeditationTexts() {
   return dataMeditations
     .map((m) => {
       let newm = m;
-      for (let k in thisDataMeditationInserts) 
-        newm = newm.replace(`[${k}]`, thisDataMeditationInserts[k]);
+      for (let k in thisDataMeditationInserts) {
+        newm = newm.replace(`[${k}]`, thisDataMeditationInserts[k]); 
+      }
       
       return newm;
     })
@@ -326,10 +335,11 @@ function queueEvents(timeline) {
       displayMeditationPhrase({ text: mt, fadeIn: each_meditation_fadein_duration, fadeOut: each_meditation_fadeout_duration});
     } });
 
-    if (meditation_long_indices.includes(i))  
-      timeMarker += meditation_long_interval;
-    else 
-      timeMarker += meditation_interval;
+    if (meditation_long_indices.includes(i)) {
+      timeMarker += meditation_long_interval; 
+    } else {
+      timeMarker += meditation_interval; 
+    }
     
 
   });
@@ -403,10 +413,11 @@ function resetTimeline() {
 
   console.log('Resetting timeline');
  
-  if (timeline === undefined) 
-    timeline = new Timeline({ loop: true, duration: 50000, interval: 100 });
-  else 
-    timeline.clear();
+  if (timeline === undefined) {
+    timeline = new Timeline({ loop: true, duration: 50000, interval: 100 }); 
+  } else {
+    timeline.clear(); 
+  }
   
 
   resetHTML();

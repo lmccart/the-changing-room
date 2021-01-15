@@ -111,7 +111,7 @@ fetch(cascadeurl).then(function(response) {
 });
 
 // Load webcam and instantiate camvas script
-if (navigator.mediaDevices.getUserMedia) 
+if (navigator.mediaDevices.getUserMedia) {
   navigator.mediaDevices.getUserMedia({ video: { width: 1280, height: 720 } })
     .then(function(stream) {
       videoEl[0].srcObject = stream;
@@ -119,15 +119,18 @@ if (navigator.mediaDevices.getUserMedia)
     })
     .catch(function(err) {
       console.log('Error:', err);
-    });
+    }); 
+}
 
 
 
 const rgba_to_grayscale = (rgba, nrows, ncols) => {
   const gray = new Uint8Array(nrows * ncols);
-  for (let r = 0; r < nrows; ++r)
-    for (let c = 0; c < ncols; ++c)
-      gray[r * ncols + c] = (2 * rgba[r * 4 * ncols + 4 * c + 0] + 7 * rgba[r * 4 * ncols + 4 * c + 1] + 1 * rgba[r * 4 * ncols + 4 * c + 2]) / 10;
+  for (let r = 0; r < nrows; ++r) {
+    for (let c = 0; c < ncols; ++c) {
+      gray[r * ncols + c] = (2 * rgba[r * 4 * ncols + 4 * c + 0] + 7 * rgba[r * 4 * ncols + 4 * c + 1] + 1 * rgba[r * 4 * ncols + 4 * c + 2]) / 10; 
+    } 
+  }
   return gray;
 };
 
@@ -143,9 +146,9 @@ const processfn = (video) => {
   };
   const params = {
     'shiftfactor': 0.1, // move the detection window by 10% of its size
-    'minsize': 100,     // minimum size of a face
-    'maxsize': 1000,    // maximum size of a face
-    'scalefactor': 1.1  // for multiscale processing: resize the detection window by 10% when moving to the higher scale
+    'minsize': 100, // minimum size of a face
+    'maxsize': 1000, // maximum size of a face
+    'scalefactor': 1.1 // for multiscale processing: resize the detection window by 10% when moving to the higher scale
   };
   // run the cascade over the frame and cluster the obtained detections
   // dets is an array that contains (r, c, s, q) quadruplets
@@ -155,12 +158,14 @@ const processfn = (video) => {
   dets = pico.cluster_detections(dets, 0.2); // set IoU threshold to 0.2
 
   let faceFound = false;
-  for (let i = 0; i < dets.length; ++i) 
-    // check the detection score
-    // if it's above the threshold increment watchdog
-    // (the constant 50.0 is empirical: other cascades might require a different one)
-    if (dets[i][3] > 50.0) 
-      faceFound = true;
+  for (let i = 0; i < dets.length; ++i) {
+  // check the detection score
+  // if it's above the threshold increment watchdog
+  // (the constant 50.0 is empirical: other cascades might require a different one)
+    if (dets[i][3] > 50.0) {
+      faceFound = true; 
+    } 
+  }
     
   
 
@@ -205,8 +210,9 @@ function typeInstruction(string, iteration) {
   console.log(fontSize);
   $('#spellbox').css('font-size', fontSize);
   // Prevent our code executing if there are no letters left
-  if (iteration === string.length) 
-    return;
+  if (iteration === string.length) {
+    return; 
+  }
   
 
   setTimeout(function() {

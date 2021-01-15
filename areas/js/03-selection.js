@@ -16,8 +16,9 @@ let fade_time = 1000;
 let curEmotion;
 
 const separate_panels = [];
-for (let i = 0; i < num_panels; i++) 
-  separate_panels.push(document.getElementById('scroll' + i));
+for (let i = 0; i < num_panels; i++) {
+  separate_panels.push(document.getElementById('scroll' + i)); 
+}
 
 const handIndicator = $('#hand-indicator');
 const sel_txt_url = '/data/03_selection_intro.txt';
@@ -114,8 +115,9 @@ function selection_txt_parse(sel_intro_content) {
     .map(_ => sel_intro_sent.splice(0, num_sents_panels));
   for (let i = 0; i < panel_array.length; i++) {
     const sentences = panel_array[i];
-    for (let j = 0; j < sentences.length; j++) 
-      separate_panels[i].firstChild.innerHTML += sentences[j];
+    for (let j = 0; j < sentences.length; j++) {
+      separate_panels[i].firstChild.innerHTML += sentences[j]; 
+    }
     
   }
 }
@@ -155,7 +157,9 @@ function joinedTimer() {
 }
 //stop auto scroll on manual scroll, restart timers
 $('#wrapper_joined').on('click wheel DOMMouseScroll mousewheel keyup touchmove', function(e) {
-  if (e.type !== 'click') $('#wrapper_joined').stop();
+  if (e.type !== 'click') {
+    $('#wrapper_joined').stop(); 
+  }
   joinedTimer();
   setHandInterval();
 });
@@ -229,7 +233,9 @@ function scroll_separate_panels() {
 
 // this function restarts 30s timer, called each time there's any interaction
 function setHandInterval() {
-  if (hand_interval) clearInterval(hand_interval);
+  if (hand_interval) {
+    clearInterval(hand_interval); 
+  }
   handIndicator.finish().fadeOut(0);
   hand_interval = setInterval(moveHand, hand_delay);
 }

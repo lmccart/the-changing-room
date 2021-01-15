@@ -37,17 +37,20 @@ window.showLoadingOverlay = (newEmotion, cb) => {
   // `hideLoadingOverlay` function on its own
   setTimeout(function() {
     hideLoadingOverlay();
-    if (typeof cb === 'function') cb();
+    if (typeof cb === 'function') {
+      cb(); 
+    }
   }, 2000);
 
 
 };
 
-window.hideLoadingOverlay =  () => {
+window.hideLoadingOverlay = () => {
   $('#loading').removeClass('show');
   $('#loading-emotion').empty();
 };
 
 // for hot reloading
-if (module.hot) 
-  module.hot.accept();
+if (module.hot) {
+  module.hot.accept(); 
+}

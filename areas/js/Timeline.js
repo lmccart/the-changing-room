@@ -64,11 +64,12 @@ class Timeline {
   _play_uncompleted() {
     let curtime = Date.now();
 
-    for (const k in this.timeline) 
+    for (const k in this.timeline) {
       if ((curtime >= Number(this.timeline[k].time) + this.startTime) && !(k in this.completed_events)) {
         this.timeline[k].event();
         this.completed_events[k] = true;
-      }
+      } 
+    }
     
 
   }
@@ -86,23 +87,26 @@ class Timeline {
 
     var loopUpdate = function() {
       setTimeout(function() {
-        if (self.status === 'stopped')  return; 
+        if (self.status === 'stopped') {
+          return; 
+        } 
         self.update();
 
         let msPastDuration = Date.now() - Number(self.startTime) - Number(self.duration);
 
-        if (msPastDuration < 0) 
-          // we're still within the timeline
-          loopUpdate();
-        else 
+        if (msPastDuration < 0) {
+        // we're still within the timeline
+          loopUpdate(); 
+        }
         // we're past timeline duration!
         if (self.loop) {
           self.completed_events = {};
           self.startTime = Date.now() - msPastDuration;
           loopUpdate();
-        } else 
+        } else {
         // we're not looping and we're over
-          opts.callback();
+          opts.callback(); 
+        }
           
         
 

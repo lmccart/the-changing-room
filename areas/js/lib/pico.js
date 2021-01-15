@@ -33,7 +33,7 @@ pico.unpack_cascade = function(bytes) {
     Array.prototype.push.apply(tcodes_ls, bytes.slice(p, p + 4 * Math.pow(2, tdepth) - 4));
     p = p + 4 * Math.pow(2, tdepth) - 4;
     // read the prediction in the leaf nodes of the tree
-    for (let i = 0; i < Math.pow(2, tdepth); ++i)  {
+    for (let i = 0; i < Math.pow(2, tdepth); ++i) {
       dview.setUint8(0, bytes[p + 0]), dview.setUint8(1, bytes[p + 1]), dview.setUint8(2, bytes[p + 2]), dview.setUint8(3, bytes[p + 3]);
       tpreds_ls.push(dview.getFloat32(0, true));
       p = p + 4;
@@ -64,7 +64,9 @@ pico.unpack_cascade = function(bytes) {
 
         o = o + tpreds[pow2tdepth * i + idx - pow2tdepth];
 
-        if (o <= thresh[i]) return -1;
+        if (o <= thresh[i]) {
+          return -1; 
+        }
 
         root += 4 * pow2tdepth;
       }
@@ -95,12 +97,14 @@ pico.run_cascade = function(image, classify_region, params) {
     const step = Math.max(shiftfactor * scale, 1) >> 0; // '>>0' transforms this number to int
     const offset = (scale / 2 + 1) >> 0;
 
-    for (let r = offset; r <= nrows - offset; r += step)
+    for (let r = offset; r <= nrows - offset; r += step) {
       for (let c = offset; c <= ncols - offset; c += step) {
         const q = classify_region(r, c, scale, pixels, ldim);
-        if (q > 0.0)
-          detections.push([r, c, scale, q]);
-      }
+        if (q > 0.0) {
+          detections.push([r, c, scale, q]); 
+        }
+      } 
+    }
     
     scale = scale * scalefactor;
   }
@@ -133,14 +137,13 @@ pico.cluster_detections = function(dets, iouthreshold) {
   */
   const assignments = new Array(dets.length).fill(0);
   const clusters = [];
-  for (let i = 0; i < dets.length; ++i)
-  
+  for (let i = 0; i < dets.length; ++i) {
     // is this detection assigned to a cluster?
     if (assignments[i] === 0) {
-      // it is not:
-      // now we make a cluster out of it and see whether some other detections belong to it
+    // it is not:
+    // now we make a cluster out of it and see whether some other detections belong to it
       let r = 0.0, c = 0.0, s = 0.0, q = 0.0, n = 0;
-      for (let j = i; j < dets.length; ++j)
+      for (let j = i; j < dets.length; ++j) {
         if (calculate_iou(dets[i], dets[j]) > iouthreshold) {
           assignments[j] = 1;
           r = r + dets[j][0];
@@ -148,10 +151,12 @@ pico.cluster_detections = function(dets, iouthreshold) {
           s = s + dets[j][2];
           q = q + dets[j][3];
           n = n + 1;
-        }
+        } 
+      }
       // make a cluster representative
       clusters.push([r / n, c / n, s / n, q]);
-    }
+    } 
+  }
   
 
   return clusters;
@@ -163,8 +168,9 @@ pico.instantiate_detection_memory = function(size) {
   */
   let n = 0;
   const memory = [];
-  for (let i = 0; i < size; ++i)
-    memory.push([]);
+  for (let i = 0; i < size; ++i) {
+    memory.push([]); 
+  }
   /*
     build a function that:
     (1) inserts the current frame's detections into the buffer;
@@ -174,8 +180,9 @@ pico.instantiate_detection_memory = function(size) {
     memory[n] = dets;
     n = (n + 1) % memory.length;
     dets = [];
-    for (let i = 0; i < memory.length; ++i)
-      dets = dets.concat(memory[i]);
+    for (let i = 0; i < memory.length; ++i) {
+      dets = dets.concat(memory[i]); 
+    }
     //
     return dets;
   }

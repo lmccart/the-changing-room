@@ -104,8 +104,9 @@ function showConvoLoading() {
 
     // start typing instruction
     let lastInstruction = curInstruction;
-    while (lastInstruction === curInstruction) 
-      curInstruction = Math.floor(Math.random() * instructions[curEmotion.base].length);
+    while (lastInstruction === curInstruction) {
+      curInstruction = Math.floor(Math.random() * instructions[curEmotion.base].length); 
+    }
     
     const instruction = instructions[curEmotion.base][curInstruction];
     typeInstruction(instruction);

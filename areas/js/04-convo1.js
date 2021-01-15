@@ -45,8 +45,9 @@ window.init = () => {
   
   // listen for return key press (13) and send message
   $(document).on('keydown', (e) => {
-    if (e.which === 13) 
-      sendMessage(e);
+    if (e.which === 13) {
+      sendMessage(e); 
+    }
     
   });
   
@@ -130,8 +131,9 @@ function handleNewMessage(data) {
     const speechMessage = new SpeechSynthesisUtterance(data.modified);
     speechSynthesis.speak(speechMessage);
     typeMessageByWord(data.modified);
-  } else 
-    typeMessageByWord(data.original);
+  } else {
+    typeMessageByWord(data.original); 
+  }
   
 }
 
@@ -160,12 +162,14 @@ function typeMessageByWord(string, iteration) {
 
 // function for making sure text to speech is available on iOS Safari
 function enableAutoTTS() {
-  if (typeof window === 'undefined') 
-    return;
+  if (typeof window === 'undefined') {
+    return; 
+  }
   
   const isiOS = navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform);
-  if (!isiOS) 
-    return;
+  if (!isiOS) {
+    return; 
+  }
   
   const simulateSpeech = () => {
     const lecture = new SpeechSynthesisUtterance('hello');

@@ -64,13 +64,15 @@ function updateEmotion(msg) {
 async function updateInterface() {
   $('#debug-info').text('CURRENT EMOTION: ' + curEmotion.name + ' (base: ' + curEmotion.base + ', level: ' + curEmotion.level + ')');
   imgURLs = await getImgUrls(curEmotion.base);
-  if (popupFactory) 
-    popupFactory.cleanup();
+  if (popupFactory) {
+    popupFactory.cleanup(); 
+  }
   
   popupFactory = new PopupFactory(curEmotion);
 
-  if (backgroundInterval) 
-    clearInterval(backgroundInterval);
+  if (backgroundInterval) {
+    clearInterval(backgroundInterval); 
+  }
    
   $('body').css('background-image', `url(${imgURLs[Math.floor(Math.random() * imgURLs.length)]})`);
   backgroundInterval = setInterval(() => {
@@ -100,8 +102,9 @@ function PopupFactory(emotionObj) {
   factoryThis.removeEl = (id) => {
     const index = factoryThis.activeElements.findIndex((element) => element.id = id);
 
-    if (index >= 0) 
-      factoryThis.activeElements.splice(index, 1);
+    if (index >= 0) {
+      factoryThis.activeElements.splice(index, 1); 
+    }
     
   };
 
@@ -198,10 +201,10 @@ function PopupFactory(emotionObj) {
     // append just the element, which is the first item in a jquery object's array
     parentEl.append(childThis.$element[0]);
 
-    if (hasImage) 
-      // we need to wait for the image to load before we measure it
+    if (hasImage) {
+    // we need to wait for the image to load before we measure it
       childThis.$element.imagesLoaded(() => {
-        // set the initial position
+      // set the initial position
         const randomXY = factoryThis.getRandomPosition(childThis.$element);
         childThis.$element.css('top', randomXY[0]);
         childThis.$element.css('left', randomXY[1]);
@@ -211,7 +214,7 @@ function PopupFactory(emotionObj) {
           const overlapPercent = factoryThis.getPercentOverlap(testEl.$element, childThis.$element);
 
           if (overlapPercent > overLapAllowance) {
-            // get new position values
+          // get new position values
             const randomXY = factoryThis.getRandomPosition(childThis.$element);
             childThis.$element.css('top', randomXY[0]);
             childThis.$element.css('left', randomXY[1]);
@@ -219,8 +222,8 @@ function PopupFactory(emotionObj) {
         }
 
         childThis.$element.css('visibility', 'visible');
-      });
-    else {
+      }); 
+    } else {
       // set the initial position
       const randomXY = factoryThis.getRandomPosition(childThis.$element);
       childThis.$element.css('top', randomXY[0]);

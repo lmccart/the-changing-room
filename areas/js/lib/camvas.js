@@ -56,16 +56,17 @@ export function camvas(ctx, callback, stream, targetFps) {
     self.video.srcObject = stream;
     // Let's start drawing the canvas!
     self.update();
-  } else 
-    // The callback happens when we are starting to stream the video.
+  } else {
+  // The callback happens when we are starting to stream the video.
     navigator.mediaDevices.getUserMedia({video: { width: 1280, height: 720 }, audio: false}).then(function(stream) {
-      // Yay, now our webcam input is treated as a normal video and
-      // we can start having fun
+    // Yay, now our webcam input is treated as a normal video and
+    // we can start having fun
       self.video.srcObject = stream;
       // Let's start drawing the canvas!
       self.update();
     }, function(err) {
       throw err;
-    });
+    }); 
+  }
   
 }
