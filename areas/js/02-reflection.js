@@ -13,7 +13,7 @@ var dataMeditationEmotions;
 var dataMemories;
 var timeline;
 var imageList = [];
-var preloadedImages = [] // kept here to preload images; without this, some browsers might clear cache & unload images
+var preloadedImages = []; // kept here to preload images; without this, some browsers might clear cache & unload images
 var dataLoaded = false;
 
 
@@ -96,18 +96,18 @@ window.init = () => {
 function updateEmotion(msg) {
   if (!curEmotion || curEmotion.name !== msg.name) {
     curEmotion = msg;
-    console.log('emotion has been updated to: ' + msg.name + ' (base: ' + msg.base + ', level: ' + msg.level +')');
+    console.log('emotion has been updated to: ' + msg.name + ' (base: ' + msg.base + ', level: ' + msg.level + ')');
     showLoadingOverlay(curEmotion);
     updateImageList(() => {
-        console.log(imageList);
-        updateInterface();
+      console.log(imageList);
+      updateInterface();
     });
   }
 }
 
 function updateInterface() {
   resetTimeline();
-  $('#debug-info').text('CURRENT EMOTION: ' + curEmotion.name + ' (base: ' + curEmotion.base + ', level: ' + curEmotion.level +')')
+  $('#debug-info').text('CURRENT EMOTION: ' + curEmotion.name + ' (base: ' + curEmotion.base + ', level: ' + curEmotion.level + ')');
 }
 
 
@@ -125,7 +125,7 @@ function updateImageList(cb) {
       imageList.forEach(url => {
         let img = new Image();
         img.src = url;
-        preloadedImages.push(img)
+        preloadedImages.push(img);
       });
       cb(text);
     });
@@ -141,61 +141,71 @@ function loadData(cb) {
     .then(text => {
       dataMeditations = text.split(/\r?\n/);
       dataLoaded += 1;
-      if(dataLoaded == 0) { cb(); }
-    })
+      if (dataLoaded === 0) {
+        cb(); 
+      } 
+    });
 
 
-  Papa.parse("/data/02_meditation_emotion_specific.tsv", {
+  Papa.parse('/data/02_meditation_emotion_specific.tsv', {
     download: true,
     header: true,
     skipEmptyLines: 'greedy',
     complete: function(results) {
       const rawResults = results.data;
-      // the data comes in as [{ "EMOTION": "annoyed", " BODY AREA": "Feel that...", ...} ...]
-      // I (dan) think it should be { "annoyed": { "BODY AREA": 'string, "PERSON": 'string' } ... }
+      // the data comes in as [{ 'EMOTION': 'annoyed', ' BODY AREA': 'Feel that...', ...} ...]
+      // I (dan) think it should be { 'annoyed': { 'BODY AREA': 'string, 'PERSON': 'string' } ... }
       console.log(rawResults);
       const reordered = {};
 
       for (var i = 0; i < rawResults.length; i++) {
-        let thisrow = rawResults[i]
+        let thisrow = rawResults[i];
 
         var newrow = {};
-        Object.keys(thisrow).forEach((key) => { newrow[key.trim()] = thisrow[key]; })
+        Object.keys(thisrow).forEach((key) => {
+          newrow[key.trim()] = thisrow[key]; 
+        });
 
-        reordered[thisrow["EMOTION"].trim()] = newrow;
+        reordered[thisrow['EMOTION'].trim()] = newrow;
       }
       dataMeditationEmotions = reordered;
       dataLoaded += 1;
-      if(dataLoaded == 0) { cb(); }
+      if (dataLoaded === 0) {
+        cb(); 
+      } 
     }
   });
 
 
-  Papa.parse("/data/02_memories.tsv", {
+  Papa.parse('/data/02_memories.tsv', {
     download: true,
     header: true,
     skipEmptyLines: 'greedy',
     complete: function(results) {
       const rawResults = results.data;
-      // the data comes in as [{ "afraid": "One time this..", "alive": "one day...", ...} ...]
-      // I (dan) think it should be { "annoyed": [ "One time", ...], "alive": ["one day", ..] /// 
+      // the data comes in as [{ 'afraid': 'One time this..', 'alive': 'one day...', ...} ...]
+      // I (dan) think it should be { 'annoyed': [ 'One time', ...], 'alive': ['one day', ..] /// 
       const reordered = {};
 
       for (var i = 0; i < rawResults.length; i++) {
-        let thisrow = rawResults[i]
+        let thisrow = rawResults[i];
 
         var newrow = {};
         Object.keys(thisrow).forEach((key) => { 
           key = key.trim();
-          if(key != "" && thisrow[key].trim() != "") {
-            if(reordered[key] == undefined) { reordered[key] = []; }
+          if (key !== '' && thisrow[key].trim() !== '') {
+            if (!reordered[key]) {
+              reordered[key] = []; 
+            } 
             reordered[key].push(thisrow[key]);
           }
-        })
+        });
       }
       dataMemories = reordered;
       dataLoaded += 1;
-      if(dataLoaded == 0) { cb(); }
+      if (dataLoaded === 0) {
+        cb(); 
+      } 
     }
   });
 
@@ -215,12 +225,15 @@ function generateMeditationTexts() {
   return dataMeditations
     .map((m) => {
       let newm = m;
-      for(let k in thisDataMeditationInserts) {
-        newm = newm.replace(`[${k}]`, thisDataMeditationInserts[k]);
+      for (let k in thisDataMeditationInserts) {
+        newm = newm.replace(`[${k}]`, thisDataMeditationInserts[k]); 
       }
+      
       return newm;
     })
-    .filter((m) => { return m != ""; });
+    .filter((m) => {
+      return m !== ''; 
+    });
 }
 
 function generateMemories() {
@@ -229,14 +242,14 @@ function generateMemories() {
 
   dataMemories[curEmotion.base].forEach(m => {
     memories.push({ 
-      type: "text",
+      type: 'text',
       text: m,
     });
   });
 
   imageList.forEach(m => {
     memories.push({
-      type: "image",
+      type: 'image',
       url: m,
     });
   });
@@ -247,12 +260,12 @@ function generateMemories() {
 
 function displayMeditationPhrase(opts) {
   // opts: { text: mt, fadeIn: 100, fadeOut: 100 };
-  $("#meditation_text")
+  $('#meditation_text')
     .fadeOut(opts.fadeOut, function() {
       $(this)
         .text(opts.text)
         .fadeIn(opts.fadeIn);
-    })
+    });
 }
 
 function displayMemory(opts) {
@@ -260,36 +273,36 @@ function displayMemory(opts) {
   let memdiv;
   let memory = opts.data;
  
-  if(memory.type == "text") {
-    memdiv = $("<div></div>");
-    memdiv.addClass("text");
-    memdiv.text(memory.text)
+  if (memory.type === 'text') {
+    memdiv = $('<div></div>');
+    memdiv.addClass('text');
+    memdiv.text(memory.text);
   } 
-  if(memory.type == "image") {
-    memdiv = $("<img></img>");
-    memdiv.addClass("image");
-    memdiv.attr("src", memory.url);
+  if (memory.type === 'image') {
+    memdiv = $('<img></img>');
+    memdiv.addClass('image');
+    memdiv.attr('src', memory.url);
   } 
 
-  memdiv.addClass("memory");
+  memdiv.addClass('memory');
   memdiv.top = opts.top;
   memdiv.css({ top:  opts.top, left: opts.left });
 
 
   memdiv
     .hide()
-    .appendTo("#memory_container")
+    .appendTo('#memory_container')
     .fadeIn(opts.fadeIn);
 }
 
 /////////////////////////////////
 
 function resetHTML(cb) {
-  $("#meditation_text").fadeOut(1000, function() {
+  $('#meditation_text').fadeOut(1000, function() {
     $(this).empty();
     $(this).fadeIn(1000);
   });
-  $("#memory_container").fadeOut(1000, function() {
+  $('#memory_container').fadeOut(1000, function() {
     $(this).empty();
     $(this).fadeIn(1000);
   });
@@ -303,9 +316,9 @@ function queueEvents(timeline) {
 
   timeMarker += meditations_fadein_pause;
 
-  timeline.add({ time: timeMarker, event: function () { 
-    $("#meditation_container").fadeIn(meditations_fadein_duration);
-    console.log("TIMELINE STARTING");
+  timeline.add({ time: timeMarker, event: function() { 
+    $('#meditation_container').fadeIn(meditations_fadein_duration);
+    console.log('TIMELINE STARTING');
   } });
 
 
@@ -317,16 +330,17 @@ function queueEvents(timeline) {
   mts.forEach((mt, i) => {
 
 
-    timeline.add({ time: timeMarker, event: function () { 
+    timeline.add({ time: timeMarker, event: function() { 
       console.log(mt); 
       displayMeditationPhrase({ text: mt, fadeIn: each_meditation_fadein_duration, fadeOut: each_meditation_fadeout_duration});
     } });
 
-    if(meditation_long_indices.includes(i)) { 
-      timeMarker += meditation_long_interval;
+    if (meditation_long_indices.includes(i)) {
+      timeMarker += meditation_long_interval; 
     } else {
-      timeMarker += meditation_interval;
+      timeMarker += meditation_interval; 
     }
+    
 
   });
   
@@ -336,15 +350,15 @@ function queueEvents(timeline) {
 
   timeMarker += meditations_fadeout_pause;
 
-  timeline.add({ time: timeMarker, event: function () { 
-    $("#meditation_container").fadeOut(meditations_fadeout_duration);
+  timeline.add({ time: timeMarker, event: function() { 
+    $('#meditation_container').fadeOut(meditations_fadeout_duration);
   } });
 
 
   timeMarker += memories_fadein_pause;
 
-  timeline.add({ time: timeMarker, event: function () { 
-    $("#memory_container").fadeIn(memories_fadein_duration);
+  timeline.add({ time: timeMarker, event: function() { 
+    $('#memory_container').fadeIn(memories_fadein_duration);
   } });
 
 
@@ -355,7 +369,7 @@ function queueEvents(timeline) {
 
   mems.forEach((mem, i) => {
 
-    timeline.add({ time: timeMarker, event: function () { 
+    timeline.add({ time: timeMarker, event: function() { 
 
       displayMemory({
         data: mem,
@@ -363,7 +377,7 @@ function queueEvents(timeline) {
         fadeOut: each_memory_fadeout_duration,
         left: `${ Math.random() * 80 }vw`, // TODO: better sizing
         top: `${ Math.random() * 80 }vh`
-      })
+      });
 
     } });
 
@@ -374,9 +388,9 @@ function queueEvents(timeline) {
   
   timeMarker += memories_fadeout_pause;
 
-  timeline.add({ time: timeMarker, event: function () { 
-    $("#meditation_text").empty();
-    $("#memory_container").fadeOut(memories_fadeout_duration, function() {
+  timeline.add({ time: timeMarker, event: function() { 
+    $('#meditation_text').empty();
+    $('#memory_container').fadeOut(memories_fadeout_duration, function() {
       $(this).empty();
     });
   } });
@@ -391,19 +405,20 @@ function queueEvents(timeline) {
 
 function resetTimeline() {
 
-  if(!dataLoaded) {
+  if (!dataLoaded) {
     // wait until data is loaded
     setTimeout(resetTimeline, 1000);
     return;
   }
 
-  console.log("Resetting timeline");
+  console.log('Resetting timeline');
  
-  if(timeline === undefined) {
-    timeline = new Timeline({ loop: true, duration: 50000, interval: 100 });
+  if (timeline === undefined) {
+    timeline = new Timeline({ loop: true, duration: 50000, interval: 100 }); 
   } else {
-    timeline.clear();
+    timeline.clear(); 
   }
+  
 
   resetHTML();
 
@@ -424,7 +439,7 @@ function resetTimeline() {
 
 
 loadData(() => {
-  console.log("Data loaded!");
+  console.log('Data loaded!');
   dataLoaded = true;
 });
 

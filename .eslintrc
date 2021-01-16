@@ -1,0 +1,18 @@
+{
+  "parser": "babel-eslint",
+  "rules": {
+    "block-spacing": [2, "always"],
+    "brace-style": [2, "1tbs"],
+    "curly": [2, "all"],
+    "eqeqeq": [2],
+    "indent": ["error", 2],
+    "no-multi-spaces": [2],
+    "semi": [2],
+    "keyword-spacing": [2, { "before": true , "after": true }],
+    "space-before-blocks": [2, "always"],
+    "space-before-function-paren": [2, "never"],
+    "space-in-parens": [2, "never"],
+    "space-infix-ops": [2],
+    "quotes": [2, "single"]
+  }
+}

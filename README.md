@@ -41,7 +41,7 @@
 - `/images/:baseEmotion/manifest` GET - returns array of image urls for a base emotion (angry, sad, strong, etc)
 
 ## Global variables
-- `window.baseColors` or `baseColors` correspond to the data in `data/colors.json` can be used like `basecolors[curEmotion.base][0]` which is `["a6588d", "ffffff"]`
+- `window.baseColors` or `baseColors` correspond to the data in `data/colors.json` can be used like `basecolors[curEmotion.base][0]` which is `['a6588d', 'ffffff']`
 
 ## `areas/js/lib` functions and helpers
 - can generally be used by importing like so:
@@ -50,7 +50,7 @@
     + `getImgUrls (baseEmotion)` a function that returns an array of image urls for a certain base emotion
         - used like `const imageURLs = await getImgUrls('angry');`
         - or `getImgUrls('angry').then(imageURLs => {do whatever u want here})`
-    + `addSvgFilterForElement ($imgEl, arrayOfColors)` this function adds an svg element to the document that has a multitone treatment, and sets css of the `$imgEl` (which is a jquery element) to use it as a filter `arrayOfColors` must be an array of 2 or more hex colors: `["7c4242", "584794", "608942"]` (`#` infront of the color is optional)
+    + `addSvgFilterForElement ($imgEl, arrayOfColors)` this function adds an svg element to the document that has a multitone treatment, and sets css of the `$imgEl` (which is a jquery element) to use it as a filter `arrayOfColors` must be an array of 2 or more hex colors: `['7c4242', '584794', '608942']` (`#` infront of the color is optional)
     + `getDimensions(url)` returns promise that resolves to the width and height of an image url used like: 
         - `const imageDims = await getDimensions('/static/images/confused/image.jpeg');`
         - or `getDimensions('/static/images/confused/image.jpeg').then(imageDims => {do whatever u want here})`

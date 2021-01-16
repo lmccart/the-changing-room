@@ -19,17 +19,17 @@ const webpack = require('webpack');
 const webpackConfig = require('./webpack.config');
 const compiler = webpack(webpackConfig);
 
-app.use(require("webpack-dev-middleware")(compiler, {
+app.use(require('webpack-dev-middleware')(compiler, {
   publicPath: webpackConfig.output.publicPath,
   writeToDisk: true,
 }));
 
-app.use(require("webpack-hot-middleware")(compiler, {
+app.use(require('webpack-hot-middleware')(compiler, {
   path: '/__webpack_hmr', heartbeat: 10 * 1000
 }));
 
 // LOGGING
-const log4js = require("log4js");
+const log4js = require('log4js');
 log4js.configure({
   appenders: {
     chatLogs: { type: 'file', filename: 'logs/chat.log', daysToKeep: 1, pattern: 'yy-MM-dd.log'  },

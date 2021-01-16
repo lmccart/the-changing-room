@@ -7,11 +7,11 @@ USAGE
  
   let t = new Timeline({ loop: true, duration: 5000, interval: 100 });
 
-  t.add({ time: 1000, event: function () { console.log("bliop"); } });
-  t.add({ time: 2000, event: function () { console.log("boop"); } });
-  t.add({ time: 4000, event: function () { console.log("bloooiop"); } });
+  t.add({ time: 1000, event: function () { console.log('bliop'); } });
+  t.add({ time: 2000, event: function () { console.log('boop'); } });
+  t.add({ time: 4000, event: function () { console.log('bloooiop'); } });
 
-  t.start({ callback: function() { console.log("we're done!!!");}  })
+  t.start({ callback: function() { console.log('we're done!!!');}  })
 
   t.stop();
 
@@ -31,7 +31,7 @@ class Timeline {
     this.interval = opts.interval;
     this.loop = opts.loop;
     this.duration = opts.duration;
-    this.status = "stopped";
+    this.status = 'stopped';
     this.startTime = null;
   }
 
@@ -58,18 +58,19 @@ class Timeline {
   }
 
   stop() {
-    this.status = "stopped";
+    this.status = 'stopped';
   }
 
   _play_uncompleted() {
     let curtime = Date.now();
 
-    for(const k in this.timeline) {
-      if((curtime >= Number(this.timeline[k].time) + this.startTime) && !(k in this.completed_events)) {
+    for (const k in this.timeline) {
+      if ((curtime >= Number(this.timeline[k].time) + this.startTime) && !(k in this.completed_events)) {
         this.timeline[k].event();
         this.completed_events[k] = true;
-      }
+      } 
     }
+    
 
   }
 
@@ -82,31 +83,34 @@ class Timeline {
     var self = this;
 
     this.reset();
-    this.status = "playing";
+    this.status = 'playing';
 
     var loopUpdate = function() {
       setTimeout(function() {
-        if(self.status == "stopped") { return; }
+        if (self.status === 'stopped') {
+          return; 
+        } 
         self.update();
 
         let msPastDuration = Date.now() - Number(self.startTime) - Number(self.duration);
 
-        if(msPastDuration < 0) {
-          // we're still within the timeline
+        if (msPastDuration < 0) {
+        // we're still within the timeline
+          loopUpdate(); 
+        }
+        // we're past timeline duration!
+        if (self.loop) {
+          self.completed_events = {};
+          self.startTime = Date.now() - msPastDuration;
           loopUpdate();
         } else {
-          // we're past timeline duration!
-          if(self.loop) {
-            self.completed_events = {};
-            self.startTime = Date.now() - msPastDuration
-            loopUpdate();
-          } else {
-            // we're not looping and we're over
-            opts.callback();
-          }
+        // we're not looping and we're over
+          opts.callback(); 
         }
+          
+        
 
-      }, self.interval)
+      }, self.interval);
     };
     loopUpdate();
   }

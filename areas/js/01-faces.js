@@ -10,19 +10,19 @@ import { getTextColorForBackground } from './lib/imageColorUtils.js';
 // EMOTION HANDLING
 let emotions;
 let curEmotion;
-let emotionalMessage = "When did you first realize that you can't trust yourself?";
+let emotionalMessage = 'When did you first realize that you can\'t trust yourself?';
 
 
 window.init = () => {
   socket.on('emotion:update', updateEmotion);
   socket.on('emotion:get');
   $('#dummy').text(emotionalMessage);
-    console.log(emotionalMessage, "!!!!")
+  console.log(emotionalMessage, '!!!!');
   $('.textbox-dummy').fancyTextFill({
-      maxFontSize: 400
-    });
+    maxFontSize: 400
+  });
   
-}
+};
 
 function updateEmotion(msg) {
   if (!curEmotion || curEmotion.name !== msg.name) {
@@ -30,22 +30,22 @@ function updateEmotion(msg) {
     console.log('emotion has been updated to: ' + msg.name + ' (base: ' + msg.base + ', level: ' + msg.level + ')');
     
     $('#dummy').text(emotionalMessage);
-    console.log(emotionalMessage, "!!!!dummy")
+    console.log(emotionalMessage, '!!!!dummy');
 
-    $(".textbox").css("visibility", "hidden");
+    $('.textbox').css('visibility', 'hidden');
     updateInterface();
   }
 }
 
 function updateInterface() {
-  $('#debug-info').text('CURRENT EMOTION: ' + curEmotion.name + ' (base: ' + curEmotion.base + ', level: ' + curEmotion.level + ')')
+  $('#debug-info').text('CURRENT EMOTION: ' + curEmotion.name + ' (base: ' + curEmotion.base + ', level: ' + curEmotion.level + ')');
 
-//   const colors = window.baseColors[curEmotion.base][curEmotion.level-1];
+  //   const colors = window.baseColors[curEmotion.base][curEmotion.level-1];
 
-// $('.radialGradient').css('background', `radial-gradient(#${colors[0]},#${colors[1]})`);
+  // $('.radialGradient').css('background', `radial-gradient(#${colors[0]},#${colors[1]})`);
 
 
-  // $('#spellbox').css("font-size", fontSize + "px");
+  // $('#spellbox').css('font-size', fontSize + 'px');
 
 
 }
@@ -55,7 +55,7 @@ function updateInterface() {
 // VARIABLES
 const canvas = document.createElement('canvas');
 const cascadeurl = '/static/facefinder_cascade.txt';
-const coverEl = $("#video-cover");
+const coverEl = $('#video-cover');
 const ctx = canvas.getContext('2d');
 const currentWidth = $(window).width();
 const currentHeight = $(window).height();
@@ -65,7 +65,7 @@ const ipadHeight = 2160;
 const heightRatio = currentHeight / ipadHeight;
 const update_memory = pico.instantiate_detection_memory(5); // use the detecions of the last 5 frames
 const videoEl = $('#face-stream');
-const videoParentEl = $("#video-parent");
+const videoParentEl = $('#video-parent');
 const typingSpeed = 60;
 
 let facefinderClassifyRegion;
@@ -102,51 +102,54 @@ canvas.setAttribute('height', 720);
 // face detection code based on https://nenadmarkus.com/p/picojs-intro/demo/
 
 // setup Pico face detector with cascade data
-fetch(cascadeurl).then(function (response) {
-  response.arrayBuffer().then(function (buffer) {
+fetch(cascadeurl).then(function(response) {
+  response.arrayBuffer().then(function(buffer) {
     const bytes = new Int8Array(buffer);
     facefinderClassifyRegion = pico.unpack_cascade(bytes);
     console.log('* cascade loaded');
-  })
-})
+  });
+});
 
 // Load webcam and instantiate camvas script
 if (navigator.mediaDevices.getUserMedia) {
   navigator.mediaDevices.getUserMedia({ video: { width: 1280, height: 720 } })
-    .then(function (stream) {
+    .then(function(stream) {
       videoEl[0].srcObject = stream;
       new camvas(ctx, processfn, stream, 10); // 10 here is the target fps for checking for faces
     })
-    .catch(function (err) {
-      console.log("Error:", err);
-    });
+    .catch(function(err) {
+      console.log('Error:', err);
+    }); 
 }
+
 
 
 const rgba_to_grayscale = (rgba, nrows, ncols) => {
   const gray = new Uint8Array(nrows * ncols);
-  for (let r = 0; r < nrows; ++r)
-    for (let c = 0; c < ncols; ++c)
-      gray[r * ncols + c] = (2 * rgba[r * 4 * ncols + 4 * c + 0] + 7 * rgba[r * 4 * ncols + 4 * c + 1] + 1 * rgba[r * 4 * ncols + 4 * c + 2]) / 10;
+  for (let r = 0; r < nrows; ++r) {
+    for (let c = 0; c < ncols; ++c) {
+      gray[r * ncols + c] = (2 * rgba[r * 4 * ncols + 4 * c + 0] + 7 * rgba[r * 4 * ncols + 4 * c + 1] + 1 * rgba[r * 4 * ncols + 4 * c + 2]) / 10; 
+    } 
+  }
   return gray;
-}
+};
 
 // This function is called by camvas at 10 fps
 const processfn = (video) => {
   ctx.drawImage(video, 0, 0);
   var rgba = ctx.getImageData(0, 0, 1280, 720).data;
   const image = {
-    "pixels": rgba_to_grayscale(rgba, 720, 1280),
-    "nrows": 720,
-    "ncols": 1280,
-    "ldim": 1280
-  }
+    'pixels': rgba_to_grayscale(rgba, 720, 1280),
+    'nrows': 720,
+    'ncols': 1280,
+    'ldim': 1280
+  };
   const params = {
-    "shiftfactor": 0.1, // move the detection window by 10% of its size
-    "minsize": 100,     // minimum size of a face
-    "maxsize": 1000,    // maximum size of a face
-    "scalefactor": 1.1  // for multiscale processing: resize the detection window by 10% when moving to the higher scale
-  }
+    'shiftfactor': 0.1, // move the detection window by 10% of its size
+    'minsize': 100, // minimum size of a face
+    'maxsize': 1000, // maximum size of a face
+    'scalefactor': 1.1 // for multiscale processing: resize the detection window by 10% when moving to the higher scale
+  };
   // run the cascade over the frame and cluster the obtained detections
   // dets is an array that contains (r, c, s, q) quadruplets
   // (representing row, column, scale and detection score)
@@ -156,13 +159,15 @@ const processfn = (video) => {
 
   let faceFound = false;
   for (let i = 0; i < dets.length; ++i) {
-    // check the detection score
-    // if it's above the threshold increment watchdog
-    // (the constant 50.0 is empirical: other cascades might require a different one)
+  // check the detection score
+  // if it's above the threshold increment watchdog
+  // (the constant 50.0 is empirical: other cascades might require a different one)
     if (dets[i][3] > 50.0) {
-      faceFound = true
-    }
+      faceFound = true; 
+    } 
   }
+    
+  
 
   // if watchdog is > 20 that means a face has been detected for 2 seconds
   if (faceFound) {
@@ -172,10 +177,10 @@ const processfn = (video) => {
       // remove cover
 
       coverEl.hide();
-      $(".textbox").css("visibility", "visible");
-      if (spellOut == false) {
+      $('.textbox').css('visibility', 'visible');
+      if (spellOut === false) {
         spellOut = true;
-        console.log("flip spell out switch")
+        console.log('flip spell out switch');
         typeInstruction(emotionalMessage);
       } 
 
@@ -187,29 +192,30 @@ const processfn = (video) => {
     if (watchdog < -(delaySeconds * 10)) {
       // cover
       coverEl.show();
-      $(".textbox").css("visibility", "hidden");
+      $('.textbox').css('visibility', 'hidden');
 
-      if (spellOut == true) {
+      if (spellOut === true) {
         spellOut = false;
-        console.log("switch off")
-        $("#spellbox").empty();
+        console.log('switch off');
+        $('#spellbox').empty();
       } 
     }
   }
-}
+};
 
 
 function typeInstruction(string, iteration) {
   var iteration = iteration || 0;
-  let fontSize = $("#dummy").css('font-size');
-  console.log(fontSize)
-  $('#spellbox').css("font-size", fontSize);
+  let fontSize = $('#dummy').css('font-size');
+  console.log(fontSize);
+  $('#spellbox').css('font-size', fontSize);
   // Prevent our code executing if there are no letters left
   if (iteration === string.length) {
-    return;
+    return; 
   }
+  
 
-  setTimeout(function () {
+  setTimeout(function() {
     // Set the instruction to the current text + the next character
     // whilst incrementing the iteration variable
     $('#spellbox').text($('#spellbox').text() + string[iteration++]);

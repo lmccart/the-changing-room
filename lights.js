@@ -13,7 +13,7 @@ if (lights) {
     })
     .then(_api => {
       api = _api;
-      console.log(`Successfully connected`);
+      console.log('Successfully connected');
     })
     .catch(err => { console.error(err); });
 }
