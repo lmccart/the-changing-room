@@ -58,7 +58,6 @@
 ## References
 * https://github.com/peter-murray/node-hue-api#readme
   
-  
 ## Install Notes
 
 * OCA1 MacPro will be driving the 4 Passive Influence Monitors.
@@ -69,9 +68,7 @@ User: Venessa Castagnoli 2, Pwd: OCA2020
 User: Venessa Castagnoli 3, Pwd: OCA2020
 * OCA4 (TBD Mac) will be driving the 2 projections in the Conversation Room 2
 
-
 ### Mac Setup
-**This is in progress**
 1. System Prefs
    * Desktop background / Screensaver OFF
    * Sleep / Display Off NEVER
@@ -89,11 +86,13 @@ User: Venessa Castagnoli 3, Pwd: OCA2020
    * Add [font files](https://drive.google.com/file/d/1uY_hy7aX85moy8OlNFx_nO7liEZoGIL-/view?usp=sharing) to `static/fonts/` (should look like `static/fonts/ABC...`)
    * Add [image files](https://drive.google.com/file/d/1SsSHYPwk1jwX-A4SABYmn7RZQqwPsv2_/view?usp=sharing) to `static/images/` (should look like `static/images/angry/image file name.jpg`)
    * Add [sound files](#)to `sounds/` (should look like `sounds/all-areas` and `sounds/02-reflection`)
-   * Copy `install/TCR-LOCATIONS.txt` to Desktop
 3. Setup startup tasks
-   * `sudo bash /install/setup-multibrowse.sh`
-   * `python /install/multibrowse-source/multibrowse.py URL URL URL` (https://github.com/foxxyz/multibrowse)
-   * Copy startup script to Desktop
-     * Script will (1) if needed, start node, (2) start browser with multibrowse
-   * Setup launch tasks / keep alive?
-     * Run script
+   * Copy `install/TCR-LOCATIONS.txt` to Desktop
+   * Copy `install/TCR-OCA*.app` to Desktop
+   * Install multibrowse
+     * `pip3 install pyobjc`
+     * `cd install/ && git clone https://github.com/foxxyz/multibrowse.git multibrowse-source`
+   * Copy *.plist to `~/Library/LaunchAgents/`
+   * Update paths and load:
+     * `launchctl load com.TCR.plist`
+     * `launchctl load screen.TCR.plist`
