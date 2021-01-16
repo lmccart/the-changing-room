@@ -15,9 +15,11 @@ fetch('/data/colors.json').then(res => {
   return res.json();
 }).then(colors => {
   window.baseColors = colors;
-  window.init();
-});
-
+  if (window.init) {
+    window.init();
+  }
+})
+console.log("love it")
 // Helper Functions
 
 window.showLoadingOverlay = (newEmotion, cb) => {
