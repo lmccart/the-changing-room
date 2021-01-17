@@ -59,8 +59,8 @@
 				<key>ActionParameters</key>
 				<dict>
 					<key>COMMAND_STRING</key>
-					<string>killall node &amp;
-cd /Users/lmccart/Documents/the-changing-room/ &amp;&amp; /usr/local/bin/node server.js &amp;
+					<string>killall "Google Chrome" &amp;
+delay 5 &amp;
 /usr/local/bin/python3 /Users/lmccart/Documents/the-changing-room/install/multibrowse-source/multibrowse.py http://localhost:3000/06-passive http://localhost:3000/06-passive http://localhost:3000/06-passive http://localhost:3000/06-passive &amp;</string>
 					<key>CheckedForUserDefaultShell</key>
 					<true/>
@@ -174,7 +174,7 @@ cd /Users/lmccart/Documents/the-changing-room/ &amp;&amp; /usr/local/bin/node se
 				<key>isViewVisible</key>
 				<integer>1</integer>
 				<key>location</key>
-				<string>833.000000:252.000000</string>
+				<string>309.000000:252.000000</string>
 				<key>nibPath</key>
 				<string>/System/Library/Automator/Run Shell Script.action/Contents/Resources/Base.lproj/main.nib</string>
 			</dict>
