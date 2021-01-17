@@ -18,8 +18,7 @@ fetch('/data/colors.json').then(res => {
   if (window.init) {
     window.init();
   }
-})
-console.log("love it")
+});
 // Helper Functions
 
 window.showLoadingOverlay = (newEmotion, cb) => {

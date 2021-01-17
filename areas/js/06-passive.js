@@ -83,8 +83,8 @@ function switchBackgrounds() {
   const bgToHide = $('#background-1').is(':visible') ? $('#background-1') : $('#background-2');
   const bgToShow = $('#background-1').is(':visible') ? $('#background-2') : $('#background-1');
   
-  const imgUrl = imgURLs[Math.floor(Math.random() * imgURLs.length)]
-  addSvgFilterForElement(bgToShow, window.baseColors[curEmotion.base][curEmotion.level%3]);
+  const imgUrl = imgURLs[Math.floor(Math.random() * imgURLs.length)];
+  addSvgFilterForElement(bgToShow, window.baseColors[curEmotion.base][curEmotion.level % 3]);
   bgToShow.css('background-image', `url(${imgUrl})`);
   $('#loader').attr('src', imgUrl).off();
   $('#loader').attr('src', imgUrl).on('load', function() {
@@ -181,7 +181,9 @@ function PopupFactory(emotionObj) {
       // attach a color modified image
       const imageURL = imgURLs[Math.floor(Math.random() * imgURLs.length)];
       const imgEl = $(`<img src="${imageURL}">`);
-      if (Math.random() < 0.25) addSvgFilterForElement($(imgEl), window.baseColors[curEmotion.base][emotionObj.level-1]);
+      if (Math.random() < 0.25) {
+        addSvgFilterForElement($(imgEl), window.baseColors[curEmotion.base][emotionObj.level - 1]);
+      }
       childThis.$element.append(imgEl);
     }
 

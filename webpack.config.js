@@ -110,7 +110,7 @@ module.exports = {
       minify: false,
     }),
     new ESLintPlugin({
-      exclude: 'node_modules/',
+      exclude: ['node_modules/', 'areas/js/lib/pico.js'],
       fix: false
     }),
     new CleanWebpackPlugin(),
