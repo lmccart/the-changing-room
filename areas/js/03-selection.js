@@ -5,13 +5,20 @@ import './shared.js';
 
 // VARIABLES
 const num_panels = 4;
-let idle_timeout = 10;
-let scroll_timeout = 3;
-let scroll_down_time = 990000;
-let scroll_up_time = 9000;
-let hand_blink_time = 700;
-let hand_delay = 30000;
-let fade_time = 1000;
+const idle_timeout = 10;
+const scroll_timeout = 3;
+const scroll_down_time = 990000;
+const scroll_up_time = 9000;
+const hand_blink_time = 700;
+const hand_delay = 30000;
+const fade_time = 1000;
+
+const separate_scroll_times = [
+  110 * 1000,
+  78 * 1000,
+  95 * 1000,
+  122 * 1000
+];
 
 let curEmotion;
 
@@ -204,9 +211,7 @@ function separatemode() {
   $('#wrapper_joined').css('display','none');
   $('#wrapper_separate').stop().fadeIn(fade_time);
   $('#wrapper_separate').css('display','flex');
-  setTimeout(function() {
-    scroll_separate_panels();
-  }, 500);
+  setTimeout(scroll_separate_panels, 500);
 }
 
 // detect manual scroll
@@ -214,18 +219,11 @@ $('#wrapper_separate .scroll').on('click wheel DOMMouseScroll mousewheel keyup t
 
 // auto scrolling
 function scroll_separate_panels() {
-  setTimeout(function() {
-    scrollDown($('#scroll0'), 3000);
-  }, 0);
-  setTimeout(function() {
-    scrollDown($('#scroll1'), 13000);
-  }, 0);
-  setTimeout(function() {
-    scrollDown($('#scroll2'), 20000);
-  }, 1500);
-  setTimeout(function() {
-    scrollDown($('#scroll3'), 18000);
-  }, 3100);  
+  for (let s in separate_panels) {
+    setTimeout(() => {
+      scrollDown($('#scroll' + s), separate_scroll_times[s]);
+    }, 0);
+  }
 }
 
 

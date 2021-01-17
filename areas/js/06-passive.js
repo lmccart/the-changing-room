@@ -1,56 +1,33 @@
 // style and js imports
 import $ from 'jquery';
 import 'imagesloaded';
-import Papa from 'papaparse';
+const Papa = require('papaparse');
 
 import '../css/06-passive.scss';
 import './shared.js';
 import { getImgUrls, addSvgFilterForElement, getTextColorForBackground } from './lib/imageColorUtils.js';
 
+const basePopupRate = 6000; // adjusted based on emotion intensity
+const minDisplayTime = 10000; // minimum time a popup shows on screen
+const displayVariation = 4000;
+const overLapAllowance = 0.60; // allows 60% overlap when a new element is created
+const backgroundChangeTime = 20000; // adjusted based on emotion intensity
+const portionFiltered = 0.25; // portion of popups with svg filter applied
+
 let curEmotion;
-let imgURLs = [];
 let backgroundInterval;
+let imgURLs = [];
 let popupFactory; // used to reference the function that produces popups
-const socket = io();
-socket.on('emotion:update', updateEmotion);
 
-// get potential strings and save them to a global variable
 window.emotionStrings = [];
-Papa.parse('/data/05_directions.tsv', {
-  download: true,
-  header: true,
-  skipEmptyLines: 'greedy',
-  complete: function(results) {
-    const rawResults = results.data;
-    const reordered = {};
-    const keys = Object.keys(rawResults[0]);
-    keys.forEach(key => reordered[key] = []);
 
-    for (var i = 0; i < rawResults.length; i++) {
-      const resultRow = rawResults[i];
-      keys.forEach(key => resultRow[key].trim().length > 0 && reordered[key].push(resultRow[key]));
-    }
-    window.emotionStrings.push(reordered);
-  }
-});
-
-Papa.parse('/data/01_reflections.tsv', {
-  download: true,
-  header: true,
-  skipEmptyLines: 'greedy',
-  complete: function(results) {
-    const rawResults = results.data;
-    const reordered = {};
-    const keys = Object.keys(rawResults[0]);
-    keys.forEach(key => reordered[key] = []);
-
-    for (var i = 0; i < rawResults.length; i++) {
-      const resultRow = rawResults[i];
-      keys.forEach(key => resultRow[key].trim().length > 0 && reordered[key].push(resultRow[key]));
-    }
-    window.emotionStrings.push(reordered);
-  }
-});
+window.init = () => {
+  Promise.all([parseDirections(), parseReflections()])
+    .then((results) => {
+      socket.on('emotion:update', updateEmotion);
+      socket.emit('emotion:get');
+    });
+};
 
 function updateEmotion(msg) {
   if (!curEmotion || curEmotion.name !== msg.name) {
@@ -76,20 +53,72 @@ async function updateInterface() {
   switchBackgrounds();;
   backgroundInterval = setInterval(() => {
     switchBackgrounds();
-  }, (15000 / (1.6 ** curEmotion.level)));
+  }, (backgroundChangeTime / (1.6 ** curEmotion.level)));
+}
+
+function parseDirections() {
+  return new Promise(resolve => {
+    Papa.parse('/data/05_directions.tsv', {
+      download: true,
+      header: true,
+      skipEmptyLines: 'greedy',
+      complete: function(results) {
+        const rawResults = results.data;
+        const reordered = {};
+        const keys = Object.keys(rawResults[0]);
+        keys.forEach(key => reordered[key] = []);
+
+        for (var i = 0; i < rawResults.length; i++) {
+          const resultRow = rawResults[i];
+          keys.forEach(key => resultRow[key].trim().length > 0 && reordered[key].push(resultRow[key]));
+        }
+        window.emotionStrings.push(reordered);
+        resolve(window.emotionStrings);
+      }
+    });
+  });
+}
+
+
+function parseReflections() {
+  return new Promise(resolve => {
+    Papa.parse('/data/01_reflections.tsv', {
+      download: true,
+      header: true,
+      skipEmptyLines: 'greedy',
+      complete: function(results) {
+        const rawResults = results.data;
+        const reordered = {};
+        const keys = Object.keys(rawResults[0]);
+        keys.forEach(key => reordered[key] = []);
+
+        for (var i = 0; i < rawResults.length; i++) {
+          const resultRow = rawResults[i];
+          keys.forEach(key => resultRow[key].trim().length > 0 && reordered[key].push(resultRow[key]));
+        }
+        window.emotionStrings.push(reordered);
+        resolve(window.emotionStrings);
+      }
+    });
+  });
 }
 
 function switchBackgrounds() {
   const bgToHide = $('#background-1').is(':visible') ? $('#background-1') : $('#background-2');
   const bgToShow = $('#background-1').is(':visible') ? $('#background-2') : $('#background-1');
   
-  const imgUrl = imgURLs[Math.floor(Math.random() * imgURLs.length)]
-  addSvgFilterForElement(bgToShow, window.baseColors[curEmotion.base][curEmotion.level%3]);
+  const imgUrl = imgURLs[Math.floor(Math.random() * imgURLs.length)];
+  let svgId = addSvgFilterForElement(bgToShow, window.baseColors[curEmotion.base][curEmotion.level % 3]);
+  bgToShow.data('svgId', svgId);
   bgToShow.css('background-image', `url(${imgUrl})`);
   $('#loader').attr('src', imgUrl).off();
   $('#loader').attr('src', imgUrl).on('load', function() {
     bgToShow.fadeIn();
     bgToHide.fadeOut();
+    setTimeout(() => {
+      let svgId = bgToHide.data('svgId');
+      $(`#${svgId}`).remove();
+    }, 1000);
   });
 }
 
@@ -104,9 +133,7 @@ function PopupFactory(emotionObj) {
 
   // note that the destruction rate is set in each individual popup for a little randomness
   const emotionLevelMultiplier = 2 ** emotionObj.level; // exponential scale
-  const popupRate = 4500 / emotionLevelMultiplier; // base rate of ~3 seconds, gets faster with higher emotion level
-  const minDisplayTime = 6000;// minimum time a popup shows on screen
-  const overLapAllowance = 0.60; // allows 60% overlap when a new element is created
+  const popupRate = basePopupRate / emotionLevelMultiplier; // base rate of ~3 seconds, gets faster with higher emotion level
   const colors = window.baseColors[curEmotion.base][emotionObj.level - 1];
 
   factoryThis.emotion = emotionObj.name;
@@ -156,7 +183,7 @@ function PopupFactory(emotionObj) {
 
   function PopupEl(multiplier) {
     const childThis = this;
-    const destroyRate = minDisplayTime + ((Math.random() * 4000));
+    const destroyRate = minDisplayTime + ((Math.random() * displayVariation));
     childThis.id = Math.floor(Math.random() * 1000000);
 
     // there are 4 types of popups: 
@@ -181,7 +208,10 @@ function PopupFactory(emotionObj) {
       // attach a color modified image
       const imageURL = imgURLs[Math.floor(Math.random() * imgURLs.length)];
       const imgEl = $(`<img src="${imageURL}">`);
-      if (Math.random() < 0.25) addSvgFilterForElement($(imgEl), window.baseColors[curEmotion.base][emotionObj.level-1]);
+      if (Math.random() < portionFiltered) {
+        let svgId = addSvgFilterForElement(imgEl, window.baseColors[curEmotion.base][emotionObj.level - 1]);
+        imgEl.attr('data-svgId', svgId);
+      }
       childThis.$element.append(imgEl);
     }
 
@@ -260,6 +290,12 @@ function PopupFactory(emotionObj) {
     childThis.destroy = () => {
       // remove element from dom and from currentElement array
       childThis.$element.remove();
+      for (let c of childThis.$element.children()) {
+        let svgId = $(c).attr('data-svgId');
+        if (svgId) {
+          $(`#${svgId}`).remove();
+        }
+      }
 
       factoryThis.removeEl(childThis.id);
     };

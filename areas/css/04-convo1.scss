@@ -55,9 +55,13 @@
     
     color: black;
 
-    border: none;
-    background: none;
-    outline: none;
+    border: none !important;
+    background: none !important;
+    outline: none !important;
+    -webkit-tap-highlight-color:transparent;
+    -moz-tap-highlight-color:transparent;
+    -o-tap-highlight-color:transparent;
+    tap-highlight-color:transparent;
   }
   input.focused {
     bottom: 60vh;
@@ -67,9 +71,6 @@
   }
   input:focus[type='submit'], input:active[type='submit'] {
     color: white;
-  }
-  input:focus {
-    outline: none !important;
   }
 
 }
