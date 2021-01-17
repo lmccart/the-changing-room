@@ -111,7 +111,7 @@ module.exports = {
     }),
     new ESLintPlugin({
       exclude: 'node_modules/',
-      fix: true
+      fix: false
     }),
     new CleanWebpackPlugin(),
     new webpack.HotModuleReplacementPlugin(),
