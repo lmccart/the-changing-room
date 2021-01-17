@@ -1,7 +1,6 @@
-*.DS_Store
 node_modules/*
 logs/*
-automate/multibrowse-source/*
+install/multibrowse-source/*
 sound/sounds/*
 sound/recordings/*
 
@@ -12,5 +11,8 @@ static/images/*/*.jpeg
 static/images/*/*.JPG
 static/images/*/*.JPEG
 static/images/*/*.png
+
+*.DS_Store
 *.swp
 *.cache
+.vscode/*
