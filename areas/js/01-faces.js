@@ -23,21 +23,48 @@ let facefinderClassifyRegion;
 let watchdog = 0; // used to delay showing/hiding video
 let spellOut = false; // used to determine when to animate text
 
+
+
+
 const coverEl = $('#video-cover');
 const canvas = document.createElement('canvas');
 const ctx = canvas.getContext('2d');
 
+// let windowInitalized = false;
+
+// console.log('adding updateEmotion listener');
+// socket.on('emotion:update', updateEmotionIfLoaded);
+// socket.on('emotion:get');
+
+
+
+// var updateEmotionIfLoaded = function(msg) {
+//   console.log(windowInitalized);
+//   if (windowInitalized === true) {
+//     console.log('updating emotion!!');
+//     updateEmotion(msg);
+//   } else {
+//     setTimeout(updateEmotionIfLoaded(msg), 1000);
+//   }
+// };
+
+
 window.init = () => {
+
+  // windowInitalized = true;
 
   const currentHeight = $(window).height();
   const heightRatio = currentHeight / ipadHeight;
   const videoEl = $('#face-stream');
   const videoParentEl = $('#video-parent');
 
+
   socket.on('emotion:update', updateEmotion);
   socket.on('emotion:get');
+
+
   $('#dummy').text(emotionalMessage);
-  console.log(emotionalMessage, '!!!!');
+  console.log(emotionalMessage);
   $('.textbox-dummy').fancyTextFill({
     maxFontSize: 400
   });
@@ -93,14 +120,18 @@ window.init = () => {
 };
 
 function updateEmotion(msg) {
+  console.log('UPDATE EMOTION');
   if (!curEmotion || curEmotion.name !== msg.name) {
     curEmotion = msg;
     console.log('emotion has been updated to: ' + msg.name + ' (base: ' + msg.base + ', level: ' + msg.level + ')');
-    
+
+   
+
     $('#dummy').text(emotionalMessage);
     console.log(emotionalMessage, '!!!!dummy');
 
     $('.textbox').css('visibility', 'hidden');
+    $('#face-stream').css('visibility', 'hidden');
     updateInterface();
   }
 }
@@ -108,12 +139,15 @@ function updateEmotion(msg) {
 function updateInterface() {
   $('#debug-info').text('CURRENT EMOTION: ' + curEmotion.name + ' (base: ' + curEmotion.base + ', level: ' + curEmotion.level + ')');
 
-  //   const colors = window.baseColors[curEmotion.base][curEmotion.level-1];
 
-  // $('.radialGradient').css('background', `radial-gradient(#${colors[0]},#${colors[1]})`);
-
-
-  // $('#spellbox').css('font-size', fontSize + 'px');
+  //get color of selected emotion colors to change bg
+  let emotion_colors = baseColors[curEmotion.base];
+  let emotion_colors_str1 = '#' + emotion_colors[0][0];
+  let emotion_colors_str2 = '#' + emotion_colors[0][1];
+  // test gradient
+  // $('.radial-gradient').css({background:'-webkit-radial-gradient(' + emotion_colors_str1 + ',' + emotion_colors_str2 + ')'});
+  $('.filtered').css({background:'-webkit-radial-gradient(' + emotion_colors_str1 + ',' + emotion_colors_str2 + ')'});
+  $('#video-cover').css('background-color', emotion_colors_str1);
 
 
 }
@@ -171,6 +205,7 @@ const processfn = (video) => {
 
       coverEl.hide();
       $('.textbox').css('visibility', 'visible');
+      $('#face-stream').css('visibility', 'visible');
       if (spellOut === false) {
         spellOut = true;
         console.log('flip spell out switch');
@@ -184,6 +219,7 @@ const processfn = (video) => {
       // cover
       coverEl.show();
       $('.textbox').css('visibility', 'hidden');
+      $('#face-stream').css('visibility', 'hidden');
 
       if (spellOut === true) {
         spellOut = false;
