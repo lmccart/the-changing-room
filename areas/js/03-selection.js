@@ -4,7 +4,7 @@ import '../css/03-selection.scss';
 import './shared.js';
 
 // VARIABLES
-const num_panels = 4;
+const num_panels = 4; 
 let idle_timeout = 10;
 let scroll_timeout = 3;
 let scroll_down_time = 990000;

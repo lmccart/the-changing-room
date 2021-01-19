@@ -34,10 +34,14 @@ window.init = () => {
   const videoEl = $('#face-stream');
   const videoParentEl = $('#video-parent');
 
+
   socket.on('emotion:update', updateEmotion);
   socket.on('emotion:get');
+
+
+
   $('#dummy').text(emotionalMessage);
-  console.log(emotionalMessage, '!!!!');
+  console.log(emotionalMessage);
   $('.textbox-dummy').fancyTextFill({
     maxFontSize: 400
   });
@@ -93,10 +97,13 @@ window.init = () => {
 };
 
 function updateEmotion(msg) {
+  console.log('UPDATE EMOTION');
   if (!curEmotion || curEmotion.name !== msg.name) {
     curEmotion = msg;
     console.log('emotion has been updated to: ' + msg.name + ' (base: ' + msg.base + ', level: ' + msg.level + ')');
-    
+
+   
+
     $('#dummy').text(emotionalMessage);
     console.log(emotionalMessage, '!!!!dummy');
 
@@ -108,12 +115,13 @@ function updateEmotion(msg) {
 function updateInterface() {
   $('#debug-info').text('CURRENT EMOTION: ' + curEmotion.name + ' (base: ' + curEmotion.base + ', level: ' + curEmotion.level + ')');
 
-  //   const colors = window.baseColors[curEmotion.base][curEmotion.level-1];
 
-  // $('.radialGradient').css('background', `radial-gradient(#${colors[0]},#${colors[1]})`);
-
-
-  // $('#spellbox').css('font-size', fontSize + 'px');
+  //get color of selected emotion colors to change bg
+  let emotion_colors = baseColors[curEmotion.base];
+  let emotion_colors_str1 = '#' + emotion_colors[0][0];
+  let emotion_colors_str2 = '#' + emotion_colors[0][1];
+  $('.radial-gradient').css({background:'-webkit-radial-gradient(' + emotion_colors_str1 + ',' + emotion_colors_str2 + ')'});
+  $('#video-cover').css('background-color', emotion_colors_str1);
 
 
 }
