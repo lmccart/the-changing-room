@@ -23,11 +23,35 @@ let facefinderClassifyRegion;
 let watchdog = 0; // used to delay showing/hiding video
 let spellOut = false; // used to determine when to animate text
 
+
+
+
 const coverEl = $('#video-cover');
 const canvas = document.createElement('canvas');
 const ctx = canvas.getContext('2d');
 
+// let windowInitalized = false;
+
+// console.log('adding updateEmotion listener');
+// socket.on('emotion:update', updateEmotionIfLoaded);
+// socket.on('emotion:get');
+
+
+
+// var updateEmotionIfLoaded = function(msg) {
+//   console.log(windowInitalized);
+//   if (windowInitalized === true) {
+//     console.log('updating emotion!!');
+//     updateEmotion(msg);
+//   } else {
+//     setTimeout(updateEmotionIfLoaded(msg), 1000);
+//   }
+// };
+
+
 window.init = () => {
+
+  // windowInitalized = true;
 
   const currentHeight = $(window).height();
   const heightRatio = currentHeight / ipadHeight;
@@ -37,7 +61,6 @@ window.init = () => {
 
   socket.on('emotion:update', updateEmotion);
   socket.on('emotion:get');
-
 
 
   $('#dummy').text(emotionalMessage);
@@ -108,6 +131,7 @@ function updateEmotion(msg) {
     console.log(emotionalMessage, '!!!!dummy');
 
     $('.textbox').css('visibility', 'hidden');
+    $('#face-stream').css('visibility', 'hidden');
     updateInterface();
   }
 }
@@ -120,7 +144,9 @@ function updateInterface() {
   let emotion_colors = baseColors[curEmotion.base];
   let emotion_colors_str1 = '#' + emotion_colors[0][0];
   let emotion_colors_str2 = '#' + emotion_colors[0][1];
-  $('.radial-gradient').css({background:'-webkit-radial-gradient(' + emotion_colors_str1 + ',' + emotion_colors_str2 + ')'});
+  // test gradient
+  // $('.radial-gradient').css({background:'-webkit-radial-gradient(' + emotion_colors_str1 + ',' + emotion_colors_str2 + ')'});
+  $('.filtered').css({background:'-webkit-radial-gradient(' + emotion_colors_str1 + ',' + emotion_colors_str2 + ')'});
   $('#video-cover').css('background-color', emotion_colors_str1);
 
 
@@ -179,6 +205,7 @@ const processfn = (video) => {
 
       coverEl.hide();
       $('.textbox').css('visibility', 'visible');
+      $('#face-stream').css('visibility', 'visible');
       if (spellOut === false) {
         spellOut = true;
         console.log('flip spell out switch');
@@ -192,6 +219,7 @@ const processfn = (video) => {
       // cover
       coverEl.show();
       $('.textbox').css('visibility', 'hidden');
+      $('#face-stream').css('visibility', 'hidden');
 
       if (spellOut === true) {
         spellOut = false;

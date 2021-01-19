@@ -16,10 +16,23 @@
   left: 0;
   width: 100%;
   height: 100%;
-
   background: coral;
 }
 
+#face-stream {
+  visibility: hidden;
+}
+
+.filtered {
+  background: radial-gradient(#e66465, #9198e5);
+}
+
+.filtered video {
+ mix-blend-mode: screen;
+ -webkit-filter: grayscale(100%) contrast(170%);
+ filter: grayscale(100%) contrast(170%);
+ opacity: 1;
+}
 
 
 .text-container {
