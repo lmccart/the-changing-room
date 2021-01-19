@@ -13,39 +13,39 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 // The function takes a canvas context, `drawFunc` function, 
 // a video stream and the target fps for updating the canvas
 export function camvas(ctx, callback, stream, targetFps) {
-  var self = this
-  this.ctx = ctx
-  this.callback = callback
+  var self = this;
+  this.ctx = ctx;
+  this.callback = callback;
 
   let fps = targetFps || 30;
 
   // We can't `new Video()` yet, so we'll resort to the vintage
   // "hidden div" hack for dynamic loading.
-  var streamContainer = document.createElement('div')
-  this.video = document.createElement('video')
+  var streamContainer = document.createElement('div');
+  this.video = document.createElement('video');
 
   // If we don't do this, the stream will not be played.
   // By the way, the play and pause controls work as usual 
   // for streamed videos.
-  this.video.setAttribute('autoplay', '1')
-  this.video.setAttribute('playsinline', '1')
+  this.video.setAttribute('autoplay', '1');
+  this.video.setAttribute('playsinline', '1');
 
   // The video should fill out all of the canvas
-  this.video.setAttribute('width', 1)
-  this.video.setAttribute('height', 1)
+  this.video.setAttribute('width', 1);
+  this.video.setAttribute('height', 1);
 
-  streamContainer.appendChild(this.video)
-  document.body.appendChild(streamContainer)
+  streamContainer.appendChild(this.video);
+  document.body.appendChild(streamContainer);
 
   // As soon as we can draw a new frame on the canvas, we call the `draw` function 
   // we passed as a parameter.
   this.update = function() {
-    var self = this
-    var last = Date.now()
+    var self = this;
+    var last = Date.now();
     var loop = function() {
       setTimeout(()=> {
-        self.callback(self.video)
-        requestAnimationFrame(loop) 
+        self.callback(self.video);
+        requestAnimationFrame(loop) ;
       }, 1000 / targetFps) // second value is ideal fps 
     }
     requestAnimationFrame(loop) 
@@ -53,19 +53,19 @@ export function camvas(ctx, callback, stream, targetFps) {
 
   if (stream) {
     // use external stream
-    self.video.srcObject = stream
+    self.video.srcObject = stream;
     // Let's start drawing the canvas!
-    self.update()
+    self.update();
   } else {
     // The callback happens when we are starting to stream the video.
     navigator.mediaDevices.getUserMedia({video: { width: 1280, height: 720 }, audio: false}).then(function(stream) {
       // Yay, now our webcam input is treated as a normal video and
       // we can start having fun
-      self.video.srcObject = stream
+      self.video.srcObject = stream;
       // Let's start drawing the canvas!
-      self.update()
+      self.update();
     }, function(err) {
-      throw err
+      throw err;
     })
   }
 }
