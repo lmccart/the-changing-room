@@ -12,8 +12,9 @@ body {
 }
 
 .bg {
-  filter: blur(10px);
-  /* The image used */  background-image: url('https://d2w9rnfcy7mm78.cloudfront.net/5009285/original_815c93068f89c6ec1ed8e0f46e152437.jpg?1568300985?bc=0');
+  filter: blur(3vw);
+  -webkit-filter: blur(3vw);
+  -moz-filter: blur(3vw);
 
 
   /* Full height */
@@ -77,8 +78,8 @@ body.black ::-webkit-scrollbar-thumb {
   left: 0;
   z-index: 100;
 
-
   backdrop-filter: blur(3vw);
+  -webkit-backdrop-filter: blur(3vw);
 
   width: 100vw;
   height: 100vh;
@@ -117,6 +118,23 @@ body.black ::-webkit-scrollbar-thumb {
       content: '...';
     }
   }
+
+  .loading-blink {
+    -webkit-animation: blink 1s ease-in-out infinite;
+  }
+
+
+  @keyframes blink {
+    0% {
+      opacity: 0;
+    }
+    50% {
+      opacity: 1.0;
+    }
+    100% {
+      opacity: 0;
+    }
+  }
 }
 
 // This class is useful as a base for the 'window' look we use a lot
@@ -134,4 +152,14 @@ body.black ::-webkit-scrollbar-thumb {
     right: 1em;
     font-style: normal;
   }
+}
+
+.noselect {
+  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Old versions of Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox */
 }
