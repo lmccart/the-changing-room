@@ -4,11 +4,11 @@
 /*
 Copyright (c) 2012 Claudio Brandolino
 
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the 'Software'), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
-THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 // The function takes a canvas context, `drawFunc` function, 
 // a video stream and the target fps for updating the canvas
@@ -20,7 +20,7 @@ export function camvas(ctx, callback, stream, targetFps) {
   let fps = targetFps || 30;
 
   // We can't `new Video()` yet, so we'll resort to the vintage
-  // 'hidden div' hack for dynamic loading.
+  // "hidden div" hack for dynamic loading.
   var streamContainer = document.createElement('div');
   this.video = document.createElement('video');
 
@@ -45,7 +45,7 @@ export function camvas(ctx, callback, stream, targetFps) {
     var loop = function() {
       setTimeout(()=> {
         self.callback(self.video);
-        requestAnimationFrame(loop); 
+        requestAnimationFrame(loop) ;
       }, 1000 / targetFps); // second value is ideal fps 
     };
     requestAnimationFrame(loop); 
@@ -57,16 +57,15 @@ export function camvas(ctx, callback, stream, targetFps) {
     // Let's start drawing the canvas!
     self.update();
   } else {
-  // The callback happens when we are starting to stream the video.
+    // The callback happens when we are starting to stream the video.
     navigator.mediaDevices.getUserMedia({video: { width: 1280, height: 720 }, audio: false}).then(function(stream) {
-    // Yay, now our webcam input is treated as a normal video and
-    // we can start having fun
+      // Yay, now our webcam input is treated as a normal video and
+      // we can start having fun
       self.video.srcObject = stream;
       // Let's start drawing the canvas!
       self.update();
     }, function(err) {
       throw err;
-    }); 
+    });
   }
-  
 }

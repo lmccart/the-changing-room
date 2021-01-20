@@ -3,6 +3,7 @@ logs/*
 install/multibrowse-source/*
 sound/sounds/*
 sound/recordings/*
+sound/sounds-orig/*
 
 dist/
 static/fonts/*
@@ -11,6 +12,7 @@ static/images/*/*.jpeg
 static/images/*/*.JPG
 static/images/*/*.JPEG
 static/images/*/*.png
+static/images/*
 
 *.DS_Store
 *.swp
