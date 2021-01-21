@@ -28,11 +28,11 @@ body {
 }
 
 .filtered {
-  background: radial-gradient(#e66465, #9198e5);
+  background: -webkit-radial-gradient(#e66465, #9198e5);
 }
 
 .filtered video {
- mix-blend-mode: screen;
+  mix-blend-mode: screen;
  -webkit-filter: grayscale(100%) contrast(170%);
  filter: grayscale(100%) contrast(170%);
  opacity: 1;

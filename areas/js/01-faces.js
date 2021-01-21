@@ -6,6 +6,8 @@ import { camvas } from './lib/camvas.js';
 import { pico } from './lib/pico.js';
 import 'fancy-textfill/es2015/jquery.plugin';
 import { getTextColorForBackground } from './lib/imageColorUtils.js';
+// import Timeline from './Timeline.js';
+import Papa from 'papaparse';
 
 
 const cascadeurl = '/static/facefinder_cascade.txt';
@@ -17,12 +19,12 @@ const update_memory = pico.instantiate_detection_memory(5); // use the detecions
 
 let emotions;
 let curEmotion;
-let emotionalMessage = 'When did you first realize that you can\'t trust yourself?';
+let emotionalMessage = '';
 
 let facefinderClassifyRegion;
 let watchdog = 0; // used to delay showing/hiding video
 let spellOut = false; // used to determine when to animate text
-
+// let phraseInterval = 1000;
 
 
 
@@ -63,11 +65,12 @@ window.init = () => {
   socket.on('emotion:get');
 
 
-  $('#dummy').text(emotionalMessage);
-  console.log(emotionalMessage);
-  $('.textbox-dummy').fancyTextFill({
-    maxFontSize: 400
-  });
+  // $('#dummy').text(emotionalMessage);
+  // console.log(emotionalMessage);
+  // $('.textbox-dummy').fancyTextFill({
+  //   maxFontSize: 400
+  // });
+
   // set video dimensions to ipad ratio
   // this is mostly for development and will
   // need some adjustment once we have an ipad 
@@ -125,19 +128,17 @@ function updateEmotion(msg) {
     curEmotion = msg;
     console.log('emotion has been updated to: ' + msg.name + ' (base: ' + msg.base + ', level: ' + msg.level + ')');
 
-   
+  
 
-    $('#dummy').text(emotionalMessage);
-    console.log(emotionalMessage, '!!!!dummy');
-
-    $('.textbox').css('visibility', 'hidden');
-    $('#face-stream').css('visibility', 'hidden');
     updateInterface();
   }
 }
 
 function updateInterface() {
   $('#debug-info').text('CURRENT EMOTION: ' + curEmotion.name + ' (base: ' + curEmotion.base + ', level: ' + curEmotion.level + ')');
+
+
+
 
 
   //get color of selected emotion colors to change bg
@@ -149,8 +150,50 @@ function updateInterface() {
   $('.filtered').css({background:'-webkit-radial-gradient(' + emotion_colors_str1 + ',' + emotion_colors_str2 + ')'});
   $('#video-cover').css('background-color', emotion_colors_str1);
 
+  
+  let randomPhrase = window.phrases[curEmotion.base][Math.floor(Math.random() * window.phrases[curEmotion.base].length)];
+  console.log(randomPhrase, 'RANDOM');
+
+  emotionalMessage = randomPhrase;
+
+  console.log(emotionalMessage, ' EMOTIONAL MSG');
+
+  // emotionalMessage = 
+
+  $('#dummy').text(emotionalMessage);
+  console.log(emotionalMessage);
+  $('.textbox-dummy').fancyTextFill({
+    maxFontSize: 400
+  });
+
+  $('.textbox').css('visibility', 'hidden');
+  $('#face-stream').css('visibility', 'hidden');
 
 }
+
+// /data/01_reflections.tsv
+Papa.parse('/data/01_reflections.tsv', {
+  download: true,
+  header: true,
+  skipEmptyLines: 'greedy',
+  complete: function(results) {
+    const rawResults = results.data;
+    // console.log(rawResults, 'RAW RESULTS');
+  
+    const reordered = {};
+    const keys = Object.keys(rawResults[0]);
+    keys.forEach(key => reordered[key] = []);
+
+    for (var i = 0; i < rawResults.length; i++) {
+      const resultRow = rawResults[i];
+      keys.forEach(key => resultRow[key].trim().length > 0 && reordered[key].push(resultRow[key]));
+    }
+    window.phrases = reordered;
+    console.log(phrases, 'REORDERED!');
+  }
+
+});
+
 
 // VIDEO AND FACE HANDLING
 const rgba_to_grayscale = (rgba, nrows, ncols) => {
