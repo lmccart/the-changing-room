@@ -51,25 +51,14 @@ const ctx = canvas.getContext('2d');
 // };
 
 
-window.init = () => {
+function setupFaceDetection() {
 
-  // windowInitalized = true;
 
   const currentHeight = $(window).height();
   const heightRatio = currentHeight / ipadHeight;
   const videoEl = $('#face-stream');
   const videoParentEl = $('#video-parent');
 
-
-  socket.on('emotion:update', updateEmotion);
-  socket.on('emotion:get');
-
-
-  // $('#dummy').text(emotionalMessage);
-  // console.log(emotionalMessage);
-  // $('.textbox-dummy').fancyTextFill({
-  //   maxFontSize: 400
-  // });
 
   // set video dimensions to ipad ratio
   // this is mostly for development and will
@@ -120,7 +109,8 @@ window.init = () => {
         console.log('Error:', err);
       });
   }
-};
+}
+
 
 function updateEmotion(msg) {
   console.log('UPDATE EMOTION');
@@ -292,3 +282,28 @@ function typeInstruction(string, iteration) {
     typeInstruction(string, iteration);
   }, typingSpeed);
 }
+
+
+
+////////////////
+////////////////
+////////////////
+
+
+
+window.init = () => {
+
+  // windowInitalized = true;
+
+  socket.on('emotion:update', updateEmotion);
+  socket.emit('emotion:get');
+
+
+  // $('#dummy').text(emotionalMessage);
+  // console.log(emotionalMessage);
+  // $('.textbox-dummy').fancyTextFill({
+  //   maxFontSize: 400
+  // });
+
+  setupFaceDetection();
+};
