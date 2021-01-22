@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang='en'>
   <head>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, viewport-fit=cover'>
+    <meta name='apple-mobile-web-app-status-bar-style' content='black-translucent'>
     <script src='/socket.io/socket.io.js'></script>
   </head>
   <body>
@@ -13,12 +15,21 @@
 
     <section class='main' id='video-parent'>
       <div id='video-cover'>
-        video is hidden
-      </div>
-      <div class='radial-gradient'>
+        <!-- video is hidden -->
       </div>
 
-      <video id='face-stream' muted autoplay></video>
+      <!-- Test gradient -->
+      <!-- <div class='radial-gradient'>
+      </div> -->
+
+
+      <div class="filtered">
+        <video id='face-stream' muted autoplay></video>
+      </div>
+      
+      <!-- <video id='face-stream' muted autoplay></video> -->
+
+
       <div class='text-container'>
         <!-- X in the top right -->
         <div id='mdiv'>

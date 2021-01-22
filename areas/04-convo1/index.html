@@ -1,37 +1,39 @@
 <!DOCTYPE html>
 <html lang='en'>
   <head>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, viewport-fit=cover'>
+    <meta name='apple-mobile-web-app-status-bar-style' content='black-translucent'>
     <script src='/socket.io/socket.io.js'></script>
     <meta name='apple-mobile-web-app-capable' content='yes'>
   </head>
   <body>
+    <main>
+      <section id='debug'>
+        AREA: <span id='debug-area'>04 convo1</span>
+        <div id='debug-info'></div>
+      </section>
+      
+      <section class='main'>
+        <div id='intro-text' class='window'></div>
 
-    <section id='debug'>
-      AREA: <span id='debug-area'>04 convo1</span>
-      <div id='debug-info'></div>
-    </section>
-    
-    <section class='main'>
-      <div id='intro-text' class='window'></div>
+        <form id='chat-form'>
+          <textarea id='chat-input'></textarea>
+          <input id='chat-submit' class='noselect' type='submit' name='Submit' value='▻'/>
+        </form>
 
-      <form id='chat-form'>
-        <textarea id='chat-input'></textarea>
-        <input id='chat-submit' type='submit' name='Submit' value='▻'/>
-      </form>
-
-      <div id='message-container' class='window'>
-        <div id='chat-viewer'>
+        <div id='message-container' class='window'>
+          <div id='chat-viewer'>
+          </div>
         </div>
-      </div>
-    </section>
-    
-    <section id='loading'>
-      <div>
-        <h1 id='loading-title'>Loading</h1>
-        <h1 id='loading-emotion'></h1>
-      </div>
-    </section>
+      </section>
+      
+      <section id='loading'>
+        <div class='loading-blink'>
+          <h1 id='loading-title-blink'>Loading...</h1>
+          <h1 id='loading-emotion'></h1>
+        </div>
+      </section>
 
-
+    </main>
   </body>
 </html>

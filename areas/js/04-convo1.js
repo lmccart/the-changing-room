@@ -1,4 +1,3 @@
-// style and js imports
 import $ from 'jquery';
 import { getTextColorForBackground } from './lib/imageColorUtils.js';
 import '../css/04-convo1.scss';
@@ -20,14 +19,13 @@ const messageViewerContainer = $('#message-container');
 const messageViewer = $('#chat-viewer');
 
 socket.on('connect', function() {
-  socketid = socket.id; 
+  socketid = socket.id;
 });
 
 window.init = () => {
   // get intro text
   fetch('/data/04_convo1_intro.txt')
-    .then(res => res.blob())
-    .then(blob => blob.text())
+    .then(res => res.text())
     .then(text => {
       introText = text;
       socket.on('emotion:update', updateEmotion);
@@ -56,6 +54,10 @@ window.init = () => {
   });
   // reset the timeout everytime the input changes
   chatInput.on('change', startResetTimeout);
+
+  document.addEventListener('touchmove', (e) => { 
+    e.preventDefault(); 
+  }, { passive:false });
 };
 
 function sendMessage(e) {

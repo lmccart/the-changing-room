@@ -46,10 +46,10 @@ export function camvas(ctx, callback, stream, targetFps) {
       setTimeout(()=> {
         self.callback(self.video);
         requestAnimationFrame(loop) ;
-      }, 1000 / targetFps) // second value is ideal fps 
-    }
-    requestAnimationFrame(loop) 
-  }
+      }, 1000 / targetFps); // second value is ideal fps 
+    };
+    requestAnimationFrame(loop); 
+  };
 
   if (stream) {
     // use external stream
@@ -66,6 +66,6 @@ export function camvas(ctx, callback, stream, targetFps) {
       self.update();
     }, function(err) {
       throw err;
-    })
+    });
   }
 }

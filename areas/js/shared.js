@@ -22,7 +22,6 @@ fetch('/data/colors.json').then(res => {
 // Helper Functions
 
 window.showLoadingOverlay = (newEmotion, cb) => {
-
   const colors = window.baseColors[newEmotion.base][newEmotion.level - 1];
   const textColor = getTextColorForBackground(colors[0], colors[1]);
   $('#loading').css('color', textColor);
@@ -39,7 +38,7 @@ window.showLoadingOverlay = (newEmotion, cb) => {
   setTimeout(function() {
     hideLoadingOverlay();
     if (typeof cb === 'function') {
-      cb(); 
+      cb();
     }
   }, 2000);
 

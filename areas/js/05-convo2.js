@@ -11,7 +11,7 @@ let imgURLs = [];
 let initTimeout;
 let typeTimeout;
 const typingSpeed = 200;
-const pauseOnInstructionTime = 5000;
+const pauseOnInstructionTime = 10 * 1000;
 let curInstruction = 0;
 let instructions;
 
@@ -126,7 +126,7 @@ function typeInstruction(string, iteration) {
     return;
   }
   
-  typeTimeout = setTimeout(function() {
+  typeTimeout = setTimeout(() => {
     // Set the instruction to the current text + the next character
     // whilst incrementing the iteration variable
     $('#instruction').text($('#instruction').text() + string[iteration++]);

@@ -1,5 +1,9 @@
 @import './shared.scss';
 
+body {
+  overflow: hidden;
+}
+
 #face-stream {
   object-fit: cover;
   width: 1620px;
@@ -16,23 +20,47 @@
   left: 0;
   width: 100%;
   height: 100%;
-
   background: coral;
 }
 
+#face-stream {
+  visibility: hidden;
+}
+
+.filtered {
+  background: -webkit-radial-gradient(#e66465, #9198e5);
+}
+
+.filtered video {
+  mix-blend-mode: screen;
+ -webkit-filter: grayscale(100%) contrast(170%);
+ filter: grayscale(100%) contrast(170%);
+ opacity: 1;
+}
 
 
 .text-container {
-  border: 5px solid white;
+  border: 0.75vw solid white;
   width: 85vw;
   display: block;
   margin: 0;
-  height: 85vh;
+  height: calc(100vh - 15vw);
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   overflow: hidden;
+}
+
+
+.radial-gradient {
+  visibility: visible;
+  position: absolute;
+  z-index: 122;
+  width: 300px;
+  height: 300px;
+  // background:radial-gradient(#e66465, #9198e5);
+  border: 5px solid honeydew;
 }
 
 .textbox
@@ -46,7 +74,7 @@
   overflow: hidden;
   display: flex;
   text-align: left;
-  padding: 50px;
+  padding: 6.5vw;
   align-items: center;
 }
 
@@ -61,7 +89,7 @@
   font-style: italic;
   color: pink;
   overflow: hidden;
-  padding: 50px;
+  padding: 6.5vw;
   opacity: 0;
 }
 
@@ -69,40 +97,31 @@
   display: block;
 }
 
-
-.radial-gradient {
-  visibility: hidden;
-  position: absolute;
-  z-index: 122;
-  width: 300px;
-  height: 300px;
-  background:radial-gradient(#e66465, #9198e5);
-  border: 5px solid honeydew;
-}
-
 #mdiv {
-  width: 25px;
-  height: 25px;
-  float: right;
-  margin-right: 65px;
-  margin-top: 35px;
   position: absolute;
   display: block;
-  right: 0px;
+  right: 7.5vw;
+  top: 4.5vw;
 }
 
 .mdiv {
-  height: 100px;
-  width: 5px;
+  height: 6vw;
+  width: .7vw;
   background-color: white;
   transform: rotate(45deg);
   Z-index: 3;
 }
 
 .md {
-  height: 100px;
-  width: 5px;
+  height: 6vw;
+  width: .7vw;
   background-color: white;
   transform: rotate(90deg);
   Z-index: 2;
+}
+
+
+
+#loading {
+  backdrop-filter: blur(2vw) !important;
 }

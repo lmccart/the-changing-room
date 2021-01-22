@@ -63,13 +63,13 @@ fetch('/emotions')
       }
       let base = emotions[emotion].base;
       let level = emotions[emotion].level;
-      $('#emotion').append('<option value=''+emotion+''>'+emotion+'</option>');
+      $('#emotion').append('<option value="'+emotion+'">'+emotion+'</option>');
       if (!bases.includes(base)) {
         bases.push(base);
       }
     });
     bases.sort().forEach((base, i) => {
-      $('#base').append('<option value=''+base+''>'+base+'</option>');
+      $('#base').append('<option value="'+base+'">'+base+'</option>');
     });
     setEmotion(curEmotion);
   });

@@ -129,4 +129,5 @@ export function addSvgFilterForElement($imgEl, arrayOfColors) {
   $imgEl.on('remove', () => {
     $(`#${svgId}`).remove();
   });
+  return svgId;
 }
