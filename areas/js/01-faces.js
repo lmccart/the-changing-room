@@ -26,11 +26,10 @@ let watchdog = 0; // used to delay showing/hiding video
 let spellOut = false; // used to determine when to animate text
 // let phraseInterval = 1000;
 
-
-
 const coverEl = $('#video-cover');
 const canvas = document.createElement('canvas');
 const ctx = canvas.getContext('2d');
+
 
 // let windowInitalized = false;
 
@@ -51,7 +50,66 @@ const ctx = canvas.getContext('2d');
 // };
 
 
-function setupFaceDetection() {
+function setupFaceDetection(options) {
+
+
+  // we want to use options.onFaceVisible and options.onFaceHidden
+
+
+  // This function is called by camvas at 10 fps
+  const processfn = (video) => {
+    ctx.drawImage(video, 0, 0);
+    var rgba = ctx.getImageData(0, 0, 1280, 720).data;
+    const image = {
+      'pixels': rgba_to_grayscale(rgba, 720, 1280),
+      'nrows': 720,
+      'ncols': 1280,
+      'ldim': 1280
+    };
+    const params = {
+      'shiftfactor': 0.1, // move the detection window by 10% of its size
+      'minsize': 100, // minimum size of a face
+      'maxsize': 1000, // maximum size of a face
+      'scalefactor': 1.1 // for multiscale processing: resize the detection window by 10% when moving to the higher scale
+    };
+    // run the cascade over the frame and cluster the obtained detections
+    // dets is an array that contains (r, c, s, q) quadruplets
+    // (representing row, column, scale and detection score)
+    let dets = pico.run_cascade(image, facefinderClassifyRegion, params);
+    dets = update_memory(dets);
+    dets = pico.cluster_detections(dets, 0.2); // set IoU threshold to 0.2
+
+    let faceFound = false;
+    for (let i = 0; i < dets.length; ++i) {
+      // check the detection score
+      // if it's above the threshold increment watchdog
+      // (the constant 50.0 is empirical: other cascades might require a different one)
+      if (dets[i][3] > 50.0) {
+        faceFound = true;
+      }
+    }
+
+    // if watchdog is > 20 that means a face has been detected for 2 seconds
+    if (faceFound) {
+      watchdog = watchdog < 0 ? 0 : watchdog + 1;
+
+      if (watchdog > (delaySeconds * 10)) {
+        // remove cover
+        options.onFaceVisible();
+
+      }
+    } else {
+      watchdog = watchdog > 0 ? 0 : watchdog - 1;
+
+      if (watchdog < -(delaySeconds * 10)) {
+        // cover
+
+        options.onFaceHidden();
+
+      }
+    }
+  };
+
 
 
   const currentHeight = $(window).height();
@@ -74,21 +132,21 @@ function setupFaceDetection() {
     videoHeight = currentHeight;
     videoWidth = (ipadWidth / ipadHeight) * currentHeight;
   }
-  
+
   videoEl.width(videoWidth);
   videoEl.height(videoHeight);
-  
+
   videoParentEl.width(videoWidth);
   videoParentEl.height(videoHeight);
-  
+
   // set canvas dimensions to match hd incoming dimensions
   // this canvas is only in memory and not on the DOM
   canvas.setAttribute('width', 1280);
   canvas.setAttribute('height', 720);
-  
-  
+
+
   // face detection code based on https://nenadmarkus.com/p/picojs-intro/demo/
-  
+
   // setup Pico face detector with cascade data
   fetch(cascadeurl).then(function(response) {
     response.arrayBuffer().then(function(buffer) {
@@ -97,7 +155,8 @@ function setupFaceDetection() {
       console.log('* cascade loaded');
     });
   });
-  
+
+
   // Load webcam and instantiate camvas script
   if (navigator.mediaDevices.getUserMedia) {
     navigator.mediaDevices.getUserMedia({ video: { width: 1280, height: 720 } })
@@ -112,13 +171,43 @@ function setupFaceDetection() {
 }
 
 
+function loadText(callback) {
+  // /data/01_reflections.tsv
+  Papa.parse('/data/01_reflections.tsv', {
+    download: true,
+    header: true,
+    skipEmptyLines: 'greedy',
+    complete: function(results) {
+      const rawResults = results.data;
+      // console.log(rawResults, 'RAW RESULTS');
+
+      const reordered = {};
+      const keys = Object.keys(rawResults[0]);
+      keys.forEach(key => reordered[key] = []);
+
+      for (var i = 0; i < rawResults.length; i++) {
+        const resultRow = rawResults[i];
+        keys.forEach(key => resultRow[key].trim().length > 0 && reordered[key].push(resultRow[key]));
+      }
+      window.phrases = reordered;
+      console.log(phrases, 'REORDERED!');
+      if (typeof (callback) === 'function') {
+        callback(window.phrases);
+      }
+    }
+
+  });
+}
+
+
+
 function updateEmotion(msg) {
   console.log('UPDATE EMOTION');
   if (!curEmotion || curEmotion.name !== msg.name) {
     curEmotion = msg;
     console.log('emotion has been updated to: ' + msg.name + ' (base: ' + msg.base + ', level: ' + msg.level + ')');
 
-  
+
 
     updateInterface();
   }
@@ -137,10 +226,10 @@ function updateInterface() {
   let emotion_colors_str2 = '#' + emotion_colors[0][1];
   // test gradient
   // $('.radial-gradient').css({background:'-webkit-radial-gradient(' + emotion_colors_str1 + ',' + emotion_colors_str2 + ')'});
-  $('.filtered').css({background:'-webkit-radial-gradient(' + emotion_colors_str1 + ',' + emotion_colors_str2 + ')'});
+  $('.filtered').css({ background: '-webkit-radial-gradient(' + emotion_colors_str1 + ',' + emotion_colors_str2 + ')' });
   $('#video-cover').css('background-color', emotion_colors_str1);
 
-  
+
   let randomPhrase = window.phrases[curEmotion.base][Math.floor(Math.random() * window.phrases[curEmotion.base].length)];
   console.log(randomPhrase, 'RANDOM');
 
@@ -161,28 +250,6 @@ function updateInterface() {
 
 }
 
-// /data/01_reflections.tsv
-Papa.parse('/data/01_reflections.tsv', {
-  download: true,
-  header: true,
-  skipEmptyLines: 'greedy',
-  complete: function(results) {
-    const rawResults = results.data;
-    // console.log(rawResults, 'RAW RESULTS');
-  
-    const reordered = {};
-    const keys = Object.keys(rawResults[0]);
-    keys.forEach(key => reordered[key] = []);
-
-    for (var i = 0; i < rawResults.length; i++) {
-      const resultRow = rawResults[i];
-      keys.forEach(key => resultRow[key].trim().length > 0 && reordered[key].push(resultRow[key]));
-    }
-    window.phrases = reordered;
-    console.log(phrases, 'REORDERED!');
-  }
-
-});
 
 
 // VIDEO AND FACE HANDLING
@@ -196,72 +263,29 @@ const rgba_to_grayscale = (rgba, nrows, ncols) => {
   return gray;
 };
 
-// This function is called by camvas at 10 fps
-const processfn = (video) => {
-  ctx.drawImage(video, 0, 0);
-  var rgba = ctx.getImageData(0, 0, 1280, 720).data;
-  const image = {
-    'pixels': rgba_to_grayscale(rgba, 720, 1280),
-    'nrows': 720,
-    'ncols': 1280,
-    'ldim': 1280
-  };
-  const params = {
-    'shiftfactor': 0.1, // move the detection window by 10% of its size
-    'minsize': 100, // minimum size of a face
-    'maxsize': 1000, // maximum size of a face
-    'scalefactor': 1.1 // for multiscale processing: resize the detection window by 10% when moving to the higher scale
-  };
-  // run the cascade over the frame and cluster the obtained detections
-  // dets is an array that contains (r, c, s, q) quadruplets
-  // (representing row, column, scale and detection score)
-  let dets = pico.run_cascade(image, facefinderClassifyRegion, params);
-  dets = update_memory(dets);
-  dets = pico.cluster_detections(dets, 0.2); // set IoU threshold to 0.2
 
-  let faceFound = false;
-  for (let i = 0; i < dets.length; ++i) {
-    // check the detection score
-    // if it's above the threshold increment watchdog
-    // (the constant 50.0 is empirical: other cascades might require a different one)
-    if (dets[i][3] > 50.0) {
-      faceFound = true;
-    }
+function removeCover() {
+  coverEl.hide();
+  $('.textbox').css('visibility', 'visible');
+  $('#face-stream').css('visibility', 'visible');
+  if (spellOut === false) {
+    spellOut = true;
+    console.log('flip spell out switch');
+    typeInstruction(emotionalMessage);
   }
+}
 
-  // if watchdog is > 20 that means a face has been detected for 2 seconds
-  if (faceFound) {
-    watchdog = watchdog < 0 ? 0 : watchdog + 1;
+function showCover() {
+  coverEl.show();
+  $('.textbox').css('visibility', 'hidden');
+  $('#face-stream').css('visibility', 'hidden');
 
-    if (watchdog > (delaySeconds * 10)) {
-      // remove cover
-
-      coverEl.hide();
-      $('.textbox').css('visibility', 'visible');
-      $('#face-stream').css('visibility', 'visible');
-      if (spellOut === false) {
-        spellOut = true;
-        console.log('flip spell out switch');
-        typeInstruction(emotionalMessage);
-      }
-    }
-  } else {
-    watchdog = watchdog > 0 ? 0 : watchdog - 1;
-
-    if (watchdog < -(delaySeconds * 10)) {
-      // cover
-      coverEl.show();
-      $('.textbox').css('visibility', 'hidden');
-      $('#face-stream').css('visibility', 'hidden');
-
-      if (spellOut === true) {
-        spellOut = false;
-        console.log('switch off');
-        $('#spellbox').empty();
-      } 
-    }
+  if (spellOut === true) {
+    spellOut = false;
+    console.log('switch off');
+    $('#spellbox').empty();
   }
-};
+}
 
 function typeInstruction(string, iteration) {
   var iteration = iteration || 0;
@@ -295,15 +319,28 @@ window.init = () => {
 
   // windowInitalized = true;
 
-  socket.on('emotion:update', updateEmotion);
-  socket.emit('emotion:get');
 
+  loadText(function(t) {
 
+    socket.on('emotion:update', updateEmotion);
+    socket.emit('emotion:get');
+
+  });
   // $('#dummy').text(emotionalMessage);
   // console.log(emotionalMessage);
   // $('.textbox-dummy').fancyTextFill({
   //   maxFontSize: 400
   // });
 
-  setupFaceDetection();
+  setupFaceDetection({
+    onFaceVisible: function() {
+      console.log('Face IS Visible!!!!!!!!');
+      removeCover();
+    },
+    onFaceHidden: function() {
+      console.log('Face HIDDDDENNN!!!');
+      showCover();
+    }
+  });
+
 };
