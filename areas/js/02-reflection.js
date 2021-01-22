@@ -106,11 +106,6 @@ var screenParams = {
 
 ///////////////////////////////////////////////
 //
-/* DEV TODO remove */
-meditation_long_interval = 1000;
-meditation_interval = 500;
-each_meditation_fadeout_duration = 50;
-/* DEV TODO remove */
 
 window.init = () => {
 
@@ -287,34 +282,87 @@ function generateMeditationTexts() {
     });
 }
 
-function generateMemories() {
+function seedShuffle (array, seed) { 
+
+  const rng = seedrandom(seed);
+
+  var m = array.length, t, i;
+
+  // While there remain elements to shuffle…
+  while (m) {
+
+    // Pick a remaining element…
+    i = Math.floor(rng() * m--);        // <-- MODIFIED LINE
+
+    // And swap it with the current element.
+    t = array[m];
+    array[m] = array[i];
+    array[i] = t;
+  }
+
+  return array;
+}
+
+function generateMemoryPairs() {
  
   var memories = [];
 
-  let rng = seedrandom("TODOchangeme");
+  var thisEmotionMemories = dataMemories[curEmotion.base];
 
-  // pick and choose from dataMemories and imageList
-  // screenNumber should be 0, 1, 2, or null
+  let rng = seedrandom(curEmotion.base + new Date().getHours()) 
+  // This means that the image sequence will rely on the current hour 
 
-  dataMemories[curEmotion.base].forEach(mem => {
-    memories.push({ 
-      type: 'text',
-      text: mem,
-      left: `${ Math.random() * 80 }vw`,
-      top: `${ Math.random() * 80 }vh`,
-      screenNumber: screenNumber,
-    });
-  });
+  let screenNumber;
 
-  imageList.forEach(img => {
-    memories.push({
+  let imgCounter = 0;
+  let memCounter = 0;
+
+  
+  while(imgCounter < imageList.length) {
+
+    // randomly pick screen
+    let r = rng();
+    if (r < 0.333) { 
+      screenNumber = 0;
+    } else if (r < 0.666) {
+      screenNumber = 1;
+    } else {
+      screenNumber = 2;
+    }
+
+    var thisMemPair = [];
+
+    thisMemPair.push({
       type: 'image',
-      url: img,
+      url: imageList[imgCounter++],
       left: `${ Math.random() * 80 }vw`,
       top: `${ Math.random() * 80 }vh`,
       screenNumber: screenNumber,
     });
-  });
+
+    if (imgCounter < imageList.length && memCounter < thisEmotionMemories.length && rng() < 0.5) {
+      thisMemPair.push({ 
+        type: 'text',
+        text: thisEmotionMemories[memCounter++],
+        left: `${ Math.random() * 80 }vw`,
+        top: `${ Math.random() * 80 }vh`,
+        screenNumber: screenNumber,
+      });
+    } else {
+      thisMemPair.push({
+        type: 'image',
+        url: imageList[imgCounter++],
+        left: `${ Math.random() * 80 }vw`,
+        top: `${ Math.random() * 80 }vh`,
+        screenNumber: screenNumber,
+      });
+    }
+
+    memories.push(thisMemPair);
+
+
+  }
+
 
   return memories;
 
@@ -322,6 +370,9 @@ function generateMemories() {
 
 function displayMeditationPhrase(opts) {
   // opts: { text: mt, fadeIn: 100, fadeOut: 100 };
+  if (thisScreenParams.id !== 1) { 
+    console.log("...displaying meditation on screen 1...");
+  }
   $('#meditation_text')
     .fadeOut(opts.fadeOut, function() {
       $(this)
@@ -437,22 +488,32 @@ function queueEvents(timeline) {
 
   ///////// QUEUE MEMORIES
   
-  let mems = generateMemories();
+  let mempairs = generateMemoryPairs();
 
-  mems.forEach((mem, i) => {
+  mempairs.forEach((mempair, i) => {
 
     timeline.add({ time: timeMarker, event: function() { 
 
-      console.log('...displaying memory...');
-      if (mem.screenNumber === thisScreenParams.id || thisScreenParams.name === 'FULLSCREEN') {
+
+      if (mempair[0].screenNumber === thisScreenParams.id || thisScreenParams.name === 'FULLSCREEN') {
       //only display if we're on the right screen
         //
         displayMemory({
-          data: mem,
+          data: mempair[0],
           fadeIn: each_memory_fadein_duration,
           fadeOut: each_memory_fadeout_duration,
         });
 
+
+        displayMemory({
+          data: mempair[1],
+          fadeIn: each_memory_fadein_duration,
+          fadeOut: each_memory_fadeout_duration,
+        });
+
+        console.log('...WE are displaying memory pair #', i, '...');
+      } else  {
+        console.log('...SOMEONE ELSE is displaying memory pair #', i, '...');
       }
 
 
