@@ -119,3 +119,9 @@ body {
   transform: rotate(90deg);
   Z-index: 2;
 }
+
+
+
+#loading {
+  backdrop-filter: blur(2vw) !important;
+}

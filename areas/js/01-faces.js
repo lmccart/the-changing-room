@@ -55,6 +55,17 @@ function setupFaceDetection(options) {
 
   // we want to use options.onFaceVisible and options.onFaceHidden
 
+  // VIDEO AND FACE HANDLING
+  const rgba_to_grayscale = (rgba, nrows, ncols) => {
+    const gray = new Uint8Array(nrows * ncols);
+    for (let r = 0; r < nrows; ++r) {
+      for (let c = 0; c < ncols; ++c) {
+        gray[r * ncols + c] = (2 * rgba[r * 4 * ncols + 4 * c + 0] + 7 * rgba[r * 4 * ncols + 4 * c + 1] + 1 * rgba[r * 4 * ncols + 4 * c + 2]) / 10;
+      }
+    }
+    return gray;
+  };
+
 
   // This function is called by camvas at 10 fps
   const processfn = (video) => {
@@ -201,26 +212,26 @@ function loadText(callback) {
 
 
 
-function updateEmotion(msg) {
-  console.log('UPDATE EMOTION');
-  if (!curEmotion || curEmotion.name !== msg.name) {
-    curEmotion = msg;
-    console.log('emotion has been updated to: ' + msg.name + ' (base: ' + msg.base + ', level: ' + msg.level + ')');
+function queueTextsAtInterval(phrases, interval) {
+  console.log('WE SHOULD BE QUEUEING UP THESE PHRASES:', phrases, 'at this interval', interval);
 
-
-
-    updateInterface();
-  }
+  // this is where we queue up texts showing up
 }
+
 
 function updateInterface() {
   $('#debug-info').text('CURRENT EMOTION: ' + curEmotion.name + ' (base: ' + curEmotion.base + ', level: ' + curEmotion.level + ')');
 
 
 
+  // show loading screen
+  showLoadingOverlay(curEmotion, function() {
+    console.log('finished loading');
+  });
 
 
-  //get color of selected emotion colors to change bg
+
+  ////// CHANGING BACKGROUND COLOR
   let emotion_colors = baseColors[curEmotion.base];
   let emotion_colors_str1 = '#' + emotion_colors[0][0];
   let emotion_colors_str2 = '#' + emotion_colors[0][1];
@@ -228,6 +239,17 @@ function updateInterface() {
   // $('.radial-gradient').css({background:'-webkit-radial-gradient(' + emotion_colors_str1 + ',' + emotion_colors_str2 + ')'});
   $('.filtered').css({ background: '-webkit-radial-gradient(' + emotion_colors_str1 + ',' + emotion_colors_str2 + ')' });
   $('#video-cover').css('background-color', emotion_colors_str1);
+
+
+  /////// CHANGING PHRASES
+  // shuffle phrases
+  // cycle through phrases over 60 seconds
+
+  let emotionPhrases = window.phrases[curEmotion.base];
+  queueTextsAtInterval(emotionPhrases, 60);
+
+
+
 
 
   let randomPhrase = window.phrases[curEmotion.base][Math.floor(Math.random() * window.phrases[curEmotion.base].length)];
@@ -252,16 +274,18 @@ function updateInterface() {
 
 
 
-// VIDEO AND FACE HANDLING
-const rgba_to_grayscale = (rgba, nrows, ncols) => {
-  const gray = new Uint8Array(nrows * ncols);
-  for (let r = 0; r < nrows; ++r) {
-    for (let c = 0; c < ncols; ++c) {
-      gray[r * ncols + c] = (2 * rgba[r * 4 * ncols + 4 * c + 0] + 7 * rgba[r * 4 * ncols + 4 * c + 1] + 1 * rgba[r * 4 * ncols + 4 * c + 2]) / 10;
-    }
+
+function updateEmotion(msg) {
+  console.log('UPDATE EMOTION');
+  if (!curEmotion || curEmotion.name !== msg.name) {
+    curEmotion = msg;
+    console.log('emotion has been updated to: ' + msg.name + ' (base: ' + msg.base + ', level: ' + msg.level + ')');
+
+    updateInterface();
   }
-  return gray;
-};
+
+}
+
 
 
 function removeCover() {
