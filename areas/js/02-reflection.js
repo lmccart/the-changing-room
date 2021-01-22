@@ -90,6 +90,7 @@ let timeline_end_pause = 1000;
 
 window.init = () => {
   socket.on('emotion:update', updateEmotion);
+  socket.emit('emotion:get');
   // the stuff at the bottom should go in here, but I'm not touching it for now so as not to create merge conflicts since I know this section is in progress -LLM
 };
 

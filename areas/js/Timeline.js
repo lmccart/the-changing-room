@@ -1,3 +1,5 @@
+/* eslint-disable */ 
+
 import { nanoid } from 'nanoid';
 
 /* 
@@ -86,6 +88,7 @@ class Timeline {
     this.status = 'playing';
 
     var loopUpdate = function() {
+
       setTimeout(function() {
         if (self.status === 'stopped') {
           return; 
@@ -94,18 +97,22 @@ class Timeline {
 
         let msPastDuration = Date.now() - Number(self.startTime) - Number(self.duration);
 
+
         if (msPastDuration < 0) {
         // we're still within the timeline
           loopUpdate(); 
-        }
-        // we're past timeline duration!
-        if (self.loop) {
-          self.completed_events = {};
-          self.startTime = Date.now() - msPastDuration;
-          loopUpdate();
         } else {
-        // we're not looping and we're over
-          opts.callback(); 
+          // we're past timeline duration!
+          if (self.loop) {
+            self.completed_events = {};
+            self.startTime = Date.now() - msPastDuration;
+            loopUpdate();
+          } else {
+          // we're not looping and we're over
+            if (typeof(opts.callback) === 'function') {
+              opts.callback();
+            }
+          }
         }
           
         
