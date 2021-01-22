@@ -1,7 +1,9 @@
+/* eslint-disable */ 
 
 // style and js imports
 import $ from 'jquery';
 import Papa from 'papaparse';
+import seedrandom from 'seedrandom';
 import '../css/02-reflection.scss';
 import './shared.js';
 import Timeline from './Timeline.js';
@@ -47,7 +49,6 @@ let each_meditation_fadeout_duration = 500;
 let meditation_long_indices = [6, 12];
 // there are longer intervals, and we take our time.)
 let meditation_long_interval = 10000;
-
 
 
 //////// The meditation is over.
@@ -104,6 +105,12 @@ var screenParams = {
 };
 
 ///////////////////////////////////////////////
+//
+/* DEV TODO remove */
+meditation_long_interval = 1000;
+meditation_interval = 500;
+each_meditation_fadeout_duration = 50;
+/* DEV TODO remove */
 
 window.init = () => {
 
@@ -281,20 +288,31 @@ function generateMeditationTexts() {
 }
 
 function generateMemories() {
-
+ 
   var memories = [];
 
-  dataMemories[curEmotion.base].forEach(m => {
+  let rng = seedrandom("TODOchangeme");
+
+  // pick and choose from dataMemories and imageList
+  // screenNumber should be 0, 1, 2, or null
+
+  dataMemories[curEmotion.base].forEach(mem => {
     memories.push({ 
       type: 'text',
-      text: m,
+      text: mem,
+      left: `${ Math.random() * 80 }vw`,
+      top: `${ Math.random() * 80 }vh`,
+      screenNumber: screenNumber,
     });
   });
 
-  imageList.forEach(m => {
+  imageList.forEach(img => {
     memories.push({
       type: 'image',
-      url: m,
+      url: img,
+      left: `${ Math.random() * 80 }vw`,
+      top: `${ Math.random() * 80 }vh`,
+      screenNumber: screenNumber,
     });
   });
 
@@ -313,6 +331,7 @@ function displayMeditationPhrase(opts) {
 }
 
 function displayMemory(opts) {
+
   //{ data: mem, top: ~, left: ~, fadeIn: 100, fadeOut: 100 };
   let memdiv;
   let memory = opts.data;
@@ -329,14 +348,14 @@ function displayMemory(opts) {
   } 
 
   memdiv.addClass('memory');
-  memdiv.top = opts.top;
-  memdiv.css({ top:  opts.top, left: opts.left });
+  memdiv.css({ top:  memory.top, left: memory.left });
 
 
   memdiv
     .hide()
     .appendTo('#memory_container')
     .fadeIn(opts.fadeIn);
+
 }
 
 /////////////////////////////////
@@ -417,20 +436,25 @@ function queueEvents(timeline) {
 
 
   ///////// QUEUE MEMORIES
-
+  
   let mems = generateMemories();
 
   mems.forEach((mem, i) => {
 
     timeline.add({ time: timeMarker, event: function() { 
 
-      displayMemory({
-        data: mem,
-        fadeIn: each_memory_fadein_duration,
-        fadeOut: each_memory_fadeout_duration,
-        left: `${ Math.random() * 80 }vw`, // TODO: better sizing
-        top: `${ Math.random() * 80 }vh`
-      });
+      console.log('...displaying memory...');
+      if (mem.screenNumber === thisScreenParams.id || thisScreenParams.name === 'FULLSCREEN') {
+      //only display if we're on the right screen
+        //
+        displayMemory({
+          data: mem,
+          fadeIn: each_memory_fadein_duration,
+          fadeOut: each_memory_fadeout_duration,
+        });
+
+      }
+
 
     } });
 
