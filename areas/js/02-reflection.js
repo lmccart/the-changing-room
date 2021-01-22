@@ -1,3 +1,4 @@
+
 // style and js imports
 import $ from 'jquery';
 import Papa from 'papaparse';
@@ -14,13 +15,15 @@ var dataMemories;
 var timeline;
 var imageList = [];
 var preloadedImages = []; // kept here to preload images; without this, some browsers might clear cache & unload images
-var dataLoaded = false;
 
 
 ////////////// MEDITATION TIMINGS /////////////
 
 
 // The timeline starts.
+
+// We pause for the loading overlay.
+let loading_overlay_pause = 1000; 
 
 // We pause before meditation starts,
 let meditations_fadein_pause = 1000; 
@@ -43,6 +46,8 @@ let each_meditation_fadeout_duration = 500;
 let meditation_long_indices = [6, 12];
 // there are longer intervals, and we take our time.)
 let meditation_long_interval = 10000;
+
+
 
 //////// The meditation is over.
 
@@ -79,34 +84,45 @@ let memories_fadeout_duration = 1000;
 
 // Finally,
 // we pause before we end the timeline
-let timeline_end_pause = 1000;
+let timeline_end_pause = 3000;
 
 // and then we start it 
 // all
 // over 
 // again.
 
+
 ///////////////////////////////////////////////
 
 window.init = () => {
-  socket.on('emotion:update', updateEmotion);
-  // the stuff at the bottom should go in here, but I'm not touching it for now so as not to create merge conflicts since I know this section is in progress -LLM
+
+  loadData(() => {
+
+    console.log('Data loaded!');
+
+    socket.on('emotion:update', updateEmotionCurried(() => {
+
+      initTimelineIfItIsnt(); 
+
+    }));
+    socket.emit('emotion:get');
+  });
 };
 
-function updateEmotion(msg) {
-  if (!curEmotion || curEmotion.name !== msg.name) {
-    curEmotion = msg;
-    console.log('emotion has been updated to: ' + msg.name + ' (base: ' + msg.base + ', level: ' + msg.level + ')');
-    showLoadingOverlay(curEmotion);
-    updateImageList(() => {
-      console.log(imageList);
-      updateInterface();
-    });
-  }
+function updateEmotionCurried(callback) {
+  return function(msg) {
+    if (!curEmotion || curEmotion.name !== msg.name) {
+      curEmotion = msg;
+      console.log('emotion has been updated to: ' + msg.name + ' (base: ' + msg.base + ', level: ' + msg.level + ')');
+      updateImageList(() => {
+        updateInterface();
+        callback();
+      });
+    }
+  };
 }
 
 function updateInterface() {
-  resetTimeline();
   $('#debug-info').text('CURRENT EMOTION: ' + curEmotion.name + ' (base: ' + curEmotion.base + ', level: ' + curEmotion.level + ')');
 }
 
@@ -314,6 +330,12 @@ function queueEvents(timeline) {
 
   var timeMarker = 0;
 
+  timeline.add({ time: timeMarker, event: function() { 
+    showLoadingOverlay(curEmotion);
+  } });
+
+  timeMarker += loading_overlay_pause;
+
   timeMarker += meditations_fadein_pause;
 
   timeline.add({ time: timeMarker, event: function() { 
@@ -331,7 +353,6 @@ function queueEvents(timeline) {
 
 
     timeline.add({ time: timeMarker, event: function() { 
-      console.log(mt); 
       displayMeditationPhrase({ text: mt, fadeIn: each_meditation_fadein_duration, fadeOut: each_meditation_fadeout_duration});
     } });
 
@@ -403,46 +424,24 @@ function queueEvents(timeline) {
 }
 
 
-function resetTimeline() {
+function initTimelineIfItIsnt() {  
 
-  if (!dataLoaded) {
-    // wait until data is loaded
-    setTimeout(resetTimeline, 1000);
-    return;
-  }
-
-  console.log('Resetting timeline');
- 
   if (timeline === undefined) {
+
+    console.log('Initializing timeline');
+ 
     timeline = new Timeline({ loop: true, duration: 50000, interval: 100 }); 
-  } else {
-    timeline.clear(); 
+
+    resetHTML();
+
+    queueEvents(timeline);
+
+    timeline.start();
+
   }
-  
-
-  resetHTML();
-
-  queueEvents(timeline);
-
-  timeline.start();
  
 }
 
 
-/////////////////////////////////
-/////////////////////////////////
-/////////////////////////////////
-//////////// MAIN ///////////////
-/////////////////////////////////
-/////////////////////////////////
-/////////////////////////////////
-
-
-loadData(() => {
-  console.log('Data loaded!');
-  dataLoaded = true;
-});
-
-// resetTimeline(); this is already called by updateEmotion() upon pageload;
 
 
