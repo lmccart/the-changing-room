@@ -1,11 +1,14 @@
 @import './shared.scss';
 
+body {
+  background-color: black;
+}
+
 section.main {
   position: absolute;
   top: 0px;
   left: 0px;
-  right: 0px;
-  bottom: 0px;
+  overflow: hidden;
 }
 
 .fs {
@@ -23,6 +26,7 @@ section.main {
   right: 0px;
   bottom: 0px;
 }
+
 
 #background_container {
 

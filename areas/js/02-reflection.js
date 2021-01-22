@@ -105,7 +105,7 @@ var screenParams = {
 };
 
 ///////////////////////////////////////////////
-//
+
 
 window.init = () => {
 
@@ -153,6 +153,9 @@ function setScreen() {
     $('body').addClass('screen-' + screenNumber);
     $('body').addClass('partialscreen');
     thisScreenParams = screenParams[screenNumber];
+    $('body').width(thisScreenParams.width).height(thisScreenParams.height);
+    $('.main').width(thisScreenParams.width).height(thisScreenParams.height);
+    $('#loading').width(thisScreenParams.width).height(thisScreenParams.height);
   } else {
     $('body').addClass('fullscreen');
   }
