@@ -1,5 +1,3 @@
-/* eslint-disable */ 
-
 // style and js imports
 import $ from 'jquery';
 import Papa from 'papaparse';
@@ -105,6 +103,11 @@ var screenParams = {
 };
 
 ///////////////////////////////////////////////
+/* DEV TIMINGS
+meditation_long_interval = 1000;
+meditation_interval = 500;
+each_meditation_fadeout_duration = 50;
+//  */
 
 
 window.init = () => {
@@ -285,7 +288,7 @@ function generateMeditationTexts() {
     });
 }
 
-function seedShuffle (array, seed) { 
+function seedShuffle(array, seed) { 
 
   const rng = seedrandom(seed);
 
@@ -295,7 +298,7 @@ function seedShuffle (array, seed) {
   while (m) {
 
     // Pick a remaining element…
-    i = Math.floor(rng() * m--);        // <-- MODIFIED LINE
+    i = Math.floor(rng() * m--);
 
     // And swap it with the current element.
     t = array[m];
@@ -312,7 +315,7 @@ function generateMemoryPairs() {
 
   var thisEmotionMemories = dataMemories[curEmotion.base];
 
-  let rng = seedrandom(curEmotion.base + new Date().getHours()) 
+  let rng = seedrandom(curEmotion.base + new Date().getHours());
   // This means that the image sequence will rely on the current hour 
 
   let screenNumber;
@@ -321,7 +324,7 @@ function generateMemoryPairs() {
   let memCounter = 0;
 
   
-  while(imgCounter < imageList.length) {
+  while (imgCounter < imageList.length) {
 
     // randomly pick screen
     let r = rng();
@@ -374,7 +377,7 @@ function generateMemoryPairs() {
 function displayMeditationPhrase(opts) {
   // opts: { text: mt, fadeIn: 100, fadeOut: 100 };
   if (thisScreenParams.id !== 1) { 
-    console.log("...displaying meditation on screen 1...");
+    console.log('...displaying meditation on screen 1...');
   }
   $('#meditation_text')
     .fadeOut(opts.fadeOut, function() {
@@ -515,7 +518,7 @@ function queueEvents(timeline) {
         });
 
         console.log('...WE are displaying memory pair #', i, '...');
-      } else  {
+      } else {
         console.log('...SOMEONE ELSE is displaying memory pair #', i, '...');
       }
 
