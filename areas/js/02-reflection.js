@@ -15,6 +15,7 @@ var dataMemories;
 var timeline;
 var imageList = [];
 var preloadedImages = []; // kept here to preload images; without this, some browsers might clear cache & unload images
+var thisScreenParams;
 
 
 ////////////// MEDITATION TIMINGS /////////////
@@ -93,8 +94,21 @@ let timeline_end_pause = 3000;
 
 
 ///////////////////////////////////////////////
+//// Screen parameters
+
+var screenParams = {
+  0: { id: 0, name: 'LEFT', width: 1631, height: 1080 },
+  1: { id: 1, name: 'CENTER', width: 1768, height: 1080 },
+  2: { id: 2, name: 'RIGHT', width: 1700, height: 1080 },
+  999: { id: 999, name: 'FULLSCREEN', width: 1631 + 1768 + 1700, height: 1080 },
+};
+
+///////////////////////////////////////////////
 
 window.init = () => {
+
+
+  setScreen();
 
   loadData(() => {
 
@@ -128,6 +142,20 @@ function updateInterface() {
 
 
 ///////////////////////////
+
+
+function setScreen() {
+  let urlParams = new URLSearchParams(window.location.search);
+  let screenNumber = urlParams.get('screen');
+  if (screenNumber) {
+    $('body').addClass('screen-' + screenNumber);
+    $('body').addClass('partialscreen');
+    thisScreenParams = screenParams[screenNumber];
+  } else {
+    $('body').addClass('fullscreen');
+  }
+
+}
 
 function updateImageList(cb) {
 
@@ -338,10 +366,14 @@ function queueEvents(timeline) {
 
   timeMarker += meditations_fadein_pause;
 
+  console.log(thisScreenParams);
+
+
   timeline.add({ time: timeMarker, event: function() { 
     $('#meditation_container').fadeIn(meditations_fadein_duration);
     console.log('TIMELINE STARTING');
   } });
+
 
 
 
