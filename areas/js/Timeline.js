@@ -1,4 +1,3 @@
-/* eslint-disable */ 
 
 import { nanoid } from 'nanoid';
 
