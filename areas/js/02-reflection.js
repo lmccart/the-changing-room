@@ -1,7 +1,9 @@
+/* eslint-disable */ 
 
 // style and js imports
 import $ from 'jquery';
 import Papa from 'papaparse';
+import seedrandom from 'seedrandom';
 import '../css/02-reflection.scss';
 import './shared.js';
 import Timeline from './Timeline.js';
@@ -15,6 +17,7 @@ var dataMemories;
 var timeline;
 var imageList = [];
 var preloadedImages = []; // kept here to preload images; without this, some browsers might clear cache & unload images
+var thisScreenParams;
 
 
 ////////////// MEDITATION TIMINGS /////////////
@@ -46,7 +49,6 @@ let each_meditation_fadeout_duration = 500;
 let meditation_long_indices = [6, 12];
 // there are longer intervals, and we take our time.)
 let meditation_long_interval = 10000;
-
 
 
 //////// The meditation is over.
@@ -93,8 +95,22 @@ let timeline_end_pause = 3000;
 
 
 ///////////////////////////////////////////////
+//// Screen parameters
+
+var screenParams = {
+  0: { id: 0, name: 'LEFT', width: 1631, height: 1080 },
+  1: { id: 1, name: 'CENTER', width: 1768, height: 1080 },
+  2: { id: 2, name: 'RIGHT', width: 1700, height: 1080 },
+  999: { id: 999, name: 'FULLSCREEN', width: 1631 + 1768 + 1700, height: 1080 },
+};
+
+///////////////////////////////////////////////
+//
 
 window.init = () => {
+
+
+  setScreen();
 
   loadData(() => {
 
@@ -128,6 +144,20 @@ function updateInterface() {
 
 
 ///////////////////////////
+
+
+function setScreen() {
+  let urlParams = new URLSearchParams(window.location.search);
+  let screenNumber = urlParams.get('screen');
+  if (screenNumber) {
+    $('body').addClass('screen-' + screenNumber);
+    $('body').addClass('partialscreen');
+    thisScreenParams = screenParams[screenNumber];
+  } else {
+    $('body').addClass('fullscreen');
+  }
+
+}
 
 function updateImageList(cb) {
 
@@ -252,23 +282,87 @@ function generateMeditationTexts() {
     });
 }
 
-function generateMemories() {
+function seedShuffle (array, seed) { 
 
+  const rng = seedrandom(seed);
+
+  var m = array.length, t, i;
+
+  // While there remain elements to shuffle…
+  while (m) {
+
+    // Pick a remaining element…
+    i = Math.floor(rng() * m--);        // <-- MODIFIED LINE
+
+    // And swap it with the current element.
+    t = array[m];
+    array[m] = array[i];
+    array[i] = t;
+  }
+
+  return array;
+}
+
+function generateMemoryPairs() {
+ 
   var memories = [];
 
-  dataMemories[curEmotion.base].forEach(m => {
-    memories.push({ 
-      type: 'text',
-      text: m,
-    });
-  });
+  var thisEmotionMemories = dataMemories[curEmotion.base];
 
-  imageList.forEach(m => {
-    memories.push({
+  let rng = seedrandom(curEmotion.base + new Date().getHours()) 
+  // This means that the image sequence will rely on the current hour 
+
+  let screenNumber;
+
+  let imgCounter = 0;
+  let memCounter = 0;
+
+  
+  while(imgCounter < imageList.length) {
+
+    // randomly pick screen
+    let r = rng();
+    if (r < 0.333) { 
+      screenNumber = 0;
+    } else if (r < 0.666) {
+      screenNumber = 1;
+    } else {
+      screenNumber = 2;
+    }
+
+    var thisMemPair = [];
+
+    thisMemPair.push({
       type: 'image',
-      url: m,
+      url: imageList[imgCounter++],
+      left: `${ Math.random() * 80 }vw`,
+      top: `${ Math.random() * 80 }vh`,
+      screenNumber: screenNumber,
     });
-  });
+
+    if (imgCounter < imageList.length && memCounter < thisEmotionMemories.length && rng() < 0.5) {
+      thisMemPair.push({ 
+        type: 'text',
+        text: thisEmotionMemories[memCounter++],
+        left: `${ Math.random() * 80 }vw`,
+        top: `${ Math.random() * 80 }vh`,
+        screenNumber: screenNumber,
+      });
+    } else {
+      thisMemPair.push({
+        type: 'image',
+        url: imageList[imgCounter++],
+        left: `${ Math.random() * 80 }vw`,
+        top: `${ Math.random() * 80 }vh`,
+        screenNumber: screenNumber,
+      });
+    }
+
+    memories.push(thisMemPair);
+
+
+  }
+
 
   return memories;
 
@@ -276,6 +370,9 @@ function generateMemories() {
 
 function displayMeditationPhrase(opts) {
   // opts: { text: mt, fadeIn: 100, fadeOut: 100 };
+  if (thisScreenParams.id !== 1) { 
+    console.log("...displaying meditation on screen 1...");
+  }
   $('#meditation_text')
     .fadeOut(opts.fadeOut, function() {
       $(this)
@@ -285,6 +382,7 @@ function displayMeditationPhrase(opts) {
 }
 
 function displayMemory(opts) {
+
   //{ data: mem, top: ~, left: ~, fadeIn: 100, fadeOut: 100 };
   let memdiv;
   let memory = opts.data;
@@ -301,14 +399,14 @@ function displayMemory(opts) {
   } 
 
   memdiv.addClass('memory');
-  memdiv.top = opts.top;
-  memdiv.css({ top:  opts.top, left: opts.left });
+  memdiv.css({ top:  memory.top, left: memory.left });
 
 
   memdiv
     .hide()
     .appendTo('#memory_container')
     .fadeIn(opts.fadeIn);
+
 }
 
 /////////////////////////////////
@@ -338,10 +436,14 @@ function queueEvents(timeline) {
 
   timeMarker += meditations_fadein_pause;
 
+  console.log(thisScreenParams);
+
+
   timeline.add({ time: timeMarker, event: function() { 
     $('#meditation_container').fadeIn(meditations_fadein_duration);
     console.log('TIMELINE STARTING');
   } });
+
 
 
 
@@ -385,20 +487,35 @@ function queueEvents(timeline) {
 
 
   ///////// QUEUE MEMORIES
+  
+  let mempairs = generateMemoryPairs();
 
-  let mems = generateMemories();
-
-  mems.forEach((mem, i) => {
+  mempairs.forEach((mempair, i) => {
 
     timeline.add({ time: timeMarker, event: function() { 
 
-      displayMemory({
-        data: mem,
-        fadeIn: each_memory_fadein_duration,
-        fadeOut: each_memory_fadeout_duration,
-        left: `${ Math.random() * 80 }vw`, // TODO: better sizing
-        top: `${ Math.random() * 80 }vh`
-      });
+
+      if (mempair[0].screenNumber === thisScreenParams.id || thisScreenParams.name === 'FULLSCREEN') {
+      //only display if we're on the right screen
+        //
+        displayMemory({
+          data: mempair[0],
+          fadeIn: each_memory_fadein_duration,
+          fadeOut: each_memory_fadeout_duration,
+        });
+
+
+        displayMemory({
+          data: mempair[1],
+          fadeIn: each_memory_fadein_duration,
+          fadeOut: each_memory_fadeout_duration,
+        });
+
+        console.log('...WE are displaying memory pair #', i, '...');
+      } else  {
+        console.log('...SOMEONE ELSE is displaying memory pair #', i, '...');
+      }
+
 
     } });
 
