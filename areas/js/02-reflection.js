@@ -1,6 +1,7 @@
 // style and js imports
 import $ from 'jquery';
 import Papa from 'papaparse';
+import seedrandom from 'seedrandom';
 import '../css/02-reflection.scss';
 import './shared.js';
 import Timeline from './Timeline.js';
@@ -14,13 +15,16 @@ var dataMemories;
 var timeline;
 var imageList = [];
 var preloadedImages = []; // kept here to preload images; without this, some browsers might clear cache & unload images
-var dataLoaded = false;
+var thisScreenParams;
 
 
 ////////////// MEDITATION TIMINGS /////////////
 
 
 // The timeline starts.
+
+// We pause for the loading overlay.
+let loading_overlay_pause = 1000; 
 
 // We pause before meditation starts,
 let meditations_fadein_pause = 1000; 
@@ -43,6 +47,7 @@ let each_meditation_fadeout_duration = 500;
 let meditation_long_indices = [6, 12];
 // there are longer intervals, and we take our time.)
 let meditation_long_interval = 10000;
+
 
 //////// The meditation is over.
 
@@ -79,39 +84,86 @@ let memories_fadeout_duration = 1000;
 
 // Finally,
 // we pause before we end the timeline
-let timeline_end_pause = 1000;
+let timeline_end_pause = 3000;
 
 // and then we start it 
 // all
 // over 
 // again.
 
-///////////////////////////////////////////////
 
-window.init = () => {
-  socket.on('emotion:update', updateEmotion);
-  // the stuff at the bottom should go in here, but I'm not touching it for now so as not to create merge conflicts since I know this section is in progress -LLM
+///////////////////////////////////////////////
+//// Screen parameters
+
+var screenParams = {
+  0: { id: 0, name: 'LEFT', width: 1631, height: 1080 },
+  1: { id: 1, name: 'CENTER', width: 1768, height: 1080 },
+  2: { id: 2, name: 'RIGHT', width: 1700, height: 1080 },
+  999: { id: 999, name: 'FULLSCREEN', width: 1631 + 1768 + 1700, height: 1080 },
 };
 
-function updateEmotion(msg) {
-  if (!curEmotion || curEmotion.name !== msg.name) {
-    curEmotion = msg;
-    console.log('emotion has been updated to: ' + msg.name + ' (base: ' + msg.base + ', level: ' + msg.level + ')');
-    showLoadingOverlay(curEmotion);
-    updateImageList(() => {
-      console.log(imageList);
-      updateInterface();
-    });
-  }
+///////////////////////////////////////////////
+/* DEV TIMINGS
+meditation_long_interval = 1000;
+meditation_interval = 500;
+each_meditation_fadeout_duration = 50;
+//  */
+
+
+window.init = () => {
+
+
+  setScreen();
+
+  loadData(() => {
+
+    console.log('Data loaded!');
+
+    socket.on('emotion:update', updateEmotionCurried(() => {
+
+      initTimelineIfItIsnt(); 
+
+    }));
+    socket.emit('emotion:get');
+  });
+};
+
+function updateEmotionCurried(callback) {
+  return function(msg) {
+    if (!curEmotion || curEmotion.name !== msg.name) {
+      curEmotion = msg;
+      console.log('emotion has been updated to: ' + msg.name + ' (base: ' + msg.base + ', level: ' + msg.level + ')');
+      updateImageList(() => {
+        updateInterface();
+        callback();
+      });
+    }
+  };
 }
 
 function updateInterface() {
-  resetTimeline();
   $('#debug-info').text('CURRENT EMOTION: ' + curEmotion.name + ' (base: ' + curEmotion.base + ', level: ' + curEmotion.level + ')');
 }
 
 
 ///////////////////////////
+
+
+function setScreen() {
+  let urlParams = new URLSearchParams(window.location.search);
+  let screenNumber = urlParams.get('screen');
+  if (screenNumber) {
+    $('body').addClass('screen-' + screenNumber);
+    $('body').addClass('partialscreen');
+    thisScreenParams = screenParams[screenNumber];
+    $('body').width(thisScreenParams.width).height(thisScreenParams.height);
+    $('.main').width(thisScreenParams.width).height(thisScreenParams.height);
+    $('#loading').width(thisScreenParams.width).height(thisScreenParams.height);
+  } else {
+    $('body').addClass('fullscreen');
+  }
+
+}
 
 function updateImageList(cb) {
 
@@ -236,23 +288,87 @@ function generateMeditationTexts() {
     });
 }
 
-function generateMemories() {
+function seedShuffle(array, seed) { 
 
+  const rng = seedrandom(seed);
+
+  var m = array.length, t, i;
+
+  // While there remain elements to shuffle…
+  while (m) {
+
+    // Pick a remaining element…
+    i = Math.floor(rng() * m--);
+
+    // And swap it with the current element.
+    t = array[m];
+    array[m] = array[i];
+    array[i] = t;
+  }
+
+  return array;
+}
+
+function generateMemoryPairs() {
+ 
   var memories = [];
 
-  dataMemories[curEmotion.base].forEach(m => {
-    memories.push({ 
-      type: 'text',
-      text: m,
-    });
-  });
+  var thisEmotionMemories = dataMemories[curEmotion.base];
 
-  imageList.forEach(m => {
-    memories.push({
+  let rng = seedrandom(curEmotion.base + new Date().getHours());
+  // This means that the image sequence will rely on the current hour 
+
+  let screenNumber;
+
+  let imgCounter = 0;
+  let memCounter = 0;
+
+  
+  while (imgCounter < imageList.length) {
+
+    // randomly pick screen
+    let r = rng();
+    if (r < 0.333) { 
+      screenNumber = 0;
+    } else if (r < 0.666) {
+      screenNumber = 1;
+    } else {
+      screenNumber = 2;
+    }
+
+    var thisMemPair = [];
+
+    thisMemPair.push({
       type: 'image',
-      url: m,
+      url: imageList[imgCounter++],
+      left: `${ Math.random() * 80 }vw`,
+      top: `${ Math.random() * 80 }vh`,
+      screenNumber: screenNumber,
     });
-  });
+
+    if (imgCounter < imageList.length && memCounter < thisEmotionMemories.length && rng() < 0.5) {
+      thisMemPair.push({ 
+        type: 'text',
+        text: thisEmotionMemories[memCounter++],
+        left: `${ Math.random() * 80 }vw`,
+        top: `${ Math.random() * 80 }vh`,
+        screenNumber: screenNumber,
+      });
+    } else {
+      thisMemPair.push({
+        type: 'image',
+        url: imageList[imgCounter++],
+        left: `${ Math.random() * 80 }vw`,
+        top: `${ Math.random() * 80 }vh`,
+        screenNumber: screenNumber,
+      });
+    }
+
+    memories.push(thisMemPair);
+
+
+  }
+
 
   return memories;
 
@@ -260,6 +376,9 @@ function generateMemories() {
 
 function displayMeditationPhrase(opts) {
   // opts: { text: mt, fadeIn: 100, fadeOut: 100 };
+  if (thisScreenParams.id !== 1) { 
+    console.log('...displaying meditation on screen 1...');
+  }
   $('#meditation_text')
     .fadeOut(opts.fadeOut, function() {
       $(this)
@@ -269,6 +388,7 @@ function displayMeditationPhrase(opts) {
 }
 
 function displayMemory(opts) {
+
   //{ data: mem, top: ~, left: ~, fadeIn: 100, fadeOut: 100 };
   let memdiv;
   let memory = opts.data;
@@ -285,14 +405,14 @@ function displayMemory(opts) {
   } 
 
   memdiv.addClass('memory');
-  memdiv.top = opts.top;
-  memdiv.css({ top:  opts.top, left: opts.left });
+  memdiv.css({ top:  memory.top, left: memory.left });
 
 
   memdiv
     .hide()
     .appendTo('#memory_container')
     .fadeIn(opts.fadeIn);
+
 }
 
 /////////////////////////////////
@@ -314,12 +434,22 @@ function queueEvents(timeline) {
 
   var timeMarker = 0;
 
+  timeline.add({ time: timeMarker, event: function() { 
+    showLoadingOverlay(curEmotion);
+  } });
+
+  timeMarker += loading_overlay_pause;
+
   timeMarker += meditations_fadein_pause;
+
+  console.log(thisScreenParams);
+
 
   timeline.add({ time: timeMarker, event: function() { 
     $('#meditation_container').fadeIn(meditations_fadein_duration);
     console.log('TIMELINE STARTING');
   } });
+
 
 
 
@@ -331,7 +461,6 @@ function queueEvents(timeline) {
 
 
     timeline.add({ time: timeMarker, event: function() { 
-      console.log(mt); 
       displayMeditationPhrase({ text: mt, fadeIn: each_meditation_fadein_duration, fadeOut: each_meditation_fadeout_duration});
     } });
 
@@ -364,20 +493,35 @@ function queueEvents(timeline) {
 
 
   ///////// QUEUE MEMORIES
+  
+  let mempairs = generateMemoryPairs();
 
-  let mems = generateMemories();
-
-  mems.forEach((mem, i) => {
+  mempairs.forEach((mempair, i) => {
 
     timeline.add({ time: timeMarker, event: function() { 
 
-      displayMemory({
-        data: mem,
-        fadeIn: each_memory_fadein_duration,
-        fadeOut: each_memory_fadeout_duration,
-        left: `${ Math.random() * 80 }vw`, // TODO: better sizing
-        top: `${ Math.random() * 80 }vh`
-      });
+
+      if (mempair[0].screenNumber === thisScreenParams.id || thisScreenParams.name === 'FULLSCREEN') {
+      //only display if we're on the right screen
+        //
+        displayMemory({
+          data: mempair[0],
+          fadeIn: each_memory_fadein_duration,
+          fadeOut: each_memory_fadeout_duration,
+        });
+
+
+        displayMemory({
+          data: mempair[1],
+          fadeIn: each_memory_fadein_duration,
+          fadeOut: each_memory_fadeout_duration,
+        });
+
+        console.log('...WE are displaying memory pair #', i, '...');
+      } else {
+        console.log('...SOMEONE ELSE is displaying memory pair #', i, '...');
+      }
+
 
     } });
 
@@ -403,46 +547,24 @@ function queueEvents(timeline) {
 }
 
 
-function resetTimeline() {
+function initTimelineIfItIsnt() {  
 
-  if (!dataLoaded) {
-    // wait until data is loaded
-    setTimeout(resetTimeline, 1000);
-    return;
-  }
-
-  console.log('Resetting timeline');
- 
   if (timeline === undefined) {
+
+    console.log('Initializing timeline');
+ 
     timeline = new Timeline({ loop: true, duration: 50000, interval: 100 }); 
-  } else {
-    timeline.clear(); 
+
+    resetHTML();
+
+    queueEvents(timeline);
+
+    timeline.start();
+
   }
-  
-
-  resetHTML();
-
-  queueEvents(timeline);
-
-  timeline.start();
  
 }
 
 
-/////////////////////////////////
-/////////////////////////////////
-/////////////////////////////////
-//////////// MAIN ///////////////
-/////////////////////////////////
-/////////////////////////////////
-/////////////////////////////////
-
-
-loadData(() => {
-  console.log('Data loaded!');
-  dataLoaded = true;
-});
-
-// resetTimeline(); this is already called by updateEmotion() upon pageload;
 
 

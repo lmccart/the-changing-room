@@ -1,11 +1,14 @@
 @import './shared.scss';
 
+body {
+  background-color: black;
+}
+
 section.main {
   position: absolute;
   top: 0px;
   left: 0px;
-  right: 0px;
-  bottom: 0px;
+  overflow: hidden;
 }
 
 .fs {
@@ -24,6 +27,7 @@ section.main {
   bottom: 0px;
 }
 
+
 #background_container {
 
   .purple-overlay {
@@ -33,8 +37,8 @@ section.main {
   }
 }
 
+
 #meditation_container {
-  /* TODO: font */
   z-index: 100;
   display: flex;
   justify-content: center;
@@ -44,7 +48,14 @@ section.main {
   font-size: 4em;
   font-weight: bold;
   color: white;
+
+  .screen-0 &, .screen-2 & {
+    display: none !important;
+  }
+
 }
+
+
 
 #meditation_text {
   padding: 50px;
