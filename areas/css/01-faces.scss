@@ -25,6 +25,8 @@ body {
 
 #face-stream {
   visibility: hidden;
+  -webkit-transform: scaleX(-1);
+  transform: scaleX(-1);
 }
 
 .filtered {

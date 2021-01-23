@@ -20,6 +20,7 @@ const update_memory = pico.instantiate_detection_memory(5); // use the detecions
 let emotions;
 let curEmotion;
 let emotionalMessage = '';
+let phrases;
 
 let facefinderClassifyRegion;
 let watchdog = 0; // used to delay showing/hiding video
@@ -27,107 +28,83 @@ let spellOut = false; // used to determine when to animate text
 // let phraseInterval = 1000;
 
 const coverEl = $('#video-cover');
+const videoEl = $('#face-stream');
 const canvas = document.createElement('canvas');
 const ctx = canvas.getContext('2d');
+let faceInitialized = false;
 
 
-// let windowInitalized = false;
-
-// console.log('adding updateEmotion listener');
-// socket.on('emotion:update', updateEmotionIfLoaded);
-// socket.on('emotion:get');
-
-
-
-// var updateEmotionIfLoaded = function(msg) {
-//   console.log(windowInitalized);
-//   if (windowInitalized === true) {
-//     console.log('updating emotion!!');
-//     updateEmotion(msg);
-//   } else {
-//     setTimeout(updateEmotionIfLoaded(msg), 1000);
-//   }
-// };
+window.init = () => {
+  loadText()
+    .then(loadClassifier)
+    .then(() => {
+      socket.on('emotion:update', updateEmotion);
+      socket.emit('emotion:get');
+      $('body').on('click', setupFaceDetection);
+      document.addEventListener('touchmove', (e) => { 
+        e.preventDefault(); 
+      }, { passive:false });
+    });
+};
 
 
-function setupFaceDetection(options) {
+async function loadText() {
+  await Papa.parse('/data/01_reflections.tsv', {
+    download: true,
+    header: true,
+    skipEmptyLines: 'greedy',
+    complete: function(results) {
+      const rawResults = results.data;
+      // console.log(rawResults, 'RAW RESULTS');
 
+      const reordered = {};
+      const keys = Object.keys(rawResults[0]);
+      keys.forEach(key => reordered[key] = []);
 
-  // we want to use options.onFaceVisible and options.onFaceHidden
-
-  // VIDEO AND FACE HANDLING
-  const rgba_to_grayscale = (rgba, nrows, ncols) => {
-    const gray = new Uint8Array(nrows * ncols);
-    for (let r = 0; r < nrows; ++r) {
-      for (let c = 0; c < ncols; ++c) {
-        gray[r * ncols + c] = (2 * rgba[r * 4 * ncols + 4 * c + 0] + 7 * rgba[r * 4 * ncols + 4 * c + 1] + 1 * rgba[r * 4 * ncols + 4 * c + 2]) / 10;
+      for (var i = 0; i < rawResults.length; i++) {
+        const resultRow = rawResults[i];
+        keys.forEach(key => resultRow[key].trim().length > 0 && reordered[key].push(resultRow[key]));
       }
+      phrases = reordered;
+      console.log(phrases, 'REORDERED!');
+      return phrases;
     }
-    return gray;
-  };
+  });
+}
 
+async function loadClassifier() {
+  await fetch(cascadeurl).then(function(response) {
+    response.arrayBuffer().then(function(buffer) {
+      const bytes = new Int8Array(buffer);
+      facefinderClassifyRegion = pico.unpack_cascade(bytes);
+      console.log('* cascade loaded');
+      return;
+    });
+  });
+}
 
-  // This function is called by camvas at 10 fps
-  const processfn = (video) => {
-    ctx.drawImage(video, 0, 0);
-    var rgba = ctx.getImageData(0, 0, 1280, 720).data;
-    const image = {
-      'pixels': rgba_to_grayscale(rgba, 720, 1280),
-      'nrows': 720,
-      'ncols': 1280,
-      'ldim': 1280
-    };
-    const params = {
-      'shiftfactor': 0.1, // move the detection window by 10% of its size
-      'minsize': 100, // minimum size of a face
-      'maxsize': 1000, // maximum size of a face
-      'scalefactor': 1.1 // for multiscale processing: resize the detection window by 10% when moving to the higher scale
-    };
-    // run the cascade over the frame and cluster the obtained detections
-    // dets is an array that contains (r, c, s, q) quadruplets
-    // (representing row, column, scale and detection score)
-    let dets = pico.run_cascade(image, facefinderClassifyRegion, params);
-    dets = update_memory(dets);
-    dets = pico.cluster_detections(dets, 0.2); // set IoU threshold to 0.2
-
-    let faceFound = false;
-    for (let i = 0; i < dets.length; ++i) {
-      // check the detection score
-      // if it's above the threshold increment watchdog
-      // (the constant 50.0 is empirical: other cascades might require a different one)
-      if (dets[i][3] > 50.0) {
-        faceFound = true;
-      }
+async function setupFaceDetection(e) {
+  if (!faceInitialized) {
+    try {
+      console.log('connecting user media');
+      e.target.disabled = true;
+      faceInitialized = true;
+      const stream = await navigator.mediaDevices.getUserMedia({video:true, audio:false});
+      console.log('connected user media');
+      videoEl[0].srcObject = stream;
+      new camvas(ctx, processfn, stream, 10); // 10 here is the target fps for checking for faces
+      resizeLayout();
+    } catch (e) {
+      console.log(e);
     }
-
-    // if watchdog is > 20 that means a face has been detected for 2 seconds
-    if (faceFound) {
-      watchdog = watchdog < 0 ? 0 : watchdog + 1;
-
-      if (watchdog > (delaySeconds * 10)) {
-        // remove cover
-        options.onFaceVisible();
-
-      }
-    } else {
-      watchdog = watchdog > 0 ? 0 : watchdog - 1;
-
-      if (watchdog < -(delaySeconds * 10)) {
-        // cover
-
-        options.onFaceHidden();
-
-      }
-    }
-  };
+  }
+}
 
 
 
+function resizeLayout() {
   const currentHeight = $(window).height();
   const heightRatio = currentHeight / ipadHeight;
-  const videoEl = $('#face-stream');
-  const videoParentEl = $('#video-parent');
-
 
   // set video dimensions to ipad ratio
   // this is mostly for development and will
@@ -146,70 +123,65 @@ function setupFaceDetection(options) {
 
   videoEl.width(videoWidth);
   videoEl.height(videoHeight);
-
-  videoParentEl.width(videoWidth);
-  videoParentEl.height(videoHeight);
+  videoEl.parent().width(videoWidth);
+  videoEl.parent().height(videoHeight);
 
   // set canvas dimensions to match hd incoming dimensions
   // this canvas is only in memory and not on the DOM
   canvas.setAttribute('width', 1280);
   canvas.setAttribute('height', 720);
-
-
-  // face detection code based on https://nenadmarkus.com/p/picojs-intro/demo/
-
-  // setup Pico face detector with cascade data
-  fetch(cascadeurl).then(function(response) {
-    response.arrayBuffer().then(function(buffer) {
-      const bytes = new Int8Array(buffer);
-      facefinderClassifyRegion = pico.unpack_cascade(bytes);
-      console.log('* cascade loaded');
-    });
-  });
-
-
-  // Load webcam and instantiate camvas script
-  if (navigator.mediaDevices.getUserMedia) {
-    navigator.mediaDevices.getUserMedia({ video: { width: 1280, height: 720 } })
-      .then(function(stream) {
-        videoEl[0].srcObject = stream;
-        new camvas(ctx, processfn, stream, 10); // 10 here is the target fps for checking for faces
-      })
-      .catch(function(err) {
-        console.log('Error:', err);
-      });
-  }
 }
 
 
-function loadText(callback) {
-  // /data/01_reflections.tsv
-  Papa.parse('/data/01_reflections.tsv', {
-    download: true,
-    header: true,
-    skipEmptyLines: 'greedy',
-    complete: function(results) {
-      const rawResults = results.data;
-      // console.log(rawResults, 'RAW RESULTS');
+// This function is called by camvas at 10 fps
+const processfn = (video) => {
+  ctx.drawImage(video, 0, 0);
+  var rgba = ctx.getImageData(0, 0, 1280, 720).data;
+  const image = {
+    'pixels': rgba_to_grayscale(rgba, 720, 1280),
+    'nrows': 720,
+    'ncols': 1280,
+    'ldim': 1280
+  };
+  const params = {
+    'shiftfactor': 0.1, // move the detection window by 10% of its size
+    'minsize': 100, // minimum size of a face
+    'maxsize': 1000, // maximum size of a face
+    'scalefactor': 1.1 // for multiscale processing: resize the detection window by 10% when moving to the higher scale
+  };
+  // run the cascade over the frame and cluster the obtained detections
+  // dets is an array that contains (r, c, s, q) quadruplets
+  // (representing row, column, scale and detection score)
+  let dets = pico.run_cascade(image, facefinderClassifyRegion, params);
+  dets = update_memory(dets);
+  dets = pico.cluster_detections(dets, 0.2); // set IoU threshold to 0.2
 
-      const reordered = {};
-      const keys = Object.keys(rawResults[0]);
-      keys.forEach(key => reordered[key] = []);
-
-      for (var i = 0; i < rawResults.length; i++) {
-        const resultRow = rawResults[i];
-        keys.forEach(key => resultRow[key].trim().length > 0 && reordered[key].push(resultRow[key]));
-      }
-      window.phrases = reordered;
-      console.log(phrases, 'REORDERED!');
-      if (typeof (callback) === 'function') {
-        callback(window.phrases);
-      }
+  let faceFound = false;
+  for (let i = 0; i < dets.length; ++i) {
+    // check the detection score
+    // if it's above the threshold increment watchdog
+    // (the constant 50.0 is empirical: other cascades might require a different one)
+    if (dets[i][3] > 50.0) {
+      faceFound = true;
     }
+  }
 
-  });
-}
+  // if watchdog is > 20 that means a face has been detected for 2 seconds
+  if (faceFound) {
+    watchdog = watchdog < 0 ? 0 : watchdog + 1;
 
+    if (watchdog > (delaySeconds * 10)) {
+      removeCover();
+
+    }
+  } else {
+    watchdog = watchdog > 0 ? 0 : watchdog - 1;
+
+    if (watchdog < -(delaySeconds * 10)) {
+      showCover();
+    }
+  }
+};
 
 
 function queueTextsAtInterval(phrases, interval) {
@@ -245,14 +217,14 @@ function updateInterface() {
   // shuffle phrases
   // cycle through phrases over 60 seconds
 
-  let emotionPhrases = window.phrases[curEmotion.base];
+  let emotionPhrases = phrases[curEmotion.base];
   queueTextsAtInterval(emotionPhrases, 60);
 
 
 
 
 
-  let randomPhrase = window.phrases[curEmotion.base][Math.floor(Math.random() * window.phrases[curEmotion.base].length)];
+  let randomPhrase = phrases[curEmotion.base][Math.floor(Math.random() * phrases[curEmotion.base].length)];
   console.log(randomPhrase, 'RANDOM');
 
   emotionalMessage = randomPhrase;
@@ -283,7 +255,6 @@ function updateEmotion(msg) {
 
     updateInterface();
   }
-
 }
 
 
@@ -332,39 +303,12 @@ function typeInstruction(string, iteration) {
 }
 
 
-
-////////////////
-////////////////
-////////////////
-
-
-
-window.init = () => {
-
-  // windowInitalized = true;
-
-
-  loadText(function(t) {
-
-    socket.on('emotion:update', updateEmotion);
-    socket.emit('emotion:get');
-
-  });
-  // $('#dummy').text(emotionalMessage);
-  // console.log(emotionalMessage);
-  // $('.textbox-dummy').fancyTextFill({
-  //   maxFontSize: 400
-  // });
-
-  setupFaceDetection({
-    onFaceVisible: function() {
-      console.log('Face IS Visible!!!!!!!!');
-      removeCover();
-    },
-    onFaceHidden: function() {
-      console.log('Face HIDDDDENNN!!!');
-      showCover();
+const rgba_to_grayscale = (rgba, nrows, ncols) => {
+  const gray = new Uint8Array(nrows * ncols);
+  for (let r = 0; r < nrows; ++r) {
+    for (let c = 0; c < ncols; ++c) {
+      gray[r * ncols + c] = (2 * rgba[r * 4 * ncols + 4 * c + 0] + 7 * rgba[r * 4 * ncols + 4 * c + 1] + 1 * rgba[r * 4 * ncols + 4 * c + 2]) / 10;
     }
-  });
-
+  }
+  return gray;
 };
