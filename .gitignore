@@ -4,6 +4,7 @@ install/multibrowse-source/*
 sound/sounds/*
 sound/recordings/*
 sound/sounds-orig/*
+*.pem
 
 dist/
 static/fonts/*

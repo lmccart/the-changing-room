@@ -1,9 +1,11 @@
 require('dotenv').config();
 const fs = require('fs');
+const key = fs.readFileSync('./lmccartbook.local+4-key.pem');
+const cert = fs.readFileSync('./lmccartbook.local+4.pem');
 const express = require('express');
 const app = express();
-const http = require('http').createServer(app);
-const io = require('socket.io')(http);
+const https = require('https').createServer({key: key, cert: cert}, app);
+const io = require('socket.io')(https);
 
 const Sound = require('./sound/sound');
 const Lights = require('./lights');
@@ -124,4 +126,4 @@ app.get('/images/:baseEmotion/manifest', (req, res) => {
   }
 });
 
-http.listen(process.env.PORT || 3000, () => { console.debug('listening on *:3000'); });
+https.listen(process.env.PORT || 3000, () => { console.debug('listening on *:3000'); });
