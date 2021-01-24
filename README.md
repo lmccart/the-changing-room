@@ -5,16 +5,17 @@
 2. Clone respository: https://github.com/lmccart/the-changing-room.git
 3. Install dependencies: `npm install`
 4. Add font files to `static/fonts/`
-5. Add [image files](https://drive.google.com/file/d/1SsSHYPwk1jwX-A4SABYmn7RZQqwPsv2_/view?usp=sharing) to `static/images/` (should look like `static/images/angry/image file name.jpg`)
+5. Add [image files](https://drive.google.com/file/d/1SsSHYPwk1jwX-A4SABYmn7RZQqwPsv2_/view?usp=sharing) to `images/` (should look like `images/angry/image file name.jpg`)
 5. Start server and webpack watcher: `npm start`
-6. Individual areas can be visited at the following paths:
-   - http://localhost:3000/00-intro
-   - http://localhost:3000/01-faces
-   - http://localhost:3000/02-reflection
-   - http://localhost:3000/03-selection
-   - http://localhost:3000/04-convo1
-   - http://localhost:3000/05-convo2
-   - http://localhost:3000/06-passive
+6. Individual areas can be visited at the following paths (or on http at port 3001):
+   - https://localhost:3000/00-intro
+   - https://localhost:3000/01-faces
+   - https://localhost:3000/02-reflection
+   - https://localhost:3000/03-selection
+   - https://localhost:3000/04-convo1
+   - https://localhost:3000/05-convo2
+   - https://localhost:3000/06-passive
+7. The server also moves over to both HTTP (port 3001) and HTTPS (port 3000) to support this. To use with HTTPS, it requires either the installation of SSL certificates (this tool can help!), or just clicking proceed anyway to get past browser warnings. On chrome if you don't see an option to proceed you can type thisisunsafe at the warning screen and it should proceed.
 
 ## Repository Structure
 * `areas/` holds all served files related to the 7 different areas of the installation.
@@ -23,7 +24,7 @@
 * `logs/` holds all console and chat logs. Log files are rolled over daily. [log4js-node](https://github.com/log4js-node/log4js-node) handles the logging.
 * `install/` holds script files for installation boot. [multibrowse](https://github.com/foxxyz/multibrowse) is used to open full-screen browser windows over multiple monitor setups.
 * `dist/` holds the served html/js/css files after they have been compiled by webpack.
-* `static/` holds static files that get copied into the `dist` folder (images, txt, etc).
+* `static/` holds static files that get served directly (images, txt, etc).
   - These files can be reached by URL in html, css, js `/static/filename`.
   - Fonts are located in `static/fonts/` and are ignored by git, so you will need to add them (message sam if you need the link to the files)
 * `server.js` is the main server file
@@ -39,9 +40,10 @@
 ## API Endpoints
 - `/emotions` GET - returns all emotions as JSON object
 - `/images/:baseEmotion/manifest` GET - returns array of image urls for a base emotion (angry, sad, strong, etc)
+- `/popups/manifest` GET - returns array of image urls for all 06-passive popups
 
 ## Global variables
-- `window.baseColors` or `baseColors` correspond to the data in `data/colors.json` can be used like `basecolors[curEmotion.base][0]` which is `['a6588d', 'ffffff']`
+- `window.baseColors` or `baseColors` correspond to the data in `static/data/colors.json` can be used like `basecolors[curEmotion.base][0]` which is `['a6588d', 'ffffff']`
 
 ## `areas/js/lib` functions and helpers
 - can generally be used by importing like so:
@@ -52,11 +54,12 @@
         - or `getImgUrls('angry').then(imageURLs => {do whatever u want here})`
     + `addSvgFilterForElement ($imgEl, arrayOfColors)` this function adds an svg element to the document that has a multitone treatment, and sets css of the `$imgEl` (which is a jquery element) to use it as a filter `arrayOfColors` must be an array of 2 or more hex colors: `['7c4242', '584794', '608942']` (`#` infront of the color is optional)
     + `getDimensions(url)` returns promise that resolves to the width and height of an image url used like: 
-        - `const imageDims = await getDimensions('/static/images/confused/image.jpeg');`
-        - or `getDimensions('/static/images/confused/image.jpeg').then(imageDims => {do whatever u want here})`
+        - `const imageDims = await getDimensions('/images/confused/image.jpeg');`
+        - or `getDimensions('/images/confused/image.jpeg').then(imageDims => {do whatever u want here})`
 
 ## References
 * https://github.com/peter-murray/node-hue-api#readme
+* https://developers.meethue.com/develop/get-started-2/
   
 ## Install Notes
 
@@ -84,8 +87,9 @@ User: Venessa Castagnoli 3, Pwd: OCA2020
    * Clone respository: `cd ~/Desktop && git clone git@github.com:lmccart/the-changing-room.git`
    * Install dependencies: `cd the-changing-room && npm install`
    * Add [font files](https://drive.google.com/file/d/1uY_hy7aX85moy8OlNFx_nO7liEZoGIL-/view?usp=sharing) to `static/fonts/` (should look like `static/fonts/ABC...`)
-   * Add [image files](https://drive.google.com/file/d/1SsSHYPwk1jwX-A4SABYmn7RZQqwPsv2_/view?usp=sharing) to `static/images/` (should look like `static/images/angry/image file name.jpg`)
-   * Add [sound files](#)to `sounds/` (should look like `sounds/all-areas` and `sounds/02-reflection`)
+   * Add [image files](https://drive.google.com/file/d/1SsSHYPwk1jwX-A4SABYmn7RZQqwPsv2_/view?usp=sharing) to `images/` (should look like `images/angry/image file name.jpg`)
+   * Add [popup files](#) to `static/popups/` 
+   * Add [sound files](#)to `sound/sounds/`
 3. Setup startup tasks
    * Copy `install/TCR-LOCATIONS.txt` to Desktop
    * Copy `install/TCR-OCA*.app` to Desktop

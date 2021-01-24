@@ -3,7 +3,7 @@ import csv
 
 short_clip_dur = 5
 long_clip_dur = 10
-total_dur = 180
+total_dur = 240
 
 
 def generate_script(row):
@@ -89,10 +89,10 @@ def cleanup_clips(base, emotion):
 
 
 # read text from txt and tsv
-contents = open("../data/02_meditation.txt", "r").read()
+contents = open("../static/data/02_meditation.txt", "r").read()
 phrases =  contents.split("\n")
 print(phrases)
-tsv_file = open("../data/02_meditation_emotion_specific.tsv")
+tsv_file = open("../static/data/02_meditation_emotion_specific.tsv")
 read_tsv = csv.reader(tsv_file, delimiter="\t")
 k = 0
 

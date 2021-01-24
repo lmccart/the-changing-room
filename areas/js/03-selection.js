@@ -5,7 +5,7 @@ import './shared.js';
 
 // VARIABLES
 const num_panels = 4;
-const idle_timeout = 10;
+const idle_timeout = 30;
 const scroll_timeout = 3;
 const scroll_down_time = 990000;
 const scroll_up_time = 9000;
@@ -28,7 +28,7 @@ for (let i = 0; i < num_panels; i++) {
 }
 
 const handIndicator = $('#hand-indicator');
-const sel_txt_url = '/data/03_selection_intro.txt';
+const sel_txt_url = '/static/data/03_selection_intro.txt';
 const apiURL_emotions = '/emotions';
 let sel_intro_content;
 let emotions;

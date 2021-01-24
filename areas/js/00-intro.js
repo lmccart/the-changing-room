@@ -14,7 +14,7 @@ let imgURLs = [];
 window.init = () => {
   socket.on('emotion:update', updateEmotion);
   socket.emit('emotion:get');
-  fetch('/data/00_intro.txt')
+  fetch('/static/data/00_intro.txt')
     .then(res => res.blob())
     .then(blob => blob.text())
     .then(text => {

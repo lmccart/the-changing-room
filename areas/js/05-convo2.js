@@ -39,7 +39,6 @@ async function updateInterface() {
   addSvgFilterForElement($('#background-2'), colors);
   
   const textColor = getTextColorForBackground(colors[0], colors[1]);
-  console.log(textColor);
   $('#loading').css('color', textColor);
   $('.bar-container').css('color', textColor);
   $('#loading-bar').removeClass();
@@ -48,7 +47,7 @@ async function updateInterface() {
   $('#instruction').css('color', textColor);
 }
 
-Papa.parse('/data/05_directions.tsv', {
+Papa.parse('/static/data/05_directions.tsv', {
   download: true,
   header: true,
   skipEmptyLines: 'greedy',
@@ -73,7 +72,6 @@ function switchBackgrounds() {
   const bgToShow = $('#background-1').is(':visible') ? $('#background-2') : $('#background-1');
   
   const imgUrl = imgURLs[Math.floor(Math.random() * imgURLs.length)];
-  console.log(imgUrl);
   bgToShow.css('background-image', `url(${imgUrl})`);
   $('#loader').attr('src', imgUrl).off();
   $('#loader').attr('src', imgUrl).on('load', function() {
@@ -98,7 +96,6 @@ function showConvoLoading() {
   switchBackgrounds();
 
   initTimeout = setTimeout(() => {
-    console.log(initTimeout);
     // hide loading bar
     $('#convo-loading').hide();
 

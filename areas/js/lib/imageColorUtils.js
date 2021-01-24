@@ -21,8 +21,8 @@
 
 // returns promise that resolves to the width and height
 // of an image url
-// used like const imageDims = await getDimensions('/static/images/confused/image.jpeg');
-// or getDimensions('/static/images/confused/image.jpeg').then(imageDims => {do whatever u want here})
+// used like const imageDims = await getDimensions('/images/confused/image.jpeg');
+// or getDimensions('/images/confused/image.jpeg').then(imageDims => {do whatever u want here})
 export function getDimensions(url) {   
   const img = new Image();
   const dimensionsPromise = new Promise((res, rej) => {

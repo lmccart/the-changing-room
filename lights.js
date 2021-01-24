@@ -1,19 +1,25 @@
 const v3 = require('node-hue-api').v3;
 const GroupLightState = v3.lightStates.GroupLightState;
 const fs = require('fs');
-const colors = JSON.parse(fs.readFileSync('data/colors.json'));
+const colors = JSON.parse(fs.readFileSync('static/data/colors.json'));
 let api;
-const lights = false;
+const lights = true;
 
-if (lights) {
+// To setup the first time, set setup=true. You'll run the code once, it will tell you to push the bridge button. 
+// Then run the server again, you'll see the user printed into console. Add it into .env as HUE_USER.
+const setup = false;
+
+if (lights && !setup) {
   v3.discovery.nupnpSearch()
     .then(searchResults => {
       const host = searchResults[0].ipaddress;
+      console.log('LIGHTS: hue search successful');
+      console.log(searchResults);
       return v3.api.createLocal(host).connect(process.env.HUE_USER);
     })
     .then(_api => {
       api = _api;
-      console.log('Successfully connected');
+      console.log('LIGHTS: hue api connected');
     })
     .catch(err => { console.error(err); });
 }
@@ -21,7 +27,7 @@ if (lights) {
 const playEmotion = (emotion) => {
   if (!lights) return;
   
-  let hex = colors[emotion.base][emotion.level][0];
+  let hex = colors[emotion.base][emotion.level-1][0];
   let cie = hex2cie(hex);
   console.log(cie);
 
@@ -67,64 +73,51 @@ function hex2cie(hex)
 	return {x: Number(x), y: Number(y)};
 }
 
-// const discovery = v3.discovery;
-// const appName = 'the-changing-room';
-// const deviceName = 'tcr-bridge';
-// v3.discovery.nupnpSearch()
-//   .then(searchResults => {
-//     const host = searchResults[0].ipaddress;
-//     return v3.api.createLocal(host).connect(process.env.HUE_USER);
-//   })
-//   .then(api => {
-//     // Using a LightState object to build the desired state
+if (setup) {
+  const discovery = v3.discovery;
+  const appName = 'the-changing-room';
+  const deviceName = 'tcr-bridge';
+  const hueApi = v3.api;
 
-    
-//     return apigroups.setState(0, state);
-//   })
-//   .then(result => {
-//     console.log(`Light state change was successful? ${result}`);
-//   })
-// ;
-
-// async function discoverBridge() {
-//   const discoveryResults = await discovery.nupnpSearch();
-//   if (discoveryResults.length === 0) {
-//     console.error('Failed to resolve any Hue Bridges');
-//     return null;
-//   } else {
-//     // Ignoring that you could have more than one Hue Bridge on a network as this is unlikely in 99.9% of users situations
-//     return discoveryResults[0].ipaddress;
-//   }
-// }
-// async function discoverAndCreateUser() {
-//   const ipAddress = await discoverBridge();
-//   // Create an unauthenticated instance of the Hue API so that we can create a new user
-//   const unauthenticatedApi = await hueApi.createLocal(ipAddress).connect();
-//   let createdUser;
-//   try {
-//     createdUser = await unauthenticatedApi.users.createUser(appName, deviceName);
-//     console.log('*******************************************************************************\n');
-//     console.log('User has been created on the Hue Bridge. The following username can be used to\n' +
-//                 'authenticate with the Bridge and provide full local access to the Hue Bridge.\n' +
-//                 'YOU SHOULD TREAT THIS LIKE A PASSWORD\n');
-//     console.log(`Hue Bridge User: ${createdUser.username}`);
-//     console.log(`Hue Bridge User Client Key: ${createdUser.clientkey}`);
-//     console.log('*******************************************************************************\n');
-//     // Create a new API instance that is authenticated with the new user we created
-//     const authenticatedApi = await hueApi.createLocal(ipAddress).connect(createdUser.username);
-//     // Do something with the authenticated user/api
-//     const bridgeConfig = await authenticatedApi.configuration.getConfiguration();
-//     console.log(`Connected to Hue Bridge: ${bridgeConfig.name} :: ${bridgeConfig.ipaddress}`);
-//   } catch(err) {
-//     if (err.getHueErrorType() === 101) {
-//       console.error('The Link button on the bridge was not pressed. Please press the Link button and try again.');
-//     } else {
-//       console.error(`Unexpected Error: ${err.message}`);
-//     }
-//   }
-// }
-// discoverAndCreateUser();
-
+  async function discoverBridge() {
+    const discoveryResults = await discovery.nupnpSearch();
+    if (discoveryResults.length === 0) {
+      console.error('Failed to resolve any Hue Bridges');
+      return null;
+    } else {
+      // Ignoring that you could have more than one Hue Bridge on a network as this is unlikely in 99.9% of users situations
+      return discoveryResults[0].ipaddress;
+    }
+  }
+  async function discoverAndCreateUser() {
+    const ipAddress = await discoverBridge();
+    // Create an unauthenticated instance of the Hue API so that we can create a new user
+    const unauthenticatedApi = await hueApi.createLocal(ipAddress).connect();
+    let createdUser;
+    try {
+      createdUser = await unauthenticatedApi.users.createUser(appName, deviceName);
+      console.log('*******************************************************************************\n');
+      console.log('User has been created on the Hue Bridge. The following username can be used to\n' +
+                  'authenticate with the Bridge and provide full local access to the Hue Bridge.\n' +
+                  'YOU SHOULD TREAT THIS LIKE A PASSWORD\n');
+      console.log(`Hue Bridge User: ${createdUser.username}`);
+      console.log(`Hue Bridge User Client Key: ${createdUser.clientkey}`);
+      console.log('*******************************************************************************\n');
+      // Create a new API instance that is authenticated with the new user we created
+      const authenticatedApi = await hueApi.createLocal(ipAddress).connect(createdUser.username);
+      // Do something with the authenticated user/api
+      const bridgeConfig = await authenticatedApi.configuration.getConfiguration();
+      console.log(`Connected to Hue Bridge: ${bridgeConfig.name} :: ${bridgeConfig.ipaddress}`);
+    } catch(err) {
+      if (err.getHueErrorType() === 101) {
+        console.error('The Link button on the bridge was not pressed. Please press the Link button and try again.');
+      } else {
+        console.error(`Unexpected Error: ${err.message}`);
+      }
+    }
+  }
+  discoverAndCreateUser();
+}
 
 
 module.exports.playEmotion = playEmotion;

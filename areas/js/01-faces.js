@@ -49,7 +49,7 @@ window.init = () => {
 
 
 async function loadText() {
-  await Papa.parse('/data/01_reflections.tsv', {
+  await Papa.parse('/static/data/01_reflections.tsv', {
     download: true,
     header: true,
     skipEmptyLines: 'greedy',

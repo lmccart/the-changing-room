@@ -4,7 +4,10 @@ const key = fs.readFileSync('./lmccartbook.local+4-key.pem');
 const cert = fs.readFileSync('./lmccartbook.local+4.pem');
 const express = require('express');
 const app = express();
+const http = require('http').createServer(app);
 const https = require('https').createServer({key: key, cert: cert}, app);
+http.listen(3001, () => { console.debug('http listening on *:3001'); });
+https.listen(3000, () => { console.debug('https listening on *:3000'); });
 const io = require('socket.io')(https);
 
 const Sound = require('./sound/sound');
@@ -94,7 +97,8 @@ io.on('connection', (socket) => {
 
 // SERVER SETUP
 app.use('/', express.static('dist'));
-app.use('/data', express.static('data'));
+app.use('/sound', express.static('sound'));
+app.use('/images', express.static('images'));
 app.get('/emotions', (req, res) => { res.json(emotions); });
 
 // responds with array of image urls for base emotion
@@ -105,13 +109,13 @@ app.get('/images/:baseEmotion/manifest', (req, res) => {
     if (!baseEmotion) {
       throw new Error('No emotion in url');
     }
-    const files = fs.readdirSync(`./static/images/${baseEmotion}`)
+    const files = fs.readdirSync(`./images/${baseEmotion}`)
 
     // get rid of hidden files (.DS_STORE, etc)
     const imageFiles = files.filter(item => !(/(^|\/)\.[^\/\.]/g).test(item));
 
     // URL client can use to get the image in css or img src attribute
-    const staticURLPrefix = `/static/images/${baseEmotion}/`;
+    const staticURLPrefix = `/images/${baseEmotion}/`;
 
     const finalURLs = [];
     imageFiles.forEach(file => {
@@ -126,4 +130,32 @@ app.get('/images/:baseEmotion/manifest', (req, res) => {
   }
 });
 
-https.listen(process.env.PORT || 3000, () => { console.debug('listening on *:3000'); });
+// responds with array of image urls for base emotion
+app.get('/images/popups/manifest', (req, res) => {
+  try {
+    const baseEmotion = req.params.baseEmotion;
+
+    if (!baseEmotion) {
+      throw new Error('No emotion in url');
+    }
+    const files = fs.readdirSync(`./images/popups/`)
+
+    // get rid of hidden files (.DS_STORE, etc)
+    const imageFiles = files.filter(item => !(/(^|\/)\.[^\/\.]/g).test(item));
+
+    // URL client can use to get the image in css or img src attribute
+    const staticURLPrefix = `/images/popups/`;
+
+    const finalURLs = [];
+    imageFiles.forEach(file => {
+      finalURLs.push(staticURLPrefix + encodeURI(file));
+    })
+
+    res.status(200).send(JSON.stringify(finalURLs));
+
+  } catch (err) {
+    console.log(err);
+    res.status(400).send(err.message);
+  }
+});
+
