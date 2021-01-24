@@ -1,21 +1,24 @@
 node_modules/*
 logs/*
 install/multibrowse-source/*
-sound/sounds/*
-sound/recordings/*
-sound/sounds-orig/*
 *.pem
 
 dist/
 static/fonts/*
-static/images/*/*.jpg
-static/images/*/*.jpeg
-static/images/*/*.JPG
-static/images/*/*.JPEG
-static/images/*/*.png
-static/images/*
+images/popups/*
+images/*/*.jpg
+images/*/*.jpeg
+images/*/*.JPG
+mages/*/*.JPEG
+images/*/*.png
+images/*
+sound/sounds/*
+sound/sounds-orig/*
+sound/sounds-reflection/*
+sound/recordings/*
 
 *.DS_Store
 *.swp
 *.cache
 .vscode/*
+.env

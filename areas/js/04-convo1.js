@@ -24,7 +24,7 @@ socket.on('connect', function() {
 
 window.init = () => {
   // get intro text
-  fetch('/data/04_convo1_intro.txt')
+  fetch('/static/data/04_convo1_intro.txt')
     .then(res => res.text())
     .then(text => {
       introText = text;

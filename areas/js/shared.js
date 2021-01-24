@@ -11,7 +11,7 @@ document.title = $('#debug-area').text();
 console.log($('#debug-area').text());
 
 // getting colors from the data file
-fetch('/data/colors.json').then(res => {
+fetch('/static/data/colors.json').then(res => {
   return res.json();
 }).then(colors => {
   window.baseColors = colors;

@@ -54,9 +54,11 @@ module.exports = {
   },
   plugins: [
     new CopyPlugin({
-      patterns: [
-        { from: './static', to: './static' },
-      ],
+      patterns: [{ 
+        from: './static',
+        to: './static',
+        // globOptions: { ignore: [ './static/images/**', 'static/popups/**' }
+      }],
     }),
     new MiniCssExtractPlugin({
       filename: 'css/[name].css',
@@ -113,7 +115,10 @@ module.exports = {
       exclude: ['node_modules/', 'areas/js/lib/pico.js'],
       fix: false
     }),
-    new CleanWebpackPlugin(),
+    new CleanWebpackPlugin({
+      // verbose: true,
+      // cleanOnceBeforeBuildPatterns: ['**/*', '!static/images/**', '!static/popups/**']
+    }),
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NoEmitOnErrorsPlugin(),
   ],

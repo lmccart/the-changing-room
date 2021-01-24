@@ -181,13 +181,12 @@ function updateImageList(cb) {
       });
       cb(text);
     });
-
 }
 
 function loadData(cb) {
   var dataLoaded = -3; // this is a bit hacky but simpler than Promises.all
 
-  fetch('/data/02_meditation.txt')
+  fetch('/static/data/02_meditation.txt')
     .then(res => res.blob())
     .then(blob => blob.text())
     .then(text => {
@@ -199,7 +198,7 @@ function loadData(cb) {
     });
 
 
-  Papa.parse('/data/02_meditation_emotion_specific.tsv', {
+  Papa.parse('/static/data/02_meditation_emotion_specific.tsv', {
     download: true,
     header: true,
     skipEmptyLines: 'greedy',
@@ -229,7 +228,7 @@ function loadData(cb) {
   });
 
 
-  Papa.parse('/data/02_memories.tsv', {
+  Papa.parse('/static/data/02_memories.tsv', {
     download: true,
     header: true,
     skipEmptyLines: 'greedy',
