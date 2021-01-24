@@ -7,14 +7,15 @@
 4. Add font files to `static/fonts/`
 5. Add [image files](https://drive.google.com/file/d/1SsSHYPwk1jwX-A4SABYmn7RZQqwPsv2_/view?usp=sharing) to `images/` (should look like `images/angry/image file name.jpg`)
 5. Start server and webpack watcher: `npm start`
-6. Individual areas can be visited at the following paths:
-   - http://localhost:3000/00-intro
-   - http://localhost:3000/01-faces
-   - http://localhost:3000/02-reflection
-   - http://localhost:3000/03-selection
-   - http://localhost:3000/04-convo1
-   - http://localhost:3000/05-convo2
-   - http://localhost:3000/06-passive
+6. Individual areas can be visited at the following paths (or on http at port 3001):
+   - https://localhost:3000/00-intro
+   - https://localhost:3000/01-faces
+   - https://localhost:3000/02-reflection
+   - https://localhost:3000/03-selection
+   - https://localhost:3000/04-convo1
+   - https://localhost:3000/05-convo2
+   - https://localhost:3000/06-passive
+7. The server also moves over to both HTTP (port 3001) and HTTPS (port 3000) to support this. To use with HTTPS, it requires either the installation of SSL certificates (this tool can help!), or just clicking proceed anyway to get past browser warnings. On chrome if you don't see an option to proceed you can type thisisunsafe at the warning screen and it should proceed.
 
 ## Repository Structure
 * `areas/` holds all served files related to the 7 different areas of the installation.
