@@ -161,7 +161,7 @@ const processfn = (video) => {
     // check the detection score
     // if it's above the threshold increment watchdog
     // (the constant 50.0 is empirical: other cascades might require a different one)
-    if (dets[i][3] > 50.0) {
+    if (dets[i][3] > 10.0) {
       faceFound = true;
     }
   }
