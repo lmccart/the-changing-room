@@ -7,7 +7,7 @@ import '../css/06-passive.scss';
 import './shared.js';
 import { getImgUrls, addSvgFilterForElement, getTextColorForBackground } from './lib/imageColorUtils.js';
 
-const basePopupRate = 700; // adjusted based on emotion intensity
+const basePopupRate = 1000; // adjusted based on emotion intensity
 const minDisplayTime = 10000; // minimum time a popup shows on screen
 const displayVariation = 4000;
 const overlapAllowance = 0.60; // allows 60% overlap when a new element is created
@@ -210,14 +210,10 @@ function PopupFactory(emotionObj) {
     // 2 text -> just text
     // 3+ popup -> random popup assets
 
-    const type = Math.floor(Math.random() * 6); // generates random number between 0 - 3;
+    const type = Math.floor(Math.random() * 5); // generates random number between 0 - 3;
     const hasImage = type !== 2; // should be a random chance either true or false
     const stringFallback = 'There is nothing you are afraid of.'; // used if string retrieval fails for some reason
     childThis.$element = $(`<div class='popup window ${type >= 3 ? 'extra' : ''}' id=${childThis.id}></div>`);
-
-    // set up the colors
-    childThis.$element.css('background', `#${colors[1]}`);
-    childThis.$element.css('color', `#${colors[0]}`);
 
     // hide it so we can calculate it's position
     childThis.$element.css('visibility', 'hidden');
@@ -234,7 +230,6 @@ function PopupFactory(emotionObj) {
     }
 
     if (type === 1 || type === 2) {
-      // insert some text
       // window.emotionStings is an array of objects with a length of 2
       const selectedData = window.emotionStrings[Math.floor(Math.random() * 2)][curEmotion.base];
       const string = selectedData[Math.floor(Math.random() * selectedData.length)] || stringFallback;
@@ -254,9 +249,8 @@ function PopupFactory(emotionObj) {
     }
 
     if (type >= 3) {
-      // set label image
       const randomExtra = preloadedExtras[Math.floor(Math.random() * preloadedExtras.length)];
-      const imgEl = $(`<img class='extra' src='${randomExtra.src}'>`);
+      const imgEl = $(`<img src='${randomExtra.src}'>`);
       childThis.$element.append(imgEl);
     }
 
@@ -304,6 +298,9 @@ function PopupFactory(emotionObj) {
     $element.css('left', randomXY[1]);
     $element.css('visibility', 'visible');
   }
+
+  const newEl = new PopupEl(emotionObj.level);
+  factoryThis.activeElements.push(newEl);
 
   const creationInterval = setInterval(() => {
     // create a new element every so often

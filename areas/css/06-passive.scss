@@ -27,6 +27,16 @@ svg {
   visibility: hidden;
 }
 
+.extra {
+  border:none;
+}
+
+.extra img {
+  max-height: 18vh;
+  max-width: 22vh;
+
+}
+
 .popup {
   position: absolute;
   top: 0;
@@ -40,7 +50,6 @@ svg {
   &:after {
     color: black;
   }
-
   img {
     display: block;
     max-height: 40vh;
@@ -50,18 +59,15 @@ svg {
     }
   }
   &.popup {
-    // border: none;
     &:after {
       content: "";
     }
   }
-  .extra {
-    max-height: 18vh;
-    max-width: 22vh;
-  }
+  
   .extra.window:after {
     content: '';
   }  
+
 
   p {
     position: absolute;
