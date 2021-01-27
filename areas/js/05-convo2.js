@@ -10,8 +10,11 @@ let curEmotion;
 let imgURLs = [];
 let initTimeout;
 let typeTimeout;
+let loadingTimeout;
 const typingSpeed = 200;
-const pauseOnInstructionTime = 10 * 1000;
+const pauseOnInstructionTime = 30 * 1000;
+const pauseVariationTime = 20 * 1000;
+const loadingBarTime = 4000;
 let curInstruction = 0;
 let instructions;
 
@@ -84,6 +87,7 @@ function switchBackgrounds() {
 function reset() {
   clearTimeout(initTimeout);
   clearTimeout(typeTimeout);
+  clearTimeout(loadingTimeout);
   $('#instruction').empty();
   $('#convo-loading').hide();
 }
@@ -107,7 +111,7 @@ function showConvoLoading() {
     
     const instruction = instructions[curEmotion.base][curInstruction];
     typeInstruction(instruction);
-  }, 4000);
+  }, loadingBarTime);
 }
 
 function typeInstruction(string, iteration) {
@@ -116,10 +120,10 @@ function typeInstruction(string, iteration) {
   // Prevent our code executing if there are no letters left
   if (iteration === string.length) {
 
-    setTimeout(() => { 
+    loadingTimeout = setTimeout(() => {
       showConvoLoading();
       $('#instruction').empty();
-    }, pauseOnInstructionTime);
+    }, pauseOnInstructionTime + Math.random(0, pauseVariationTime));
     return;
   }
   
