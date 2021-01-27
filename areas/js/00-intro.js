@@ -5,7 +5,7 @@ import { getImgUrls, addSvgFilterForElement, getTextColorForBackground } from '.
 
 /* VARIABLES */
 const scroll_up_time = 5000;
-const scroll_down_time = 30000;
+const scroll_down_time = 200000;
 const scroll_pause_time = 3000;
 
 let curEmotion;

@@ -29,7 +29,8 @@ const playEmotion = (emotion) => {
   for (area of areas) {
     console.log(area);
     // area.setPlayMode('REPEAT_ONE');
-    area.setVolume(55 + emotion.level * 15);
+    // area.setVolume(55 + emotion.level * 15);
+    area.setVolume(15 + emotion.level * 15);
     area.play(track).then(() => { console.log('SOUND: now playing '+track); }).catch(err => { console.log(err) })
   }
 };

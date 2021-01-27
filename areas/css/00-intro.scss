@@ -3,10 +3,10 @@
 .intro-text-container {
     visibility: hidden;
     border: .24vw solid black;
-    width: 70vw;
+    width: 80vw;
     display: block;
     margin: 0;
-    height: 60vh;
+    height: calc(100vh - 20vw);
     position: absolute;
     top: 50%;
     left: 50%;
@@ -17,7 +17,7 @@
 
 .text
 {
-   height: 100%;
+   height: calc(100% - 7vw);
    font-size: 3.5vw;
    overflow: auto;
    font-weight: 700;
