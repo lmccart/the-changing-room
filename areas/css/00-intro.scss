@@ -2,7 +2,7 @@
 
 .intro-text-container {
     visibility: hidden;
-    border: .24vw solid black;
+    border: 4px solid black;
     width: 80vw;
     display: block;
     margin: 0;
@@ -17,12 +17,12 @@
 
 .text
 {
-   height: calc(100% - 7vw);
-   font-size: 3.5vw;
+   height: 100%;
+   font-size: 4.5em;
    overflow: auto;
    font-weight: 700;
    font-style: italic;
-   padding: 3.5vw;
+   padding: 1em;
 //    scroll-behavior: smooth;
 }
 
@@ -32,7 +32,7 @@
 
   /* Track */
   ::-webkit-scrollbar-track {
-    border-left: .24vw solid black;
+    border-left: 4px solid black;
     width: 1.7vw;
   }
 
