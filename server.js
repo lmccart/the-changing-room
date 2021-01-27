@@ -52,47 +52,19 @@ const chatLogger = log4js.getLogger('chat');
 // DATA INIT
 const emotions = JSON.parse(fs.readFileSync('all-emotions.json')); // read all emotions
 const emotionName = fs.readFileSync('current.txt', {encoding:'utf8', flag:'r'}).replace(/\s/g, '');  // remove whitespace
-curEmotion = emotions[emotionName];
-console.debug('current emotion: ' + JSON.stringify(curEmotion));
+setEmotion(emotionName, true);
 
 // SOCKET
 io.on('connection', (socket) => {
   console.debug('user connected: ' + socket.id);
   socket.emit('emotion:update', curEmotion);
+
   socket.on('disconnect', () => { console.debug('user disconnected: ' + socket.id); });
-
-  socket.on('emotion:pick', function(emotionName){
-    curEmotion = emotions[emotionName];
-    io.emit('emotion:update', curEmotion);
-    console.debug(curEmotion);
-    fs.writeFileSync('current.txt', emotionName);
-
-    Sound.playEmotion(curEmotion);
-    Lights.playEmotion(curEmotion);
-  });
+  socket.on('emotion:pick', setEmotion);
   socket.on('emotion:get', function() {
     socket.emit('emotion:update', curEmotion);
   });
-
-  socket.on('chat:send', function(data){
-    // called by area 04 when user hits "send" on a chat message
-    const wordsToSubArray = chatSubs[curEmotion.base]
-    const subArray = chatSubs[`${curEmotion.base}-subs`];
-
-    // splits message into array of words, spaces and punctuation marks
-    const msgWordArray = data.original.split(/([\.!\?\,\-])|([\s])/g);
-    for (let index = 0; index < msgWordArray.length; index++) {
-      const currentWord = msgWordArray[index];
-      const matchedIndex = wordsToSubArray.findIndex(word => currentWord && (word.toLowerCase() === currentWord.toLowerCase()));
-      
-      if (matchedIndex >= 0) {
-        msgWordArray[index] = subArray[matchedIndex];
-      }
-    }
-    data.modified = msgWordArray.join('');
-    io.emit('chat:new', data);
-  });
-
+  socket.on('chat:send', handleChat);
 });
 
 // SERVER SETUP
@@ -159,3 +131,32 @@ app.get('/images/popups/manifest', (req, res) => {
   }
 });
 
+function setEmotion(emotionName, init) {
+  curEmotion = emotions[emotionName];
+  console.debug(curEmotion);
+  Sound.playEmotion(curEmotion);
+  Lights.playEmotion(curEmotion);
+  if (!init) {
+    io.emit('emotion:update', curEmotion);
+    fs.writeFileSync('current.txt', emotionName);
+  }
+}
+
+function handleChat(data) {
+  // called by area 04 when user hits "send" on a chat message
+  const wordsToSubArray = chatSubs[curEmotion.base]
+  const subArray = chatSubs[`${curEmotion.base}-subs`];
+
+  // splits message into array of words, spaces and punctuation marks
+  const msgWordArray = data.original.split(/([\.!\?\,\-])|([\s])/g);
+  for (let index = 0; index < msgWordArray.length; index++) {
+    const currentWord = msgWordArray[index];
+    const matchedIndex = wordsToSubArray.findIndex(word => currentWord && (word.toLowerCase() === currentWord.toLowerCase()));
+    
+    if (matchedIndex >= 0) {
+      msgWordArray[index] = subArray[matchedIndex];
+    }
+  }
+  data.modified = msgWordArray.join('');
+  io.emit('chat:new', data);
+}

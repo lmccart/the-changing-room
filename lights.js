@@ -4,6 +4,7 @@ const fs = require('fs');
 const colors = JSON.parse(fs.readFileSync('static/data/colors.json'));
 let api;
 const lights = true;
+const lightsInit = false;
 
 // To setup the first time, set setup=true. You'll run the code once, it will tell you to push the bridge button. 
 // Then run the server again, you'll see the user printed into console. Add it into .env as HUE_USER.
@@ -20,12 +21,13 @@ if (lights && !setup) {
     .then(_api => {
       api = _api;
       console.log('LIGHTS: hue api connected');
+      lightsInit = true;
     })
     .catch(err => { console.error(err); });
 }
 
 const playEmotion = (emotion) => {
-  if (!lights) return;
+  if (!lights || !lightsInit) return;
   
   let hex = colors[emotion.base][emotion.level-1][0];
   let cie = hex2cie(hex);
@@ -40,38 +42,6 @@ const playEmotion = (emotion) => {
     })
     .catch(err => { console.error(err); });
 };
-
-const hex2rgb = (hex) => {
-  var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-  return result ? {
-    r: parseInt(result[1], 16) / 255,
-    g: parseInt(result[2], 16) / 255,
-    b: parseInt(result[3], 16) / 255
-  } : null;
-};
-
-function hex2cie(hex)
-{
-  let rgb = hex2rgb(hex);
-	//Apply a gamma correction to the RGB values, which makes the color more vivid and more the like the color displayed on the screen of your device
-	var red 	= (rgb.r > 0.04045) ? Math.pow((rgb.r + 0.055) / (1.0 + 0.055), 2.4) : (rgb.r / 12.92);
-	var green 	= (rgb.g > 0.04045) ? Math.pow((rgb.g + 0.055) / (1.0 + 0.055), 2.4) : (rgb.g / 12.92);
-	var blue 	= (rgb.b > 0.04045) ? Math.pow((rgb.b + 0.055) / (1.0 + 0.055), 2.4) : (rgb.b / 12.92); 
-
-	//RGB values to XYZ using the Wide RGB D65 conversion formula
-	var X 		= red * 0.664511 + green * 0.154324 + blue * 0.162028;
-	var Y 		= red * 0.283881 + green * 0.668433 + blue * 0.047685;
-  var Z 		= red * 0.000088 + green * 0.072310 + blue * 0.986039;
-
-	//Calculate the xy values from the XYZ values
-	var x 		= (X / (X + Y + Z)).toFixed(4);
-	var y 		= (Y / (X + Y + Z)).toFixed(4);
-
-	if (isNaN(x)) x = 0;
-	if (isNaN(y)) y = 0;
-
-	return {x: Number(x), y: Number(y)};
-}
 
 if (setup) {
   const discovery = v3.discovery;
@@ -119,5 +89,37 @@ if (setup) {
   discoverAndCreateUser();
 }
 
+
+
+const hex2rgb = (hex) => {
+  var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  return result ? {
+    r: parseInt(result[1], 16) / 255,
+    g: parseInt(result[2], 16) / 255,
+    b: parseInt(result[3], 16) / 255
+  } : null;
+};
+
+function hex2cie(hex) {
+  let rgb = hex2rgb(hex);
+	//Apply a gamma correction to the RGB values, which makes the color more vivid and more the like the color displayed on the screen of your device
+	var red 	= (rgb.r > 0.04045) ? Math.pow((rgb.r + 0.055) / (1.0 + 0.055), 2.4) : (rgb.r / 12.92);
+	var green 	= (rgb.g > 0.04045) ? Math.pow((rgb.g + 0.055) / (1.0 + 0.055), 2.4) : (rgb.g / 12.92);
+	var blue 	= (rgb.b > 0.04045) ? Math.pow((rgb.b + 0.055) / (1.0 + 0.055), 2.4) : (rgb.b / 12.92); 
+
+	//RGB values to XYZ using the Wide RGB D65 conversion formula
+	var X 		= red * 0.664511 + green * 0.154324 + blue * 0.162028;
+	var Y 		= red * 0.283881 + green * 0.668433 + blue * 0.047685;
+  var Z 		= red * 0.000088 + green * 0.072310 + blue * 0.986039;
+
+	//Calculate the xy values from the XYZ values
+	var x 		= (X / (X + Y + Z)).toFixed(4);
+	var y 		= (Y / (X + Y + Z)).toFixed(4);
+
+	if (isNaN(x)) x = 0;
+	if (isNaN(y)) y = 0;
+
+	return {x: Number(x), y: Number(y)};
+}
 
 module.exports.playEmotion = playEmotion;
