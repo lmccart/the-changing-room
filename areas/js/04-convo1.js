@@ -8,19 +8,36 @@ let introText = '';
 let uiResetTimeout;
 let resetWaitTime = 30 * 1000;
 let socketid;
+let selectedVoiceIndex = 9999;
+let selectedVoice;
 const typingSpeed = 200; // milliseconds
-const pauseOnMessageTime = 3000; // 3s
+const pauseOnMessageTime = 2000; // 3s
 
 // elements
 const introEl = $('#intro-text');
 const chatForm = $('#chat-form');
 const chatInput = $('#chat-input');
+const chatSubmit = $('#chat-submit');
 const messageViewerContainer = $('#message-container');
 const messageViewer = $('#chat-viewer');
 
 socket.on('connect', function() {
   socketid = socket.id;
 });
+
+window.speechSynthesis.onvoiceschanged = function() {
+  let voiceOptions = ['Ava', 'Allison', 'Samantha', 'Susan', 'Vicki', 'Kathy', 'Victoria'];
+  let voices = window.speechSynthesis.getVoices();
+  for (let v in voices) {
+    console.log(voices[v]);
+    let ind = voiceOptions.indexOf(voices[v].voiceURI);
+    if (ind !== -1 && ind < selectedVoiceIndex) {
+      selectedVoice = voices[v];
+      selectedVoiceIndex = ind;
+      console.log('found! ' + voices[v]);
+    }
+  }
+};
 
 window.init = () => {
   // get intro text
@@ -35,25 +52,26 @@ window.init = () => {
   
   enableAutoTTS();
   
-  // set up intro tap listener
   introEl.on('click', showChatInput);
-  
-  // set up submit listener
   chatForm.submit(sendMessage);
-  
-  // listen for return key press (13) and send message
   $(document).on('keydown', (e) => {
     if (e.which === 13) {
       sendMessage(e); 
     }
-    
   });
   
   chatInput.on('focus', () => {
     $('#chat-submit').addClass('focused'); 
   });
-  // reset the timeout everytime the input changes
-  chatInput.on('change', startResetTimeout);
+  
+  chatInput.on('change keyup', () => {
+    if (chatInput.val()) {
+      chatSubmit.show();
+    } else {
+      chatSubmit.hide();
+    }
+    startResetTimeout();
+  });
 
   document.addEventListener('touchmove', (e) => { 
     e.preventDefault(); 
@@ -91,9 +109,10 @@ function showChatInput() {
   messageViewerContainer.hide(); 
   messageViewer.empty();
   introEl.hide();
-  chatInput.val('');
   chatForm.show();
-  chatInput.trigger('focus'); // this doesn't work on iPad, unless triggered by click
+  if (chatInput.val()) {
+    chatInput.trigger('focus'); // this may not work on iPad, unless triggered by click
+  }
 }
 
 function showMessageViewer() {
@@ -129,7 +148,9 @@ function updateInterface() {
 
 function handleNewMessage(data) {
   showMessageViewer();
+  console.log(data.id, socketid);
   if (data.id !== socketid) { // only show modified to partner
+    console.log('speak ' + data.modified);
     const speechMessage = new SpeechSynthesisUtterance(data.modified);
     speechSynthesis.speak(speechMessage);
     typeMessageByWord(data.modified);
@@ -162,21 +183,24 @@ function typeMessageByWord(string, iteration) {
   }, typingSpeed);
 }
 
+function speak(msg, vol) {
+  if (arguments.length === 1) {
+    vol = 1;
+  }
+  const utterance = new SpeechSynthesisUtterance(msg);
+  utterance.volume = vol;
+  if (selectedVoice) utterance.voice = selectedVoice;
+  speechSynthesis.speak(utterance);
+}
+
 // function for making sure text to speech is available on iOS Safari
 function enableAutoTTS() {
   if (typeof window === 'undefined') {
     return; 
   }
   
-  const isiOS = navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform);
-  if (!isiOS) {
-    return; 
-  }
-  
   const simulateSpeech = () => {
-    const lecture = new SpeechSynthesisUtterance('hello');
-    lecture.volume = 0;
-    speechSynthesis.speak(lecture);
+    speak('Hello', 0);
     document.removeEventListener('click', simulateSpeech);
   };
 

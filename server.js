@@ -83,7 +83,7 @@ io.on('connection', (socket) => {
     const msgWordArray = data.original.split(/([\.!\?\,\-])|([\s])/g);
     for (let index = 0; index < msgWordArray.length; index++) {
       const currentWord = msgWordArray[index];
-      const matchedIndex = wordsToSubArray.findIndex(word => word === currentWord);
+      const matchedIndex = wordsToSubArray.findIndex(word => currentWord && (word.toLowerCase() === currentWord.toLowerCase()));
       
       if (matchedIndex >= 0) {
         msgWordArray[index] = subArray[matchedIndex];

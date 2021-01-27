@@ -2,8 +2,8 @@
   "parser": "babel-eslint",
   "rules": {
     "block-spacing": [2, "always"],
-    "brace-style": [2, "1tbs"],
-    "curly": [2, "all"],
+    "brace-style": [0],
+    "curly": [2, "multi-line"],
     "eqeqeq": [2],
     "indent": ["error", 2],
     "no-multi-spaces": [2],
