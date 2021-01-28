@@ -9,7 +9,6 @@ import { getImgUrls, addSvgFilterForElement, getTextColorForBackground } from '.
 
 let emotions;
 let curEmotion;
-
 let backgroundColor;
 let backgroundTextColor;
 
@@ -20,7 +19,18 @@ var timeline;
 var imgURLs = [];
 var preloadedImages = []; // kept here to preload images; without this, some browsers might clear cache & unload images
 var thisScreenParams;
+var sharedSeed = 0;
 
+
+///////////////////////////////////////////////
+//// Screen parameters
+
+var screenParams = {
+  0: { id: 0, name: 'LEFT', width: 1631, height: 1080 },
+  1: { id: 1, name: 'CENTER', width: 1768, height: 1080 },
+  2: { id: 2, name: 'RIGHT', width: 1700, height: 1080 },
+  999: { id: 999, name: 'FULLSCREEN', width: 1631 + 1768 + 1700, height: 1080 },
+};
 
 ////////////// MEDITATION TIMINGS /////////////
 
@@ -96,15 +106,6 @@ let timeline_end_pause = 3000;
 // again.
 
 
-///////////////////////////////////////////////
-//// Screen parameters
-
-var screenParams = {
-  0: { id: 0, name: 'LEFT', width: 1631, height: 1080 },
-  1: { id: 1, name: 'CENTER', width: 1768, height: 1080 },
-  2: { id: 2, name: 'RIGHT', width: 1700, height: 1080 },
-  999: { id: 999, name: 'FULLSCREEN', width: 1631 + 1768 + 1700, height: 1080 },
-};
 
 ///////////////////////////////////////////////
 ///* DEV TIMINGS
@@ -127,7 +128,11 @@ window.init = () => {
       initTimelineIfItIsnt(); 
     }));
 
-    socket.on('reflection:restart', () => {
+    socket.on('reflection:restart', (msg) => {
+      let opt = JSON.parse(msg);
+      sharedSeed = opt.seed;
+      console.log('shared seed = ', sharedSeed);
+
       resetHTML();
       timeline.start();
       console.log('REFLECTION RESTARTED');
@@ -320,10 +325,9 @@ function generateMemoryPairs() {
  
   var memories = [];
 
-  var thisEmotionMemories = dataMemories[curEmotion.base];
+  var thisEmotionMemories = seedShuffle(dataMemories[curEmotion.base], sharedSeed);
 
-  let rng = seedrandom(curEmotion.base + new Date().getHours());
-  // This means that the image sequence will rely on the current hour 
+  let rng = seedrandom(sharedSeed);
 
   let screenNumber;
 
@@ -433,7 +437,7 @@ function setColorsAndBackgrounds() {
 
   const bg = $('#background');
 
-  const imgUrl = imgURLs[Math.floor(Math.random() * imgURLs.length)];
+  const imgUrl = seedShuffle(imgURLs, sharedSeed)[0];
   let prevSvgId = bg.data('svgId');
   let svgId = addSvgFilterForElement(bg, window.baseColors[curEmotion.base][curEmotion.level % 3]);
   bg.data('svgId', svgId);
