@@ -149,7 +149,7 @@ function setEmotion(emotionName, init) {
 
 function restartReflectionAudio() {
   // TODO: restart of reflection audio
-  let opt = { 'seed' : Math.random() * 1000 };
+  let opt = { 'seed' : Math.round( Math.random() * 10000 )};
   io.emit('reflection:restart', JSON.stringify(opt)); 
 }
 

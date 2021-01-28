@@ -11,6 +11,7 @@ let emotions;
 let curEmotion;
 let backgroundColor;
 let backgroundTextColor;
+let memoriesColor;
 
 var dataMeditations;
 var dataMeditationEmotions;
@@ -109,7 +110,7 @@ let timeline_end_pause = 3000;
 
 
 ///////////////////////////////////////////////
-/* DEV TIMINGS
+///* DEV TIMINGS
 meditation_long_interval = 1000;
 meditation_interval = 500;
 each_meditation_fadeout_duration = 50;
@@ -414,6 +415,7 @@ function displayMemory(opts) {
     memdiv = $('<img></img>');
     memdiv.addClass('image');
     memdiv.attr('src', memory.url);
+    let svgId = addSvgFilterForElement(memdiv, memoriesColor);
   } 
 
   memdiv.addClass('memory');
@@ -425,11 +427,13 @@ function displayMemory(opts) {
     .appendTo('#memory_container')
     .fadeIn(opts.fadeIn);
 
+
 }
 
 
 function setColorsAndBackgrounds() {
   backgroundColor = window.baseColors[curEmotion.base][curEmotion.level % 3];
+  memoriesColor = window.baseColors[curEmotion.base][(curEmotion.level - 1) % 3];
   window.baseColors[curEmotion.base];
   backgroundTextColor = getTextColorForBackground(backgroundColor[0]);
   $('#meditation_text').css('color', backgroundTextColor);
@@ -485,7 +489,7 @@ function setColorsAndBackgrounds() {
       if (bgIsTaller) {
         $('#background').css('background-position', `calc(100% - ${(bgw - screenParams[1].width)}px) center`);
       } else {
-        $('#background').css('background-position', `${(bgw - thisScreenParams.width) / 2}px center`);
+        $('#background').css('background-position', `calc(0% - ${(bgw - thisScreenParams.width) / 2}px) center`);
       }
     }
    
@@ -501,6 +505,7 @@ function setColorsAndBackgrounds() {
 /////////////////////////////////
 
 function resetHTML(cb) {
+  $('svg').remove();
   setColorsAndBackgrounds();
   $('#meditation_text').fadeOut(1000, function() {
     $(this).empty();
