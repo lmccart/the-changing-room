@@ -38,15 +38,20 @@ section.main {
 #background {
   z-index: 1;
   background-position: center;
+  background-repeat: no-repeat;
   background-size: cover;
 
-  .screen-2 &, .screen-1 & {
+  .screen-2 &, .screen-0 & {
     -moz-transform: scaleX(-1);
     -o-transform: scaleX(-1);
     -webkit-transform: scaleX(-1);
     transform: scaleX(-1);
     filter: FlipH;
     -ms-filter: "FlipH";
+  }
+
+  .screen-2 & {
+    background-position: 100% 0;
   }
 }
 
