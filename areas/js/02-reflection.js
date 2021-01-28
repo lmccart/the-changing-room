@@ -449,6 +449,7 @@ function setColorsAndBackgrounds() {
     let nw = $('#loader')[0].naturalWidth;
     let nh = $('#loader')[0].naturalHeight;
     let bgw, bgh, bgscale;
+    let bgIsTaller = false;
     if ((nw / nh) > (screenParams[1].width / screenParams[1].height)) {
       // background image is wider than screen, so 
       // it is filled at top and bottom and cropped on the sides
@@ -461,21 +462,31 @@ function setColorsAndBackgrounds() {
       bgw = screenParams[1].width;
       bgh = bgw * nh / nw;
       bgscale = bgh / nh;
+      bgIsTaller = true;
     }
 
     console.log('thisScreen', thisScreenParams.width, thisScreenParams.height);
     console.log('centerScreen', screenParams[1].width, screenParams[1].height);
     console.log('nw nh', nw, nh);
     console.log('bgw, bgh, bgscale', bgw, bgh, bgscale);
+    console.log('bgIsTaller', bgIsTaller);
       
     if (thisScreenParams.id === 0) {
       $('#background').css('background-size', `${bgw}px ${bgh}px`);
-      $('#background').css('background-position', `${(bgw - screenParams[1].width)}px center`);
+      if (bgIsTaller) {
+        $('#background').css('background-position', `-${(bgw - screenParams[1].width)}px center`);
+      } else {
+        $('#background').css('background-position', `calc(0% - ${(bgw - screenParams[1].width) / 2}px) center`);
+      }
     }
    
     if (thisScreenParams.id === 2) {
       $('#background').css('background-size', `${bgw}px ${bgh}px`);
-      $('#background').css('background-position', `calc(100% - ${(bgw - screenParams[1].width)}px) center`);
+      if (bgIsTaller) {
+        $('#background').css('background-position', `calc(100% - ${(bgw - screenParams[1].width)}px) center`);
+      } else {
+        $('#background').css('background-position', `${(bgw - thisScreenParams.width) / 2}px center`);
+      }
     }
    
     
