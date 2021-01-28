@@ -33,9 +33,10 @@ body {
   // background: -webkit-radial-gradient(#e66465, #9198e5);
   // background: -webkit-gradient(
   // radial, 500 25%, 20, 500 25%, 40, from(blue), to(#eef)
-// );
+  // );
+  // why does this break the cover??
   position: fixed;
-  visibility: hidden;
+  // visibility: hidden;
 }
 
 
