@@ -10,6 +10,9 @@ import { getImgUrls, addSvgFilterForElement, getTextColorForBackground } from '.
 let emotions;
 let curEmotion;
 
+let backgroundColor;
+let backgroundTextColor;
+
 var dataMeditations;
 var dataMeditationEmotions;
 var dataMemories;
@@ -420,35 +423,35 @@ function displayMemory(opts) {
 }
 
 
+function setColorsAndBackgrounds() {
+  backgroundColor = window.baseColors[curEmotion.base][curEmotion.level % 3];
+  window.baseColors[curEmotion.base];
+  backgroundTextColor = getTextColorForBackground(backgroundColor[0]);
+  $('#meditation_text').css('color', backgroundTextColor);
+  $('#meditation_container').css('border-color', backgroundTextColor);
 
-function switchBackgrounds() {
-  const bgToHide = $('#background-1').is(':visible') ? $('#background-1') : $('#background-2');
-  const bgToShow = $('#background-1').is(':visible') ? $('#background-2') : $('#background-1');
-  window.bth = bgToHide;
 
-  
+  const bg = $('#background');
+
   const imgUrl = imgURLs[Math.floor(Math.random() * imgURLs.length)];
-  let svgId = addSvgFilterForElement(bgToShow, window.baseColors[curEmotion.base][curEmotion.level % 3]);
-  bgToShow.data('svgId', svgId);
-  bgToShow.css('background-image', `url(${imgUrl})`);
+  let prevSvgId = bg.data('svgId');
+  let svgId = addSvgFilterForElement(bg, window.baseColors[curEmotion.base][curEmotion.level % 3]);
+  bg.data('svgId', svgId);
+  bg.css('background-image', `url(${imgUrl})`);
   $('#loader').attr('src', imgUrl).off();
   $('#loader').attr('src', imgUrl).on('load', function() {
-    bgToShow.fadeIn();
-    bgToHide.fadeOut();
-    let svgId = bgToHide.data('svgId');
     setTimeout(() => {
-      console.log(`removing #${svgId}`);
-      $(`#${svgId}`).remove();
+      console.log(`removing #${prevSvgId}`);
+      $(`#${prevSvgId}`).remove();
     }, 1000);
   });
 }
-
-window.switchBackgrounds = switchBackgrounds;
 
 
 /////////////////////////////////
 
 function resetHTML(cb) {
+  setColorsAndBackgrounds();
   $('#meditation_text').fadeOut(1000, function() {
     $(this).empty();
     $(this).fadeIn(1000);
@@ -466,8 +469,6 @@ function queueEvents(timeline) {
   var timeMarker = 0;
 
   timeline.add({ time: timeMarker, event: function() { 
-    switchBackgrounds();
-    console.log(getTextColorForBackground());
     showLoadingOverlay(curEmotion);
   } });
 
