@@ -6,7 +6,6 @@ import { camvas } from './lib/camvas.js';
 import { pico } from './lib/pico.js';
 import 'fancy-textfill/es2015/jquery.plugin';
 import { getTextColorForBackground } from './lib/imageColorUtils.js';
-// import Timeline from './Timeline.js';
 import Papa from 'papaparse';
 
 
@@ -25,13 +24,15 @@ let phrases;
 let facefinderClassifyRegion;
 let watchdog = 0; // used to delay showing/hiding video
 let spellOut = false; // used to determine when to animate text
-// let phraseInterval = 1000;
+let calledAgain = 0; // used to break the phrase loop if the emotion changes
+let phraseInterval = 10000; 
 
 const coverEl = $('#video-cover');
 const videoEl = $('#face-stream');
 const canvas = document.createElement('canvas');
 const ctx = canvas.getContext('2d');
 let faceInitialized = false;
+
 
 
 window.init = () => {
@@ -161,9 +162,10 @@ const processfn = (video) => {
     // check the detection score
     // if it's above the threshold increment watchdog
     // (the constant 50.0 is empirical: other cascades might require a different one)
-    if (dets[i][3] > 50.0) {
+    if (dets[i][3] > 5.0) {
       faceFound = true;
-    }
+      // console.log(dets[i][3]);
+    } 
   }
 
   // if watchdog is > 20 that means a face has been detected for 2 seconds
@@ -186,6 +188,33 @@ const processfn = (video) => {
 
 function queueTextsAtInterval(phrases, interval) {
   console.log('WE SHOULD BE QUEUEING UP THESE PHRASES:', phrases, 'at this interval', interval);
+  calledAgain ++; // used to check if this function was called again in order to reset the phrases
+
+  if (calledAgain <= 1) {
+    let shuffPhrases = phrases.sort(() => Math.random() - 0.5);
+
+    let counter = 0;
+    setInterval(function() {
+      console.log(shuffPhrases[counter]);
+      $('#dummy').empty();
+      $('#spellbox').empty();
+      //the dummy gets the tight font size which we use in typeInstruction
+      $('#dummy').text(shuffPhrases[counter]);
+      $('.textbox-dummy').fancyTextFill({
+        maxFontSize: 400
+      });
+      typeInstruction(shuffPhrases[counter]);
+      counter++;
+      if (counter === shuffPhrases.length) {
+        counter = 0;
+        calledAgain = 0;
+      }
+    },interval);
+  } else {
+    return;
+  }
+
+  
 
   // this is where we queue up texts showing up
 }
@@ -193,8 +222,6 @@ function queueTextsAtInterval(phrases, interval) {
 
 function updateInterface() {
   $('#debug-info').text('CURRENT EMOTION: ' + curEmotion.name + ' (base: ' + curEmotion.base + ', level: ' + curEmotion.level + ')');
-
-
 
   // show loading screen
   showLoadingOverlay(curEmotion, function() {
@@ -207,8 +234,7 @@ function updateInterface() {
   let emotion_colors = baseColors[curEmotion.base];
   let emotion_colors_str1 = '#' + emotion_colors[0][0];
   let emotion_colors_str2 = '#' + emotion_colors[0][1];
-  // test gradient
-  // $('.radial-gradient').css({background:'-webkit-radial-gradient(' + emotion_colors_str1 + ',' + emotion_colors_str2 + ')'});
+
   $('.filtered').css({ background: '-webkit-radial-gradient(' + emotion_colors_str1 + ',' + emotion_colors_str2 + ')' });
   $('#video-cover').css('background-color', emotion_colors_str1);
 
@@ -218,26 +244,22 @@ function updateInterface() {
   // cycle through phrases over 60 seconds
 
   let emotionPhrases = phrases[curEmotion.base];
-  queueTextsAtInterval(emotionPhrases, 60);
+  queueTextsAtInterval(emotionPhrases, phraseInterval);
 
 
+  // let randomPhrase = emotionPhrases[Math.floor(Math.random() * emotionPhrases.length)];
 
+  // emotionalMessage = randomPhrase;
 
-
-  let randomPhrase = phrases[curEmotion.base][Math.floor(Math.random() * phrases[curEmotion.base].length)];
-  console.log(randomPhrase, 'RANDOM');
-
-  emotionalMessage = randomPhrase;
-
-  console.log(emotionalMessage, ' EMOTIONAL MSG');
+  // console.log(emotionalMessage, ' EMOTIONAL MSG');
 
   // emotionalMessage = 
 
-  $('#dummy').text(emotionalMessage);
-  console.log(emotionalMessage);
-  $('.textbox-dummy').fancyTextFill({
-    maxFontSize: 400
-  });
+  // $('#dummy').text(emotionalMessage);
+  // // console.log(emotionalMessage);
+  // $('.textbox-dummy').fancyTextFill({
+  //   maxFontSize: 400
+  // });
 
   $('.textbox').css('visibility', 'hidden');
   $('#face-stream').css('visibility', 'hidden');
@@ -261,17 +283,20 @@ function updateEmotion(msg) {
 
 function removeCover() {
   coverEl.hide();
+  $('.filtered').css('visibility', 'visible');
   $('.textbox').css('visibility', 'visible');
   $('#face-stream').css('visibility', 'visible');
   if (spellOut === false) {
     spellOut = true;
     console.log('flip spell out switch');
-    typeInstruction(emotionalMessage);
+    // typeInstruction(emotionalMessage);
   }
 }
 
 function showCover() {
+  console.log('show cover');
   coverEl.show();
+  $('.filtered').css('visibility', 'hidden');
   $('.textbox').css('visibility', 'hidden');
   $('#face-stream').css('visibility', 'hidden');
 
