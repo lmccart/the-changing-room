@@ -5,6 +5,7 @@ import seedrandom from 'seedrandom';
 import '../css/02-reflection.scss';
 import './shared.js';
 import Timeline from './Timeline.js';
+import { getImgUrls, addSvgFilterForElement, getTextColorForBackground } from './lib/imageColorUtils.js';
 
 let emotions;
 let curEmotion;
@@ -13,7 +14,7 @@ var dataMeditations;
 var dataMeditationEmotions;
 var dataMemories;
 var timeline;
-var imageList = [];
+var imgURLs = [];
 var preloadedImages = []; // kept here to preload images; without this, some browsers might clear cache & unload images
 var thisScreenParams;
 
@@ -103,7 +104,7 @@ var screenParams = {
 };
 
 ///////////////////////////////////////////////
-/* DEV TIMINGS
+///* DEV TIMINGS
 meditation_long_interval = 1000;
 meditation_interval = 500;
 each_meditation_fadeout_duration = 50;
@@ -172,19 +173,18 @@ function setScreen() {
 
 function updateImageList(cb) {
 
-  fetch(`/images/${curEmotion.base}/manifest`)
-    .then(res => res.blob())
-    .then(blob => blob.text())
-    .then(text => { 
-      imageList = JSON.parse(text);
+  getImgUrls(curEmotion.base)
+    .then(images => { 
+
+      imgURLs = images;
 
       preloadedImages = [];
-      imageList.forEach(url => {
+      imgURLs.forEach(url => {
         let img = new Image();
         img.src = url;
         preloadedImages.push(img);
       });
-      cb(text);
+      cb(imgURLs);
     });
 }
 
@@ -328,7 +328,7 @@ function generateMemoryPairs() {
   let memCounter = 0;
 
   
-  while (imgCounter < imageList.length) {
+  while (imgCounter < imgURLs.length) {
 
     // randomly pick screen
     let r = rng();
@@ -344,13 +344,13 @@ function generateMemoryPairs() {
 
     thisMemPair.push({
       type: 'image',
-      url: imageList[imgCounter++],
+      url: imgURLs[imgCounter++],
       left: `${ Math.random() * 80 }vw`,
       top: `${ Math.random() * 80 }vh`,
       screenNumber: screenNumber,
     });
 
-    if (imgCounter < imageList.length && memCounter < thisEmotionMemories.length && rng() < 0.5) {
+    if (imgCounter < imgURLs.length && memCounter < thisEmotionMemories.length && rng() < 0.5) {
       thisMemPair.push({ 
         type: 'text',
         text: thisEmotionMemories[memCounter++],
@@ -361,7 +361,7 @@ function generateMemoryPairs() {
     } else {
       thisMemPair.push({
         type: 'image',
-        url: imageList[imgCounter++],
+        url: imgURLs[imgCounter++],
         left: `${ Math.random() * 80 }vw`,
         top: `${ Math.random() * 80 }vh`,
         screenNumber: screenNumber,
@@ -419,6 +419,33 @@ function displayMemory(opts) {
 
 }
 
+
+
+function switchBackgrounds() {
+  const bgToHide = $('#background-1').is(':visible') ? $('#background-1') : $('#background-2');
+  const bgToShow = $('#background-1').is(':visible') ? $('#background-2') : $('#background-1');
+  window.bth = bgToHide;
+
+  
+  const imgUrl = imgURLs[Math.floor(Math.random() * imgURLs.length)];
+  let svgId = addSvgFilterForElement(bgToShow, window.baseColors[curEmotion.base][curEmotion.level % 3]);
+  bgToShow.data('svgId', svgId);
+  bgToShow.css('background-image', `url(${imgUrl})`);
+  $('#loader').attr('src', imgUrl).off();
+  $('#loader').attr('src', imgUrl).on('load', function() {
+    bgToShow.fadeIn();
+    bgToHide.fadeOut();
+    let svgId = bgToHide.data('svgId');
+    setTimeout(() => {
+      console.log(`removing #${svgId}`);
+      $(`#${svgId}`).remove();
+    }, 1000);
+  });
+}
+
+window.switchBackgrounds = switchBackgrounds;
+
+
 /////////////////////////////////
 
 function resetHTML(cb) {
@@ -439,6 +466,8 @@ function queueEvents(timeline) {
   var timeMarker = 0;
 
   timeline.add({ time: timeMarker, event: function() { 
+    switchBackgrounds();
+    console.log(getTextColorForBackground());
     showLoadingOverlay(curEmotion);
   } });
 
