@@ -110,7 +110,7 @@ let timeline_end_pause = 3000;
 
 
 ///////////////////////////////////////////////
-///* DEV TIMINGS
+/* DEV TIMINGS
 meditation_long_interval = 1000;
 meditation_interval = 500;
 each_meditation_fadeout_duration = 50;
