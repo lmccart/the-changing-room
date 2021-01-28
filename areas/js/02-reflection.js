@@ -120,10 +120,15 @@ window.init = () => {
     console.log('Data loaded!');
 
     socket.on('emotion:update', updateEmotionCurried(() => {
-
       initTimelineIfItIsnt(); 
-
     }));
+
+    socket.on('reflection:restart', () => {
+      resetHTML();
+      timeline.start();
+      console.log('REFLECTION RESTARTED');
+    });
+
     socket.emit('emotion:get');
   });
 };
@@ -540,7 +545,13 @@ function queueEvents(timeline) {
 
   timeMarker += timeline_end_pause;
 
-  timeline.setDuration(timeMarker); // LOOP
+  timeline.add({ time: timeMarker, event: function() { 
+    if (thisScreenParams.id === 1) { 
+      socket.emit('reflection:end');
+    }
+  } });
+
+  timeline.setDuration(timeMarker); 
 
 
 }
@@ -552,7 +563,7 @@ function initTimelineIfItIsnt() {
 
     console.log('Initializing timeline');
  
-    timeline = new Timeline({ loop: true, duration: 50000, interval: 100 }); 
+    timeline = new Timeline({ loop: false, duration: 50000, interval: 100 }); 
 
     resetHTML();
 

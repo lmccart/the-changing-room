@@ -1,7 +1,7 @@
 require('dotenv').config();
 const fs = require('fs');
-const key = fs.readFileSync('./lmccartbook.local+4-key.pem');
-const cert = fs.readFileSync('./lmccartbook.local+4.pem');
+const key = fs.readFileSync('./localhost+1-key.pem');
+const cert = fs.readFileSync('./localhost+1.pem');
 const express = require('express');
 const app = express();
 const http = require('http').createServer(app);
@@ -61,6 +61,7 @@ io.on('connection', (socket) => {
 
   socket.on('disconnect', () => { console.debug('user disconnected: ' + socket.id); });
   socket.on('emotion:pick', setEmotion);
+  socket.on('reflection:end', restartReflectionAudio);
   socket.on('emotion:get', function() {
     socket.emit('emotion:update', curEmotion);
   });
@@ -140,6 +141,11 @@ function setEmotion(emotionName, init) {
     io.emit('emotion:update', curEmotion);
     fs.writeFileSync('current.txt', emotionName);
   }
+}
+
+function restartReflectionAudio() {
+  // TODO: restart of reflection audio
+  io.emit('reflection:restart', curEmotion);
 }
 
 function handleChat(data) {
