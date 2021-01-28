@@ -6,7 +6,6 @@ import { camvas } from './lib/camvas.js';
 import { pico } from './lib/pico.js';
 import 'fancy-textfill/es2015/jquery.plugin';
 import { getTextColorForBackground } from './lib/imageColorUtils.js';
-// import Timeline from './Timeline.js';
 import Papa from 'papaparse';
 
 
@@ -161,9 +160,10 @@ const processfn = (video) => {
     // check the detection score
     // if it's above the threshold increment watchdog
     // (the constant 50.0 is empirical: other cascades might require a different one)
-    if (dets[i][3] > 50.0) {
+    if (dets[i][3] > 5.0) {
       faceFound = true;
-    }
+      // console.log(dets[i][3]);
+    } 
   }
 
   // if watchdog is > 20 that means a face has been detected for 2 seconds
@@ -207,8 +207,7 @@ function updateInterface() {
   let emotion_colors = baseColors[curEmotion.base];
   let emotion_colors_str1 = '#' + emotion_colors[0][0];
   let emotion_colors_str2 = '#' + emotion_colors[0][1];
-  // test gradient
-  // $('.radial-gradient').css({background:'-webkit-radial-gradient(' + emotion_colors_str1 + ',' + emotion_colors_str2 + ')'});
+
   $('.filtered').css({ background: '-webkit-radial-gradient(' + emotion_colors_str1 + ',' + emotion_colors_str2 + ')' });
   $('#video-cover').css('background-color', emotion_colors_str1);
 
@@ -261,6 +260,7 @@ function updateEmotion(msg) {
 
 function removeCover() {
   coverEl.hide();
+  $('.filtered').css('visibility', 'visible');
   $('.textbox').css('visibility', 'visible');
   $('#face-stream').css('visibility', 'visible');
   if (spellOut === false) {
@@ -271,7 +271,9 @@ function removeCover() {
 }
 
 function showCover() {
+  console.log('show cover');
   coverEl.show();
+  $('.filtered').css('visibility', 'hidden');
   $('.textbox').css('visibility', 'hidden');
   $('#face-stream').css('visibility', 'hidden');
 
