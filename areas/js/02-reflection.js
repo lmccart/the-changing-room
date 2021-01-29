@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 // style and js imports
 import $ from 'jquery';
 import Papa from 'papaparse';
@@ -6,6 +8,7 @@ import '../css/02-reflection.scss';
 import './shared.js';
 import Timeline from './Timeline.js';
 import { getImgUrls, addSvgFilterForElement, getTextColorForBackground } from './lib/imageColorUtils.js';
+import './02-reflection-helpers.js';
 
 let emotions;
 let curEmotion;
@@ -86,6 +89,9 @@ let memory_interval = 1000;
 
 // and fades in
 let each_memory_fadein_duration = 500;
+
+// pauses
+let each_memory_pause_duration = 2000;
 
 // and fades out.
 let each_memory_fadeout_duration = 500;
@@ -335,6 +341,7 @@ function generateMemoryPairs() {
 
   let imgCounter = 0;
   let memCounter = 0;
+  let mempairCounter = 0;
 
   
   while (imgCounter < imgURLs.length) {
@@ -355,6 +362,7 @@ function generateMemoryPairs() {
       type: 'image',
       url: imgURLs[imgCounter++],
       screenNumber: screenNumber,
+      mempairNumber: mempairCounter,
     });
 
     if (imgCounter < imgURLs.length && memCounter < thisEmotionMemories.length && rng() < 0.5) {
@@ -362,15 +370,18 @@ function generateMemoryPairs() {
         type: 'text',
         text: thisEmotionMemories[memCounter++],
         screenNumber: screenNumber,
+        mempairNumber: mempairCounter,
       });
     } else {
       thisMemPair.push({
         type: 'image',
         url: imgURLs[imgCounter++],
         screenNumber: screenNumber,
+        mempairNumber: mempairCounter,
       });
     }
 
+    mempairCounter++;
     memories.push(thisMemPair);
 
 
@@ -394,24 +405,49 @@ function displayMeditationPhrase(opts) {
     });
 }
 
-function generateMemoryDiv(memory) {
-  let memdiv;
- 
-  if (memory.type === 'text') {
-    memdiv = $('<div></div>');
-    memdiv.addClass('text');
-    memdiv.text(memory.text);
-  } 
-  if (memory.type === 'image') {
-    memdiv = $('<img></img>');
-    memdiv.addClass('image');
-    memdiv.attr('src', memory.url);
-    let svgId = addSvgFilterForElement(memdiv, memoriesColor);
-  } 
+function preloadMempairDivs(mempairdata, index) {
 
-  memdiv.addClass('memory');
+  // generate divs
+  let memdivs = mempairdata.map((memory, i) => {
 
-  return memdiv;
+    let memdiv;
+   
+    if (memory.type === 'text') {
+      memdiv = $('<div></div>');
+      memdiv.addClass('text');
+      memdiv.text(memory.text);
+    } 
+    if (memory.type === 'image') {
+      memdiv = $('<img></img>');
+      memdiv.addClass('image');
+      memdiv.attr('src', memory.url);
+      let svgId = addSvgFilterForElement(memdiv, memoriesColor);
+    } 
+
+    memdiv.addClass('memory');
+    memdiv.attr('id', `memory-${index}-${i}`);
+    return memdiv;
+  });
+
+  // add them to container
+  memdivs.forEach(m => {
+    m.hide().appendTo('#memory_container');
+  });
+
+  // generate the locations
+  //
+  console.log(memdivs);
+  console.log(memdivs[0].width());
+  let memlocs = generateMemoryLocations(memdivs);
+
+  console.log(memlocs);
+
+  // position via css
+  memdivs[0].css({ top: memlocs.m1.screenY, left: memlocs.m1.screenX });
+  memdivs[1].css({ top: memlocs.m2.screenY, left: memlocs.m2.screenX });
+
+  return memdivs;
+
 }
 
 
@@ -502,19 +538,8 @@ function generateMemoryLocations(memdivs) {
 
 function displayMemoryPair(opts) {
   //{ data: [mem, mem], top: ~, left: ~, fadeIn: 100, fadeOut: 100 };
-  //
-  console.log(opts.data);
+  let mempairdata = opts.data;
 
-  let memdivs = opts.data.map(generateMemoryDiv);
-
-  memdivs.forEach(m => {
-    m.hide().appendTo('#memory_container');
-  });
-
-  let memlocs = generateMemoryLocations(memdivs);
-
-  memdivs[0].css({ top: memlocs.m1.screenY, left: memlocs.m1.screenX });
-  memdivs[1].css({ top: memlocs.m2.screenY, left: memlocs.m2.screenX });
 
   memdivs[0]
     .fadeIn(opts.fadeIn);
@@ -596,21 +621,31 @@ function setColorsAndBackgrounds() {
 function resetHTML(cb) {
   $('svg').remove();
   setColorsAndBackgrounds();
-  $('#meditation_text').fadeOut(1000, function() {
-    $(this).empty();
-    $(this).fadeIn(1000);
+  $('#meditation_text').empty();
+  $('#memory_container').empty();
+}
+
+function preloadImages(memdata) {
+
+  memdata.forEach((mempair, i) => {
+    if (mempair[0].screenNumber === thisScreenParams.id || thisScreenParams.name === 'FULLSCREEN') {
+      preloadMempairDivs(mempair, i);
+    }
   });
-  $('#memory_container').fadeOut(1000, function() {
-    $(this).empty();
-    $(this).fadeIn(1000);
-  });
+
+
+
 }
 
 function queueEvents(timeline) {
   window.timeline = timeline;
 
 
+
   var timeMarker = 0;
+
+
+
 
   timeline.add({ time: timeMarker, event: function() { 
     showLoadingOverlay(curEmotion);
@@ -632,7 +667,7 @@ function queueEvents(timeline) {
 
 
   ///////// QUEUE MEDITATIONS
-  
+  /* 
   let mts = generateMeditationTexts();
 
   mts.forEach((mt, i) => {
@@ -662,30 +697,31 @@ function queueEvents(timeline) {
 
 
   timeMarker += memories_fadein_pause;
+  */
 
   timeline.add({ time: timeMarker, event: function() { 
     $('#memory_container').fadeIn(memories_fadein_duration);
   } });
 
 
-
   ///////// QUEUE MEMORIES
   
   let mempairs = generateMemoryPairs();
 
+  preloadImages(mempairs);
+
   mempairs.forEach((mempair, i) => {
+
 
     timeline.add({ time: timeMarker, event: function() { 
 
 
       if (mempair[0].screenNumber === thisScreenParams.id || thisScreenParams.name === 'FULLSCREEN') {
       //only display if we're on the right screen
-        //
-        displayMemoryPair({
-          data: mempair,
-          fadeIn: each_memory_fadein_duration,
-          fadeOut: each_memory_fadeout_duration,
-        });
+        
+        $(`#memory-${i}-0`).fadeIn(each_memory_fadein_duration);
+        $(`#memory-${i}-1`).fadeIn(each_memory_fadein_duration);
+
 
         console.log('...WE are displaying memory pair #', i, '...');
       } else {
@@ -725,7 +761,7 @@ function queueEvents(timeline) {
 
 function initTimelineIfItIsnt() {  
 
-  if (timeline === undefined) {
+//  if (timeline === undefined) {
 
     console.log('Initializing timeline');
  
@@ -737,7 +773,7 @@ function initTimelineIfItIsnt() {
 
     timeline.start();
 
-  }
+//  }
  
 }
 
