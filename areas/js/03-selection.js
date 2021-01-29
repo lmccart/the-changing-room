@@ -91,9 +91,9 @@ function updateInterface() {
   $('.emotion').removeAttr('style');
   $('.emotion').removeClass('selected_emotion');
   //get color of selected emotion colors
-  let emotion_colors = baseColors[curEmotion.base];
-  let emotion_colors_str1 = '#' + emotion_colors[0][0];
-  let emotion_colors_str2 = '#' + emotion_colors[0][1];
+  let emotion_colors = baseColors[curEmotion.base][curEmotion.level - 1];
+  let emotion_colors_str1 = '#' + emotion_colors[0];
+  let emotion_colors_str2 = '#' + emotion_colors[1];
 
   const elm = '#option-' + curEmotion.name;
   $(elm).fadeIn(fade_time, function() {
