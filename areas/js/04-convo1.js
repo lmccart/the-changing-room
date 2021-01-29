@@ -29,12 +29,10 @@ window.speechSynthesis.onvoiceschanged = function() {
   let voiceOptions = ['Ava', 'Allison', 'Samantha', 'Susan', 'Vicki', 'Kathy', 'Victoria'];
   let voices = window.speechSynthesis.getVoices();
   for (let v in voices) {
-    console.log(voices[v]);
     let ind = voiceOptions.indexOf(voices[v].voiceURI);
     if (ind !== -1 && ind < selectedVoiceIndex) {
       selectedVoice = voices[v];
       selectedVoiceIndex = ind;
-      console.log('found! ' + voices[v]);
     }
   }
 };
@@ -136,12 +134,17 @@ function updateEmotion(msg) {
 }
 
 function updateInterface() {
-  showLoadingOverlay(curEmotion, function() {
-  });
+  showLoadingOverlay(curEmotion);
   resetChat();
   const colors = window.baseColors[curEmotion.base][curEmotion.level - 1];
   const textColor = getTextColorForBackground(colors[0], colors[1]);
   $('body').css('color', textColor);
+  chatInput.css('color', textColor);
+  if (textColor === 'white') {
+    chatSubmit.css('filter', 'invert(1)');
+  } else {
+    chatSubmit.css('filter', 'none');
+  }
   $('body').css('background', `radial-gradient(${colors[0]},${colors[1]})`);
   $('#debug-info').text(screen.width + ' ' + screen.height);//CURRENT EMOTION: ' + curEmotion.name + ' (base: ' + curEmotion.base + ', level: ' + curEmotion.level +')')
 }
