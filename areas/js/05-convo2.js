@@ -70,19 +70,6 @@ Papa.parse('/static/data/05_directions.tsv', {
   }
 });
 
-function switchBackgrounds() {
-  const bgToHide = $('#background-1').is(':visible') ? $('#background-1') : $('#background-2');
-  const bgToShow = $('#background-1').is(':visible') ? $('#background-2') : $('#background-1');
-  
-  const imgUrl = imgUrls[Math.floor(Math.random() * imgUrls.length)];
-  bgToShow.css('background-image', `url(${imgUrl})`);
-  $('#loader').attr('src', imgUrl).off();
-  $('#loader').attr('src', imgUrl).on('load', function() {
-    console.log('loaded: ', imgUrl);
-    bgToShow.fadeIn();
-    bgToHide.fadeOut();
-  });
-}
 
 function reset() {
   clearTimeout(initTimeout);
@@ -97,7 +84,7 @@ function showConvoLoading() {
   $('#instruction').empty();
   clearTimeout(initTimeout);
 
-  switchBackgrounds();
+  switchBackgrounds(imgUrls);
 
   initTimeout = setTimeout(() => {
     // hide loading bar

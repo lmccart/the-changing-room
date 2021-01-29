@@ -234,7 +234,6 @@ function updateInterface() {
   let emotion_colors = baseColors[curEmotion.base][0];
 
   console.log('setting css');
-  $('.filtered').css('background', `webkit-radial-gradient(${emotion_colors[0]},${emotion_colors[1]})`);
   $('.filtered').css('background', `radial-gradient(${emotion_colors[0]},${emotion_colors[1]})`);
   $('#video-cover').css('background-color', emotion_colors[1]);
 

@@ -190,12 +190,13 @@ function updateImageList(cb) {
 
       imgURLs = images;
 
-      preloadedImages = [];
-      imgURLs.forEach(url => {
-        let img = new Image();
-        img.src = url;
-        preloadedImages.push(img);
-      });
+      // TEMP FOR TESTING
+      // preloadedImages = [];
+      // imgURLs.forEach(url => {
+      //   let img = new Image();
+      //   img.src = url;
+      //   preloadedImages.push(img);
+      // });
       cb(imgURLs);
     });
 }

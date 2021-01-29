@@ -22,55 +22,41 @@ window.init = () => {
     });
 };
 
+window.loadingComplete = () => {
+  console.log('sodfdfs');
+  $('.intro-text-container').css('visibility', 'visible');
+  scrollDown();
+};
+
 function updateEmotion(msg) {
   console.log('updateEmotion');
   if (!curEmotion || curEmotion.name !== msg.name) {
     curEmotion = msg;
     console.log('emotion has been updated to: ' + msg.name + ' (base: ' + msg.base + ', level: ' + msg.level + ')');
-    updateInterface();
+    let durations = showLoadingOverlay(curEmotion);
+    setTimeout(() => { updateInterface(durations); }, durations[0]);
     $('.intro-text-container').css('visibility', 'hidden');
   }
 }
 
-async function updateInterface() {
-
-  console.log('updateInterface');
-  showLoadingOverlay(curEmotion, function() {
-    $('.intro-text-container').css('visibility', 'visible');
-    scrollDown();
-
-  });
-  $('#debug-info').text('CURRENT EMOTION: ' + curEmotion.name + ' (base: ' + curEmotion.base + ', level: ' + curEmotion.level + ')');
-  $('svg').remove();
-  imgUrls = await getImgUrls(curEmotion.base);
+async function updateInterface(durations) {
+  // $('svg').remove();
   const colors = window.baseColors[curEmotion.base][curEmotion.level - 1];
-  updateBackground(colors);
+
+  imgUrls = await getImgUrls(curEmotion.base);
+  switchBackgrounds(imgUrls, durations[1] - durations[0], colors);
 
   const textColor = getTextColorForBackground(colors[0], colors[1]);
-  $('body').removeClass();
-  $('body').addClass(textColor);
+  $('body').removeClass().addClass(textColor);
   $('.intro-text-container').css('border-color', textColor);
   $('.text').css('color', textColor);
   $('#loading').css('color', textColor);
 }
 
-function updateBackground(colors) {
-  addSvgFilterForElement($('#background-1'), colors);
-  const imgUrl = imgUrls[Math.floor(Math.random() * imgUrls.length)];
-  console.log(imgUrl);
-  $('#background-1').css('background-image', `url(${imgUrl})`);
-  $('#loader').attr('src', imgUrl).off();
-  $('#loader').attr('src', imgUrl).on('load', function() {
-    console.log('loaded: ', imgUrl);
-    $('#background-1').show();
-  });
-}
-
 function scrollDown() {
-  console.log('scrollDown');
   $('.text').scrollTop(0);
   $('.text').stop();
-  setTimeout(function() {
+  setTimeout(() => {
     $('.text').animate({
       scrollTop: $('.text').prop('scrollHeight')
     }, scroll_down_time, 'linear', scrollUp);
@@ -78,7 +64,7 @@ function scrollDown() {
 }
 
 function scrollUp() {
-  setTimeout(function() {
+  setTimeout(() => {
     $('.text').animate({
       scrollTop: 0
     }, scroll_up_time, 'linear', scrollDown);
