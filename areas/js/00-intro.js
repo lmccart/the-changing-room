@@ -43,7 +43,7 @@ async function updateInterface(durations) {
   const colors = window.baseColors[curEmotion.base][curEmotion.level - 1];
 
   imgUrls = await getImgUrls(curEmotion.base);
-  switchBackgrounds(imgUrls, durations[1] - durations[0], colors);
+  switchBackgrounds(imgUrls, durations[1] - durations[0] - 500, colors);
 
   const textColor = getTextColorForBackground(colors[0], colors[1]);
   $('body').removeClass().addClass(textColor);

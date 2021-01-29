@@ -27,14 +27,16 @@ svg {
   visibility: hidden;
 }
 
-.extra {
-  border:none;
+.popup.extra {
+  border: none;
+  &:after {
+    content: '' !important;
+  }
 }
 
 .extra img {
   max-height: 18vh;
   max-width: 22vh;
-
 }
 
 .popup {
@@ -42,7 +44,7 @@ svg {
   top: 0;
   left: 0;
   padding: 0;
-  border-width: 0.25vw;
+  border-width: 2px;
   border-style: solid;
   background: blanchedalmond;
   z-index: 100;
@@ -52,15 +54,19 @@ svg {
   }
   img {
     display: block;
-    max-height: 40vh;
+    max-height: 50vh;
 
     &.popup {
-      max-height: 25vh;
+      max-height: 30vh;
     }
   }
   &.popup {
     &:after {
-      content: "";
+      content: '✕';
+      position: absolute;
+      top: 0.85em;
+      right: 1em;
+      font-size: 1.5em;
     }
   }
   

@@ -2,7 +2,7 @@ import $ from 'jquery';
 import { getTextColorForBackground, addSvgFilterForElement } from './lib/imageColorUtils.js';
 
 
-window.loadingDur = 3000;
+window.loadingDur = 2000;
 window.loadingFadeDur = 300;
 
 window.socket = io();
@@ -41,6 +41,7 @@ window.showLoadingOverlay = (newEmotion) => {
 
 
 window.switchBackgrounds = (imgUrls, fadeDur, colors) => {
+  console.log(fadeDur);
 
   const bgToHide = $('#background-1').is(':visible') ? $('#background-1') : $('#background-2');
   const bgToShow = $('#background-1').is(':visible') ? $('#background-2') : $('#background-1');

@@ -42,7 +42,7 @@ async function updateInterface() {
   reset();
   imgUrls = await getImgUrls(curEmotion.base);
   const colors = window.baseColors[curEmotion.base][curEmotion.level - 1];
-  switchBackgrounds(imgUrls, durations[1] - durations[0], colors);
+  switchBackgrounds(imgUrls, durations[1] - durations[0] - 500, colors);
   
   const textColor = getTextColorForBackground(colors[0], colors[1]);
   $('#loading').css('color', textColor);
