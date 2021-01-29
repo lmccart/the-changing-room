@@ -294,7 +294,7 @@ function removeCover() {
 
 function showCover() {
   console.log('show cover');
-  // coverEl.show();
+  coverEl.show();
   $('.filtered').css('visibility', 'hidden');
   $('.textbox').css('visibility', 'hidden');
   $('#face-stream').css('visibility', 'hidden');
