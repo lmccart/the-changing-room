@@ -94,12 +94,12 @@ app.get('/images/:baseEmotion/manifest', (req, res) => {
     // URL client can use to get the image in css or img src attribute
     const staticURLPrefix = `/images/${baseEmotion}/`;
 
-    const finalURLs = [];
+    const finalUrls = [];
     imageFiles.forEach(file => {
-      finalURLs.push(staticURLPrefix + encodeURI(file));
+      finalUrls.push(staticURLPrefix + encodeURI(file));
     })
 
-    res.status(200).send(JSON.stringify(finalURLs));
+    res.status(200).send(JSON.stringify(finalUrls));
 
   } catch (err) {
     console.log(err);
@@ -123,12 +123,12 @@ app.get('/images/popups/manifest', (req, res) => {
     // URL client can use to get the image in css or img src attribute
     const staticURLPrefix = `/images/popups/`;
 
-    const finalURLs = [];
+    const finalUrls = [];
     imageFiles.forEach(file => {
-      finalURLs.push(staticURLPrefix + encodeURI(file));
+      finalUrls.push(staticURLPrefix + encodeURI(file));
     })
 
-    res.status(200).send(JSON.stringify(finalURLs));
+    res.status(200).send(JSON.stringify(finalUrls));
 
   } catch (err) {
     console.log(err);
@@ -138,6 +138,7 @@ app.get('/images/popups/manifest', (req, res) => {
 
 function setEmotion(emotionName, init) {
   curEmotion = emotions[emotionName];
+  curEmotion.seed = Math.round(Math.random() * 10000);
   console.debug(curEmotion);
   Sound.playEmotion(curEmotion);
   Lights.playEmotion(curEmotion);
@@ -150,7 +151,7 @@ function setEmotion(emotionName, init) {
 function restartReflectionAudio() {
   // TODO: restart of reflection audio
   let opt = { 'seed' : Math.round( Math.random() * 10000 )};
-  io.emit('reflection:restart', JSON.stringify(opt)); 
+  io.emit('reflection:restart', opt); 
 }
 
 function handleChat(data) {

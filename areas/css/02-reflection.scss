@@ -74,16 +74,15 @@ section.main {
   font-weight: bold;
   color: white;
 
-  .screen-0 &, .screen-2 & {
-    display: none !important;
-  }
-
 }
 
 
 
 #meditation_text {
   padding: 50px;
+  // .screen-0 &, .screen-2 & {
+  //   display: none !important;
+  // }
 }
 
 #memory_container {

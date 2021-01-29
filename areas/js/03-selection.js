@@ -92,8 +92,6 @@ function updateInterface() {
   $('.emotion').removeClass('selected_emotion');
   //get color of selected emotion colors
   let emotion_colors = baseColors[curEmotion.base][curEmotion.level - 1];
-  let emotion_colors_str1 = '#' + emotion_colors[0];
-  let emotion_colors_str2 = '#' + emotion_colors[1];
 
   const elm = '#option-' + curEmotion.name;
   $(elm).fadeIn(fade_time, function() {
@@ -101,10 +99,10 @@ function updateInterface() {
 
     //transition to color of selected emotion colors
     console.log('setting colors');
-    $(this).css('color', emotion_colors_str1);
-    $('body').css({background:'-webkit-radial-gradient(' + emotion_colors_str1 + ',' + emotion_colors_str2 + ')'});
-    $('#wrapper_joined').css({background:'-webkit-radial-gradient(' + emotion_colors_str1 + ',' + emotion_colors_str2 + ')'});
-    $('#wrapper_separate').css({background:'-webkit-radial-gradient(' + emotion_colors_str1 + ',' + emotion_colors_str2 + ')'});
+    $(this).css('color', emotion_colors[0]);
+    $('body').css({background:'-webkit-radial-gradient(' + emotion_colors[0] + ',' + emotion_colors[1] + ')'});
+    $('#wrapper_joined').css({background:'-webkit-radial-gradient(' + emotion_colors[0] + ',' + emotion_colors[1] + ')'});
+    $('#wrapper_separate').css({background:'-webkit-radial-gradient(' + emotion_colors[0] + ',' + emotion_colors[1] + ')'});
   });
   
   //transition to font color to white

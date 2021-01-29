@@ -9,7 +9,7 @@ const scroll_down_time = 200000;
 const scroll_pause_time = 3000;
 
 let curEmotion;
-let imgURLs = [];
+let imgUrls = [];
 
 window.init = () => {
   socket.on('emotion:update', updateEmotion);
@@ -42,7 +42,7 @@ async function updateInterface() {
   });
   $('#debug-info').text('CURRENT EMOTION: ' + curEmotion.name + ' (base: ' + curEmotion.base + ', level: ' + curEmotion.level + ')');
   $('svg').remove();
-  imgURLs = await getImgUrls(curEmotion.base);
+  imgUrls = await getImgUrls(curEmotion.base);
   const colors = window.baseColors[curEmotion.base][curEmotion.level - 1];
   updateBackground(colors);
 
@@ -56,7 +56,7 @@ async function updateInterface() {
 
 function updateBackground(colors) {
   addSvgFilterForElement($('#background-1'), colors);
-  const imgUrl = imgURLs[Math.floor(Math.random() * imgURLs.length)];
+  const imgUrl = imgUrls[Math.floor(Math.random() * imgUrls.length)];
   console.log(imgUrl);
   $('#background-1').css('background-image', `url(${imgUrl})`);
   $('#loader').attr('src', imgUrl).off();

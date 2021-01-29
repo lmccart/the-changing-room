@@ -7,7 +7,7 @@ import './shared.js';
 import { getImgUrls, addSvgFilterForElement, getTextColorForBackground } from './lib/imageColorUtils.js';
 
 let curEmotion;
-let imgURLs = [];
+let imgUrls = [];
 let initTimeout;
 let typeTimeout;
 let loadingTimeout;
@@ -34,7 +34,7 @@ function updateEmotion(msg) {
 async function updateInterface() {
   $('#debug-info').text('CURRENT EMOTION: ' + curEmotion.name + ' (base: ' + curEmotion.base + ', level: ' + curEmotion.level + ')');
   showLoadingOverlay(curEmotion, showConvoLoading);
-  imgURLs = await getImgUrls(curEmotion.base);
+  imgUrls = await getImgUrls(curEmotion.base);
   reset();
   $('svg').remove();
   const colors = window.baseColors[curEmotion.base][curEmotion.level - 1];
@@ -74,7 +74,7 @@ function switchBackgrounds() {
   const bgToHide = $('#background-1').is(':visible') ? $('#background-1') : $('#background-2');
   const bgToShow = $('#background-1').is(':visible') ? $('#background-2') : $('#background-1');
   
-  const imgUrl = imgURLs[Math.floor(Math.random() * imgURLs.length)];
+  const imgUrl = imgUrls[Math.floor(Math.random() * imgUrls.length)];
   bgToShow.css('background-image', `url(${imgUrl})`);
   $('#loader').attr('src', imgUrl).off();
   $('#loader').attr('src', imgUrl).on('load', function() {

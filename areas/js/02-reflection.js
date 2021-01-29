@@ -4,14 +4,14 @@ import Papa from 'papaparse';
 import seedrandom from 'seedrandom';
 import '../css/02-reflection.scss';
 import './shared.js';
-import Timeline from './Timeline.js';
+import Timeline from './lib/Timeline.js';
 import { getImgUrls, addSvgFilterForElement, getTextColorForBackground } from './lib/imageColorUtils.js';
 
 let emotions;
 let curEmotion;
-let backgroundColor;
+let primaryColor;
 let backgroundTextColor;
-let memoriesColor;
+let secondaryColor;
 
 var dataMeditations;
 var dataMeditationEmotions;
@@ -26,7 +26,7 @@ var sharedSeed = 0;
 ///////////////////////////////////////////////
 //// Screen parameters
 
-var screenParams = {
+const screenParams = {
   0: { id: 0, name: 'LEFT', width: 1631, height: 1080 },
   1: { id: 1, name: 'CENTER', width: 1768, height: 1080 },
   2: { id: 2, name: 'RIGHT', width: 1700, height: 1080 },
@@ -81,14 +81,17 @@ let memories_fadein_duration = 500;
 
 //////// The memory sequence starts.
 
+// Total memory time
+let memories_total_duration = 15000;
+
 // Each memory arrives at this interval,
 let memory_interval = 1000;
 
 // and fades in
-let each_memory_fadein_duration = 500;
+let each_memory_fadein_duration = 0;//500;
 
 // and fades out.
-let each_memory_fadeout_duration = 500;
+let each_memory_fadeout_duration = 0;//500;
 
 /////// The memories are over.
 
@@ -131,8 +134,7 @@ window.init = () => {
     }));
 
     socket.on('reflection:restart', (msg) => {
-      let opt = JSON.parse(msg);
-      sharedSeed = opt.seed;
+      sharedSeed = msg.seed;
       console.log('shared seed = ', sharedSeed);
 
       resetHTML();
@@ -199,7 +201,7 @@ function updateImageList(cb) {
 }
 
 function loadData(cb) {
-  var dataLoaded = -3; // this is a bit hacky but simpler than Promises.all
+  let dataLoaded = -3; // this is a bit hacky but simpler than Promises.all
 
   fetch('/static/data/02_meditation.txt')
     .then(res => res.blob())
@@ -224,10 +226,10 @@ function loadData(cb) {
       console.log(rawResults);
       const reordered = {};
 
-      for (var i = 0; i < rawResults.length; i++) {
+      for (let i = 0; i < rawResults.length; i++) {
         let thisrow = rawResults[i];
 
-        var newrow = {};
+        let newrow = {};
         Object.keys(thisrow).forEach((key) => {
           newrow[key.trim()] = thisrow[key]; 
         });
@@ -324,6 +326,8 @@ function seedShuffle(array, seed) {
 }
 
 function generateMemoryPairs() {
+
+  let numMemories = Math.floor((memories_total_duration - timeline_end_pause) / (memory_interval));
  
   var memories = [];
 
@@ -333,11 +337,13 @@ function generateMemoryPairs() {
 
   let screenNumber;
 
-  let imgCounter = 0;
-  let memCounter = 0;
+  let imgOffset = Math.floor(rng() * imgURLs.length);
+  let memOffset = Math.floor(rng() * thisEmotionMemories.length);
 
-  
-  while (imgCounter < imgURLs.length) {
+  for (let imgCounter = 0; imgCounter < numMemories; imgCounter++) {
+
+    let img = imgURLs[(imgCounter + imgOffset) & imgURLs.length];
+    let text = thisEmotionMemories[(imgCounter + memOffset) & thisEmotionMemories.length];
 
     // randomly pick screen
     let r = rng();
@@ -353,16 +359,16 @@ function generateMemoryPairs() {
 
     thisMemPair.push({
       type: 'image',
-      url: imgURLs[imgCounter++],
+      url: img,
       left: `${ Math.random() * 80 }vw`,
       top: `${ Math.random() * 80 }vh`,
       screenNumber: screenNumber,
     });
 
-    if (imgCounter < imgURLs.length && memCounter < thisEmotionMemories.length && rng() < 0.5) {
+    if (rng() < 0.5) {
       thisMemPair.push({ 
         type: 'text',
-        text: thisEmotionMemories[memCounter++],
+        text: text,
         left: `${ Math.random() * 80 }vw`,
         top: `${ Math.random() * 80 }vh`,
         screenNumber: screenNumber,
@@ -370,7 +376,7 @@ function generateMemoryPairs() {
     } else {
       thisMemPair.push({
         type: 'image',
-        url: imgURLs[imgCounter++],
+        url: img,
         left: `${ Math.random() * 80 }vw`,
         top: `${ Math.random() * 80 }vh`,
         screenNumber: screenNumber,
@@ -415,7 +421,7 @@ function displayMemory(opts) {
     memdiv = $('<img></img>');
     memdiv.addClass('image');
     memdiv.attr('src', memory.url);
-    let svgId = addSvgFilterForElement(memdiv, memoriesColor);
+    let svgId = addSvgFilterForElement(memdiv, secondaryColor);
   } 
 
   memdiv.addClass('memory');
@@ -432,21 +438,23 @@ function displayMemory(opts) {
 
 
 function setColorsAndBackgrounds() {
-  backgroundColor = window.baseColors[curEmotion.base][curEmotion.level % 3];
-  memoriesColor = window.baseColors[curEmotion.base][(curEmotion.level - 1) % 3];
-  window.baseColors[curEmotion.base];
-  backgroundTextColor = getTextColorForBackground(backgroundColor[0]);
+  primaryColor = window.baseColors[curEmotion.base][curEmotion.level - 1];
+  secondaryColor = window.baseColors[curEmotion.base][curEmotion.level - 1];
+  backgroundTextColor = getTextColorForBackground(primaryColor[0]);
+
+  $('#memory_container').css({background:'-webkit-radial-gradient(' + secondaryColor[0] + ',' + secondaryColor[1] + ')'});
+  $('#memory_container').hide();
+
   $('#meditation_text').css('color', backgroundTextColor);
   $('#meditation_container').css('border-color', backgroundTextColor);
 
-
   const bg = $('#background');
-
   const imgUrl = seedShuffle(imgURLs, sharedSeed)[0];
   let prevSvgId = bg.data('svgId');
-  let svgId = addSvgFilterForElement(bg, window.baseColors[curEmotion.base][curEmotion.level % 3]);
+  let svgId = addSvgFilterForElement(bg, primaryColor);
   bg.data('svgId', svgId);
   bg.css('background-image', `url(${imgUrl})`);
+
   $('#loader').attr('src', imgUrl).off();
   $('#loader').attr('src', imgUrl).on('load', function() {
 
@@ -476,24 +484,23 @@ function setColorsAndBackgrounds() {
     console.log('bgIsTaller', bgIsTaller);
       
     if (thisScreenParams.id === 0) {
-      $('#background').css('background-size', `${bgw}px ${bgh}px`);
+      bg.css('background-size', `${bgw}px ${bgh}px`);
       if (bgIsTaller) {
-        $('#background').css('background-position', `-${(bgw - screenParams[1].width)}px center`);
+        bg.css('background-position', `-${(bgw - screenParams[1].width)}px center`);
       } else {
-        $('#background').css('background-position', `calc(0% - ${(bgw - screenParams[1].width) / 2}px) center`);
+        bg.css('background-position', `calc(0% - ${(bgw - screenParams[1].width) / 2}px) center`);
       }
     }
    
     if (thisScreenParams.id === 2) {
-      $('#background').css('background-size', `${bgw}px ${bgh}px`);
+      bg.css('background-size', `${bgw}px ${bgh}px`);
       if (bgIsTaller) {
-        $('#background').css('background-position', `calc(100% - ${(bgw - screenParams[1].width)}px) center`);
+        bg.css('background-position', `calc(100% - ${(bgw - screenParams[1].width)}px) center`);
       } else {
-        $('#background').css('background-position', `calc(0% - ${(bgw - thisScreenParams.width) / 2}px) center`);
+        bg.css('background-position', `calc(0% - ${(bgw - thisScreenParams.width) / 2}px) center`);
       }
     }
-   
-    
+
     setTimeout(() => {
       console.log(`removing #${prevSvgId}`);
       $(`#${prevSvgId}`).remove();
@@ -513,7 +520,6 @@ function resetHTML(cb) {
   });
   $('#memory_container').fadeOut(1000, function() {
     $(this).empty();
-    $(this).fadeIn(1000);
   });
 }
 
@@ -548,7 +554,7 @@ function queueEvents(timeline) {
 
   mts.forEach((mt, i) => {
 
-
+    // if (i < 3) { // temp for testing
     timeline.add({ time: timeMarker, event: function() { 
       displayMeditationPhrase({ text: mt, fadeIn: each_meditation_fadein_duration, fadeOut: each_meditation_fadeout_duration});
     } });
@@ -558,7 +564,7 @@ function queueEvents(timeline) {
     } else {
       timeMarker += meditation_interval; 
     }
-    
+    // }
 
   });
   

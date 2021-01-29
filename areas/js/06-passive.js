@@ -16,7 +16,7 @@ const portionFiltered = 0.5; // portion of popups with svg filter applied
 
 let curEmotion;
 let backgroundInterval;
-let imgURLs = [];
+let imgUrls = [];
 let preloadedExtras = [];
 let popupFactory; // used to reference the function that produces popups
 
@@ -58,7 +58,7 @@ function updateEmotion(msg) {
 
 async function updateInterface() {
   $('#debug-info').text('CURRENT EMOTION: ' + curEmotion.name + ' (base: ' + curEmotion.base + ', level: ' + curEmotion.level + ')');
-  imgURLs = await getImgUrls(curEmotion.base);
+  imgUrls = await getImgUrls(curEmotion.base);
   if (popupFactory) {
     popupFactory.cleanup(); 
   }
@@ -124,7 +124,7 @@ function switchBackgrounds() {
   const bgToHide = $('#background-1').is(':visible') ? $('#background-1') : $('#background-2');
   const bgToShow = $('#background-1').is(':visible') ? $('#background-2') : $('#background-1');
   
-  const imgUrl = imgURLs[Math.floor(Math.random() * imgURLs.length)];
+  const imgUrl = imgUrls[Math.floor(Math.random() * imgUrls.length)];
   let svgId = addSvgFilterForElement(bgToShow, window.baseColors[curEmotion.base][curEmotion.level % 3]);
   bgToShow.data('svgId', svgId);
   bgToShow.css('background-image', `url(${imgUrl})`);
@@ -220,7 +220,7 @@ function PopupFactory(emotionObj) {
 
     if (type === 0 || type === 1) {
       // attach a color modified image
-      const imageURL = imgURLs[Math.floor(Math.random() * imgURLs.length)];
+      const imageURL = imgUrls[Math.floor(Math.random() * imgUrls.length)];
       const imgEl = $(`<img src="${imageURL}">`);
       if (Math.random() < portionFiltered) {
         let svgId = addSvgFilterForElement(imgEl, window.baseColors[curEmotion.base][emotionObj.level - 1]);

@@ -10,7 +10,7 @@
 6. Individual areas can be visited at the following paths (or on http at port 3001):
    - https://localhost:3000/00-intro
    - https://localhost:3000/01-faces
-   - https://localhost:3000/02-reflection
+   - https://localhost:3000/02-reflection?screen=0,1,2
    - https://localhost:3000/03-selection
    - https://localhost:3000/04-convo1
    - https://localhost:3000/05-convo2
@@ -50,8 +50,8 @@
     + `import { getImgUrls, addSvgFilterForElement } from './lib/imageColorUtils.js';`
 - `imageColorUtils.js`
     + `getImgUrls (baseEmotion)` a function that returns an array of image urls for a certain base emotion
-        - used like `const imageURLs = await getImgUrls('angry');`
-        - or `getImgUrls('angry').then(imageURLs => {do whatever u want here})`
+        - used like `const imageUrls = await getImgUrls('angry');`
+        - or `getImgUrls('angry').then(imageUrls => {do whatever u want here})`
     + `addSvgFilterForElement ($imgEl, arrayOfColors)` this function adds an svg element to the document that has a multitone treatment, and sets css of the `$imgEl` (which is a jquery element) to use it as a filter `arrayOfColors` must be an array of 2 or more hex colors: `['7c4242', '584794', '608942']` (`#` infront of the color is optional)
     + `getDimensions(url)` returns promise that resolves to the width and height of an image url used like: 
         - `const imageDims = await getDimensions('/images/confused/image.jpeg');`

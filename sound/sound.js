@@ -28,13 +28,16 @@ const playEmotion = (emotion) => {
   let track = process.env.HTTP_SERVER + 'sound/sounds/' + emotion.base + '.aif';
   let reflectionTrack = process.env.HTTP_SERVER + 'sound/sounds-reflection/' + emotion.base + '-' + emotion.name + '.wav';
   for (area of areas.rest) {
+    area.setVolume(0);
     // area.setVolume(55 + emotion.level * 15);
-    area.setVolume(5 + emotion.level * 15);
+    // area.setVolume(5 + emotion.level * 15);
     area.play(track).then(() => { console.log('SOUND: rest playing '+track); }).catch(err => { console.log(err) })
   }  
   for (area of areas.reflection) {
     // area.setVolume(55 + emotion.level * 15);
-    area.setVolume(5 + emotion.level * 15);
+    // area.setVolume(5 + emotion.level * 15);
+
+    area.setVolume(0);
     area.play(reflectionTrack).then(() => { console.log('SOUND: reflection playing '+reflectionTrack); }).catch(err => { console.log(err) })
   }
 };
