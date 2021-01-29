@@ -23,11 +23,6 @@ body {
   background: black;
 }
 
-#video-holder {
-  position: fixed;
-  
-}
-
 #face-stream {
   visibility: hidden;
   -webkit-transform: scaleX(-1);
@@ -36,16 +31,18 @@ body {
 
 .filtered {
   visibility: hidden;
-  width: 100vw;
-  height: 100vh;
+  position: fixed;
 }
 
 
 .filtered video {
+  -webkit-filter: grayscale(100%) contrast(170%);
+  filter: grayscale(100%) contrast(170%);
+  opacity: 1;
+}
+
+.filtered .stream-wrapper {
   mix-blend-mode: screen;
- -webkit-filter: grayscale(100%) contrast(170%);
- filter: grayscale(100%) contrast(170%);
- opacity: 1;
 }
 
 
