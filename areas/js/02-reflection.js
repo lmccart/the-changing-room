@@ -354,8 +354,6 @@ function generateMemoryPairs() {
     thisMemPair.push({
       type: 'image',
       url: imgURLs[imgCounter++],
-      left: `${ Math.random() * 80 }vw`,
-      top: `${ Math.random() * 80 }vh`,
       screenNumber: screenNumber,
     });
 
@@ -363,16 +361,12 @@ function generateMemoryPairs() {
       thisMemPair.push({ 
         type: 'text',
         text: thisEmotionMemories[memCounter++],
-        left: `${ Math.random() * 80 }vw`,
-        top: `${ Math.random() * 80 }vh`,
         screenNumber: screenNumber,
       });
     } else {
       thisMemPair.push({
         type: 'image',
         url: imgURLs[imgCounter++],
-        left: `${ Math.random() * 80 }vw`,
-        top: `${ Math.random() * 80 }vh`,
         screenNumber: screenNumber,
       });
     }
@@ -400,11 +394,8 @@ function displayMeditationPhrase(opts) {
     });
 }
 
-function displayMemory(opts) {
-
-  //{ data: mem, top: ~, left: ~, fadeIn: 100, fadeOut: 100 };
+function generateMemoryDiv(memory) {
   let memdiv;
-  let memory = opts.data;
  
   if (memory.type === 'text') {
     memdiv = $('<div></div>');
@@ -419,12 +410,115 @@ function displayMemory(opts) {
   } 
 
   memdiv.addClass('memory');
-  memdiv.css({ top:  memory.top, left: memory.left });
+
+  return memdiv;
+}
 
 
-  memdiv
-    .hide()
-    .appendTo('#memory_container')
+function generateMemoryLocations(memdivs) {
+
+  let minoverlap = 0.7;
+  let maxoverlap = 1.2;
+  let memoryPadding = 30; // memory padding in pixels - will add padding around which memories won't be placed
+
+
+  // first let's assume that the first div is at 0, 0
+  let m1 = { 
+    x: 0, 
+    y: 0, 
+    height: memdivs[0].height(), 
+    width: memdivs[0].width() 
+  }; 
+
+  let m2 = {
+    height: memdivs[0].height(), 
+    width: memdivs[0].width() 
+  }; //m2 locations based on trig
+
+  let overlapcoeff = minoverlap + (Math.random() * (maxoverlap - minoverlap));
+
+  let randangle = Math.random() * Math.PI * 2; // random angle in radians
+
+  let possiblem1r1 = Math.abs(m1.height / 2 / Math.sin(randangle));
+  let possiblem1r2 = Math.abs(m1.width / 2 / Math.cos(randangle));
+  let m1r = Math.min(possiblem1r1, possiblem1r2);  
+
+  let possiblem2r1 = Math.abs(m2.height / 2 / Math.sin(randangle));
+  let possiblem2r2 = Math.abs(m2.width / 2 / Math.cos(randangle));
+  let m2r = Math.min(possiblem2r1, possiblem2r2);  
+
+  let distapart = (m1r + m2r) * overlapcoeff;
+
+
+  // set m2 locations with some trig
+  m2.x = (Math.cos(randangle) * distapart) + m1.x;
+  m2.y = (Math.sin(randangle) * distapart) + m1.y;
+
+  //////////////////
+
+
+  // adjust coordinates so that none are negative
+  if (m2.x < 0) { 
+    m1.x += Math.abs(m2.x);
+    m2.x = 0;
+  }
+
+  if (m2.y < 0) { 
+    m1.y += Math.abs(m2.y);
+    m2.y = 0;
+  }
+
+  // get boundingbox of both overlapping rectangles
+  let bb = {};
+  bb.x1 = Math.min(m1.x, m2.x); 
+  bb.y1 = Math.min(m1.y, m2.y); 
+  bb.x2 = Math.max(m1.x + m1.width, m2.x + m2.width); 
+  bb.y2 = Math.max(m1.y + m1.height, m2.y + m2.height); 
+  bb.width = bb.x2 - bb.x1;
+  bb.height = bb.y2 - bb.y1;
+
+
+  // SO now we position the bounding box randomly within the screen
+  bb.screenX = Math.random() * (thisScreenParams.width - bb.width - (memoryPadding * 2));
+  bb.screenY = Math.random() * (thisScreenParams.height - bb.height - (memoryPadding * 2));
+
+
+  // and then drive memdiv screen locations from that
+  m1.screenX = m1.x + bb.screenX;
+  m1.screenY = m1.y + bb.screenY;
+  m2.screenX = m2.x + bb.screenX;
+  m2.screenY = m2.y + bb.screenY;
+
+  return {
+    m1: m1,
+    m2: m2,
+    bb: bb,
+    randangle: randangle,
+    distapart: distapart
+  };
+
+}
+
+
+function displayMemoryPair(opts) {
+  //{ data: [mem, mem], top: ~, left: ~, fadeIn: 100, fadeOut: 100 };
+  //
+  console.log(opts.data);
+
+  let memdivs = opts.data.map(generateMemoryDiv);
+
+  memdivs.forEach(m => {
+    m.hide().appendTo('#memory_container');
+  });
+
+  let memlocs = generateMemoryLocations(memdivs);
+
+  memdivs[0].css({ top: memlocs.m1.screenY, left: memlocs.m1.screenX });
+  memdivs[1].css({ top: memlocs.m2.screenY, left: memlocs.m2.screenX });
+
+  memdivs[0]
+    .fadeIn(opts.fadeIn);
+  memdivs[1]
     .fadeIn(opts.fadeIn);
 
 
@@ -442,7 +536,7 @@ function setColorsAndBackgrounds() {
 
   const bg = $('#background');
 
-  const imgUrl = seedShuffle(imgURLs, sharedSeed)[0];
+  const imgUrl = imgURLs[sharedSeed % imgURLs.length];
   let prevSvgId = bg.data('svgId');
   let svgId = addSvgFilterForElement(bg, window.baseColors[curEmotion.base][curEmotion.level % 3]);
   bg.data('svgId', svgId);
@@ -469,11 +563,6 @@ function setColorsAndBackgrounds() {
       bgIsTaller = true;
     }
 
-    console.log('thisScreen', thisScreenParams.width, thisScreenParams.height);
-    console.log('centerScreen', screenParams[1].width, screenParams[1].height);
-    console.log('nw nh', nw, nh);
-    console.log('bgw, bgh, bgscale', bgw, bgh, bgscale);
-    console.log('bgIsTaller', bgIsTaller);
       
     if (thisScreenParams.id === 0) {
       $('#background').css('background-size', `${bgw}px ${bgh}px`);
@@ -561,7 +650,6 @@ function queueEvents(timeline) {
     
 
   });
-  
 
   ///////// MEDITATION FADES OUT
   //
@@ -593,15 +681,8 @@ function queueEvents(timeline) {
       if (mempair[0].screenNumber === thisScreenParams.id || thisScreenParams.name === 'FULLSCREEN') {
       //only display if we're on the right screen
         //
-        displayMemory({
-          data: mempair[0],
-          fadeIn: each_memory_fadein_duration,
-          fadeOut: each_memory_fadeout_duration,
-        });
-
-
-        displayMemory({
-          data: mempair[1],
+        displayMemoryPair({
+          data: mempair,
           fadeIn: each_memory_fadein_duration,
           fadeOut: each_memory_fadeout_duration,
         });
