@@ -1,7 +1,7 @@
 import $ from 'jquery';
 import '../css/00-intro.scss';
 import './shared.js';
-import { getImgUrls, addSvgFilterForElement, getTextColorForBackground } from './lib/imageColorUtils.js';
+import { getImgUrls, getTextColorForBackground } from './lib/imageColorUtils.js';
 
 /* VARIABLES */
 const scroll_up_time = 5000;
@@ -31,6 +31,7 @@ function updateEmotion(msg) {
   if (!curEmotion || curEmotion.name !== msg.name) {
     curEmotion = msg;
     console.log('emotion has been updated to: ' + msg.name + ' (base: ' + msg.base + ', level: ' + msg.level + ')');
+    $('#debug-info').text('CURRENT EMOTION: ' + curEmotion.name + ' (base: ' + curEmotion.base + ', level: ' + curEmotion.level + ')');
     let durations = showLoadingOverlay(curEmotion);
     setTimeout(() => { updateInterface(durations); }, durations[0]);
     $('.intro-text-container').css('visibility', 'hidden');
