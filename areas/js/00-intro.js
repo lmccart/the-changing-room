@@ -23,13 +23,11 @@ window.init = () => {
 };
 
 window.loadingComplete = () => {
-  console.log('sodfdfs');
   $('.intro-text-container').css('visibility', 'visible');
   scrollDown();
 };
 
 function updateEmotion(msg) {
-  console.log('updateEmotion');
   if (!curEmotion || curEmotion.name !== msg.name) {
     curEmotion = msg;
     console.log('emotion has been updated to: ' + msg.name + ' (base: ' + msg.base + ', level: ' + msg.level + ')');

@@ -5,7 +5,7 @@ import './shared.js';
 
 // VARIABLES
 const num_panels = 4;
-const idle_timeout = 30;
+const idle_timeout = 60;
 const scroll_timeout = 3;
 const scroll_down_time = 990000;
 const scroll_up_time = 9000;
@@ -17,7 +17,7 @@ const separate_scroll_times = [
   110 * 1000,
   78 * 1000,
   95 * 1000,
-  122 * 1000
+  52 * 1000
 ];
 
 let curEmotion;
@@ -80,6 +80,10 @@ function updateEmotion(msg) {
   if (!curEmotion || curEmotion.name !== msg.name) {
     curEmotion = msg;
     console.log('emotion has been updated to: ' + msg.name + ' (base: ' + msg.base + ', level: ' + msg.level + ')');
+    $('body').addClass('notouch').delay(window.loadingDur).queue(next => {
+      $('body').removeClass('notouch');
+      next();
+    });
     updateInterface();
   }
 }
@@ -129,7 +133,7 @@ function selection_txt_parse(sel_intro_content) {
 
 ////////////////// JOINED MODE
 function joinedmode() {
-  $('#wrapper_joined').stop().fadeIn(fade_time, function() {
+  $('#wrapper_joined').stop(true).fadeIn(fade_time, function() {
     scrollToEmotion(curEmotion.name, curEmotion.base);
   });
   // $('#wrapper_joined').css('display','flex');
@@ -144,7 +148,7 @@ function joinedTimer() {
   clearInterval(timer_to_idle);
   timer = setInterval(function() { 
     sec--;
-    console.log('seconds to scroll ' + sec);
+    // console.log('seconds to scroll ' + sec);
     if (sec === -1) {
       console.log('restart autoscroll');
       clearInterval(timer);
@@ -153,7 +157,7 @@ function joinedTimer() {
   }, 1000);
   timer_to_idle = setInterval(function() {
     sec_to_idle--;
-    console.log('seconds to idle ' + sec_to_idle);
+    // console.log('seconds to idle ' + sec_to_idle);
     if (sec_to_idle === -1) {
       clearInterval(timer_to_idle);
       separatemode();
@@ -163,14 +167,20 @@ function joinedTimer() {
 //stop auto scroll on manual scroll, restart timers
 $('#wrapper_joined').on('click wheel DOMMouseScroll mousewheel keyup touchmove', function(e) {
   if (e.type !== 'click') {
-    $('#wrapper_joined').stop(); 
+    $('#wrapper_joined').stop(true); 
+    $('#wrapper_joined').clearQueue(); 
   }
   joinedTimer();
   setHandInterval();
 });
 
 function scrollDown(el, scroll_dur) {
-  let dur = scroll_dur || scroll_down_time;
+  let dur = scroll_dur;
+  if (!dur) {
+    dur = (1 - ($('#wrapper_joined').scrollTop() / $('#wrapper_joined')[0].scrollHeight)) * scroll_down_time;
+  }
+  // console.log($('#wrapper_joined').scrollTop(), $('#wrapper_joined')[0].scrollHeight);
+  // console.log('scroll dur down is ' + dur);
   el.animate({
     scrollTop: el.get(0).scrollHeight
   }, dur, 'linear', function() {
@@ -179,7 +189,11 @@ function scrollDown(el, scroll_dur) {
 }; 
 
 function scrollUp(el, scroll_dur) {
-  let dur = scroll_dur || scroll_up_time;
+  let dur = scroll_dur;
+  if (!dur) {
+    dur = ($('#wrapper_joined').scrollTop() / $('#wrapper_joined')[0].scrollHeight) * scroll_up_time;
+  }
+  // console.log('scroll dur up is ' + dur);
   el.animate({
     scrollTop: 0
   }, dur, function() {
@@ -198,16 +212,16 @@ function scrollToEmotion(emotion_name, base_emotion) {
   const middle = $(window).height() / 2;
   const scrollVal = currentScroll + (currentPosition - middle + (elHeight / 2));
   console.log(currentScroll, currentPosition, scrollVal);
-  $('#wrapper_joined').stop().animate({
+  $('#wrapper_joined').stop(true).animate({
     scrollTop: scrollVal
   }, 2000, 'linear');
 }
 
 ////////////////// SEPARATE MODE
 function separatemode() {
-  $('#wrapper_joined').stop().fadeOut(fade_time);
+  $('#wrapper_joined').stop(true).fadeOut(fade_time);
   $('#wrapper_joined').css('display','none');
-  $('#wrapper_separate').stop().fadeIn(fade_time);
+  $('#wrapper_separate').stop(true).fadeIn(fade_time);
   $('#wrapper_separate').css('display','flex');
   setTimeout(scroll_separate_panels, 500);
 }

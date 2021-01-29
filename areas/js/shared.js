@@ -2,8 +2,8 @@ import $ from 'jquery';
 import { getTextColorForBackground, addSvgFilterForElement } from './lib/imageColorUtils.js';
 
 
-const loadingDur = 3000;
-const loadingFadeDur = 300;
+window.loadingDur = 3000;
+window.loadingFadeDur = 300;
 
 window.socket = io();
 
@@ -26,18 +26,17 @@ window.showLoadingOverlay = (newEmotion) => {
   $('#loading').css('color', textColor);
 
   $('#loading-emotion').text(newEmotion.name);
-  // $('#loading').addClass('show');
-  $('#loading').fadeIn(loadingFadeDur);
+  $('#loading').fadeIn(window.loadingFadeDur);
 
 
   setTimeout(function() {
-    $('#loading').fadeOut(loadingFadeDur);
+    $('#loading').fadeOut(window.loadingFadeDur);
     $('#loading-emotion').empty();
     if (window.loadingComplete) {
       window.loadingComplete();
     }
   }, loadingDur);
-  return [loadingFadeDur, loadingDur];
+  return [window.loadingFadeDur, window.loadingDur];
 };
 
 

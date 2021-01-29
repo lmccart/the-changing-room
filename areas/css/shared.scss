@@ -133,6 +133,10 @@ body.black ::-webkit-scrollbar-thumb {
   }
 }
 
+.notouch {
+  pointer-events: none;
+}
+
 // This class is useful as a base for the 'window' look we use a lot
 .window {
   position: relative;
