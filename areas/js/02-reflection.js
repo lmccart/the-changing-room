@@ -5,17 +5,33 @@ import seedrandom from 'seedrandom';
 import '../css/02-reflection.scss';
 import './shared.js';
 import Timeline from './Timeline.js';
+import { getImgUrls, addSvgFilterForElement, getTextColorForBackground } from './lib/imageColorUtils.js';
 
 let emotions;
 let curEmotion;
+let backgroundColor;
+let backgroundTextColor;
+let memoriesColor;
 
 var dataMeditations;
 var dataMeditationEmotions;
 var dataMemories;
 var timeline;
-var imageList = [];
+var imgURLs = [];
 var preloadedImages = []; // kept here to preload images; without this, some browsers might clear cache & unload images
 var thisScreenParams;
+var sharedSeed = 0;
+
+
+///////////////////////////////////////////////
+//// Screen parameters
+
+var screenParams = {
+  0: { id: 0, name: 'LEFT', width: 1631, height: 1080 },
+  1: { id: 1, name: 'CENTER', width: 1768, height: 1080 },
+  2: { id: 2, name: 'RIGHT', width: 1700, height: 1080 },
+  999: { id: 999, name: 'FULLSCREEN', width: 1631 + 1768 + 1700, height: 1080 },
+};
 
 
 ////////////// MEDITATION TIMINGS /////////////
@@ -92,15 +108,6 @@ let timeline_end_pause = 3000;
 // again.
 
 
-///////////////////////////////////////////////
-//// Screen parameters
-
-var screenParams = {
-  0: { id: 0, name: 'LEFT', width: 1631, height: 1080 },
-  1: { id: 1, name: 'CENTER', width: 1768, height: 1080 },
-  2: { id: 2, name: 'RIGHT', width: 1700, height: 1080 },
-  999: { id: 999, name: 'FULLSCREEN', width: 1631 + 1768 + 1700, height: 1080 },
-};
 
 ///////////////////////////////////////////////
 /* DEV TIMINGS
@@ -120,10 +127,19 @@ window.init = () => {
     console.log('Data loaded!');
 
     socket.on('emotion:update', updateEmotionCurried(() => {
-
       initTimelineIfItIsnt(); 
-
     }));
+
+    socket.on('reflection:restart', (msg) => {
+      let opt = JSON.parse(msg);
+      sharedSeed = opt.seed;
+      console.log('shared seed = ', sharedSeed);
+
+      resetHTML();
+      timeline.start();
+      console.log('REFLECTION RESTARTED');
+    });
+
     socket.emit('emotion:get');
   });
 };
@@ -167,19 +183,18 @@ function setScreen() {
 
 function updateImageList(cb) {
 
-  fetch(`/images/${curEmotion.base}/manifest`)
-    .then(res => res.blob())
-    .then(blob => blob.text())
-    .then(text => { 
-      imageList = JSON.parse(text);
+  getImgUrls(curEmotion.base)
+    .then(images => { 
+
+      imgURLs = images;
 
       preloadedImages = [];
-      imageList.forEach(url => {
+      imgURLs.forEach(url => {
         let img = new Image();
         img.src = url;
         preloadedImages.push(img);
       });
-      cb(text);
+      cb(imgURLs);
     });
 }
 
@@ -312,10 +327,9 @@ function generateMemoryPairs() {
  
   var memories = [];
 
-  var thisEmotionMemories = dataMemories[curEmotion.base];
+  var thisEmotionMemories = seedShuffle(dataMemories[curEmotion.base], sharedSeed);
 
-  let rng = seedrandom(curEmotion.base + new Date().getHours());
-  // This means that the image sequence will rely on the current hour 
+  let rng = seedrandom(sharedSeed);
 
   let screenNumber;
 
@@ -323,7 +337,7 @@ function generateMemoryPairs() {
   let memCounter = 0;
 
   
-  while (imgCounter < imageList.length) {
+  while (imgCounter < imgURLs.length) {
 
     // randomly pick screen
     let r = rng();
@@ -339,13 +353,13 @@ function generateMemoryPairs() {
 
     thisMemPair.push({
       type: 'image',
-      url: imageList[imgCounter++],
+      url: imgURLs[imgCounter++],
       left: `${ Math.random() * 80 }vw`,
       top: `${ Math.random() * 80 }vh`,
       screenNumber: screenNumber,
     });
 
-    if (imgCounter < imageList.length && memCounter < thisEmotionMemories.length && rng() < 0.5) {
+    if (imgCounter < imgURLs.length && memCounter < thisEmotionMemories.length && rng() < 0.5) {
       thisMemPair.push({ 
         type: 'text',
         text: thisEmotionMemories[memCounter++],
@@ -356,7 +370,7 @@ function generateMemoryPairs() {
     } else {
       thisMemPair.push({
         type: 'image',
-        url: imageList[imgCounter++],
+        url: imgURLs[imgCounter++],
         left: `${ Math.random() * 80 }vw`,
         top: `${ Math.random() * 80 }vh`,
         screenNumber: screenNumber,
@@ -401,6 +415,7 @@ function displayMemory(opts) {
     memdiv = $('<img></img>');
     memdiv.addClass('image');
     memdiv.attr('src', memory.url);
+    let svgId = addSvgFilterForElement(memdiv, memoriesColor);
   } 
 
   memdiv.addClass('memory');
@@ -412,11 +427,86 @@ function displayMemory(opts) {
     .appendTo('#memory_container')
     .fadeIn(opts.fadeIn);
 
+
 }
+
+
+function setColorsAndBackgrounds() {
+  backgroundColor = window.baseColors[curEmotion.base][curEmotion.level % 3];
+  memoriesColor = window.baseColors[curEmotion.base][(curEmotion.level - 1) % 3];
+  window.baseColors[curEmotion.base];
+  backgroundTextColor = getTextColorForBackground(backgroundColor[0]);
+  $('#meditation_text').css('color', backgroundTextColor);
+  $('#meditation_container').css('border-color', backgroundTextColor);
+
+
+  const bg = $('#background');
+
+  const imgUrl = seedShuffle(imgURLs, sharedSeed)[0];
+  let prevSvgId = bg.data('svgId');
+  let svgId = addSvgFilterForElement(bg, window.baseColors[curEmotion.base][curEmotion.level % 3]);
+  bg.data('svgId', svgId);
+  bg.css('background-image', `url(${imgUrl})`);
+  $('#loader').attr('src', imgUrl).off();
+  $('#loader').attr('src', imgUrl).on('load', function() {
+
+    let nw = $('#loader')[0].naturalWidth;
+    let nh = $('#loader')[0].naturalHeight;
+    let bgw, bgh, bgscale;
+    let bgIsTaller = false;
+    if ((nw / nh) > (screenParams[1].width / screenParams[1].height)) {
+      // background image is wider than screen, so 
+      // it is filled at top and bottom and cropped on the sides
+      bgh = screenParams[1].height;
+      bgw = bgh * nw / nh;
+      bgscale = bgw / nw;
+    } else {
+      // background image is taller than screen, so 
+      // it is filled at left and right and cropped at top and bottom
+      bgw = screenParams[1].width;
+      bgh = bgw * nh / nw;
+      bgscale = bgh / nh;
+      bgIsTaller = true;
+    }
+
+    console.log('thisScreen', thisScreenParams.width, thisScreenParams.height);
+    console.log('centerScreen', screenParams[1].width, screenParams[1].height);
+    console.log('nw nh', nw, nh);
+    console.log('bgw, bgh, bgscale', bgw, bgh, bgscale);
+    console.log('bgIsTaller', bgIsTaller);
+      
+    if (thisScreenParams.id === 0) {
+      $('#background').css('background-size', `${bgw}px ${bgh}px`);
+      if (bgIsTaller) {
+        $('#background').css('background-position', `-${(bgw - screenParams[1].width)}px center`);
+      } else {
+        $('#background').css('background-position', `calc(0% - ${(bgw - screenParams[1].width) / 2}px) center`);
+      }
+    }
+   
+    if (thisScreenParams.id === 2) {
+      $('#background').css('background-size', `${bgw}px ${bgh}px`);
+      if (bgIsTaller) {
+        $('#background').css('background-position', `calc(100% - ${(bgw - screenParams[1].width)}px) center`);
+      } else {
+        $('#background').css('background-position', `calc(0% - ${(bgw - thisScreenParams.width) / 2}px) center`);
+      }
+    }
+   
+    
+    setTimeout(() => {
+      console.log(`removing #${prevSvgId}`);
+      $(`#${prevSvgId}`).remove();
+    }, 1000);
+  });
+}
+
 
 /////////////////////////////////
 
 function resetHTML(cb) {
+  $('svg').remove();
+  setColorsAndBackgrounds();
   $('#meditation_text').fadeOut(1000, function() {
     $(this).empty();
     $(this).fadeIn(1000);
@@ -540,7 +630,13 @@ function queueEvents(timeline) {
 
   timeMarker += timeline_end_pause;
 
-  timeline.setDuration(timeMarker); // LOOP
+  timeline.add({ time: timeMarker, event: function() { 
+    if (thisScreenParams.id === 1) { 
+      socket.emit('reflection:end');
+    }
+  } });
+
+  timeline.setDuration(timeMarker); 
 
 
 }
@@ -552,7 +648,7 @@ function initTimelineIfItIsnt() {
 
     console.log('Initializing timeline');
  
-    timeline = new Timeline({ loop: true, duration: 50000, interval: 100 }); 
+    timeline = new Timeline({ loop: false, duration: 50000, interval: 100 }); 
 
     resetHTML();
 

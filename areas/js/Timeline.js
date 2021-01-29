@@ -108,7 +108,7 @@ class Timeline {
             loopUpdate();
           } else {
           // we're not looping and we're over
-            if (typeof(opts.callback) === 'function') {
+            if (opts && 'callback' in opts && typeof(opts.callback) === 'function') {
               opts.callback();
             }
           }
