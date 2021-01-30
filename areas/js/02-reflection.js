@@ -174,6 +174,8 @@ function updateInterface() {
 
 
 ///////////////////////////
+// DATA AND PARAMS
+//////////////////////////
 
 
 function setScreen() {
@@ -290,28 +292,6 @@ function loadData(cb) {
 }
 
 
-//////////////////////
-
-
-
-
-function generateMeditationTexts() {
-
-  let thisDataMeditationInserts = dataMeditationEmotions[curEmotion.name];
-
-  return dataMeditations
-    .map((m) => {
-      let newm = m;
-      for (let k in thisDataMeditationInserts) {
-        newm = newm.replace(`[${k}]`, thisDataMeditationInserts[k]); 
-      }
-      
-      return newm;
-    })
-    .filter((m) => {
-      return m !== ''; 
-    });
-}
 
 function seedShuffle(array, seed) { 
 
@@ -334,7 +314,122 @@ function seedShuffle(array, seed) {
   return array;
 }
 
-function generateMemoryPairs() {
+
+/////////////////////////////////
+///// BACKGROUNDS
+//////////////////////////////////
+
+
+function setColorsAndBackgrounds() {
+  backgroundColor = window.baseColors[curEmotion.base][curEmotion.level % 3];
+  memoriesColor = window.baseColors[curEmotion.base][(curEmotion.level - 1) % 3];
+  window.baseColors[curEmotion.base];
+  backgroundTextColor = getTextColorForBackground(backgroundColor[0]);
+  $('#meditation_text').css('color', backgroundTextColor);
+  $('#meditation_container').css('border-color', backgroundTextColor);
+
+
+  const bg = $('#background');
+
+  const imgUrl = imgURLs[sharedSeed % imgURLs.length];
+  let prevSvgId = bg.data('svgId');
+  let svgId = addSvgFilterForElement(bg, window.baseColors[curEmotion.base][curEmotion.level % 3]);
+  bg.data('svgId', svgId);
+  bg.css('background-image', `url(${imgUrl})`);
+  $('#loader').attr('src', imgUrl).off();
+  $('#loader').attr('src', imgUrl).on('load', function() {
+
+    let nw = $('#loader')[0].naturalWidth;
+    let nh = $('#loader')[0].naturalHeight;
+    let bgw, bgh, bgscale;
+    let bgIsTaller = false;
+    if ((nw / nh) > (screenParams[1].width / screenParams[1].height)) {
+      // background image is wider than screen, so 
+      // it is filled at top and bottom and cropped on the sides
+      bgh = screenParams[1].height;
+      bgw = bgh * nw / nh;
+      bgscale = bgw / nw;
+    } else {
+      // background image is taller than screen, so 
+      // it is filled at left and right and cropped at top and bottom
+      bgw = screenParams[1].width;
+      bgh = bgw * nh / nw;
+      bgscale = bgh / nh;
+      bgIsTaller = true;
+    }
+
+      
+    if (thisScreenParams.id === 0) {
+      $('#background').css('background-size', `${bgw}px ${bgh}px`);
+      if (bgIsTaller) {
+        $('#background').css('background-position', `-${(bgw - screenParams[1].width)}px center`);
+      } else {
+        $('#background').css('background-position', `calc(0% - ${(bgw - screenParams[1].width) / 2}px) center`);
+      }
+    }
+   
+    if (thisScreenParams.id === 2) {
+      $('#background').css('background-size', `${bgw}px ${bgh}px`);
+      if (bgIsTaller) {
+        $('#background').css('background-position', `calc(100% - ${(bgw - screenParams[1].width)}px) center`);
+      } else {
+        $('#background').css('background-position', `calc(0% - ${(bgw - thisScreenParams.width) / 2}px) center`);
+      }
+    }
+   
+    
+    setTimeout(() => {
+      console.log(`removing #${prevSvgId}`);
+      $(`#${prevSvgId}`).remove();
+    }, 1000);
+  });
+}
+
+
+
+
+///////////////////////////////////
+//////////// MEDITATIONS
+///////////////////////////////////
+
+
+function generateMeditationTexts() {
+
+  let thisDataMeditationInserts = dataMeditationEmotions[curEmotion.name];
+
+  return dataMeditations
+    .map((m) => {
+      let newm = m;
+      for (let k in thisDataMeditationInserts) {
+        newm = newm.replace(`[${k}]`, thisDataMeditationInserts[k]); 
+      }
+      
+      return newm;
+    })
+    .filter((m) => {
+      return m !== ''; 
+    });
+}
+
+function displayMeditationPhrase(opts) {
+  // opts: { text: mt, fadeIn: 100, fadeOut: 100 };
+  if (thisScreenParams.id !== 1) { 
+    console.log('...displaying meditation on screen 1...');
+  }
+  $('#meditation_text')
+    .fadeOut(opts.fadeOut, function() {
+      $(this)
+        .text(opts.text)
+        .fadeIn(opts.fadeIn);
+    });
+}
+
+
+///////////////////////////////////
+///////////// MEMORIES
+///////////////////////////////////
+
+function generateAndPreloadMemoryPairs() {
  
   var memories = [];
 
@@ -397,17 +492,16 @@ function generateMemoryPairs() {
 
 }
 
-function displayMeditationPhrase(opts) {
-  // opts: { text: mt, fadeIn: 100, fadeOut: 100 };
-  if (thisScreenParams.id !== 1) { 
-    console.log('...displaying meditation on screen 1...');
-  }
-  $('#meditation_text')
-    .fadeOut(opts.fadeOut, function() {
-      $(this)
-        .text(opts.text)
-        .fadeIn(opts.fadeIn);
-    });
+
+function preloadImages(memdata) {
+
+  memdata.forEach((mempair, i) => {
+    if (mempair[0].screenNumber === thisScreenParams.id || thisScreenParams.name === 'FULLSCREEN') {
+      preloadMempairDivs(mempair, i);
+    }
+  });
+
+
 }
 
 function preloadMempairDivs(mempairdata, index) {
@@ -541,86 +635,20 @@ function generateMemoryLocations(memdivs) {
 }
 
 
-function displayMemoryPair(opts) {
+function displayMemoryPair(mempair) {
   //{ data: [mem, mem], top: ~, left: ~, fadeIn: 100, fadeOut: 100 };
-  let mempairdata = opts.data;
+  // mem looks like: { id: '#memory-0-1', ... }
 
-
-  memdivs[0]
-    .fadeIn(opts.fadeIn);
-  memdivs[1]
-    .fadeIn(opts.fadeIn);
-
-
-}
-
-
-function setColorsAndBackgrounds() {
-  backgroundColor = window.baseColors[curEmotion.base][curEmotion.level % 3];
-  memoriesColor = window.baseColors[curEmotion.base][(curEmotion.level - 1) % 3];
-  window.baseColors[curEmotion.base];
-  backgroundTextColor = getTextColorForBackground(backgroundColor[0]);
-  $('#meditation_text').css('color', backgroundTextColor);
-  $('#meditation_container').css('border-color', backgroundTextColor);
-
-
-  const bg = $('#background');
-
-  const imgUrl = imgURLs[sharedSeed % imgURLs.length];
-  let prevSvgId = bg.data('svgId');
-  let svgId = addSvgFilterForElement(bg, window.baseColors[curEmotion.base][curEmotion.level % 3]);
-  bg.data('svgId', svgId);
-  bg.css('background-image', `url(${imgUrl})`);
-  $('#loader').attr('src', imgUrl).off();
-  $('#loader').attr('src', imgUrl).on('load', function() {
-
-    let nw = $('#loader')[0].naturalWidth;
-    let nh = $('#loader')[0].naturalHeight;
-    let bgw, bgh, bgscale;
-    let bgIsTaller = false;
-    if ((nw / nh) > (screenParams[1].width / screenParams[1].height)) {
-      // background image is wider than screen, so 
-      // it is filled at top and bottom and cropped on the sides
-      bgh = screenParams[1].height;
-      bgw = bgh * nw / nh;
-      bgscale = bgw / nw;
-    } else {
-      // background image is taller than screen, so 
-      // it is filled at left and right and cropped at top and bottom
-      bgw = screenParams[1].width;
-      bgh = bgw * nh / nw;
-      bgscale = bgh / nh;
-      bgIsTaller = true;
-    }
-
-      
-    if (thisScreenParams.id === 0) {
-      $('#background').css('background-size', `${bgw}px ${bgh}px`);
-      if (bgIsTaller) {
-        $('#background').css('background-position', `-${(bgw - screenParams[1].width)}px center`);
-      } else {
-        $('#background').css('background-position', `calc(0% - ${(bgw - screenParams[1].width) / 2}px) center`);
-      }
-    }
-   
-    if (thisScreenParams.id === 2) {
-      $('#background').css('background-size', `${bgw}px ${bgh}px`);
-      if (bgIsTaller) {
-        $('#background').css('background-position', `calc(100% - ${(bgw - screenParams[1].width)}px) center`);
-      } else {
-        $('#background').css('background-position', `calc(0% - ${(bgw - thisScreenParams.width) / 2}px) center`);
-      }
-    }
-   
-    
-    setTimeout(() => {
-      console.log(`removing #${prevSvgId}`);
-      $(`#${prevSvgId}`).remove();
-    }, 1000);
+  mempair.forEach(mem => {
+    $(mem.id).fadeIn(each_memory_fadein_duration);
+    $(mem.id).fadeIn(each_memory_fadein_duration);
   });
+
 }
 
 
+/////////////////////////////////
+///////// Crafting Timeline
 /////////////////////////////////
 
 function resetHTML(cb) {
@@ -630,27 +658,13 @@ function resetHTML(cb) {
   $('#memory_container').empty();
 }
 
-function preloadImages(memdata) {
 
-  memdata.forEach((mempair, i) => {
-    if (mempair[0].screenNumber === thisScreenParams.id || thisScreenParams.name === 'FULLSCREEN') {
-      preloadMempairDivs(mempair, i);
-    }
-  });
-
-
-
-}
 
 function queueEvents(timeline) {
   window.timeline = timeline;
 
 
-
   var timeMarker = 0;
-
-
-
 
   timeline.add({ time: timeMarker, event: function() { 
     showLoadingOverlay(curEmotion);
@@ -660,15 +674,10 @@ function queueEvents(timeline) {
 
   timeMarker += meditations_fadein_pause;
 
-  console.log(thisScreenParams);
-
-
   timeline.add({ time: timeMarker, event: function() { 
     $('#meditation_container').fadeIn(meditations_fadein_duration);
     console.log('TIMELINE STARTING');
   } });
-
-
 
 
   ///////// QUEUE MEDITATIONS
@@ -711,7 +720,7 @@ function queueEvents(timeline) {
 
   ///////// QUEUE MEMORIES
   
-  let mempairs = generateMemoryPairs();
+  let mempairs = generateAndPreloadMemoryPairs();
 
   preloadImages(mempairs);
 
@@ -723,9 +732,8 @@ function queueEvents(timeline) {
 
       if (mempair[0].screenNumber === thisScreenParams.id || thisScreenParams.name === 'FULLSCREEN') {
       //only display if we're on the right screen
-        
-        $(`#memory-${i}-0`).fadeIn(each_memory_fadein_duration);
-        $(`#memory-${i}-1`).fadeIn(each_memory_fadein_duration);
+       
+        displayMemoryPair(mempair)
 
 
         console.log('...WE are displaying memory pair #', i, '...');
@@ -775,6 +783,12 @@ function resetTimeline() {
     queueEvents(timeline);
 
 }
+
+///////////////////////////////////
+//// MAIN
+/////////////////////////////////////
+
+// window.init is on top of page
 
 
 
