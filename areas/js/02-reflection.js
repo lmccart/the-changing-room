@@ -141,8 +141,8 @@ window.init = () => {
     }));
 
     socket.on('reflection:restart', (msg) => {
-      let opt = JSON.parse(msg);
-      sharedSeed = opt.seed;
+
+      sharedSeed = JSON.parse(msg).seed;
       console.log('shared seed = ', sharedSeed);
 
       resetTimeline(); 
