@@ -116,7 +116,7 @@ let timeline_end_pause = 3000;
 
 
 ///////////////////////////////////////////////
-/* DEV TIMINGS
+///* DEV TIMINGS
 meditation_long_interval = 1000;
 meditation_interval = 500;
 each_meditation_fadeout_duration = 50;
@@ -133,7 +133,11 @@ window.init = () => {
     console.log('Data loaded!');
 
     socket.on('emotion:update', updateEmotionCurried(() => {
-      initTimelineIfItIsnt(); 
+      if (timeline === undefined) {
+        // on launch/startup
+        resetTimeline(); 
+        timeline.start();
+      }
     }));
 
     socket.on('reflection:restart', (msg) => {
@@ -141,7 +145,7 @@ window.init = () => {
       sharedSeed = opt.seed;
       console.log('shared seed = ', sharedSeed);
 
-      resetHTML();
+      resetTimeline(); 
       timeline.start();
       console.log('REFLECTION RESTARTED');
     });
@@ -149,6 +153,7 @@ window.init = () => {
     socket.emit('emotion:get');
   });
 };
+
 
 function updateEmotionCurried(callback) {
   return function(msg) {
@@ -759,9 +764,7 @@ function queueEvents(timeline) {
 }
 
 
-function initTimelineIfItIsnt() {  
-
-//  if (timeline === undefined) {
+function resetTimeline() {  
 
     console.log('Initializing timeline');
  
@@ -771,10 +774,6 @@ function initTimelineIfItIsnt() {
 
     queueEvents(timeline);
 
-    timeline.start();
-
-//  }
- 
 }
 
 
