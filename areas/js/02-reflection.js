@@ -581,7 +581,7 @@ function positionMemories(memPairs) {
     console.log(mempair);
 
     let minoverlap = 0.7;
-    let maxoverlap = 1.2;
+    let maxoverlap = 1.1;
     let memoryPadding = 30; // memory padding in pixels - will add padding around which memories won't be placed
 
 
@@ -598,28 +598,29 @@ function positionMemories(memPairs) {
       width: mempair.data[1].width
     }; //m2 locations based on trig
 
-    let overlapcoeff = minoverlap + (Math.random() * (maxoverlap - minoverlap));
+    // either:
+    let sr = Math.random();
 
-    let randangle = Math.random() * Math.PI * 2; // random angle in radians
+    let overlapcoeff = randomBetween(minoverlap, maxoverlap);
 
-    let possiblem1r1 = Math.abs(m1.height / 2 / Math.sin(randangle));
-    let possiblem1r2 = Math.abs(m1.width / 2 / Math.cos(randangle));
-    let m1r = Math.min(possiblem1r1, possiblem1r2);  
-
-    let possiblem2r1 = Math.abs(m2.height / 2 / Math.sin(randangle));
-    let possiblem2r2 = Math.abs(m2.width / 2 / Math.cos(randangle));
-    let m2r = Math.min(possiblem2r1, possiblem2r2);  
-
-    let distapart = (m1r + m2r) * overlapcoeff;
-
-
-    // set m2 locations with some trig
-    m2.x = (Math.cos(randangle) * distapart) + m1.x;
-    m2.y = (Math.sin(randangle) * distapart) + m1.y;
-
-    //////////////////
-
-
+    if (sr <= 0.25) {
+      // m2 is on right side of m1, slid up and down
+      m2.x = m1.width * overlapcoeff;
+      m2.y = randomBetween(m1.y - m2.height, m1.y + m1.height); 
+    } else if (sr <= 0.5) {
+      // m2 is on left side of m1, slid up and down
+      m2.x = -m2.width * overlapcoeff;
+      m2.y = randomBetween(m1.y - m2.height, m1.y + m1.height);
+    } else if (sr <= 0.75) {
+      // m2 is on bottom side of m1, slid left and right
+      m2.y = m1.height * overlapcoeff;
+      m2.x = randomBetween(m1.x - m2.width, m1.x + m1.width);
+    } else {
+      // m2 is on top side of m1, slid left and right
+      m2.y = -m2.height * overlapcoeff;
+      m2.x = randomBetween(m1.x - m2.width, m1.x + m1.width);
+    }
+    
     // adjust coordinates so that none are negative
     if (m2.x < 0) { 
       m1.x += Math.abs(m2.x);
@@ -630,6 +631,31 @@ function positionMemories(memPairs) {
       m1.y += Math.abs(m2.y);
       m2.y = 0;
     }
+
+/*
+    let randangle = randomBetween(0, Math.PI * 2); // random angle in radians
+
+    let distanceToTilePerfectly = Math.cos(randangle) / m1.width;
+
+
+    let possiblem1r1 = Math.abs(m1.height / 2 / Math.sin(randangle));
+    let possiblem1r2 = Math.abs(m1.width / 2 / Math.cos(randangle));
+    let m1r = Math.min(possiblem1r1, possiblem1r2);  
+
+    let possiblem2r1 = Math.abs(m2.height / 2 / Math.sin(randangle));
+    let possiblem2r2 = Math.abs(m2.width / 2 / Math.cos(randangle));
+    let m2r = Math.min(possiblem2r1, possiblem2r2);  
+
+    let distapart = (m1r + m2r) * 1; //overlapcoeff;
+
+
+    // set m2 locations with some trig
+    m2.x = (Math.cos(randangle) * distapart) + m1.x;
+    m2.y = (Math.sin(randangle) * distapart) + m1.y;
+
+    //////////////////
+*/
+
 
     // get boundingbox of both overlapping rectangles
     let bb = {};
@@ -663,8 +689,8 @@ function positionMemories(memPairs) {
     $('#' + mempair.data[1].id).css({ top: mempair.data[1].screenY, left: mempair.data[1].screenX });
 
     mempair.bb = bb;
-    mempair.randangle = randangle;
-    mempair.distapart = distapart;
+//    mempair.randangle = randangle;
+//    mempair.distapart = distapart;
 
     return mempair;
   });
