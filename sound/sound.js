@@ -24,22 +24,29 @@ DeviceDiscovery((device) => {
 });
 
 const playEmotion = (emotion) => {
-  console.log(emotion)
   let track = process.env.HTTP_SERVER + 'sound/sounds/' + emotion.base + '.aif';
   let reflectionTrack = process.env.HTTP_SERVER + 'sound/sounds-reflection/' + emotion.base + '-' + emotion.name + '.wav';
   for (area of areas.rest) {
-    area.setVolume(0);
+    area.setVolume(10);
     // area.setVolume(55 + emotion.level * 15);
-    // area.setVolume(5 + emotion.level * 15);
     area.play(track).then(() => { console.log('SOUND: rest playing '+track); }).catch(err => { console.log(err) })
   }  
   for (area of areas.reflection) {
     // area.setVolume(55 + emotion.level * 15);
-    // area.setVolume(5 + emotion.level * 15);
-
-    area.setVolume(0);
+    area.setVolume(10);
     area.play(reflectionTrack).then(() => { console.log('SOUND: reflection playing '+reflectionTrack); }).catch(err => { console.log(err) })
   }
 };
 
+const stopAll = () => {
+  // console.debug('stop sound');
+  // for (area of areas.rest) {
+  //   area.stop();
+  // }  
+  // for (area of areas.reflection) {
+  //   area.stop();
+  // } 
+}
+
 module.exports.playEmotion = playEmotion;
+module.exports.stopAll = stopAll;

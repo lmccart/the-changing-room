@@ -99,11 +99,15 @@ function setEmotion(emotionName, init) {
   curEmotion = emotions[emotionName];
   curEmotion.seed = Math.round(Math.random() * 10000);
   console.debug(curEmotion);
-  Sound.playEmotion(curEmotion);
   Lights.playEmotion(curEmotion);
   if (!init) {
     io.emit('emotion:update', curEmotion);
     fs.writeFileSync('current.txt', emotionName);
+    Sound.playEmotion(curEmotion);
+  } else { // give time for sonos to find itself
+    setTimeout(() => {
+      Sound.playEmotion(curEmotion);
+    }, 10000);
   }
 }
 
@@ -187,3 +191,33 @@ function generateImagesManifest() {
 
   return manifest;
 }
+
+// CLEANUP
+function cleanup() {
+  console.debug('stop all');
+  Sound.stopAll();
+  Lights.stopAll();
+};
+
+process.on('cleanup', cleanup);
+
+// do app specific cleaning before exiting
+process.on('exit', function () {
+  cleanup();
+  process.emit('cleanup');
+});
+
+// catch ctrl+c event and exit normally
+process.on('SIGINT', function () {
+  console.log('Ctrl-C...');
+  cleanup();
+  process.exit(2);
+});
+
+//catch uncaught exceptions, trace, then exit normally
+process.on('uncaughtException', function(e) {
+  console.log('Uncaught Exception...');
+  console.log(e.stack);
+  cleanup();
+  process.exit(99);
+});

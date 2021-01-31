@@ -5,6 +5,7 @@ const colors = JSON.parse(fs.readFileSync('static/data/colors.json'));
 let api;
 const lights = true;
 let lightsInit = false;
+let curEmotion;
 
 // To setup the first time, set setup=true. You'll run the code once, it will tell you to push the bridge button. 
 // Then run the server again, you'll see the user printed into console. Add it into .env as HUE_USER.
@@ -22,11 +23,13 @@ if (lights && !setup) {
       api = _api;
       console.log('LIGHTS: hue api connected');
       lightsInit = true;
+      if (curEmotion) playEmotion(curEmotion);
     })
     .catch(err => { console.error(err); });
 }
 
 const playEmotion = (emotion) => {
+  curEmotion = emotion;
   if (!lights || !lightsInit) return;
   
   let hex = colors[emotion.base][emotion.level-1][0].substring(1);
@@ -35,7 +38,7 @@ const playEmotion = (emotion) => {
 
   let sat = emotion.level * 30 + 164;
   console.log(`LIGHTS: Setting group light state to ${hex} ${sat}`);
-  const state = new GroupLightState().on().xy(cie.x, cie.y).sat(sat).brightness(100);
+  const state = new GroupLightState().on().xy(cie.x, cie.y).sat(sat).brightness(100).transitiontime(10);
   api.groups.setGroupState(0, state)
     .then(result => {
       console.log(`LIGHTS: Successfully set group light state? ${result}`);
@@ -122,4 +125,17 @@ function hex2cie(hex) {
 	return {x: Number(x), y: Number(y)};
 }
 
+
+const stopAll = () => {
+  // console.debug('stop lights');
+  // const state = new GroupLightState().off();
+  // api.groups.setGroupState(0, state)
+  //   .then(result => {
+  //     console.log(`LIGHTS: Successfully set group light state OFF? ${result}`);
+  //   })
+  //   .catch(err => { console.error(err); });
+}
+
+
 module.exports.playEmotion = playEmotion;
+module.exports.stopAll = stopAll;
