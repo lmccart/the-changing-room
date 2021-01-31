@@ -1,3 +1,4 @@
+
 // style and js imports
 import $ from 'jquery';
 import Papa from 'papaparse';
@@ -90,6 +91,9 @@ let memory_interval = 1000;
 // and fades in
 let each_memory_fadein_duration = 0;//500;
 
+// pauses
+let each_memory_pause_duration = 2000;
+
 // and fades out.
 let each_memory_fadeout_duration = 0;//500;
 
@@ -130,14 +134,18 @@ window.init = () => {
     console.log('Data loaded!');
 
     socket.on('emotion:update', updateEmotionCurried(() => {
-      initTimelineIfItIsnt(); 
+      if (timeline === undefined) {
+        // on launch/startup
+        resetTimeline(); 
+        timeline.start();
+      }
     }));
 
     socket.on('reflection:restart', (msg) => {
-      sharedSeed = msg.seed;
+      sharedSeed = JSON.parse(msg).seed;
       console.log('shared seed = ', sharedSeed);
 
-      resetHTML();
+      resetTimeline(); 
       timeline.start();
       console.log('REFLECTION RESTARTED');
     });
@@ -145,6 +153,7 @@ window.init = () => {
     socket.emit('emotion:get');
   });
 };
+
 
 function updateEmotionCurried(callback) {
   return function(msg) {
@@ -165,6 +174,8 @@ function updateInterface() {
 
 
 ///////////////////////////
+// DATA AND PARAMS
+//////////////////////////
 
 
 function setScreen() {
@@ -282,28 +293,6 @@ function loadData(cb) {
 }
 
 
-//////////////////////
-
-
-
-
-function generateMeditationTexts() {
-
-  let thisDataMeditationInserts = dataMeditationEmotions[curEmotion.name];
-
-  return dataMeditations
-    .map((m) => {
-      let newm = m;
-      for (let k in thisDataMeditationInserts) {
-        newm = newm.replace(`[${k}]`, thisDataMeditationInserts[k]); 
-      }
-      
-      return newm;
-    })
-    .filter((m) => {
-      return m !== ''; 
-    });
-}
 
 function seedShuffle(array, seed) { 
 
@@ -326,136 +315,32 @@ function seedShuffle(array, seed) {
   return array;
 }
 
-function generateMemoryPairs() {
-
-  let numMemories = Math.floor((memories_total_duration - timeline_end_pause) / (memory_interval));
- 
-  var memories = [];
-
-  var thisEmotionMemories = seedShuffle(dataMemories[curEmotion.base], sharedSeed);
-
-  let rng = seedrandom(sharedSeed);
-
-  let screenNumber;
-
-  let imgOffset = Math.floor(rng() * imgURLs.length);
-  let memOffset = Math.floor(rng() * thisEmotionMemories.length);
-
-  for (let imgCounter = 0; imgCounter < numMemories; imgCounter++) {
-
-    let img = imgURLs[(imgCounter + imgOffset) & imgURLs.length];
-    let text = thisEmotionMemories[(imgCounter + memOffset) & thisEmotionMemories.length];
-
-    // randomly pick screen
-    let r = rng();
-    if (r < 0.333) { 
-      screenNumber = 0;
-    } else if (r < 0.666) {
-      screenNumber = 1;
-    } else {
-      screenNumber = 2;
-    }
-
-    var thisMemPair = [];
-
-    thisMemPair.push({
-      type: 'image',
-      url: img,
-      left: `${ Math.random() * 80 }vw`,
-      top: `${ Math.random() * 80 }vh`,
-      screenNumber: screenNumber,
-    });
-
-    if (rng() < 0.5) {
-      thisMemPair.push({ 
-        type: 'text',
-        text: text,
-        left: `${ Math.random() * 80 }vw`,
-        top: `${ Math.random() * 80 }vh`,
-        screenNumber: screenNumber,
-      });
-    } else {
-      thisMemPair.push({
-        type: 'image',
-        url: img,
-        left: `${ Math.random() * 80 }vw`,
-        top: `${ Math.random() * 80 }vh`,
-        screenNumber: screenNumber,
-      });
-    }
-
-    memories.push(thisMemPair);
-
-
-  }
-
-
-  return memories;
-
+function randomBetween(a, b) {
+  return a + (Math.random() * (b - a));
 }
 
-function displayMeditationPhrase(opts) {
-  // opts: { text: mt, fadeIn: 100, fadeOut: 100 };
-  if (thisScreenParams.id !== 1) { 
-    console.log('...displaying meditation on screen 1...');
-  }
-  $('#meditation_text')
-    .fadeOut(opts.fadeOut, function() {
-      $(this)
-        .text(opts.text)
-        .fadeIn(opts.fadeIn);
-    });
-}
 
-function displayMemory(opts) {
-
-  //{ data: mem, top: ~, left: ~, fadeIn: 100, fadeOut: 100 };
-  let memdiv;
-  let memory = opts.data;
- 
-  if (memory.type === 'text') {
-    memdiv = $('<div></div>');
-    memdiv.addClass('text');
-    memdiv.text(memory.text);
-  } 
-  if (memory.type === 'image') {
-    memdiv = $('<img></img>');
-    memdiv.addClass('image');
-    memdiv.attr('src', memory.url);
-    let svgId = addSvgFilterForElement(memdiv, secondaryColor);
-  } 
-
-  memdiv.addClass('memory');
-  memdiv.css({ top:  memory.top, left: memory.left });
-
-
-  memdiv
-    .hide()
-    .appendTo('#memory_container')
-    .fadeIn(opts.fadeIn);
-
-
-}
+/////////////////////////////////
+///// BACKGROUNDS
+//////////////////////////////////
 
 
 function setColorsAndBackgrounds() {
-  primaryColor = window.baseColors[curEmotion.base][curEmotion.level - 1];
-  secondaryColor = window.baseColors[curEmotion.base][curEmotion.level - 1];
-  backgroundTextColor = getTextColorForBackground(primaryColor[0]);
-
-  $('#memory_container').css({background:'-webkit-radial-gradient(' + secondaryColor[0] + ',' + secondaryColor[1] + ')'});
-  $('#memory_container').hide();
-
+  backgroundColor = window.baseColors[curEmotion.base][curEmotion.level % 3];
+  memoriesColor = window.baseColors[curEmotion.base][(curEmotion.level - 1) % 3];
+  window.baseColors[curEmotion.base];
+  backgroundTextColor = getTextColorForBackground(backgroundColor[0]);
   $('#meditation_text').css('color', backgroundTextColor);
   $('#meditation_container').css('border-color', backgroundTextColor);
 
+
   const bg = $('#background');
-  const imgUrl = seedShuffle(imgURLs, sharedSeed)[0];
+
+  const imgUrl = imgURLs[sharedSeed % imgURLs.length];
   let prevSvgId = bg.data('svgId');
-  let svgId = addSvgFilterForElement(bg, primaryColor);
+  let svgId = addSvgFilterForElement(bg, window.baseColors[curEmotion.base][curEmotion.level % 3]);
   bg.data('svgId', svgId);
   bg.css('background-image', `url(${imgUrl})`);
-
   $('#loader').attr('src', imgUrl).off();
   $('#loader').attr('src', imgUrl).on('load', function() {
 
@@ -478,30 +363,26 @@ function setColorsAndBackgrounds() {
       bgIsTaller = true;
     }
 
-    console.log('thisScreen', thisScreenParams.width, thisScreenParams.height);
-    console.log('centerScreen', screenParams[1].width, screenParams[1].height);
-    console.log('nw nh', nw, nh);
-    console.log('bgw, bgh, bgscale', bgw, bgh, bgscale);
-    console.log('bgIsTaller', bgIsTaller);
       
     if (thisScreenParams.id === 0) {
-      bg.css('background-size', `${bgw}px ${bgh}px`);
+      $('#background').css('background-size', `${bgw}px ${bgh}px`);
       if (bgIsTaller) {
-        bg.css('background-position', `-${(bgw - screenParams[1].width)}px center`);
+        $('#background').css('background-position', `-${(bgw - screenParams[1].width)}px center`);
       } else {
-        bg.css('background-position', `calc(0% - ${(bgw - screenParams[1].width) / 2}px) center`);
+        $('#background').css('background-position', `calc(0% - ${(bgw - screenParams[1].width) / 2}px) center`);
       }
     }
    
     if (thisScreenParams.id === 2) {
-      bg.css('background-size', `${bgw}px ${bgh}px`);
+      $('#background').css('background-size', `${bgw}px ${bgh}px`);
       if (bgIsTaller) {
-        bg.css('background-position', `calc(100% - ${(bgw - screenParams[1].width)}px) center`);
+        $('#background').css('background-position', `calc(100% - ${(bgw - screenParams[1].width)}px) center`);
       } else {
-        bg.css('background-position', `calc(0% - ${(bgw - thisScreenParams.width) / 2}px) center`);
+        $('#background').css('background-position', `calc(0% - ${(bgw - thisScreenParams.width) / 2}px) center`);
       }
     }
-
+   
+    
     setTimeout(() => {
       console.log(`removing #${prevSvgId}`);
       $(`#${prevSvgId}`).remove();
@@ -510,19 +391,341 @@ function setColorsAndBackgrounds() {
 }
 
 
+
+
+///////////////////////////////////
+//////////// MEDITATIONS
+///////////////////////////////////
+
+
+function generateMeditationTexts() {
+
+  let thisDataMeditationInserts = dataMeditationEmotions[curEmotion.name];
+
+  return dataMeditations
+    .map((m) => {
+      let newm = m;
+      for (let k in thisDataMeditationInserts) {
+        newm = newm.replace(`[${k}]`, thisDataMeditationInserts[k]); 
+      }
+      
+      return newm;
+    })
+    .filter((m) => {
+      return m !== ''; 
+    });
+}
+
+function displayMeditationPhrase(opts) {
+  // opts: { text: mt, fadeIn: 100, fadeOut: 100 };
+  if (thisScreenParams.id !== 1) { 
+    console.log('...displaying meditation on screen 1...');
+  }
+  $('#meditation_text')
+    .fadeOut(opts.fadeOut, function() {
+      $(this)
+        .text(opts.text)
+        .fadeIn(opts.fadeIn);
+    });
+}
+
+
+///////////////////////////////////
+///////////// MEMORIES
+///////////////////////////////////
+
+function pickMemoryPairs() {
+  var memories = [];
+
+  var thisEmotionMemories = seedShuffle(dataMemories[curEmotion.base], sharedSeed);
+
+  let rng = seedrandom(sharedSeed);
+
+  let screenNumber;
+
+  let imgCounter = 0;
+  let memCounter = 0;
+  let mempairCounter = 0;
+
+  for (let imgCounter = 0; imgCounter < numMemories; imgCounter++) {
+
+    let img = imgURLs[(imgCounter + imgOffset) & imgURLs.length];
+    let text = thisEmotionMemories[(imgCounter + memOffset) & thisEmotionMemories.length];
+
+    // randomly pick screen
+    let r = rng();
+    if (r < 0.333) { 
+      screenNumber = 0;
+    } else if (r < 0.666) {
+      screenNumber = 1;
+    } else {
+      screenNumber = 2;
+    }
+
+    var thisMemPair = [];
+
+    thisMemPair.push({
+      type: 'image',
+      url: imgURLs[imgCounter++],
+      screenNumber: screenNumber,
+      mempairNumber: mempairCounter,
+    });
+
+    if (rng() < 0.5) {
+      thisMemPair.push({ 
+        type: 'text',
+        text: thisEmotionMemories[memCounter++],
+        screenNumber: screenNumber,
+        mempairNumber: mempairCounter,
+      });
+    } else {
+      thisMemPair.push({
+        type: 'image',
+        url: imgURLs[imgCounter++],
+        screenNumber: screenNumber,
+        mempairNumber: mempairCounter,
+      });
+    }
+
+    mempairCounter++;
+    memories.push({ data: thisMemPair });
+
+  }
+
+  return memories;
+}
+
+
+function preloadMemoriesAndSetDimensions(memPairs) { 
+  // memPairs = [{ 0: mempairNumber: 1, screenNumber: 1, type: ..., url: ... }, ]
+
+  // TODO: add dimensions by adapting preload mempair divs
+
+  memPairs = memPairs.map((mempair, index) => {
+
+    if (!mempair.display) { return mempair; }
+
+
+    // generate divs and add them to container
+    mempair.data.forEach((memory, i) => {
+
+      let memdiv;
+     
+      if (memory.type === 'text') {
+        memdiv = $('<div></div>');
+        memdiv.addClass('text');
+        memdiv.text(memory.text);
+      } 
+
+
+      if (memory.type === 'image') {
+        memdiv = $('<img></img>');
+        memdiv.addClass('image');
+        memdiv.attr('src', memory.url);
+        let svgId = addSvgFilterForElement(memdiv, memoriesColor);
+
+        memory.naturalWidth = memdiv.get(0).naturalWidth;
+        memory.naturalHeight = memdiv.get(0).naturalHeight;
+      } 
+
+      memory.id = `memory-${index}-${i}`;
+
+      memdiv.addClass('memory');
+      memdiv.attr('id', memory.id);
+      memdiv.css('visibility','hidden');
+      memdiv.appendTo('#memory_container');
+
+    });
+
+
+    // add dimensions/crop and shape
+    mempair.data.forEach(m => {
+
+      let mdiv = $('#' + m.id);
+      if (m.type === 'text') {
+        m.width = 500;
+        mdiv.width(m.width);
+        m.height = mdiv.height();
+      }
+
+      if (m.type === 'image') {
+        // TODO - apply crop in the future
+        m.width = randomBetween(300, 600); // IMAGE SIZE PARAMETERS
+        m.height = m.width / m.naturalWidth * m.naturalHeight;
+        mdiv.width(m.width);
+        mdiv.height(m.height);
+      }
+
+
+      mdiv.css('visibility','visible');
+      mdiv.css('display','none');
+
+    });
+    
+       
+    return mempair;
+
+  });
+
+  return memPairs;
+
+}
+
+
+function positionMemories(memPairs) {
+
+  memPairs = memPairs.map((mempair, index) => {
+
+    if (!mempair.display) { return mempair; }
+
+    console.log(mempair);
+
+    let minoverlap = 0.7;
+    let maxoverlap = 1.1;
+    let memoryPadding = 50; // memory padding in pixels - will add padding around which memories won't be placed
+
+
+    // first let's assume that the first div is at 0, 0
+    let m1 = { 
+      x: 0, 
+      y: 0, 
+      height: mempair.data[0].height,
+      width: mempair.data[0].width
+    }; 
+
+    let m2 = {
+      height: mempair.data[1].height,
+      width: mempair.data[1].width
+    }; //m2 locations based on trig
+
+    let overlapcoeff = randomBetween(minoverlap, maxoverlap);
+
+    // either:
+    let sr = Math.random();
+    if (sr <= 0.25) {
+      // m2 is on right side of m1, slid up and down
+      m2.x = m1.width * overlapcoeff;
+      m2.y = randomBetween(m1.y - m2.height, m1.y + m1.height); 
+    } else if (sr <= 0.5) {
+      // m2 is on left side of m1, slid up and down
+      m2.x = -m2.width * overlapcoeff;
+      m2.y = randomBetween(m1.y - m2.height, m1.y + m1.height);
+    } else if (sr <= 0.75) {
+      // m2 is on bottom side of m1, slid left and right
+    
+      m2.x = randomBetween(m1.x - m2.width, m1.x + m1.width);
+    } else {
+      // m2 is on top side of m1, slid left and right
+      m2.y = -m2.height * overlapcoeff;
+      m2.x = randomBetween(m1.x - m2.width, m1.x + m1.width);
+    }
+    
+    // adjust coordinates so that none are negative
+    if (m2.x < 0) { 
+      m1.x += Math.abs(m2.x);
+      m2.x = 0;
+    }
+
+    if (m2.y < 0) { 
+      m1.y += Math.abs(m2.y);
+      m2.y = 0;
+    }
+
+    //////////////////
+
+
+    // get boundingbox of both overlapping rectangles
+    let bb = {};
+    bb.x1 = Math.min(m1.x, m2.x); 
+    bb.y1 = Math.min(m1.y, m2.y); 
+    bb.x2 = Math.max(m1.x + m1.width, m2.x + m2.width); 
+    bb.y2 = Math.max(m1.y + m1.height, m2.y + m2.height); 
+    bb.width = bb.x2 - bb.x1;
+    bb.height = bb.y2 - bb.y1;
+
+
+
+    // SO now we position the bounding box randomly within the screen
+    bb.screenX = randomBetween(memoryPadding, thisScreenParams.width - bb.width - memoryPadding);
+    bb.screenY = randomBetween(memoryPadding, thisScreenParams.height - bb.height - memoryPadding);
+
+
+    // and then drive memdiv screen locations from that
+    m1.screenX = m1.x + bb.screenX;
+    m1.screenY = m1.y + bb.screenY;
+    m2.screenX = m2.x + bb.screenX;
+    m2.screenY = m2.y + bb.screenY;
+
+    mempair.data[0].screenX = m1.x + bb.screenX;
+    mempair.data[0].screenY = m1.y + bb.screenY;
+    mempair.data[1].screenX = m2.x + bb.screenX;
+    mempair.data[1].screenY = m2.y + bb.screenY;
+
+    $('#' + mempair.data[0].id).css({ top: mempair.data[0].screenY, left: mempair.data[0].screenX });
+    $('#' + mempair.data[1].id).css({ top: mempair.data[1].screenY, left: mempair.data[1].screenX });
+
+    mempair.bb = bb;
+
+    return mempair;
+  });
+
+  return memPairs;
+
+}
+
+
+function generateAndPreloadMemoryPairs() {
+
+  let memoryPairs = pickMemoryPairs();
+
+  console.log(memoryPairs);
+
+  // flag whether or not memory pair is displayed
+  memoryPairs.forEach(mempair => {
+    if (mempair.data[0].screenNumber === thisScreenParams.id || thisScreenParams.name === 'FULLSCREEN') {
+      mempair.display = true;
+    } else {
+      mempair.display = false;
+    }
+
+  });
+
+  memoryPairs = preloadMemoriesAndSetDimensions(memoryPairs);
+
+  memoryPairs = positionMemories(memoryPairs); 
+
+  console.log(memoryPairs);
+
+  return memoryPairs;
+
+}
+
+
+
+function displayMemoryPair(mempair) {
+  //{ data: [mem, mem], top: ~, left: ~, fadeIn: 100, fadeOut: 100 };
+  // mem looks like: { id: '#memory-0-1', ... }
+
+  mempair.data.forEach(mem => {
+    $('#' + mem.id).fadeIn(each_memory_fadein_duration);
+    $('#' + mem.id).fadeIn(each_memory_fadein_duration);
+  });
+
+}
+
+
+/////////////////////////////////
+///////// Crafting Timeline
 /////////////////////////////////
 
 function resetHTML(cb) {
   $('svg').remove();
   setColorsAndBackgrounds();
-  $('#meditation_text').fadeOut(1000, function() {
-    $(this).empty();
-    $(this).fadeIn(1000);
-  });
-  $('#memory_container').fadeOut(1000, function() {
-    $(this).empty();
-  });
+  $('#meditation_text').empty();
+  $('#memory_container').empty();
 }
+
+
 
 function queueEvents(timeline) {
   window.timeline = timeline;
@@ -538,19 +741,13 @@ function queueEvents(timeline) {
 
   timeMarker += meditations_fadein_pause;
 
-  console.log(thisScreenParams);
-
-
   timeline.add({ time: timeMarker, event: function() { 
     $('#meditation_container').fadeIn(meditations_fadein_duration);
     console.log('TIMELINE STARTING');
   } });
 
 
-
-
   ///////// QUEUE MEDITATIONS
-  
   let mts = generateMeditationTexts();
 
   mts.forEach((mt, i) => {
@@ -568,7 +765,6 @@ function queueEvents(timeline) {
     // }
 
   });
-  
 
   ///////// MEDITATION FADES OUT
   //
@@ -587,31 +783,21 @@ function queueEvents(timeline) {
   } });
 
 
-
   ///////// QUEUE MEMORIES
   
-  let mempairs = generateMemoryPairs();
+  let mempairs = generateAndPreloadMemoryPairs();
+
 
   mempairs.forEach((mempair, i) => {
+
 
     timeline.add({ time: timeMarker, event: function() { 
 
 
-      if (mempair[0].screenNumber === thisScreenParams.id || thisScreenParams.name === 'FULLSCREEN') {
+      if (mempair.data[0].screenNumber === thisScreenParams.id || thisScreenParams.name === 'FULLSCREEN') {
       //only display if we're on the right screen
-        //
-        displayMemory({
-          data: mempair[0],
-          fadeIn: each_memory_fadein_duration,
-          fadeOut: each_memory_fadeout_duration,
-        });
-
-
-        displayMemory({
-          data: mempair[1],
-          fadeIn: each_memory_fadein_duration,
-          fadeOut: each_memory_fadeout_duration,
-        });
+       
+        displayMemoryPair(mempair);
 
         console.log('...WE are displaying memory pair #', i, '...');
       } else {
@@ -649,23 +835,23 @@ function queueEvents(timeline) {
 }
 
 
-function initTimelineIfItIsnt() {  
+function resetTimeline() {  
 
-  if (timeline === undefined) {
+  console.log('Initializing timeline');
 
-    console.log('Initializing timeline');
- 
-    timeline = new Timeline({ loop: false, duration: 50000, interval: 100 }); 
+  timeline = new Timeline({ loop: false, duration: 50000, interval: 100 }); 
 
-    resetHTML();
+  resetHTML();
 
-    queueEvents(timeline);
+  queueEvents(timeline);
 
-    timeline.start();
-
-  }
- 
 }
+
+///////////////////////////////////
+//// MAIN
+/////////////////////////////////////
+
+// window.init is on top of page
 
 
 
