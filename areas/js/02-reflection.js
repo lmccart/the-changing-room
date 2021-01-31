@@ -429,8 +429,8 @@ function displayMeditationPhrase(opts) {
 ///////////// MEMORIES
 ///////////////////////////////////
 
-function generateAndPreloadMemoryPairs() {
- 
+
+function pickMemoryPairs() {
   var memories = [];
 
   var thisEmotionMemories = seedShuffle(dataMemories[curEmotion.base], sharedSeed);
@@ -487,13 +487,12 @@ function generateAndPreloadMemoryPairs() {
 
   }
 
-
   return memories;
-
 }
 
+function preloadMemoriesAndDimensions(memdata) { 
 
-function preloadImages(memdata) {
+  // TODO: add dimensions by adapting preload mempair divs
 
   memdata.forEach((mempair, i) => {
     if (mempair[0].screenNumber === thisScreenParams.id || thisScreenParams.name === 'FULLSCREEN') {
@@ -501,8 +500,24 @@ function preloadImages(memdata) {
     }
   });
 
+  return memdata;
 
 }
+
+function generateAndPreloadMemoryPairs() {
+ 
+
+  let memories = pickMemoryPairs();
+
+  memories = preloadMemoriesAndDimensions(memories);
+
+  // memories = positionMemories(memories); // TODO: create or adapt preload mempair divs
+
+  return memories;
+
+}
+
+
 
 function preloadMempairDivs(mempairdata, index) {
 
@@ -722,7 +737,6 @@ function queueEvents(timeline) {
   
   let mempairs = generateAndPreloadMemoryPairs();
 
-  preloadImages(mempairs);
 
   mempairs.forEach((mempair, i) => {
 
@@ -735,6 +749,7 @@ function queueEvents(timeline) {
        
         displayMemoryPair(mempair)
 
+        console.log(mempair);
 
         console.log('...WE are displaying memory pair #', i, '...');
       } else {
