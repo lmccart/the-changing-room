@@ -30,21 +30,19 @@ body {
 }
 
 .filtered {
-  // background: -webkit-radial-gradient(#e66465, #9198e5);
-  // background: -webkit-gradient(
-  // radial, 500 25%, 20, 500 25%, 40, from(blue), to(#eef)
-  // );
-  // why does this break the cover??
+  visibility: hidden;
   position: fixed;
-  // visibility: hidden;
 }
 
 
 .filtered video {
+  -webkit-filter: grayscale(100%) contrast(170%);
+  filter: grayscale(100%) contrast(170%);
+  opacity: 1;
+}
+
+.filtered .stream-wrapper {
   mix-blend-mode: screen;
-//  -webkit-filter: grayscale(100%) contrast(170%);
-//  filter: grayscale(100%) contrast(170%);
- opacity: 1;
 }
 
 
@@ -55,9 +53,8 @@ body {
   margin: 0;
   height: calc(100vh - 15vw);
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, 5%);
+  top: 7.5vw;
+  left: 7.5vw;
   overflow: hidden;
 }
 

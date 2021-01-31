@@ -34,9 +34,9 @@ export function getDimensions(url) {
   return dimensionsPromise;
 }
 
-// returns array of image URLs for base emotion
-// used like const imageURLs = await getImgUrls('angry');
-// or getImgUrls('angry').then(imageURLs => {do whatever u want here})
+// returns array of image Urls for base emotion
+// used like const imageUrls = await getImgUrls('angry');
+// or getImgUrls('angry').then(imageUrls => {do whatever u want here})
 export function getImgUrls(baseEmotion) {
   return fetch(`/images/${baseEmotion}/manifest`).then(res => res.json());
 }

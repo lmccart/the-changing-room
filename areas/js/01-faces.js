@@ -231,12 +231,11 @@ function updateInterface() {
 
 
   ////// CHANGING BACKGROUND COLOR
-  let emotion_colors = baseColors[curEmotion.base];
-  let emotion_colors_str1 = '#' + emotion_colors[0][0];
-  let emotion_colors_str2 = '#' + emotion_colors[0][1];
+  let emotion_colors = baseColors[curEmotion.base][0];
 
-  $('.filtered').css({ background: '-webkit-radial-gradient(' + emotion_colors_str1 + ',' + emotion_colors_str2 + ')' });
-  $('#video-cover').css('background-color', emotion_colors_str1);
+  console.log('setting css');
+  $('.filtered').css('background', `radial-gradient(${emotion_colors[0]},${emotion_colors[1]})`);
+  $('#video-cover').css('background-color', emotion_colors[1]);
 
 
   /////// CHANGING PHRASES

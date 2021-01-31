@@ -4,7 +4,7 @@ const fs = require('fs');
 const colors = JSON.parse(fs.readFileSync('static/data/colors.json'));
 let api;
 const lights = true;
-const lightsInit = false;
+let lightsInit = false;
 
 // To setup the first time, set setup=true. You'll run the code once, it will tell you to push the bridge button. 
 // Then run the server again, you'll see the user printed into console. Add it into .env as HUE_USER.
@@ -29,7 +29,7 @@ if (lights && !setup) {
 const playEmotion = (emotion) => {
   if (!lights || !lightsInit) return;
   
-  let hex = colors[emotion.base][emotion.level-1][0];
+  let hex = colors[emotion.base][emotion.level-1][0].substring(1);
   let cie = hex2cie(hex);
   console.log(cie);
 

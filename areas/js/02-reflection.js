@@ -5,14 +5,14 @@ import Papa from 'papaparse';
 import seedrandom from 'seedrandom';
 import '../css/02-reflection.scss';
 import './shared.js';
-import Timeline from './Timeline.js';
+import Timeline from './lib/Timeline.js';
 import { getImgUrls, addSvgFilterForElement, getTextColorForBackground } from './lib/imageColorUtils.js';
 
 let emotions;
 let curEmotion;
-let backgroundColor;
+let primaryColor;
 let backgroundTextColor;
-let memoriesColor;
+let secondaryColor;
 
 var dataMeditations;
 var dataMeditationEmotions;
@@ -27,7 +27,7 @@ var sharedSeed = 0;
 ///////////////////////////////////////////////
 //// Screen parameters
 
-var screenParams = {
+const screenParams = {
   0: { id: 0, name: 'LEFT', width: 1631, height: 1080 },
   1: { id: 1, name: 'CENTER', width: 1768, height: 1080 },
   2: { id: 2, name: 'RIGHT', width: 1700, height: 1080 },
@@ -82,17 +82,20 @@ let memories_fadein_duration = 500;
 
 //////// The memory sequence starts.
 
+// Total memory time
+let memories_total_duration = 15000;
+
 // Each memory arrives at this interval,
 let memory_interval = 1000;
 
 // and fades in
-let each_memory_fadein_duration = 500;
+let each_memory_fadein_duration = 0;//500;
 
 // pauses
 let each_memory_pause_duration = 2000;
 
 // and fades out.
-let each_memory_fadeout_duration = 500;
+let each_memory_fadeout_duration = 0;//500;
 
 /////// The memories are over.
 
@@ -139,7 +142,6 @@ window.init = () => {
     }));
 
     socket.on('reflection:restart', (msg) => {
-
       sharedSeed = JSON.parse(msg).seed;
       console.log('shared seed = ', sharedSeed);
 
@@ -199,18 +201,19 @@ function updateImageList(cb) {
 
       imgURLs = images;
 
-      preloadedImages = [];
-      imgURLs.forEach(url => {
-        let img = new Image();
-        img.src = url;
-        preloadedImages.push(img);
-      });
+      // TEMP FOR TESTING
+      // preloadedImages = [];
+      // imgURLs.forEach(url => {
+      //   let img = new Image();
+      //   img.src = url;
+      //   preloadedImages.push(img);
+      // });
       cb(imgURLs);
     });
 }
 
 function loadData(cb) {
-  var dataLoaded = -3; // this is a bit hacky but simpler than Promises.all
+  let dataLoaded = -3; // this is a bit hacky but simpler than Promises.all
 
   fetch('/static/data/02_meditation.txt')
     .then(res => res.blob())
@@ -235,10 +238,10 @@ function loadData(cb) {
       console.log(rawResults);
       const reordered = {};
 
-      for (var i = 0; i < rawResults.length; i++) {
+      for (let i = 0; i < rawResults.length; i++) {
         let thisrow = rawResults[i];
 
-        var newrow = {};
+        let newrow = {};
         Object.keys(thisrow).forEach((key) => {
           newrow[key.trim()] = thisrow[key]; 
         });
@@ -431,7 +434,6 @@ function displayMeditationPhrase(opts) {
 ///////////// MEMORIES
 ///////////////////////////////////
 
-
 function pickMemoryPairs() {
   var memories = [];
 
@@ -445,8 +447,10 @@ function pickMemoryPairs() {
   let memCounter = 0;
   let mempairCounter = 0;
 
-  
-  while (imgCounter < imgURLs.length) {
+  for (let imgCounter = 0; imgCounter < numMemories; imgCounter++) {
+
+    let img = imgURLs[(imgCounter + imgOffset) & imgURLs.length];
+    let text = thisEmotionMemories[(imgCounter + memOffset) & thisEmotionMemories.length];
 
     // randomly pick screen
     let r = rng();
@@ -467,7 +471,7 @@ function pickMemoryPairs() {
       mempairNumber: mempairCounter,
     });
 
-    if (imgCounter < imgURLs.length && memCounter < thisEmotionMemories.length && rng() < 0.5) {
+    if (rng() < 0.5) {
       thisMemPair.push({ 
         type: 'text',
         text: thisEmotionMemories[memCounter++],
@@ -552,6 +556,7 @@ function preloadMemoriesAndSetDimensions(memPairs) {
         mdiv.height(m.height);
       }
 
+
       mdiv.css('visibility','visible');
       mdiv.css('display','none');
 
@@ -565,10 +570,6 @@ function preloadMemoriesAndSetDimensions(memPairs) {
   return memPairs;
 
 }
-
-
-
-
 
 
 function positionMemories(memPairs) {
@@ -686,6 +687,7 @@ function generateAndPreloadMemoryPairs() {
     } else {
       mempair.display = false;
     }
+
   });
 
   memoryPairs = preloadMemoriesAndSetDimensions(memoryPairs);
@@ -750,7 +752,7 @@ function queueEvents(timeline) {
 
   mts.forEach((mt, i) => {
 
-
+    // if (i < 3) { // temp for testing
     timeline.add({ time: timeMarker, event: function() { 
       displayMeditationPhrase({ text: mt, fadeIn: each_meditation_fadein_duration, fadeOut: each_meditation_fadeout_duration});
     } });
@@ -760,7 +762,7 @@ function queueEvents(timeline) {
     } else {
       timeMarker += meditation_interval; 
     }
-    
+    // }
 
   });
 

@@ -84,14 +84,10 @@ body.black ::-webkit-scrollbar-thumb {
   width: 100vw;
   height: 100vh;
 
-  display: none;
+  display: flex;
   justify-content: center;
   align-items: center;
 
-  &.show {
-    display: flex;
-  } 
-   
   h1 {
     font-size: 6vmax;
     line-height: 0.8;
@@ -135,6 +131,10 @@ body.black ::-webkit-scrollbar-thumb {
       opacity: 0;
     }
   }
+}
+
+.notouch {
+  pointer-events: none;
 }
 
 // This class is useful as a base for the 'window' look we use a lot

@@ -4,10 +4,10 @@ import Papa from 'papaparse';
 
 import '../css/05-convo2.scss';
 import './shared.js';
-import { getImgUrls, addSvgFilterForElement, getTextColorForBackground } from './lib/imageColorUtils.js';
+import { getImgUrls, getTextColorForBackground } from './lib/imageColorUtils.js';
 
 let curEmotion;
-let imgURLs = [];
+let imgUrls = [];
 let initTimeout;
 let typeTimeout;
 let loadingTimeout;
@@ -23,6 +23,10 @@ window.init = () => {
   socket.emit('emotion:get');
 };
 
+window.loadingComplete = () => {
+  showConvoLoading();
+};
+
 function updateEmotion(msg) {
   if (!curEmotion || curEmotion.name !== msg.name) {
     curEmotion = msg;
@@ -33,13 +37,12 @@ function updateEmotion(msg) {
 
 async function updateInterface() {
   $('#debug-info').text('CURRENT EMOTION: ' + curEmotion.name + ' (base: ' + curEmotion.base + ', level: ' + curEmotion.level + ')');
-  showLoadingOverlay(curEmotion, showConvoLoading);
-  imgURLs = await getImgUrls(curEmotion.base);
+ 
+  const durations = showLoadingOverlay(curEmotion);
   reset();
-  $('svg').remove();
+  imgUrls = await getImgUrls(curEmotion.base);
   const colors = window.baseColors[curEmotion.base][curEmotion.level - 1];
-  addSvgFilterForElement($('#background-1'), colors);
-  addSvgFilterForElement($('#background-2'), colors);
+  switchBackgrounds(imgUrls, durations[1] - durations[0] - 500, colors);
   
   const textColor = getTextColorForBackground(colors[0], colors[1]);
   $('#loading').css('color', textColor);
@@ -49,6 +52,7 @@ async function updateInterface() {
   $('.instruction-container').css('border-color', textColor);
   $('#instruction').css('color', textColor);
 }
+
 
 Papa.parse('/static/data/05_directions.tsv', {
   download: true,
@@ -70,19 +74,6 @@ Papa.parse('/static/data/05_directions.tsv', {
   }
 });
 
-function switchBackgrounds() {
-  const bgToHide = $('#background-1').is(':visible') ? $('#background-1') : $('#background-2');
-  const bgToShow = $('#background-1').is(':visible') ? $('#background-2') : $('#background-1');
-  
-  const imgUrl = imgURLs[Math.floor(Math.random() * imgURLs.length)];
-  bgToShow.css('background-image', `url(${imgUrl})`);
-  $('#loader').attr('src', imgUrl).off();
-  $('#loader').attr('src', imgUrl).on('load', function() {
-    console.log('loaded: ', imgUrl);
-    bgToShow.fadeIn();
-    bgToHide.fadeOut();
-  });
-}
 
 function reset() {
   clearTimeout(initTimeout);
@@ -96,8 +87,6 @@ function showConvoLoading() {
   $('#convo-loading').show();
   $('#instruction').empty();
   clearTimeout(initTimeout);
-
-  switchBackgrounds();
 
   initTimeout = setTimeout(() => {
     // hide loading bar

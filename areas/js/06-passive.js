@@ -16,7 +16,7 @@ const portionFiltered = 0.5; // portion of popups with svg filter applied
 
 let curEmotion;
 let backgroundInterval;
-let imgURLs = [];
+let imgUrls = [];
 let preloadedExtras = [];
 let popupFactory; // used to reference the function that produces popups
 
@@ -51,27 +51,28 @@ function updateEmotion(msg) {
   if (!curEmotion || curEmotion.name !== msg.name) {
     curEmotion = msg;
     console.log('emotion has been updated to: ' + msg.name + ' (base: ' + msg.base + ', level: ' + msg.level + ')');
-    showLoadingOverlay(curEmotion);
-    updateInterface();
+    const durations = showLoadingOverlay(curEmotion);
+    updateInterface(durations);
   }
 }
 
-async function updateInterface() {
+async function updateInterface(durations) {
   $('#debug-info').text('CURRENT EMOTION: ' + curEmotion.name + ' (base: ' + curEmotion.base + ', level: ' + curEmotion.level + ')');
-  imgURLs = await getImgUrls(curEmotion.base);
+  imgUrls = await getImgUrls(curEmotion.base);
+  const colors = window.baseColors[curEmotion.base][curEmotion.level - 1];
+  switchBackgrounds(imgUrls, durations[1] - durations[0] - 500, colors);
+
+  if (backgroundInterval) clearInterval(backgroundInterval);
+  backgroundInterval = setInterval(() => {
+    switchBackgrounds(imgUrls, 500, colors);
+  }, (backgroundChangeTime / (1.6 ** curEmotion.level)));
+
   if (popupFactory) {
     popupFactory.cleanup(); 
   }
   
   popupFactory = new PopupFactory(curEmotion);
 
-  if (backgroundInterval) {
-    clearInterval(backgroundInterval);
-  } 
-  switchBackgrounds();;
-  backgroundInterval = setInterval(() => {
-    switchBackgrounds();
-  }, (backgroundChangeTime / (1.6 ** curEmotion.level)));
 }
 
 function parseDirections() {
@@ -120,24 +121,6 @@ function parseReflections() {
   });
 }
 
-function switchBackgrounds() {
-  const bgToHide = $('#background-1').is(':visible') ? $('#background-1') : $('#background-2');
-  const bgToShow = $('#background-1').is(':visible') ? $('#background-2') : $('#background-1');
-  
-  const imgUrl = imgURLs[Math.floor(Math.random() * imgURLs.length)];
-  let svgId = addSvgFilterForElement(bgToShow, window.baseColors[curEmotion.base][curEmotion.level % 3]);
-  bgToShow.data('svgId', svgId);
-  bgToShow.css('background-image', `url(${imgUrl})`);
-  $('#loader').attr('src', imgUrl).off();
-  $('#loader').attr('src', imgUrl).on('load', function() {
-    bgToShow.fadeIn();
-    bgToHide.fadeOut();
-    setTimeout(() => {
-      let svgId = bgToHide.data('svgId');
-      $(`#${svgId}`).remove();
-    }, 1000);
-  });
-}
 
 // add elements at random, with a multiplier based on a single digit integer
 // elements should self destruct, and not overlap too much with current objects on screen
@@ -220,10 +203,10 @@ function PopupFactory(emotionObj) {
 
     if (type === 0 || type === 1) {
       // attach a color modified image
-      const imageURL = imgURLs[Math.floor(Math.random() * imgURLs.length)];
+      const imageURL = imgUrls[Math.floor(Math.random() * imgUrls.length)];
       const imgEl = $(`<img src="${imageURL}">`);
       if (Math.random() < portionFiltered) {
-        let svgId = addSvgFilterForElement(imgEl, window.baseColors[curEmotion.base][emotionObj.level - 1]);
+        let svgId = addSvgFilterForElement(imgEl, window.baseColors[curEmotion.base][Math.floor(Math.random() * 3)]);
         imgEl.attr('data-svgId', svgId);
       }
       childThis.$element.append(imgEl);
@@ -243,7 +226,9 @@ function PopupFactory(emotionObj) {
         // set border color to match text on just text elements
         childThis.$element.css('border-color', `#${colors[0]}`);
         childThis.$element.css('color', textColor);
-      } 
+      } else if (type === 2) {
+        childThis.$element.css('background', `radial-gradient(${colors[0]},${colors[1]})`);
+      }
 
       childThis.$element.append(textEl);
     }

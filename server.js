@@ -55,6 +55,9 @@ const chatLogger = log4js.getLogger('chat');
 
 // DATA INIT
 const emotions = JSON.parse(fs.readFileSync('all-emotions.json')); // read all emotions
+const baseEmotions = generateBases();
+const imagesManifest = generateImagesManifest();
+
 const emotionName = fs.readFileSync('current.txt', {encoding:'utf8', flag:'r'}).replace(/\s/g, '');  // remove whitespace
 setEmotion(emotionName, true);
 
@@ -65,11 +68,11 @@ io.on('connection', (socket) => {
 
   socket.on('disconnect', () => { console.debug('user disconnected: ' + socket.id); });
   socket.on('emotion:pick', setEmotion);
-  socket.on('reflection:end', restartReflectionAudio);
   socket.on('emotion:get', function() {
     socket.emit('emotion:update', curEmotion);
   });
   socket.on('chat:send', handleChat);
+  socket.on('reflection:end', restartReflectionAudio);
 });
 
 // SERVER SETUP
@@ -82,54 +85,10 @@ app.get('/emotions', (req, res) => { res.json(emotions); });
 app.get('/images/:baseEmotion/manifest', (req, res) => {
   try {
     const baseEmotion = req.params.baseEmotion;
-
     if (!baseEmotion) {
       throw new Error('No emotion in url');
     }
-    const files = fs.readdirSync(`./images/${baseEmotion}`)
-
-    // get rid of hidden files (.DS_STORE, etc)
-    const imageFiles = files.filter(item => !(/(^|\/)\.[^\/\.]/g).test(item));
-
-    // URL client can use to get the image in css or img src attribute
-    const staticURLPrefix = `/images/${baseEmotion}/`;
-
-    const finalURLs = [];
-    imageFiles.forEach(file => {
-      finalURLs.push(staticURLPrefix + encodeURI(file));
-    })
-
-    res.status(200).send(JSON.stringify(finalURLs));
-
-  } catch (err) {
-    console.log(err);
-    res.status(400).send(err.message);
-  }
-});
-
-// responds with array of image urls for base emotion
-app.get('/images/popups/manifest', (req, res) => {
-  try {
-    const baseEmotion = req.params.baseEmotion;
-
-    if (!baseEmotion) {
-      throw new Error('No emotion in url');
-    }
-    const files = fs.readdirSync(`./images/popups/`)
-
-    // get rid of hidden files (.DS_STORE, etc)
-    const imageFiles = files.filter(item => !(/(^|\/)\.[^\/\.]/g).test(item));
-
-    // URL client can use to get the image in css or img src attribute
-    const staticURLPrefix = `/images/popups/`;
-
-    const finalURLs = [];
-    imageFiles.forEach(file => {
-      finalURLs.push(staticURLPrefix + encodeURI(file));
-    })
-
-    res.status(200).send(JSON.stringify(finalURLs));
-
+    res.status(200).send(JSON.stringify(imagesManifest[baseEmotion]));
   } catch (err) {
     console.log(err);
     res.status(400).send(err.message);
@@ -138,6 +97,7 @@ app.get('/images/popups/manifest', (req, res) => {
 
 function setEmotion(emotionName, init) {
   curEmotion = emotions[emotionName];
+  curEmotion.seed = Math.round(Math.random() * 10000);
   console.debug(curEmotion);
   Sound.playEmotion(curEmotion);
   Lights.playEmotion(curEmotion);
@@ -150,7 +110,7 @@ function setEmotion(emotionName, init) {
 function restartReflectionAudio() {
   // TODO: restart of reflection audio
   let opt = { 'seed' : Math.round( Math.random() * 10000 )};
-  io.emit('reflection:restart', JSON.stringify(opt)); 
+  io.emit('reflection:restart', opt); 
 }
 
 function handleChat(data) {
@@ -170,4 +130,60 @@ function handleChat(data) {
   }
   data.modified = msgWordArray.join('');
   io.emit('chat:new', data);
+}
+
+function generateBases() {
+  let bases = [];
+  Object.keys(emotions)
+  .sort()
+  .forEach((emotion, i) => {
+    let base = emotions[emotion].base;
+    if (!bases.includes(base)) {
+      bases.push(base);
+    }
+  });
+  return bases;
+}
+
+function generatePopupsManifest() {
+  return finalUrls;
+}
+
+function generateImagesManifest() {
+  let manifest = {
+    popups: []
+  };
+
+  // GET BASES
+  for (let base of baseEmotions) {
+    if (!manifest.hasOwnProperty(base)) {
+      manifest[base] = [];
+    }
+    const files = fs.readdirSync(`./images/${base}`)
+  
+    // get rid of hidden files (.DS_STORE, etc)
+    const imageFiles = files.filter(item => !(/(^|\/)\.[^\/\.]/g).test(item));
+  
+    // URL client can use to get the image in css or img src attribute
+    const staticURLPrefix = `/images/${base}/`;
+  
+    imageFiles.forEach(file => {
+      manifest[base].push(staticURLPrefix + encodeURI(file));
+    });
+  }
+
+  // GET POPUPS
+  const files = fs.readdirSync(`./images/popups/`);
+
+  // get rid of hidden files (.DS_STORE, etc)
+  const imageFiles = files.filter(item => !(/(^|\/)\.[^\/\.]/g).test(item));
+
+  // URL client can use to get the image in css or img src attribute
+  const staticURLPrefix = `/images/popups/`;
+
+  imageFiles.forEach(file => {
+    manifest['popups'].push(staticURLPrefix + encodeURI(file));
+  });
+
+  return manifest;
 }
