@@ -4,10 +4,14 @@
     <script src='/socket.io/socket.io.js'></script>
   </head>
   <body class='black'>
-    <div class='backgrounds'>
+    <div class='backgrounds' style='display:none'>
       <div id='background-1'></div>
       <div id='background-2'></div>
       <img id='loader'/>
+    </div>
+    <div class='backgrounds-video'>
+      <video id='video-1' autoplay loop muted></video>
+      <video id='video-2' autoplay loop muted></video>
     </div>
     <section id='debug'>
       AREA: <span id='debug-area'>00 intro</span>

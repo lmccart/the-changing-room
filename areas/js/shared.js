@@ -41,8 +41,6 @@ window.showLoadingOverlay = (newEmotion) => {
 
 
 window.switchBackgrounds = (imgUrls, fadeDur, colors) => {
-  console.log(fadeDur);
-
   const bgToHide = $('#background-1').is(':visible') ? $('#background-1') : $('#background-2');
   const bgToShow = $('#background-1').is(':visible') ? $('#background-2') : $('#background-1');
 
@@ -58,6 +56,26 @@ window.switchBackgrounds = (imgUrls, fadeDur, colors) => {
   $('#loader').attr('src', imgUrl).off();
   $('#loader').attr('src', imgUrl).on('load', function() {
     console.log('loaded: ', imgUrl);
+    bgToShow.fadeIn(fadeDur);
+    bgToHide.fadeOut(fadeDur);
+  });
+};
+
+
+window.switchVideoBackgrounds = (base, fadeDur, colors) => {
+  const bgToHide = $('#video-1').is(':visible') ? $('#video-1') : $('#video-2');
+  const bgToShow = $('#video-1').is(':visible') ? $('#video-2') : $('#video-1');
+
+  if (colors) {
+    let svgId = addSvgFilterForElement(bgToShow, colors);
+    let oldSvgId = bgToShow.data('svgId');
+    $(`#${oldSvgId}`).remove();
+    bgToShow.data('svgId', svgId);
+  }
+  
+  bgToShow.attr('src', `./images/videos/${base}.mp4`);
+  bgToShow.on('canplaythrough', () => {
+    console.log('loaded: ', base);
     bgToShow.fadeIn(fadeDur);
     bgToHide.fadeOut(fadeDur);
   });

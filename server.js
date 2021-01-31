@@ -79,6 +79,7 @@ io.on('connection', (socket) => {
 app.use('/', express.static('dist'));
 app.use('/sound', express.static('sound'));
 app.use('/images', express.static('images'));
+app.use('/videos', express.static('videos'));
 app.get('/emotions', (req, res) => { res.json(emotions); });
 
 // responds with array of image urls for base emotion
