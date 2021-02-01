@@ -22,6 +22,11 @@ let thisScreenParams;
 let sharedSeed = 0;
 let emotionChanged = false;
 
+// 10s before meditation
+// 10s per instruction
+// 15s per long instruction
+// total dur 6 minutes (plenty of time)
+
 
 ///////////////////////////////////////////////
 //// Screen parameters
@@ -37,7 +42,7 @@ const screenParams = {
 ////////////// MEDITATION TIMINGS /////////////
 
 // We pause before meditation starts,
-let meditations_fadein_pause = 2000; 
+let meditations_fadein_pause = 9500; 
 
 // and slowly, the meditation fades in.
 let meditations_fadein_duration = 500; 
@@ -45,7 +50,7 @@ let meditations_fadein_duration = 500;
 //////// The meditation starts.
 
 // Each meditation text plays at this interval,
-let meditation_interval = 5000;
+let meditation_interval = 10000;
 
 // and fades in,
 let each_meditation_fadein_duration = 500;
@@ -56,7 +61,7 @@ let each_meditation_fadeout_duration = 500;
 // (But for [BODY AREA] and [PERSON], at indices 6 and 12 in the text,
 let meditation_long_indices = [6, 12];
 // there are longer intervals, and we take our time.)
-let meditation_long_interval = 10000;
+let meditation_long_interval = 15000;
 
 
 //////// The meditation is over.
@@ -645,17 +650,14 @@ async function queueEvents(timeline) {
   let mts = generateMeditationTexts();
 
   mts.forEach((mt, i) => {
+    timeline.add({ time: timeMarker, event: function() { 
+      displayMeditationPhrase({ text: mt, fadeIn: each_meditation_fadein_duration, fadeOut: each_meditation_fadeout_duration});
+    } });
 
-    if (i < 1) { // temp for testing
-      timeline.add({ time: timeMarker, event: function() { 
-        displayMeditationPhrase({ text: mt, fadeIn: each_meditation_fadein_duration, fadeOut: each_meditation_fadeout_duration});
-      } });
-
-      if (meditation_long_indices.includes(i)) {
-        timeMarker += meditation_long_interval; 
-      } else {
-        timeMarker += meditation_interval; 
-      }
+    if (meditation_long_indices.includes(i)) {
+      timeMarker += meditation_long_interval; 
+    } else {
+      timeMarker += meditation_interval; 
     }
 
   });
@@ -712,13 +714,13 @@ async function queueEvents(timeline) {
     }
   } });
 
-  timeline.setDuration(timeMarker); 
-
-
   if (emotionChanged) {
-    showLoadingOverlay(curEmotion);
+    let overlay_dur = showLoadingOverlay(curEmotion)[1];
+    timeMarker += overlay_dur;
     emotionChanged = false;
   }
+
+  timeline.setDuration(timeMarker); 
 
   console.log('TOTAL TIMELINE DURATION = ' + timeline.duration);
 

@@ -113,9 +113,9 @@ function setEmotion(emotionName, init) {
 }
 
 function restartReflectionAudio() {
-  // TODO: restart of reflection audio
   let opt = { 'seed' : Math.round( Math.random() * 10000 )};
   io.emit('reflection:restart', opt); 
+  Sound.playEmotionReflection(curEmotion);
 }
 
 function handleChat(data) {

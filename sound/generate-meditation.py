@@ -1,9 +1,9 @@
 import os
 import csv
 
-short_clip_dur = 5
-long_clip_dur = 10
-total_dur = 240
+short_clip_dur = 10
+long_clip_dur = 15
+total_dur = 360
 
 
 def generate_script(row):
@@ -33,7 +33,7 @@ def generate_script(row):
   # concat phrases
   output = concat_clips(pad_dir, base, emotion)
   # mix with base audio
-  mix_clips(output, "sounds/" + base + ".aif")
+  mix_clips(output, "sounds-long/" + base + ".aif")
   cleanup_clips(base, emotion)
 
 
@@ -55,7 +55,7 @@ def concat_clips(dir, base, emotion):
   i = 0
   command = "sox"
   output_concat = "recordings/final/" + base + "-" + emotion + "1.wav"
-  while i < 17:
+  while i < 18:
     command += " " + dir + "/" + str(i) + ".wav"
     i += 1
   command += " " + output_concat
@@ -74,10 +74,10 @@ def mix_clips(meditation, base):
   os.system(command)
   # trim
   output_trim = meditation.replace("2.wav", "4.wav")
-  os.system("ffmpeg -loglevel quiet -i " + output_mix + " -ss 00:00:00 -t 00:02:00 -async 1 " + output_trim)
+  os.system("ffmpeg -loglevel quiet -i " + output_mix + " -ss 00:00:00 -t 00:06:00 -async 1 " + output_trim)
   # fade
   output_final = meditation.replace("2.wav", ".wav")
-  os.system("ffmpeg -loglevel quiet -i " + output_trim + " -af afade=t=out:st=117:d=3 " + output_final)
+  os.system("ffmpeg -loglevel quiet -i " + output_trim + " -af afade=t=out:st=357:d=3 " + output_final)
 
 def cleanup_clips(base, emotion):
   i = 1

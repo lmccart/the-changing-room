@@ -1,7 +1,7 @@
 import os
 
-directory = "./sounds-orig/"
-out_directory = "./sounds/"
+directory = "./sounds-long/"
+out_directory = "./sounds-longer/"
 
 for filename in os.listdir(directory):
     if filename.endswith(".aif"):
