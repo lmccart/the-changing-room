@@ -41,23 +41,26 @@ window.showLoadingOverlay = (newEmotion) => {
 
 
 window.switchBackgrounds = (imgUrls, fadeDur, colors) => {
-  const bgToHide = $('#background-1').is(':visible') ? $('#background-1') : $('#background-2');
-  const bgToShow = $('#background-1').is(':visible') ? $('#background-2') : $('#background-1');
+  return new Promise(resolve => {
+    const bgToHide = $('#background-1').is(':visible') ? $('#background-1') : $('#background-2');
+    const bgToShow = $('#background-1').is(':visible') ? $('#background-2') : $('#background-1');
 
-  if (colors) {
-    let svgId = addSvgFilterForElement(bgToShow, colors);
-    let oldSvgId = bgToShow.data('svgId');
-    $(`#${oldSvgId}`).remove();
-    bgToShow.data('svgId', svgId);
-  }
-  
-  const imgUrl = imgUrls[Math.floor(Math.random() * imgUrls.length)];
-  bgToShow.css('background-image', `url(${imgUrl})`);
-  $('#loader').attr('src', imgUrl).off();
-  $('#loader').attr('src', imgUrl).on('load', function() {
-    console.log('loaded: ', imgUrl);
-    bgToShow.fadeIn(fadeDur);
-    bgToHide.fadeOut(fadeDur);
+    if (colors) {
+      let svgId = addSvgFilterForElement(bgToShow, colors);
+      let oldSvgId = bgToShow.data('svgId');
+      $(`#${oldSvgId}`).remove();
+      bgToShow.data('svgId', svgId);
+    }
+    
+    const imgUrl = imgUrls[Math.floor(Math.random() * imgUrls.length)];
+    bgToShow.css('background-image', `url(${imgUrl})`);
+    $('#loader').attr('src', imgUrl).off();
+    $('#loader').attr('src', imgUrl).on('load', function() {
+      console.log('loaded: ', imgUrl);
+      bgToShow.fadeIn(fadeDur);
+      bgToHide.fadeOut(fadeDur);
+      resolve();
+    });
   });
 };
 

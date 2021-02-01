@@ -8,20 +8,18 @@ import './shared.js';
 import Timeline from './lib/Timeline.js';
 import { getImgUrls, addSvgFilterForElement, getTextColorForBackground } from './lib/imageColorUtils.js';
 
-let emotions;
 let curEmotion;
 let primaryColor;
 let backgroundTextColor;
 let secondaryColor;
 
-var dataMeditations;
-var dataMeditationEmotions;
-var dataMemories;
-var timeline;
-var imgURLs = [];
-var preloadedImages = []; // kept here to preload images; without this, some browsers might clear cache & unload images
-var thisScreenParams;
-var sharedSeed = 0;
+let dataMeditations;
+let dataMeditationEmotions;
+let dataMemories;
+let timeline;
+let imgURLs = [];
+let thisScreenParams;
+let sharedSeed = 0;
 
 
 ///////////////////////////////////////////////
@@ -37,14 +35,8 @@ const screenParams = {
 
 ////////////// MEDITATION TIMINGS /////////////
 
-
-// The timeline starts.
-
-// We pause for the loading overlay.
-let loading_overlay_pause = 1000; 
-
 // We pause before meditation starts,
-let meditations_fadein_pause = 1000; 
+let meditations_fadein_pause = 2000; 
 
 // and slowly, the meditation fades in.
 let meditations_fadein_duration = 500; 
@@ -69,7 +61,7 @@ let meditation_long_interval = 10000;
 //////// The meditation is over.
 
 // We have a brief pause, 
-let meditations_fadeout_pause = 1000;
+let meditations_fadeout_pause = 3000;
 
 // Then meditation fades out,
 let meditations_fadeout_duration = 500;
@@ -82,11 +74,10 @@ let memories_fadein_duration = 500;
 
 //////// The memory sequence starts.
 
-// Total memory time
-let memories_total_duration = 15000;
-
 // Each memory arrives at this interval,
-let memory_interval = 1000;
+let num_memories = 8;
+
+let memory_interval = 2000;
 
 // and fades in
 let each_memory_fadein_duration = 0;//500;
@@ -109,40 +100,25 @@ let memories_fadeout_duration = 1000;
 // we pause before we end the timeline
 let timeline_end_pause = 3000;
 
-// and then we start it 
-// all
-// over 
-// again.
-
-
-
-///////////////////////////////////////////////
-/* DEV TIMINGS
-meditation_long_interval = 1000;
-meditation_interval = 500;
-each_meditation_fadeout_duration = 50;
-//  */
 
 
 window.init = () => {
-
-
   setScreen();
-
   loadData(() => {
-
     console.log('Data loaded!');
-
     socket.on('emotion:update', updateEmotionCurried(() => {
-      if (timeline === undefined) {
-        // on launch/startup
-        resetTimeline(); 
-        timeline.start();
+      // if (timeline === undefined) {
+      //   // on launch/startup
+      //   resetTimeline();
+      //   timeline.start();
+      // }
+      if (!timeline) { 
+        socket.emit('reflection:end');
       }
     }));
 
     socket.on('reflection:restart', (msg) => {
-      sharedSeed = JSON.parse(msg).seed;
+      sharedSeed = msg.seed;
       console.log('shared seed = ', sharedSeed);
 
       resetTimeline(); 
@@ -160,10 +136,13 @@ function updateEmotionCurried(callback) {
     if (!curEmotion || curEmotion.name !== msg.name) {
       curEmotion = msg;
       console.log('emotion has been updated to: ' + msg.name + ' (base: ' + msg.base + ', level: ' + msg.level + ')');
-      updateImageList(() => {
-        updateInterface();
-        callback();
-      });
+      
+      getImgUrls(curEmotion.base)
+        .then(images => {
+          imgURLs = images;
+          updateInterface();
+          callback();
+        });
     }
   };
 }
@@ -194,24 +173,6 @@ function setScreen() {
 
 }
 
-function updateImageList(cb) {
-
-  getImgUrls(curEmotion.base)
-    .then(images => { 
-
-      imgURLs = images;
-
-      // TEMP FOR TESTING
-      // preloadedImages = [];
-      // imgURLs.forEach(url => {
-      //   let img = new Image();
-      //   img.src = url;
-      //   preloadedImages.push(img);
-      // });
-      cb(imgURLs);
-    });
-}
-
 function loadData(cb) {
   let dataLoaded = -3; // this is a bit hacky but simpler than Promises.all
 
@@ -225,7 +186,6 @@ function loadData(cb) {
         cb(); 
       } 
     });
-
 
   Papa.parse('/static/data/02_meditation_emotion_specific.tsv', {
     download: true,
@@ -256,7 +216,6 @@ function loadData(cb) {
     }
   });
 
-
   Papa.parse('/static/data/02_memories.tsv', {
     download: true,
     header: true,
@@ -267,10 +226,10 @@ function loadData(cb) {
       // I (dan) think it should be { 'annoyed': [ 'One time', ...], 'alive': ['one day', ..] /// 
       const reordered = {};
 
-      for (var i = 0; i < rawResults.length; i++) {
+      for (let i = 0; i < rawResults.length; i++) {
         let thisrow = rawResults[i];
 
-        var newrow = {};
+        let newrow = {};
         Object.keys(thisrow).forEach((key) => { 
           key = key.trim();
           if (key !== '' && thisrow[key].trim() !== '') {
@@ -288,106 +247,76 @@ function loadData(cb) {
       } 
     }
   });
-
-
 }
-
-
-
-function seedShuffle(array, seed) { 
-
-  const rng = seedrandom(seed);
-
-  var m = array.length, t, i;
-
-  // While there remain elements to shuffle…
-  while (m) {
-
-    // Pick a remaining element…
-    i = Math.floor(rng() * m--);
-
-    // And swap it with the current element.
-    t = array[m];
-    array[m] = array[i];
-    array[i] = t;
-  }
-
-  return array;
-}
-
-function randomBetween(a, b) {
-  return a + (Math.random() * (b - a));
-}
-
 
 /////////////////////////////////
 ///// BACKGROUNDS
 //////////////////////////////////
 
-
 function setColorsAndBackgrounds() {
-  backgroundColor = window.baseColors[curEmotion.base][curEmotion.level % 3];
-  memoriesColor = window.baseColors[curEmotion.base][(curEmotion.level - 1) % 3];
+  primaryColor = window.baseColors[curEmotion.base][curEmotion.level % 3];
+  secondaryColor = window.baseColors[curEmotion.base][(curEmotion.level - 1) % 3];
   window.baseColors[curEmotion.base];
-  backgroundTextColor = getTextColorForBackground(backgroundColor[0]);
+  backgroundTextColor = getTextColorForBackground(primaryColor[0]);
   $('#meditation_text').css('color', backgroundTextColor);
   $('#meditation_container').css('border-color', backgroundTextColor);
 
 
-  const bg = $('#background');
+  // const bg = $('#background');
 
   const imgUrl = imgURLs[sharedSeed % imgURLs.length];
-  let prevSvgId = bg.data('svgId');
-  let svgId = addSvgFilterForElement(bg, window.baseColors[curEmotion.base][curEmotion.level % 3]);
-  bg.data('svgId', svgId);
-  bg.css('background-image', `url(${imgUrl})`);
-  $('#loader').attr('src', imgUrl).off();
-  $('#loader').attr('src', imgUrl).on('load', function() {
+  // let prevSvgId = bg.data('svgId');
+  // let svgId = addSvgFilterForElement(bg, window.baseColors[curEmotion.base][curEmotion.level % 3]);
+  // bg.data('svgId', svgId);
 
-    let nw = $('#loader')[0].naturalWidth;
-    let nh = $('#loader')[0].naturalHeight;
-    let bgw, bgh, bgscale;
-    let bgIsTaller = false;
-    if ((nw / nh) > (screenParams[1].width / screenParams[1].height)) {
-      // background image is wider than screen, so 
-      // it is filled at top and bottom and cropped on the sides
-      bgh = screenParams[1].height;
-      bgw = bgh * nw / nh;
-      bgscale = bgw / nw;
-    } else {
-      // background image is taller than screen, so 
-      // it is filled at left and right and cropped at top and bottom
-      bgw = screenParams[1].width;
-      bgh = bgw * nh / nw;
-      bgscale = bgh / nh;
-      bgIsTaller = true;
-    }
+  const colors = window.baseColors[curEmotion.base][curEmotion.level % 3];
 
-      
-    if (thisScreenParams.id === 0) {
-      $('#background').css('background-size', `${bgw}px ${bgh}px`);
-      if (bgIsTaller) {
-        $('#background').css('background-position', `-${(bgw - screenParams[1].width)}px center`);
+  switchBackgrounds([imgUrl], 1000, colors)
+    .then(() => {
+      let nw = $('#loader')[0].naturalWidth;
+      let nh = $('#loader')[0].naturalHeight;
+      let bgw, bgh, bgscale;
+      let bgIsTaller = false;
+      if ((nw / nh) > (screenParams[1].width / screenParams[1].height)) {
+        // background image is wider than screen, so 
+        // it is filled at top and bottom and cropped on the sides
+        bgh = screenParams[1].height;
+        bgw = bgh * nw / nh;
+        bgscale = bgw / nw;
       } else {
-        $('#background').css('background-position', `calc(0% - ${(bgw - screenParams[1].width) / 2}px) center`);
+        // background image is taller than screen, so 
+        // it is filled at left and right and cropped at top and bottom
+        bgw = screenParams[1].width;
+        bgh = bgw * nh / nw;
+        bgscale = bgh / nh;
+        bgIsTaller = true;
       }
-    }
-   
-    if (thisScreenParams.id === 2) {
-      $('#background').css('background-size', `${bgw}px ${bgh}px`);
-      if (bgIsTaller) {
-        $('#background').css('background-position', `calc(100% - ${(bgw - screenParams[1].width)}px) center`);
-      } else {
-        $('#background').css('background-position', `calc(0% - ${(bgw - thisScreenParams.width) / 2}px) center`);
+
+        
+      if (thisScreenParams.id === 0) {
+        $('#background').css('background-size', `${bgw}px ${bgh}px`);
+        if (bgIsTaller) {
+          $('#background').css('background-position', `-${(bgw - screenParams[1].width)}px center`);
+        } else {
+          $('#background').css('background-position', `calc(0% - ${(bgw - screenParams[1].width) / 2}px) center`);
+        }
       }
-    }
-   
     
-    setTimeout(() => {
-      console.log(`removing #${prevSvgId}`);
-      $(`#${prevSvgId}`).remove();
-    }, 1000);
-  });
+      if (thisScreenParams.id === 2) {
+        $('#background').css('background-size', `${bgw}px ${bgh}px`);
+        if (bgIsTaller) {
+          $('#background').css('background-position', `calc(100% - ${(bgw - screenParams[1].width)}px) center`);
+        } else {
+          $('#background').css('background-position', `calc(0% - ${(bgw - thisScreenParams.width) / 2}px) center`);
+        }
+      }
+    
+      
+      // setTimeout(() => {
+      //   console.log(`removing #${prevSvgId}`);
+      //   $(`#${prevSvgId}`).remove();
+      // }, 1000);
+    });
 }
 
 
@@ -435,22 +364,18 @@ function displayMeditationPhrase(opts) {
 ///////////////////////////////////
 
 function pickMemoryPairs() {
-  var memories = [];
+  let memories = [];
 
-  var thisEmotionMemories = seedShuffle(dataMemories[curEmotion.base], sharedSeed);
+  let thisEmotionMemories = seedShuffle(dataMemories[curEmotion.base], sharedSeed);
 
   let rng = seedrandom(sharedSeed);
 
   let screenNumber;
 
-  let imgCounter = 0;
-  let memCounter = 0;
-  let mempairCounter = 0;
+  for (let i = 0; i < num_memories; i++) {
 
-  for (let imgCounter = 0; imgCounter < numMemories; imgCounter++) {
-
-    let img = imgURLs[(imgCounter + imgOffset) & imgURLs.length];
-    let text = thisEmotionMemories[(imgCounter + memOffset) & thisEmotionMemories.length];
+    let img = imgURLs[i % imgURLs.length];
+    let text = thisEmotionMemories[i % thisEmotionMemories.length];
 
     // randomly pick screen
     let r = rng();
@@ -462,92 +387,76 @@ function pickMemoryPairs() {
       screenNumber = 2;
     }
 
-    var thisMemPair = [];
+    let thisMemPair = [];
 
     thisMemPair.push({
       type: 'image',
-      url: imgURLs[imgCounter++],
+      url: img,
       screenNumber: screenNumber,
-      mempairNumber: mempairCounter,
+      mempairNumber: i,
     });
 
     if (rng() < 0.5) {
       thisMemPair.push({ 
         type: 'text',
-        text: thisEmotionMemories[memCounter++],
+        text: text,
         screenNumber: screenNumber,
-        mempairNumber: mempairCounter,
+        mempairNumber: i,
       });
     } else {
       thisMemPair.push({
         type: 'image',
-        url: imgURLs[imgCounter++],
+        url: img,
         screenNumber: screenNumber,
-        mempairNumber: mempairCounter,
+        mempairNumber: i,
       });
     }
 
-    mempairCounter++;
     memories.push({ data: thisMemPair });
-
   }
-
   return memories;
 }
 
 
 function preloadMemoriesAndSetDimensions(memPairs) { 
-  // memPairs = [{ 0: mempairNumber: 1, screenNumber: 1, type: ..., url: ... }, ]
-
-  // TODO: add dimensions by adapting preload mempair divs
-
   memPairs = memPairs.map((mempair, index) => {
 
     if (!mempair.display) { return mempair; }
 
-
     // generate divs and add them to container
     mempair.data.forEach((memory, i) => {
-
       let memdiv;
      
       if (memory.type === 'text') {
         memdiv = $('<div></div>');
         memdiv.addClass('text');
         memdiv.text(memory.text);
-      } 
-
+      }
 
       if (memory.type === 'image') {
         memdiv = $('<img></img>');
         memdiv.addClass('image');
         memdiv.attr('src', memory.url);
-        let svgId = addSvgFilterForElement(memdiv, memoriesColor);
-
+        let svgId = addSvgFilterForElement(memdiv, secondaryColor);
         memory.naturalWidth = memdiv.get(0).naturalWidth;
         memory.naturalHeight = memdiv.get(0).naturalHeight;
       } 
 
       memory.id = `memory-${index}-${i}`;
-
       memdiv.addClass('memory');
       memdiv.attr('id', memory.id);
       memdiv.css('visibility','hidden');
       memdiv.appendTo('#memory_container');
-
     });
-
 
     // add dimensions/crop and shape
     mempair.data.forEach(m => {
-
       let mdiv = $('#' + m.id);
       if (m.type === 'text') {
         m.width = 500;
         mdiv.width(m.width);
         m.height = mdiv.height();
       }
-
       if (m.type === 'image') {
         // TODO - apply crop in the future
         m.width = randomBetween(300, 600); // IMAGE SIZE PARAMETERS
@@ -555,20 +464,12 @@ function preloadMemoriesAndSetDimensions(memPairs) {
         mdiv.width(m.width);
         mdiv.height(m.height);
       }
-
-
       mdiv.css('visibility','visible');
       mdiv.css('display','none');
-
     });
-    
-       
     return mempair;
-
   });
-
   return memPairs;
-
 }
 
 
@@ -707,8 +608,7 @@ function displayMemoryPair(mempair) {
   // mem looks like: { id: '#memory-0-1', ... }
 
   mempair.data.forEach(mem => {
-    $('#' + mem.id).fadeIn(each_memory_fadein_duration);
-    $('#' + mem.id).fadeIn(each_memory_fadein_duration);
+    $('#' + mem.id).fadeIn(each_memory_fadein_duration).delay(each_memory_pause_duration).fadeOut(each_memory_fadeout_duration);
   });
 
 }
@@ -719,7 +619,6 @@ function displayMemoryPair(mempair) {
 /////////////////////////////////
 
 function resetHTML(cb) {
-  $('svg').remove();
   setColorsAndBackgrounds();
   $('#meditation_text').empty();
   $('#memory_container').empty();
@@ -731,13 +630,12 @@ function queueEvents(timeline) {
   window.timeline = timeline;
 
 
-  var timeMarker = 0;
+  let timeMarker = 0;
 
   timeline.add({ time: timeMarker, event: function() { 
-    showLoadingOverlay(curEmotion);
+    let timeline_duration = showLoadingOverlay(curEmotion);
+    timeMarker += timeline_duration[1];
   } });
-
-  timeMarker += loading_overlay_pause;
 
   timeMarker += meditations_fadein_pause;
 
@@ -752,17 +650,17 @@ function queueEvents(timeline) {
 
   mts.forEach((mt, i) => {
 
-    // if (i < 3) { // temp for testing
-    timeline.add({ time: timeMarker, event: function() { 
-      displayMeditationPhrase({ text: mt, fadeIn: each_meditation_fadein_duration, fadeOut: each_meditation_fadeout_duration});
-    } });
+    if (i < 3) { // temp for testing
+      timeline.add({ time: timeMarker, event: function() { 
+        displayMeditationPhrase({ text: mt, fadeIn: each_meditation_fadein_duration, fadeOut: each_meditation_fadeout_duration});
+      } });
 
-    if (meditation_long_indices.includes(i)) {
-      timeMarker += meditation_long_interval; 
-    } else {
-      timeMarker += meditation_interval; 
+      if (meditation_long_indices.includes(i)) {
+        timeMarker += meditation_long_interval; 
+      } else {
+        timeMarker += meditation_interval; 
+      }
     }
-    // }
 
   });
 
@@ -775,7 +673,6 @@ function queueEvents(timeline) {
     $('#meditation_container').fadeOut(meditations_fadeout_duration);
   } });
 
-
   timeMarker += memories_fadein_pause;
 
   timeline.add({ time: timeMarker, event: function() { 
@@ -787,18 +684,13 @@ function queueEvents(timeline) {
   
   let mempairs = generateAndPreloadMemoryPairs();
 
-
   mempairs.forEach((mempair, i) => {
-
 
     timeline.add({ time: timeMarker, event: function() { 
 
-
       if (mempair.data[0].screenNumber === thisScreenParams.id || thisScreenParams.name === 'FULLSCREEN') {
       //only display if we're on the right screen
-       
         displayMemoryPair(mempair);
-
         console.log('...WE are displaying memory pair #', i, '...');
       } else {
         console.log('...SOMEONE ELSE is displaying memory pair #', i, '...');
@@ -831,14 +723,16 @@ function queueEvents(timeline) {
 
   timeline.setDuration(timeMarker); 
 
+  console.log('TOTAL TIMELINE DURATION = ' + timeline.duration);
 
 }
 
 
 function resetTimeline() {  
 
-  console.log('Initializing timeline');
+  console.log('Reseting timeline');
 
+  if (timeline) timeline.clear();
   timeline = new Timeline({ loop: false, duration: 50000, interval: 100 }); 
 
   resetHTML();
@@ -848,11 +742,32 @@ function resetTimeline() {
 }
 
 ///////////////////////////////////
-//// MAIN
+//// HELPERS
 /////////////////////////////////////
 
-// window.init is on top of page
+function seedShuffle(array, seed) { 
 
+  const rng = seedrandom(seed);
 
+  let m = array.length, t, i;
+
+  // While there remain elements to shuffle…
+  while (m) {
+
+    // Pick a remaining element…
+    i = Math.floor(rng() * m--);
+
+    // And swap it with the current element.
+    t = array[m];
+    array[m] = array[i];
+    array[i] = t;
+  }
+
+  return array;
+}
+
+function randomBetween(a, b) {
+  return a + (Math.random() * (b - a));
+}
 
 
