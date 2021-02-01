@@ -35,7 +35,8 @@ section.main {
 }
 
 
-#background {
+#background-1, 
+#background-2 {
   z-index: 1;
   background-position: center;
   background-repeat: no-repeat;
@@ -87,7 +88,6 @@ section.main {
 
 #memory_container {
   z-index: 200;
-  visibility: hidden;
 }
 
 .memory {

@@ -20,6 +20,7 @@ let timeline;
 let imgURLs = [];
 let thisScreenParams;
 let sharedSeed = 0;
+let emotionChanged = false;
 
 
 ///////////////////////////////////////////////
@@ -80,13 +81,13 @@ let num_memories = 8;
 let memory_interval = 2000;
 
 // and fades in
-let each_memory_fadein_duration = 0;//500;
+let each_memory_fadein_duration = 500;
 
 // pauses
 let each_memory_pause_duration = 2000;
 
 // and fades out.
-let each_memory_fadeout_duration = 0;//500;
+let each_memory_fadeout_duration = 500;
 
 /////// The memories are over.
 
@@ -107,11 +108,6 @@ window.init = () => {
   loadData(() => {
     console.log('Data loaded!');
     socket.on('emotion:update', updateEmotionCurried(() => {
-      // if (timeline === undefined) {
-      //   // on launch/startup
-      //   resetTimeline();
-      //   timeline.start();
-      // }
       if (!timeline) { 
         socket.emit('reflection:end');
       }
@@ -135,6 +131,7 @@ function updateEmotionCurried(callback) {
   return function(msg) {
     if (!curEmotion || curEmotion.name !== msg.name) {
       curEmotion = msg;
+      emotionChanged = true;
       console.log('emotion has been updated to: ' + msg.name + ' (base: ' + msg.base + ', level: ' + msg.level + ')');
       
       getImgUrls(curEmotion.base)
@@ -271,7 +268,7 @@ function setColorsAndBackgrounds() {
 
   const colors = window.baseColors[curEmotion.base][curEmotion.level % 3];
 
-  switchBackgrounds([imgUrl], 1000, colors)
+  switchBackgrounds([imgUrl], 2000, colors)
     .then(() => {
       let nw = $('#loader')[0].naturalWidth;
       let nh = $('#loader')[0].naturalHeight;
@@ -374,11 +371,12 @@ function pickMemoryPairs() {
 
   for (let i = 0; i < num_memories; i++) {
 
-    let img = imgURLs[i % imgURLs.length];
+    let img0 = imgURLs[Math.floor(rng() * imgURLs.length)];
+    let img1 = imgURLs[Math.floor(rng() * imgURLs.length)];
     let text = thisEmotionMemories[i % thisEmotionMemories.length];
 
     // randomly pick screen
-    let r = rng();
+    let r = rng(); // temp
     if (r < 0.333) { 
       screenNumber = 0;
     } else if (r < 0.666) {
@@ -386,218 +384,220 @@ function pickMemoryPairs() {
     } else {
       screenNumber = 2;
     }
+    
+    let thisMempair = [];
 
-    let thisMemPair = [];
-
-    thisMemPair.push({
+    thisMempair.push({
       type: 'image',
-      url: img,
+      url: img0,
       screenNumber: screenNumber,
       mempairNumber: i,
     });
 
     if (rng() < 0.5) {
-      thisMemPair.push({ 
+      thisMempair.push({ 
         type: 'text',
         text: text,
         screenNumber: screenNumber,
         mempairNumber: i,
       });
     } else {
-      thisMemPair.push({
+      thisMempair.push({
         type: 'image',
-        url: img,
+        url: img1,
         screenNumber: screenNumber,
         mempairNumber: i,
       });
     }
-
-    memories.push({ data: thisMemPair });
+    memories.push({ data: thisMempair });
   }
   return memories;
 }
 
 
-function preloadMemoriesAndSetDimensions(memPairs) { 
-  memPairs = memPairs.map((mempair, index) => {
+async function loadMempair(mempair, index) {
+  if (!mempair.display) { return mempair; }
+  await loadMedia(mempair.data[0], index, 0);
+  await loadMedia(mempair.data[1], index, 1);
+}
 
-    if (!mempair.display) { return mempair; }
 
-    // generate divs and add them to container
-    mempair.data.forEach((memory, i) => {
-      let memdiv;
-     
-      if (memory.type === 'text') {
-        memdiv = $('<div></div>');
-        memdiv.addClass('text');
-        memdiv.text(memory.text);
-      }
+function loadMedia(memory, index, i) {
+  return new Promise(resolve => {
+    let memdiv;
+    if (memory.type === 'text') {
+      memdiv = $('<div></div>');
+      memdiv.addClass('text');
+      memdiv.text(memory.text);
+    }
+    else if (memory.type === 'image') {
+      memdiv = $('<img></img>');
+      memdiv.addClass('image');
+      memdiv.attr('src', memory.url);
+      let svgId = addSvgFilterForElement(memdiv, secondaryColor);
+    } 
 
-      if (memory.type === 'image') {
-        memdiv = $('<img></img>');
-        memdiv.addClass('image');
-        memdiv.attr('src', memory.url);
-        let svgId = addSvgFilterForElement(memdiv, secondaryColor);
+    memory.id = `memory-${index}-${i}`;
+    memdiv.addClass('memory');
+    memdiv.attr('id', memory.id);
+    memdiv.hide();
+    memdiv.appendTo('#memory_container');
+
+    if (memory.type === 'text') {
+      memory.width = 500;
+      memdiv.width(memory.width);
+      memory.height = memdiv.height();
+      resolve(memdiv);
+    } else if (memory.type === 'image') {
+      memdiv.on('load', () => {
         memory.naturalWidth = memdiv.get(0).naturalWidth;
         memory.naturalHeight = memdiv.get(0).naturalHeight;
-      } 
-
-      memory.id = `memory-${index}-${i}`;
-      memdiv.addClass('memory');
-      memdiv.attr('id', memory.id);
-      memdiv.css('visibility','hidden');
-      memdiv.appendTo('#memory_container');
-    });
-
-    // add dimensions/crop and shape
-    mempair.data.forEach(m => {
-      let mdiv = $('#' + m.id);
-      if (m.type === 'text') {
-        m.width = 500;
-        mdiv.width(m.width);
-        m.height = mdiv.height();
-      }
-      if (m.type === 'image') {
-        // TODO - apply crop in the future
-        m.width = randomBetween(300, 600); // IMAGE SIZE PARAMETERS
-        m.height = m.width / m.naturalWidth * m.naturalHeight;
-        mdiv.width(m.width);
-        mdiv.height(m.height);
-      }
-      mdiv.css('visibility','visible');
-      mdiv.css('display','none');
-    });
-    return mempair;
+        memory.width = randomBetween(300, 600); // IMAGE SIZE PARAMETERS
+        memory.height = memory.width / memory.naturalWidth * memory.naturalHeight;
+        memdiv.width(memory.width);
+        memdiv.height(memory.height);
+        resolve(memdiv);
+      });
+    }
   });
-  return memPairs;
 }
 
 
-function positionMemories(memPairs) {
+function positionMempairs(mempairs) {
 
-  memPairs = memPairs.map((mempair, index) => {
-
-    if (!mempair.display) { return mempair; }
-
-    console.log(mempair);
-
-    let minoverlap = 0.7;
-    let maxoverlap = 1.1;
-    let memoryPadding = 50; // memory padding in pixels - will add padding around which memories won't be placed
-
-
-    // first let's assume that the first div is at 0, 0
-    let m1 = { 
-      x: 0, 
-      y: 0, 
-      height: mempair.data[0].height,
-      width: mempair.data[0].width
-    }; 
-
-    let m2 = {
-      height: mempair.data[1].height,
-      width: mempair.data[1].width
-    }; //m2 locations based on trig
-
-    let overlapcoeff = randomBetween(minoverlap, maxoverlap);
-
-    // either:
-    let sr = Math.random();
-    if (sr <= 0.25) {
-      // m2 is on right side of m1, slid up and down
-      m2.x = m1.width * overlapcoeff;
-      m2.y = randomBetween(m1.y - m2.height, m1.y + m1.height); 
-    } else if (sr <= 0.5) {
-      // m2 is on left side of m1, slid up and down
-      m2.x = -m2.width * overlapcoeff;
-      m2.y = randomBetween(m1.y - m2.height, m1.y + m1.height);
-    } else if (sr <= 0.75) {
-      // m2 is on bottom side of m1, slid left and right
-    
-      m2.x = randomBetween(m1.x - m2.width, m1.x + m1.width);
-    } else {
-      // m2 is on top side of m1, slid left and right
-      m2.y = -m2.height * overlapcoeff;
-      m2.x = randomBetween(m1.x - m2.width, m1.x + m1.width);
-    }
-    
-    // adjust coordinates so that none are negative
-    if (m2.x < 0) { 
-      m1.x += Math.abs(m2.x);
-      m2.x = 0;
-    }
-
-    if (m2.y < 0) { 
-      m1.y += Math.abs(m2.y);
-      m2.y = 0;
-    }
-
-    //////////////////
-
-
-    // get boundingbox of both overlapping rectangles
-    let bb = {};
-    bb.x1 = Math.min(m1.x, m2.x); 
-    bb.y1 = Math.min(m1.y, m2.y); 
-    bb.x2 = Math.max(m1.x + m1.width, m2.x + m2.width); 
-    bb.y2 = Math.max(m1.y + m1.height, m2.y + m2.height); 
-    bb.width = bb.x2 - bb.x1;
-    bb.height = bb.y2 - bb.y1;
-
-
-
-    // SO now we position the bounding box randomly within the screen
-    bb.screenX = randomBetween(memoryPadding, thisScreenParams.width - bb.width - memoryPadding);
-    bb.screenY = randomBetween(memoryPadding, thisScreenParams.height - bb.height - memoryPadding);
-
-
-    // and then drive memdiv screen locations from that
-    m1.screenX = m1.x + bb.screenX;
-    m1.screenY = m1.y + bb.screenY;
-    m2.screenX = m2.x + bb.screenX;
-    m2.screenY = m2.y + bb.screenY;
-
-    mempair.data[0].screenX = m1.x + bb.screenX;
-    mempair.data[0].screenY = m1.y + bb.screenY;
-    mempair.data[1].screenX = m2.x + bb.screenX;
-    mempair.data[1].screenY = m2.y + bb.screenY;
-
-    $('#' + mempair.data[0].id).css({ top: mempair.data[0].screenY, left: mempair.data[0].screenX });
-    $('#' + mempair.data[1].id).css({ top: mempair.data[1].screenY, left: mempair.data[1].screenX });
-
-    mempair.bb = bb;
-
-    return mempair;
+  mempairs = mempairs.map((mempair, index) => {
+    positionMempair(mempair, index);
   });
 
-  return memPairs;
+  return mempairs;
 
 }
 
+function positionMempair(mempair, index) {
+  if (!mempair.display) { return mempair; }
 
-function generateAndPreloadMemoryPairs() {
+  let minoverlap = 0.7;
+  let maxoverlap = 1.1;
+  let memoryPadding = 50; // memory padding in pixels - will add padding around which memories won't be placed
 
-  let memoryPairs = pickMemoryPairs();
 
-  console.log(memoryPairs);
+  // first let's assume that the first div is at 0, 0
+  let m1 = { 
+    x: 0, 
+    y: 0, 
+    height: mempair.data[0].height,
+    width: mempair.data[0].width
+  }; 
 
-  // flag whether or not memory pair is displayed
-  memoryPairs.forEach(mempair => {
-    if (mempair.data[0].screenNumber === thisScreenParams.id || thisScreenParams.name === 'FULLSCREEN') {
-      mempair.display = true;
-    } else {
-      mempair.display = false;
-    }
+  let m2 = {
+    x: 0,
+    y: 0,
+    height: mempair.data[1].height,
+    width: mempair.data[1].width
+  }; //m2 locations based on trig
+
+  let overlapcoeff = randomBetween(minoverlap, maxoverlap);
+
+  // either:
+  let sr = Math.random();
+  if (sr <= 0.25) {
+    // m2 is on right side of m1, slid up and down
+    m2.x = m1.width * overlapcoeff;
+    m2.y = randomBetween(m1.y - m2.height, m1.y + m1.height); 
+  } else if (sr <= 0.5) {
+    // m2 is on left side of m1, slid up and down
+    m2.x = -m2.width * overlapcoeff;
+    m2.y = randomBetween(m1.y - m2.height, m1.y + m1.height);
+  } else if (sr <= 0.75) {
+    // m2 is on bottom side of m1, slid left and right
+  
+    m2.x = randomBetween(m1.x - m2.width, m1.x + m1.width);
+  } else {
+    // m2 is on top side of m1, slid left and right
+    m2.y = -m2.height * overlapcoeff;
+    m2.x = randomBetween(m1.x - m2.width, m1.x + m1.width);
+  }
+  
+  // adjust coordinates so that none are negative
+  if (m2.x < 0) { 
+    m1.x += Math.abs(m2.x);
+    m2.x = 0;
+  }
+
+  if (m2.y < 0) { 
+    m1.y += Math.abs(m2.y);
+    m2.y = 0;
+  }
+
+  //////////////////
+
+
+  // get boundingbox of both overlapping rectangles
+  let bb = {};
+  bb.x1 = Math.min(m1.x, m2.x); 
+  bb.y1 = Math.min(m1.y, m2.y); 
+  bb.x2 = Math.max(m1.x + m1.width, m2.x + m2.width); 
+  bb.y2 = Math.max(m1.y + m1.height, m2.y + m2.height); 
+  bb.width = bb.x2 - bb.x1;
+  bb.height = bb.y2 - bb.y1;
+
+  // SO now we position the bounding box randomly within the screen
+  bb.screenX = randomBetween(memoryPadding, thisScreenParams.width - bb.width - memoryPadding);
+  bb.screenY = randomBetween(memoryPadding, thisScreenParams.height - bb.height - memoryPadding);
+
+
+  // and then drive memdiv screen locations from that
+  m1.screenX = m1.x + bb.screenX;
+  m1.screenY = m1.y + bb.screenY;
+  m2.screenX = m2.x + bb.screenX;
+  m2.screenY = m2.y + bb.screenY;
+
+  mempair.data[0].screenX = m1.x + bb.screenX;
+  mempair.data[0].screenY = m1.y + bb.screenY;
+  mempair.data[1].screenX = m2.x + bb.screenX;
+  mempair.data[1].screenY = m2.y + bb.screenY;
+
+  $('#' + mempair.data[0].id).css({ top: mempair.data[0].screenY, left: mempair.data[0].screenX });
+  $('#' + mempair.data[1].id).css({ top: mempair.data[1].screenY, left: mempair.data[1].screenX });
+
+  mempair.bb = bb;
+
+  return mempair;
+}
+
+
+async function generateAndPreloadMemoryPairs() {
+  return new Promise(resolve => {
+
+    let memoryPairs = pickMemoryPairs();
+
+    console.log(memoryPairs);
+
+    // flag whether or not memory pair is displayed
+    memoryPairs.forEach(mempair => {
+      if (mempair.data[0].screenNumber === thisScreenParams.id || thisScreenParams.name === 'FULLSCREEN') {
+        mempair.display = true;
+      } else {
+        mempair.display = false;
+      }
+
+    });
+
+    // memoryPairs = await preloadMemoriesAndSetDimensions(memoryPairs);
+
+    let tasks = [];
+    memoryPairs.forEach((mempair, index) => {
+      tasks.push(loadMempair(mempair, index));
+    });
+
+    Promise.all(tasks)
+      .then(results => {
+        positionMempairs(memoryPairs); 
+        console.log(memoryPairs);
+        resolve(memoryPairs);
+      });
 
   });
-
-  memoryPairs = preloadMemoriesAndSetDimensions(memoryPairs);
-
-  memoryPairs = positionMemories(memoryPairs); 
-
-  console.log(memoryPairs);
-
-  return memoryPairs;
 
 }
 
@@ -622,20 +622,16 @@ function resetHTML(cb) {
   setColorsAndBackgrounds();
   $('#meditation_text').empty();
   $('#memory_container').empty();
+  $('#memory_container').hide();
 }
 
 
 
-function queueEvents(timeline) {
+async function queueEvents(timeline) {
   window.timeline = timeline;
 
 
   let timeMarker = 0;
-
-  timeline.add({ time: timeMarker, event: function() { 
-    let timeline_duration = showLoadingOverlay(curEmotion);
-    timeMarker += timeline_duration[1];
-  } });
 
   timeMarker += meditations_fadein_pause;
 
@@ -650,7 +646,7 @@ function queueEvents(timeline) {
 
   mts.forEach((mt, i) => {
 
-    if (i < 3) { // temp for testing
+    if (i < 1) { // temp for testing
       timeline.add({ time: timeMarker, event: function() { 
         displayMeditationPhrase({ text: mt, fadeIn: each_meditation_fadein_duration, fadeOut: each_meditation_fadeout_duration});
       } });
@@ -682,12 +678,11 @@ function queueEvents(timeline) {
 
   ///////// QUEUE MEMORIES
   
-  let mempairs = generateAndPreloadMemoryPairs();
+  let mempairs = await generateAndPreloadMemoryPairs();
 
+  console.log(mempairs);
   mempairs.forEach((mempair, i) => {
-
     timeline.add({ time: timeMarker, event: function() { 
-
       if (mempair.data[0].screenNumber === thisScreenParams.id || thisScreenParams.name === 'FULLSCREEN') {
       //only display if we're on the right screen
         displayMemoryPair(mempair);
@@ -695,12 +690,8 @@ function queueEvents(timeline) {
       } else {
         console.log('...SOMEONE ELSE is displaying memory pair #', i, '...');
       }
-
-
-    } });
-
+    } }); 
     timeMarker += memory_interval;
-
   });
  
   
@@ -722,6 +713,12 @@ function queueEvents(timeline) {
   } });
 
   timeline.setDuration(timeMarker); 
+
+
+  if (emotionChanged) {
+    showLoadingOverlay(curEmotion);
+    emotionChanged = false;
+  }
 
   console.log('TOTAL TIMELINE DURATION = ' + timeline.duration);
 
