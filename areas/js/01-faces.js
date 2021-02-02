@@ -7,32 +7,35 @@ import { pico } from './lib/pico.js';
 import 'fancy-textfill/es2015/jquery.plugin';
 import { getTextColorForBackground } from './lib/imageColorUtils.js';
 import Papa from 'papaparse';
-
-
 const cascadeurl = '/static/facefinder_cascade.txt';
+
 const ipadWidth = 1620;
 const ipadHeight = 2160;
 const typingSpeed = 60;
+let phraseInterval = 5000; 
 const delaySeconds = 1; // seconds to wait before showing/hiding video
 const update_memory = pico.instantiate_detection_memory(5); // use the detecions of the last 5 frames
 
 let emotions;
 let curEmotion;
 let emotionalMessage = '';
+let spellOut = false; // used to determine when to animate text
+let phraseTimeout;
+let typingTimeout;
 let phrases;
+let emotionPhrases;
+let curPhrase = 0;
 
 let facefinderClassifyRegion;
 let watchdog = 0; // used to delay showing/hiding video
-let spellOut = false; // used to determine when to animate text
-let calledAgain = 0; // used to break the phrase loop if the emotion changes
-let phraseInterval = 10000; 
+let faceFound = false;
+let faceInitialized = false;
+let face_threshold = 0.01; // 0.2;
 
 const coverEl = $('#video-cover');
 const videoEl = $('#face-stream');
 const canvas = document.createElement('canvas');
 const ctx = canvas.getContext('2d');
-let faceInitialized = false;
-
 
 
 window.init = () => {
@@ -48,6 +51,12 @@ window.init = () => {
     });
 };
 
+window.loadingComplete = () => {
+  if (faceFound) {
+    queueText();
+  }
+  $('#hand-container').delay(1000).fadeIn();
+};
 
 async function loadText() {
   await Papa.parse('/static/data/01_reflections.tsv', {
@@ -56,7 +65,6 @@ async function loadText() {
     skipEmptyLines: 'greedy',
     complete: function(results) {
       const rawResults = results.data;
-      // console.log(rawResults, 'RAW RESULTS');
 
       const reordered = {};
       const keys = Object.keys(rawResults[0]);
@@ -95,6 +103,8 @@ async function setupFaceDetection(e) {
       videoEl[0].srcObject = stream;
       new camvas(ctx, processfn, stream, 10); // 10 here is the target fps for checking for faces
       resizeLayout();
+      removeCover(true);
+      $('#hand-container').remove();
     } catch (e) {
       console.log(e);
     }
@@ -155,24 +165,24 @@ const processfn = (video) => {
   // (representing row, column, scale and detection score)
   let dets = pico.run_cascade(image, facefinderClassifyRegion, params);
   dets = update_memory(dets);
-  dets = pico.cluster_detections(dets, 0.2); // set IoU threshold to 0.2
+  dets = pico.cluster_detections(dets, face_threshold); // set IoU threshold to 0.2
 
-  let faceFound = false;
+  let faceTempFound = false;
   for (let i = 0; i < dets.length; ++i) {
     // check the detection score
     // if it's above the threshold increment watchdog
     // (the constant 50.0 is empirical: other cascades might require a different one)
     if (dets[i][3] > 5.0) {
-      faceFound = true;
-      // console.log(dets[i][3]);
+      faceTempFound = true;
     } 
   }
 
   // if watchdog is > 20 that means a face has been detected for 2 seconds
-  if (faceFound) {
+  if (faceTempFound) {
     watchdog = watchdog < 0 ? 0 : watchdog + 1;
 
     if (watchdog > (delaySeconds * 10)) {
+      faceFound = true;
       removeCover();
 
     }
@@ -180,54 +190,20 @@ const processfn = (video) => {
     watchdog = watchdog > 0 ? 0 : watchdog - 1;
 
     if (watchdog < -(delaySeconds * 10)) {
+      faceFound = false;
       showCover();
     }
   }
 };
 
 
-function queueTextsAtInterval(phrases, interval) {
-  console.log('WE SHOULD BE QUEUEING UP THESE PHRASES:', phrases, 'at this interval', interval);
-  calledAgain ++; // used to check if this function was called again in order to reset the phrases
-
-  if (calledAgain <= 1) {
-    let shuffPhrases = phrases.sort(() => Math.random() - 0.5);
-
-    let counter = 0;
-    setInterval(function() {
-      console.log(shuffPhrases[counter]);
-      $('#dummy').empty();
-      $('#spellbox').empty();
-      //the dummy gets the tight font size which we use in typeInstruction
-      $('#dummy').text(shuffPhrases[counter]);
-      $('.textbox-dummy').fancyTextFill({
-        maxFontSize: 400
-      });
-      typeInstruction(shuffPhrases[counter]);
-      counter++;
-      if (counter === shuffPhrases.length) {
-        counter = 0;
-        calledAgain = 0;
-      }
-    },interval);
-  } else {
-    return;
-  }
-
-  
-
-  // this is where we queue up texts showing up
-}
-
-
 function updateInterface() {
   $('#debug-info').text('CURRENT EMOTION: ' + curEmotion.name + ' (base: ' + curEmotion.base + ', level: ' + curEmotion.level + ')');
 
   // show loading screen
-  showLoadingOverlay(curEmotion, function() {
-    console.log('finished loading');
-  });
-
+  cleanupText();
+  $('#hand-container').hide();
+  showLoadingOverlay(curEmotion);
 
 
   ////// CHANGING BACKGROUND COLOR
@@ -240,25 +216,9 @@ function updateInterface() {
 
   /////// CHANGING PHRASES
   // shuffle phrases
-  // cycle through phrases over 60 seconds
+  // cycle through phrases 
 
-  let emotionPhrases = phrases[curEmotion.base];
-  queueTextsAtInterval(emotionPhrases, phraseInterval);
-
-
-  // let randomPhrase = emotionPhrases[Math.floor(Math.random() * emotionPhrases.length)];
-
-  // emotionalMessage = randomPhrase;
-
-  // console.log(emotionalMessage, ' EMOTIONAL MSG');
-
-  // emotionalMessage = 
-
-  // $('#dummy').text(emotionalMessage);
-  // // console.log(emotionalMessage);
-  // $('.textbox-dummy').fancyTextFill({
-  //   maxFontSize: 400
-  // });
+  emotionPhrases = phrases[curEmotion.base];
 
   $('.textbox').css('visibility', 'hidden');
   $('#face-stream').css('visibility', 'hidden');
@@ -280,15 +240,15 @@ function updateEmotion(msg) {
 
 
 
-function removeCover() {
+function removeCover(loadCam) {
   coverEl.hide();
   $('.filtered').css('visibility', 'visible');
   $('.textbox').css('visibility', 'visible');
   $('#face-stream').css('visibility', 'visible');
-  if (spellOut === false) {
+  if (spellOut === false && !loadCam) {
     spellOut = true;
     console.log('flip spell out switch');
-    // typeInstruction(emotionalMessage);
+    queueText();
   }
 }
 
@@ -302,27 +262,57 @@ function showCover() {
   if (spellOut === true) {
     spellOut = false;
     console.log('switch off');
-    $('#spellbox').empty();
+    cleanupText();
   }
 }
 
-function typeInstruction(string, iteration) {
+function cleanupText() {
+  $('#dummy').empty();
+  $('#spellbox').empty();
+  if (phraseTimeout) clearTimeout(phraseTimeout);
+  if (typingTimeout) clearTimeout(typingTimeout);
+
+}
+
+function queueText() {
+  curPhrase++;
+  if (curPhrase >= emotionPhrases.length) {
+    curPhrase = 0;
+  }
+  if (curPhrase === 0) {
+    emotionPhrases = emotionPhrases.sort(() => Math.random() - 0.5);
+  }
+
+  playInstruction(emotionPhrases[curPhrase]);
+  phraseTimeout = setTimeout(queueText, phraseInterval);
+}
+
+function playInstruction(phrase) {
+  cleanupText();
+  //the dummy gets the tight font size which we use in typeInstruction
+  $('#dummy').text(phrase);
+  $('.textbox-dummy').fancyTextFill({
+    maxFontSize: 400
+  });
+  typeInstruction(phrase);
+}
+
+function typeInstruction(phrase, iteration) {
   var iteration = iteration || 0;
   let fontSize = $('#dummy').css('font-size');
-  console.log(fontSize);
   $('#spellbox').css('font-size', fontSize);
   // Prevent our code executing if there are no letters left
-  if (iteration === string.length) {
+  if (iteration === phrase.length) {
     return;
   }
 
-  setTimeout(function() {
+  typingTimeout = setTimeout(function() {
     // Set the instruction to the current text + the next character
     // whilst incrementing the iteration variable
-    $('#spellbox').text($('#spellbox').text() + string[iteration++]);
+    $('#spellbox').text($('#spellbox').text() + phrase[iteration++]);
 
     // Re-trigger our function
-    typeInstruction(string, iteration);
+    typeInstruction(phrase, iteration);
   }, typingSpeed);
 }
 

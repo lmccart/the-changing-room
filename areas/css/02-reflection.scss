@@ -71,10 +71,16 @@ section.main {
   align-items: center;
   border: 4px solid white;
   margin: 30px;
-  font-size: 4em;
+  font-size: 8em;
   font-weight: bold;
   color: white;
+  font-style: italic;
+  text-align: center;
 
+}
+
+.smaller_meditation_text {
+  font-size: .5em;
 }
 
 

@@ -16,16 +16,10 @@
 
     <section class='main' id='video-parent'>
 
-
-      <!-- Test gradient -->
-      <!-- <div class='radial-gradient'>
-      </div> -->
-
       <div class="filtered">
         <div class='stream-wrapper'><video id='face-stream' muted autoplay></video></div>
       </div>
       
-      <!-- <video id='face-stream' muted autoplay></video> -->
       <div id='video-cover'>
         <!-- video is hidden -->
       </div>
@@ -46,9 +40,13 @@
       </div>
     </section>
     
+    <div id='hand-container'>
+      <img id='hand-indicator' src='/static/pointer.png' />
+    </div>
+
     <section id='loading'>
-      <div>
-        <h1>Loading...</h1>
+      <div class='loading-blink'>
+        <h1 id='loading-title-blink'>Loading...</h1>
         <h1 id='loading-emotion'></h1>
       </div>
     </section>

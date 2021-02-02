@@ -70,7 +70,7 @@ def concat_clips(dir, base, emotion):
 def mix_clips(meditation, base):
   output_mix = meditation.replace("2.wav", "3.wav")
   command = "ffmpeg -loglevel quiet -i " + meditation + " -i " + base;
-  command += " -shortest -filter_complex '[0]adelay="+str(short_clip_dur * 1000)+"|"+str(short_clip_dur * 1000)+",volume=1.0[a]; [1]volume=1.0[b]; [a][b]amix=inputs=2[out]' -map '[out]' " + output_mix
+  command += " -shortest -filter_complex '[0]adelay="+str(short_clip_dur * 1000)+"|"+str(short_clip_dur * 1000)+",volume=0.8[a]; [1]volume=1.0[b]; [a][b]amix=inputs=2[out]' -map '[out]' " + output_mix
   os.system(command)
   # trim
   output_trim = meditation.replace("2.wav", "4.wav")

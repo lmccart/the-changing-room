@@ -33,8 +33,8 @@ const playEmotion = (emotion) => {
 };
 
 const playEmotionReflection = (emotion) => {
-  // let reflectionTrack = process.env.HTTP_SERVER + 'sound/sounds-reflection/' + emotion.base + '-' + emotion.name + '.wav';
-  let reflectionTrack = process.env.HTTP_SERVER + 'sound/sounds-reflection/angry-annoyed.wav';
+  console.log('play emotion');
+  let reflectionTrack = process.env.HTTP_SERVER + 'sound/sounds-reflection/' + emotion.base + '-' + emotion.name + '.wav';
   for (area of areas.reflection) {
     // area.setVolume(55 + emotion.level * 15);
     area.setVolume(30);

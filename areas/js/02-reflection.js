@@ -22,6 +22,9 @@ let thisScreenParams;
 let sharedSeed = 0;
 let emotionChanged = false;
 
+const hand_blink_time = 700;
+const hand_delay = 30000;
+
 // 10s before meditation
 // 10s per instruction
 // 15s per long instruction
@@ -267,12 +270,10 @@ function setColorsAndBackgrounds() {
   // const bg = $('#background');
 
   const imgUrl = imgURLs[sharedSeed % imgURLs.length];
-  // let prevSvgId = bg.data('svgId');
-  // let svgId = addSvgFilterForElement(bg, window.baseColors[curEmotion.base][curEmotion.level % 3]);
-  // bg.data('svgId', svgId);
 
   const colors = window.baseColors[curEmotion.base][curEmotion.level % 3];
 
+  $('#memory_container').css('background', `radial-gradient(${colors[0]},${colors[1]})`);
   switchBackgrounds([imgUrl], 2000, colors)
     .then(() => {
       let nw = $('#loader')[0].naturalWidth;
@@ -352,10 +353,12 @@ function displayMeditationPhrase(opts) {
   if (thisScreenParams.id !== 1) { 
     console.log('...displaying meditation on screen 1...');
   }
+  let sizeClass = opts.text.length > 80 ? 'smaller_meditation_text' : '';
   $('#meditation_text')
     .fadeOut(opts.fadeOut, function() {
       $(this)
         .text(opts.text)
+        .attr('class', sizeClass)
         .fadeIn(opts.fadeIn);
     });
 }
@@ -440,6 +443,7 @@ function loadMedia(memory, index, i) {
       memdiv.addClass('image');
       memdiv.attr('src', memory.url);
       let svgId = addSvgFilterForElement(memdiv, secondaryColor);
+      memdiv.data('svgId', svgId);
     } 
 
     memory.id = `memory-${index}-${i}`;
@@ -576,8 +580,6 @@ async function generateAndPreloadMemoryPairs() {
 
     let memoryPairs = pickMemoryPairs();
 
-    console.log(memoryPairs);
-
     // flag whether or not memory pair is displayed
     memoryPairs.forEach(mempair => {
       if (mempair.data[0].screenNumber === thisScreenParams.id || thisScreenParams.name === 'FULLSCREEN') {
@@ -598,7 +600,6 @@ async function generateAndPreloadMemoryPairs() {
     Promise.all(tasks)
       .then(results => {
         positionMempairs(memoryPairs); 
-        console.log(memoryPairs);
         resolve(memoryPairs);
       });
 
@@ -626,7 +627,12 @@ function displayMemoryPair(mempair) {
 function resetHTML(cb) {
   setColorsAndBackgrounds();
   $('#meditation_text').empty();
-  $('#memory_container').empty();
+  // $('#memory_container').empty();
+  $('#memory_container').children().each((i, elt) => {
+    let svgId = $(elt).data('svgId');
+    $(`#${svgId}`).remove();
+    $(elt).remove();
+  });
   $('#memory_container').hide();
 }
 
@@ -650,14 +656,16 @@ async function queueEvents(timeline) {
   let mts = generateMeditationTexts();
 
   mts.forEach((mt, i) => {
-    timeline.add({ time: timeMarker, event: function() { 
-      displayMeditationPhrase({ text: mt, fadeIn: each_meditation_fadein_duration, fadeOut: each_meditation_fadeout_duration});
-    } });
+    if (i < 2) { // temp for testing
+      timeline.add({ time: timeMarker, event: function() { 
+        displayMeditationPhrase({ text: mt, fadeIn: each_meditation_fadein_duration, fadeOut: each_meditation_fadeout_duration});
+      } });
 
-    if (meditation_long_indices.includes(i)) {
-      timeMarker += meditation_long_interval; 
-    } else {
-      timeMarker += meditation_interval; 
+      if (meditation_long_indices.includes(i)) {
+        timeMarker += meditation_long_interval; 
+      } else {
+        timeMarker += meditation_interval; 
+      }
     }
 
   });
@@ -682,7 +690,6 @@ async function queueEvents(timeline) {
   
   let mempairs = await generateAndPreloadMemoryPairs();
 
-  console.log(mempairs);
   mempairs.forEach((mempair, i) => {
     timeline.add({ time: timeMarker, event: function() { 
       if (mempair.data[0].screenNumber === thisScreenParams.id || thisScreenParams.name === 'FULLSCREEN') {
@@ -702,7 +709,11 @@ async function queueEvents(timeline) {
   timeline.add({ time: timeMarker, event: function() { 
     $('#meditation_text').empty();
     $('#memory_container').fadeOut(memories_fadeout_duration, function() {
-      $(this).empty();
+      $(this).children().each((i, elt) => {
+        let svgId = $(elt).data('svgId');
+        $(`#${svgId}`).remove();
+        $(elt).remove();
+      });
     });
   } });
 
