@@ -1,5 +1,9 @@
 @import './shared.scss';
 
+body {
+  overflow: hidden;
+}
+
 .intro-text-container {
     visibility: hidden;
     border: 4px solid black;

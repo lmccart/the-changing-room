@@ -8,7 +8,7 @@ const scroll_up_time = 5000;
 const scroll_down_time = 200000;
 const scroll_pause_time = 3000;
 
-let video = false;
+let video = true;
 let curEmotion;
 let imgUrls = [];
 
@@ -54,13 +54,13 @@ async function updateInterface(durations) {
 
    
   if (video) {
-    switchVideoBackgrounds(curEmotion.base, durations[1] - durations[0] - 500, colors);
+    switchVideoBackgrounds(curEmotion, durations[1] - durations[0] - 500, colors);
   } else {
     imgUrls = await getImgUrls(curEmotion.base);
     switchBackgrounds(imgUrls, durations[1] - durations[0] - 500, colors);
   }
 
-  const textColor = getTextColorForBackground(colors[0], colors[1]);
+  const textColor = getTextColorForBackground(colors[0]);//, colors[1]);
   $('body').removeClass().addClass(textColor);
   $('.intro-text-container').css('border-color', textColor);
   $('.text').css('color', textColor);

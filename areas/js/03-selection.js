@@ -63,6 +63,7 @@ window.init = () => {
       socket.emit('emotion:get');
       separatemode();
       setHandInterval();
+      setInterval(testTrigger, 10 * 60 * 1000); // test every 10 mins
     });
 
   // READ IN SELECTION TEXT
@@ -277,46 +278,11 @@ function moveHand() {
 }
 
 
-//     ___    ___     ___              ___     ___     ___    _   _    ___           
-//    | __|  / _ \   | _ \     o O O  |   \   | __|   | _ )  | | | |  / __|          
-//    | _|  | (_) |  |   /    o       | |) |  | _|    | _ \  | |_| | | (_ |          
-//   _|_|_   \___/   |_|_\   TS__[O]  |___/   |___|   |___/   \___/   \___|          
-// _| ''' |_|'''''|_|'''''| {======|_|'''''|_|'''''|_|'''''|_|'''''|_|'''''|         
-// '`-0-0-''`-0-0-''`-0-0-'./o--000''`-0-0-''`-0-0-''`-0-0-''`-0-0-''`-0-0-'         
-//     ___    _       ___              ___     ___   __  __    ___   __   __   ___   
-//    | _ \  | |     / __|     o O O  | _ \   | __| |  \/  |  / _ \  \ \ / /  | __|  
-//    |  _/  | |__   \__ \    o       |   /   | _|  | |\/| | | (_) |  \ V /   | _|   
-//   _|_|_   |____|  |___/   TS__[O]  |_|_\   |___| |_|__|_|  \___/   _\_/_   |___|  
-// _| ''' |_|'''''|_|'''''| {======|_|'''''|_|'''''|_|'''''|_|'''''|_| ''''|_|'''''| 
-// '`-0-0-''`-0-0-''`-0-0-'./o--000''`-0-0-''`-0-0-''`-0-0-''`-0-0-''`-0-0-''`-0-0-' 
-// 
+function testTrigger() {
 
-// $('#emotions').change(pickEmotion);
+  let keys = Object.keys(emotions);
+  let randEmotion = emotions[keys[ keys.length * Math.random() << 0]];
 
-// $.getJSON('/emotions', (data) => {
-//   console.log(data);
-//   populatePicker(data);
-// });
-
-// function populatePicker(data) {
-//   for (let item in data) {
-//     $('#emotions').append($('<option>', {
-//       value: item,
-//       text: item
-//     }));
-//   }
-// }
-
-// function pickEmotion() {
-//   let emotionName = $('#emotions').val();
-//   socket.emit('emotion:pick', emotionName);
-// }
-
-// 
-//    ___    _  _     ___              ___     ___     ___    _   _    ___   
-//   | __|  | \| |   |   \     o O O  |   \   | __|   | _ )  | | | |  / __|  
-//   | _|   | .` |   | |) |   o       | |) |  | _|    | _ \  | |_| | | (_ |  
-//   |___|  |_|\_|   |___/   TS__[O]  |___/   |___|   |___/   \___/   \___|  
-// _|'''''|_|'''''|_|'''''| {======|_|'''''|_|'''''|_|'''''|_|'''''|_|'''''| 
-// '`-0-0-''`-0-0-''`-0-0-'./o--000''`-0-0-''`-0-0-''`-0-0-''`-0-0-''`-0-0-' 
-// 
+  console.log(randEmotion);
+  socket.emit('emotion:pick', `${randEmotion.name}`);
+}

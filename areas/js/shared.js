@@ -2,7 +2,7 @@ import $ from 'jquery';
 import { getTextColorForBackground, addSvgFilterForElement } from './lib/imageColorUtils.js';
 
 
-window.loadingDur = 1000;
+window.loadingDur = 5000;
 window.loadingFadeDur = 300;
 
 window.socket = io();
@@ -66,9 +66,11 @@ window.switchBackgrounds = (imgUrls, fadeDur, colors) => {
 };
 
 
-window.switchVideoBackgrounds = (base, fadeDur, colors) => {
+window.switchVideoBackgrounds = (emotion, fadeDur, colors) => {
   const bgToHide = $('#video-1').is(':visible') ? $('#video-1') : $('#video-2');
   const bgToShow = $('#video-1').is(':visible') ? $('#video-2') : $('#video-1');
+  bgToShow.off('canplaythrough');
+  bgToHide.off('canplaythrough');
 
   if (colors) {
     let svgId = addSvgFilterForElement(bgToShow, colors);
@@ -77,11 +79,11 @@ window.switchVideoBackgrounds = (base, fadeDur, colors) => {
     bgToShow.data('svgId', svgId);
   }
   
-  bgToShow.attr('src', `./images/videos/${base}.mp4`);
+  bgToShow.attr('src', `./images/videos/${emotion.base}${emotion.level}.mp4`);
   bgToShow.on('canplaythrough', () => {
-    console.log('loaded: ', base);
+    console.log('loaded: ', emotion.base, emotion.level);
     bgToShow.fadeIn(fadeDur);
-    bgToHide.fadeOut(fadeDur);
+    bgToHide.delay(500).fadeOut(fadeDur);
   });
 };
 

@@ -9,9 +9,9 @@ import Timeline from './lib/Timeline.js';
 import { getImgUrls, addSvgFilterForElement, getTextColorForBackground } from './lib/imageColorUtils.js';
 
 let curEmotion;
-let primaryColor;
+let primaryColors;
 let backgroundTextColor;
-let secondaryColor;
+let secondaryColors;
 
 let dataMeditations;
 let dataMeditationEmotions;
@@ -21,9 +21,6 @@ let imgURLs = [];
 let thisScreenParams;
 let sharedSeed = 0;
 let emotionChanged = false;
-
-const hand_blink_time = 700;
-const hand_delay = 30000;
 
 // 10s before meditation
 // 10s per instruction
@@ -259,10 +256,9 @@ function loadData(cb) {
 //////////////////////////////////
 
 function setColorsAndBackgrounds() {
-  primaryColor = window.baseColors[curEmotion.base][curEmotion.level % 3];
-  secondaryColor = window.baseColors[curEmotion.base][(curEmotion.level - 1) % 3];
-  window.baseColors[curEmotion.base];
-  backgroundTextColor = getTextColorForBackground(primaryColor[0]);
+  primaryColors = window.baseColors[curEmotion.base][(curEmotion.level - 1) % 3];
+  // secondaryColors = window.baseColors[curEmotion.base][curEmotion.level % 3];
+  backgroundTextColor = getTextColorForBackground(primaryColors[0]);
   $('#meditation_text').css('color', backgroundTextColor);
   $('#meditation_container').css('border-color', backgroundTextColor);
 
@@ -271,10 +267,9 @@ function setColorsAndBackgrounds() {
 
   const imgUrl = imgURLs[sharedSeed % imgURLs.length];
 
-  const colors = window.baseColors[curEmotion.base][curEmotion.level % 3];
 
-  $('#memory_container').css('background', `radial-gradient(${colors[0]},${colors[1]})`);
-  switchBackgrounds([imgUrl], 2000, colors)
+  $('#memory_container').css('background', `radial-gradient(${primaryColors[0]},${primaryColors[1]})`);
+  switchBackgrounds([imgUrl], 2000, primaryColors)
     .then(() => {
       let nw = $('#loader')[0].naturalWidth;
       let nh = $('#loader')[0].naturalHeight;
@@ -442,7 +437,7 @@ function loadMedia(memory, index, i) {
       memdiv = $('<img></img>');
       memdiv.addClass('image');
       memdiv.attr('src', memory.url);
-      let svgId = addSvgFilterForElement(memdiv, secondaryColor);
+      let svgId = addSvgFilterForElement(memdiv, primaryColors);
       memdiv.data('svgId', svgId);
     } 
 
@@ -656,17 +651,17 @@ async function queueEvents(timeline) {
   let mts = generateMeditationTexts();
 
   mts.forEach((mt, i) => {
-    if (i < 2) { // temp for testing
-      timeline.add({ time: timeMarker, event: function() { 
-        displayMeditationPhrase({ text: mt, fadeIn: each_meditation_fadein_duration, fadeOut: each_meditation_fadeout_duration});
-      } });
+    // if (i < 2) { // temp for testing
+    timeline.add({ time: timeMarker, event: function() { 
+      displayMeditationPhrase({ text: mt, fadeIn: each_meditation_fadein_duration, fadeOut: each_meditation_fadeout_duration});
+    } });
 
-      if (meditation_long_indices.includes(i)) {
-        timeMarker += meditation_long_interval; 
-      } else {
-        timeMarker += meditation_interval; 
-      }
+    if (meditation_long_indices.includes(i)) {
+      timeMarker += meditation_long_interval; 
+    } else {
+      timeMarker += meditation_interval; 
     }
+    // }
 
   });
 

@@ -93,10 +93,13 @@ User: Venessa Castagnoli 3, Pwd: OCA2020
 3. Setup startup tasks
    * Copy `install/TCR-LOCATIONS.txt` to Desktop
    * Copy `install/TCR-OCA*.app` to Desktop
+   * Add login item
    * Install multibrowse
      * `pip3 install pyobjc`
      * `cd install/ && git clone https://github.com/foxxyz/multibrowse.git multibrowse-source`
    * Copy *.plist to `~/Library/LaunchAgents/`
    * Update paths and load:
      * `launchctl load com.TCR.plist`
-     * `launchctl load screen.TCR.plist`
+   * Testing:
+     * `launchctl start com.TCR.plist`
+     * `launchctl stop com.TCR.plist`

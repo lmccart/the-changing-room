@@ -10,14 +10,14 @@
         <true/>
         <key>ProgramArguments</key>
         <array>
-            <string>/usr/local/bin/node</string>
-            <string>server.js</string>
+            <string>/usr/local/bin/npm</string>
+            <string>start</string>
         </array>
         <key>WorkingDirectory</key>
         <string>/Users/lmccart/Documents/the-changing-room/</string>
         <key>StandardOutPath</key>
-        <string>/Users/lmccart/Documents/the-changing-room/logs/stout.log</string>
+        <string>/Users/lmccart/Documents/the-changing-room/logs/stout.com.log</string>
         <key>StandardErrorPath</key>
-        <string>/Users/lmccart/Documents/the-changing-room/logs/sterr.log</string>
+        <string>/Users/lmccart/Documents/the-changing-room/logs/sterr.com.log</string>
     </dict>
 </plist>
