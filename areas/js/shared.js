@@ -2,7 +2,7 @@ import $ from 'jquery';
 import { getTextColorForBackground, addSvgFilterForElement } from './lib/imageColorUtils.js';
 
 
-window.loadingDur = 5000;
+window.loadingDur = 2000;
 window.loadingFadeDur = 300;
 
 window.socket = io();

@@ -5,7 +5,7 @@ import './shared.js';
 
 // VARIABLES
 const num_panels = 4;
-const idle_timeout = 60;
+const idle_timeout = 10;
 const scroll_timeout = 3;
 const scroll_down_time = 990000;
 const scroll_up_time = 9000;
@@ -135,11 +135,10 @@ function selection_txt_parse(sel_intro_content) {
 ////////////////// JOINED MODE
 function joinedmode() {
   $('#wrapper_joined').stop(true).fadeIn(fade_time, function() {
-    scrollToEmotion(curEmotion.name, curEmotion.base);
+    scrollToEmotion(curEmotion.name, curEmotion.base).then(joinedTimer);
   });
   // $('#wrapper_joined').css('display','flex');
   $('#wrapper_separate').fadeOut(fade_time);
-  joinedTimer();
 }
 // restart auto scrolling, restart hand blink
 function joinedTimer() {
@@ -205,17 +204,21 @@ function scrollUp(el, scroll_dur) {
 
 ////////////////// TRANSITION INTO SEPARATE MODE
 function scrollToEmotion(emotion_name, base_emotion) {
-  console.log(emotion_name, base_emotion);
-  const elm = '#option-' + emotion_name;
-  const elHeight = $(elm).height() * 0.9;
-  const currentPosition = $(elm).offset().top;
-  const currentScroll = $('#wrapper_joined').scrollTop();
-  const middle = $(window).height() / 2;
-  const scrollVal = currentScroll + (currentPosition - middle + (elHeight / 2));
-  console.log(currentScroll, currentPosition, scrollVal);
-  $('#wrapper_joined').stop(true).animate({
-    scrollTop: scrollVal
-  }, 2000, 'linear');
+  return new Promise(resolve => {
+    console.log(emotion_name, base_emotion);
+    const elm = '#option-' + emotion_name;
+    const elHeight = $(elm).height() * 0.9;
+    const currentPosition = $(elm).offset().top;
+    const currentScroll = $('#wrapper_joined').scrollTop();
+    const middle = $(window).height() / 2;
+    const scrollVal = currentScroll + (currentPosition - middle + (elHeight / 2));
+    const scrollDiff = Math.abs(scrollVal - currentScroll);
+    const scrollTime = 0.3 * scrollDiff;
+    console.log(currentScroll, currentPosition, scrollVal, scrollDiff, scrollTime);
+    $('#wrapper_joined').stop(true).animate({
+      scrollTop: scrollVal
+    }, scrollTime, 'linear', resolve);
+  });
 }
 
 ////////////////// SEPARATE MODE

@@ -47,7 +47,6 @@ function updateEmotion(msg) {
 async function updateInterface(durations) {
   $('#debug-info').text('CURRENT EMOTION: ' + curEmotion.name + ' (base: ' + curEmotion.base + ', level: ' + curEmotion.level + ')');
   imgUrls = await getImgUrls(curEmotion.base, curEmotion.level);
-  console.log(imgUrls);
   const colors = window.baseColors[curEmotion.base][curEmotion.level - 1];
   switchBackgrounds(imgUrls, durations[1] - durations[0] - 500, colors);
 
