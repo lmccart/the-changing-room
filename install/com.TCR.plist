@@ -10,8 +10,8 @@
         <true/>
         <key>ProgramArguments</key>
         <array>
-            <string>/usr/local/bin/npm</string>
-            <string>start</string>
+            <string>/usr/local/bin/node</string>
+            <string>server.js</string>
         </array>
         <key>WorkingDirectory</key>
         <string>/Users/lmccart/Documents/the-changing-room/</string>

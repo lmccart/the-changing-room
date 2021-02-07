@@ -10,7 +10,7 @@ jpegOptions.quality = 6;
 var emotions = [
     // 'afraid',
     // 'alive',
-    'angry',
+    // 'angry',
     // 'confused',
     // 'depressed',
     // 'envious',
@@ -24,8 +24,8 @@ var emotions = [
     // 'peaceful',
     // 'positive',
     // 'open',
-    // 'sad',
-    // 'strong'
+    // 'sad',*
+    'strong'
 ]
 
 for (var e=0; e<emotions.length; e++) {
@@ -41,7 +41,8 @@ function processEmotion(emotion) {
     textures = texturesDir.getFiles(searchMask);
     
     
-    for (var i=51;i<images.length;i++){ //2;i++){//
+    // for (var i=0;i<2;i++){ 
+    for (var i=0;i<images.length;i++){
         processImage(emotion, i);
     }
 }
@@ -54,7 +55,7 @@ function processImage(emotion, i) {
         doc.activeLayer.desaturate();
     } catch (e) {}
 
-    for (var t=0; t<textures.length; t++) {
+    for (var t=2; t<3; t++) {//textures.length; t++) {
         for (var b=0; b<blends.length; b++) {
             for (var v=0; v<3; v++) {
                 textureImage(doc, emotion, i, t, b, v);
@@ -67,14 +68,22 @@ function processImage(emotion, i) {
 
 function textureImage(doc, emotion, i, t, b, v) {
     placeFile(textures[t]);
+    // if (b ===0 && v === 1) doc.activeLayer.blendMode = BlendMode.MULTIPLY;
+    // else if (b ===0) doc.activeLayer.blendMode = BlendMode.SOFTLIGHT;
+    // else if (b ===1) doc.activeLayer.blendMode = BlendMode.OVERLAY;
     doc.activeLayer.blendMode = BlendMode[blends[b]];
-    // if (b === 0) {
-        doc.activeLayer.opacity = 65;
-    // }
-    doc.activeLayer.rotate(Math.random() * 360 - 180);
-    var scale = Math.random()*200 + 150; // 150-350%;
-    var x = Math.random() * -500;
-    var y = Math.random() * -500;
+
+    if (b === 0) {
+        // doc.activeLayer.opacity = 80;
+    }
+    // doc.activeLayer.rotate(Math.random() * 360 - 180);
+    // doc.activeLayer.rotate(Math.random() * 90 - 45);
+    if (Math.random() < 0.5) {
+        doc.activeLayer.rotate(90);
+    }
+    var scale = Math.random()*300 + 100; // 150-450%;
+    var x = Math.random() * -400;
+    var y = Math.random() * -400;
 
     doc.activeLayer.resize(scale, scale);
     doc.activeLayer.translate(x, y);
