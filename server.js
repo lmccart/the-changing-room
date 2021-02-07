@@ -150,75 +150,65 @@ function generateBases() {
   return bases;
 }
 
-function generatePopupsManifest() {
-  return finalUrls;
-}
 
 function generateImagesManifest() {
-  let manifest = {
-    popups: []
-  };
+  let manifest = {};
 
   // GET BASES
   for (let base of baseEmotions) {
     if (!manifest.hasOwnProperty(base)) {
       manifest[base] = [];
+      for (let i=0; i<3; i++) {
+        manifest[base][i] = getAllFiles(`/images/${base}/${i+1}/`);
+      }
     }
-    const files = fs.readdirSync(`./images/${base}`)
-  
-    // get rid of hidden files (.DS_STORE, etc)
-    const imageFiles = files.filter(item => !(/(^|\/)\.[^\/\.]/g).test(item));
-  
-    // URL client can use to get the image in css or img src attribute
-    const staticURLPrefix = `/images/${base}/`;
-  
-    imageFiles.forEach(file => {
-      manifest[base].push(staticURLPrefix + encodeURI(file));
-    });
   }
+  manifest['popups'] = getAllFiles('/images/popups/');
+  return manifest;
+}
 
-  // GET POPUPS
-  const files = fs.readdirSync(`./images/popups/`);
-
+function getAllFiles(dir) {
+  const list = [];
+  const files = fs.readdirSync(`.${dir}`);
+  
   // get rid of hidden files (.DS_STORE, etc)
   const imageFiles = files.filter(item => !(/(^|\/)\.[^\/\.]/g).test(item));
 
   // URL client can use to get the image in css or img src attribute
-  const staticURLPrefix = `/images/popups/`;
+  const staticURLPrefix = dir;
 
   imageFiles.forEach(file => {
-    manifest['popups'].push(staticURLPrefix + encodeURI(file));
+    list.push(staticURLPrefix + encodeURI(file));
   });
-
-  return manifest;
+  return list;
 }
 
 // CLEANUP
-function cleanup() {
-  console.debug('stop all');
-  Sound.stopAll();
-  Lights.stopAll();
-};
+// function cleanup() {
+//   console.debug('stop all');
+//   Sound.stopAll();
+//   Lights.stopAll();
+// };
 
-process.on('cleanup', cleanup);
+// process.on('cleanup', cleanup);
 
-// do app specific cleaning before exiting
-process.on('exit', function () {
-  cleanup();
-  process.emit('cleanup');
-});
+// // do app specific cleaning before exiting
+// process.on('exit', function () {
+//   cleanup();
+//   process.emit('cleanup');
+// });
 
-// catch ctrl+c event and exit normally
-process.on('SIGINT', function () {
-  console.log('Ctrl-C...');
-  cleanup();
-  process.exit(2);
-});
+// // catch ctrl+c event and exit normally
+// process.on('SIGINT', function () {
+//   console.log('Ctrl-C...');
+//   cleanup();
+//   process.exit(2);
+// });
 
-//catch uncaught exceptions, trace, then exit normally
-process.on('uncaughtException', function(e) {
-  console.log('Uncaught Exception...');
-  console.log(e.stack);
-  cleanup();
-  process.exit(99);
-});
+// //catch uncaught exceptions, trace, then exit normally
+// process.on('uncaughtException', function(e) {
+//   console.log('Uncaught Exception...');
+//   console.log(e.stack);
+//   cleanup();
+//   process.exit(99);
+// });

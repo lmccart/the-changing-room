@@ -35,11 +35,22 @@ export function getDimensions(url) {
 }
 
 // returns array of image Urls for base emotion
-// used like const imageUrls = await getImgUrls('angry');
-// or getImgUrls('angry').then(imageUrls => {do whatever u want here})
-export function getImgUrls(baseEmotion) {
-  return fetch(`/images/${baseEmotion}/manifest`).then(res => res.json());
+// used like const imageUrls = await getImgUrls('angry', 1);
+// or getImgUrls('angry', 1).then(imageUrls => {do whatever u want here})
+export function getImgUrls(baseEmotion, level) {
+  return new Promise(resolve => {
+    fetch(`/images/${baseEmotion}/manifest`)
+      .then(res => { return res.json(); })
+      .then(data => {
+        resolve(data[level]);
+      });
+  });
 }
+
+export function getPopupUrls() {
+  return fetch('/images/popups/manifest').then(res => res.json());
+}
+
 
 // returns rgb values from hex in either fractional or normal form
 // to get fractional rgba values, pass in true as the second argument

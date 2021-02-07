@@ -139,7 +139,7 @@ function updateEmotionCurried(callback) {
       emotionChanged = true;
       console.log('emotion has been updated to: ' + msg.name + ' (base: ' + msg.base + ', level: ' + msg.level + ')');
       
-      getImgUrls(curEmotion.base)
+      getImgUrls(curEmotion.base, curEmotion.level)
         .then(images => {
           imgURLs = images;
           updateInterface();

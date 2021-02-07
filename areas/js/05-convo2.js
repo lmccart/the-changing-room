@@ -40,7 +40,7 @@ async function updateInterface() {
  
   const durations = showLoadingOverlay(curEmotion);
   reset();
-  imgUrls = await getImgUrls(curEmotion.base);
+  imgUrls = await getImgUrls(curEmotion.base, curEmotion.level);
   const colors = window.baseColors[curEmotion.base][curEmotion.level - 1];
   switchBackgrounds(imgUrls, durations[1] - durations[0] - 500, colors);
   

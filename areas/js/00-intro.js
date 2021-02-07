@@ -56,7 +56,7 @@ async function updateInterface(durations) {
   if (video) {
     switchVideoBackgrounds(curEmotion, durations[1] - durations[0] - 500, colors);
   } else {
-    imgUrls = await getImgUrls(curEmotion.base);
+    imgUrls = await getImgUrls(curEmotion.base, curEmotion.level);
     switchBackgrounds(imgUrls, durations[1] - durations[0] - 500, colors);
   }
 

@@ -5,7 +5,7 @@ const Papa = require('papaparse');
 
 import '../css/06-passive.scss';
 import './shared.js';
-import { getImgUrls, addSvgFilterForElement, getTextColorForBackground } from './lib/imageColorUtils.js';
+import { getImgUrls, addSvgFilterForElement, getTextColorForBackground, getPopupUrls } from './lib/imageColorUtils.js';
 
 const basePopupRate = 1000; // adjusted based on emotion intensity
 const minDisplayTime = 10000; // minimum time a popup shows on screen
@@ -23,29 +23,17 @@ let popupFactory; // used to reference the function that produces popups
 window.emotionStrings = [];
 
 window.init = () => {
-  Promise.all([parseDirections(), parseReflections(), loadExtras()])
+  Promise.all([parseDirections(), parseReflections(), getPopupUrls()])
     .then((results) => {
+      results[2].forEach(url => {
+        let img = new Image();
+        img.src = url;
+        preloadedExtras.push(img);
+      });
       socket.on('emotion:update', updateEmotion);
       socket.emit('emotion:get');
     });
 };
-
-function loadExtras() {
-  return new Promise(resolve => {
-    fetch('/images/popups/manifest')
-      .then(res => res.blob())
-      .then(blob => blob.text())
-      .then(text => { 
-        text = JSON.parse(text);
-        text.forEach(url => {
-          let img = new Image();
-          img.src = url;
-          preloadedExtras.push(img);
-        });
-        resolve();
-      });
-  });
-}
 
 function updateEmotion(msg) {
   if (!curEmotion || curEmotion.name !== msg.name) {
@@ -58,7 +46,8 @@ function updateEmotion(msg) {
 
 async function updateInterface(durations) {
   $('#debug-info').text('CURRENT EMOTION: ' + curEmotion.name + ' (base: ' + curEmotion.base + ', level: ' + curEmotion.level + ')');
-  imgUrls = await getImgUrls(curEmotion.base);
+  imgUrls = await getImgUrls(curEmotion.base, curEmotion.level);
+  console.log(imgUrls);
   const colors = window.baseColors[curEmotion.base][curEmotion.level - 1];
   switchBackgrounds(imgUrls, durations[1] - durations[0] - 500, colors);
 

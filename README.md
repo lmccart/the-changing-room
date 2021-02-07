@@ -49,9 +49,9 @@
 - can generally be used by importing like so:
     + `import { getImgUrls, addSvgFilterForElement } from './lib/imageColorUtils.js';`
 - `imageColorUtils.js`
-    + `getImgUrls (baseEmotion)` a function that returns an array of image urls for a certain base emotion
-        - used like `const imageUrls = await getImgUrls('angry');`
-        - or `getImgUrls('angry').then(imageUrls => {do whatever u want here})`
+    + `getImgUrls (baseEmotion, level)` a function that returns an array of image urls for a certain base emotion
+        - used like `const imageUrls = await getImgUrls('angry', 1);`
+        - or `getImgUrls('angry', 1).then(imageUrls => {do whatever u want here})`
     + `addSvgFilterForElement ($imgEl, arrayOfColors)` this function adds an svg element to the document that has a multitone treatment, and sets css of the `$imgEl` (which is a jquery element) to use it as a filter `arrayOfColors` must be an array of 2 or more hex colors: `['7c4242', '584794', '608942']` (`#` infront of the color is optional)
     + `getDimensions(url)` returns promise that resolves to the width and height of an image url used like: 
         - `const imageDims = await getDimensions('/images/confused/image.jpeg');`
