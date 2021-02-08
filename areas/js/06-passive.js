@@ -8,7 +8,7 @@ import '../css/06-passive.scss';
 import './shared.js';
 import { getImgUrls, addSvgFilterForElement, getTextColorForBackground, getPopupUrls } from './lib/imageColorUtils.js';
 
-const basePopupRate = 8000; // adjusted based on emotion intensity
+const basePopupRate = 3000; // adjusted based on emotion intensity
 const minDisplayTime = 60000; // minimum time a popup shows on screen
 const displayVariation = 10000;
 const overlapAllowance = 0.50; // allows 60% overlap when a new element is created
@@ -185,8 +185,8 @@ function PopupFactory(emotionObj) {
   };
 
   factoryThis.getRandomPosition = ($element) => {
-    const x = document.body.offsetHeight - $element.outerHeight();
-    const y = document.body.offsetWidth - $element.outerWidth();
+    const x = document.body.offsetHeight - $element.outerHeight() - 10;
+    const y = document.body.offsetWidth - $element.outerWidth() - 10;
     const randomX = Math.floor(Math.random() * x);
     const randomY = Math.floor(Math.random() * y);
     return [randomX,randomY];
@@ -227,7 +227,7 @@ function PopupFactory(emotionObj) {
 
     if (type === POPUP.IMAGE || type === POPUP.IMAGE_TEXT) {
       // attach a color modified image
-      const imageURL = imgUrls[Math.floor(rng() * imgUrls.length)];
+      const imageURL = imgUrls[Math.floor(Math.random() * imgUrls.length)];
       const imgEl = $(`<img src="${imageURL}">`);
       const contrast = rng() < 0.5 ? '#FFFFFF' : '#000000';
       if (rng() < portionFiltered) {
@@ -300,15 +300,31 @@ function PopupFactory(emotionObj) {
     }
 
     childThis.destroy = () => {
-      // remove element from dom and from currentElement array
-      childThis.$element.remove();
-      for (let c of childThis.$element.children()) {
-        let svgId = $(c).attr('data-svgId');
-        if (svgId) {
-          $(`#${svgId}`).remove();
-        }
+      let x = childThis.$element.offset().left;
+      let y = childThis.$element.offset().top;
+      let w = window.innerWidth;
+      let pos = {};
+      let n = Math.random() < 0.25;
+      if (n < 0.25) {
+        pos.left = x - w;
+      } else if (n < 0.5) {
+        pos.left = x + w;
+      } else if (n < 0.75) {
+        pos.top = y - w;
+      } else {
+        pos.top = y + w;
       }
-      factoryThis.removeEl(childThis.id);
+      childThis.$element.stop(true).animate(pos, 1000, () => {
+        // remove element from dom and from currentElement array
+        childThis.$element.remove();
+        for (let c of childThis.$element.children()) {
+          let svgId = $(c).attr('data-svgId');
+          if (svgId) {
+            $(`#${svgId}`).remove();
+          }
+        }
+        factoryThis.removeEl(childThis.id);
+      });
     };
     setTimeout(childThis.destroy, destroyRate);
   }
@@ -332,14 +348,13 @@ function PopupFactory(emotionObj) {
     let l = (window.innerWidth - $element.width()) / 2;
     $element.css('top', t);
     $element.css('left', l); 
-    let blinkDur = 1500; 
+    let blinkDur = 1000; 
     $element.delay(blinkDur / 5).fadeOut(0).delay(blinkDur / 5).fadeIn(0).delay(blinkDur / 5).fadeOut(0).delay(blinkDur / 5).fadeIn(0).delay(blinkDur / 5).fadeIn(0, moveAll);
   }
 
   function moveAll() {
     console.log('move all');
     for (let i = 0; i < factoryThis.activeElements.length; i++) {
-    
       let slideTime = Math.random() * 300 + 200;
       let $element = factoryThis.activeElements[i].$element;
       let randomXY = factoryThis.getRandomPosition($element);
@@ -347,7 +362,24 @@ function PopupFactory(emotionObj) {
         top: randomXY[0],
         left: randomXY[1]
       }, slideTime);
+      if (i === factoryThis.activeElements.length - 1) {
+        $element.degree = 0;
+        $element.timer;
+        rotate($element);
+      }
     }
+  }
+  
+  function rotate($element) {
+    $element.css({ WebkitTransform: 'rotate(' + $element.degree + 'deg)'});                   
+    $element.timer = setTimeout(function() {
+      $element.degree += 2; 
+      if ($element.degree <= 360) {
+        rotate($element);
+      } else {
+        $element.css({ WebkitTransform: 'rotate(0)deg)'});     
+      }
+    }, 1);
   }
 
   const newEl = new PopupEl(emotionObj.level);
