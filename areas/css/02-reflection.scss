@@ -6,9 +6,16 @@ body {
 
 section.main {
   position: absolute;
-  top: 0px;
-  left: 0px;
   overflow: hidden;
+}
+.screen-0 .main, #wrapper.screen-0  {
+  right: 0px;
+  left: unset !important;
+}
+
+.screen-1 .main, 
+.screen-2 .main {
+  left: 0px;
 }
 
 .fs {
@@ -35,6 +42,7 @@ section.main {
 }
 
 
+#background-0,
 #background-1, 
 #background-2 {
   z-index: 1;
@@ -50,12 +58,12 @@ section.main {
     filter: FlipH;
     -ms-filter: "FlipH";
   }
-
-  .screen-2 & {
-    background-position: 100% 0;
-  }
 }
 
+.screen-0 #loading {
+  right: 0;
+  left: unset;
+}
 
 #loader {
   position: absolute;
@@ -69,10 +77,10 @@ section.main {
   display: flex;
   justify-content: center;
   align-items: center;
-  border: 4px solid white;
-  margin: 30px;
+  border: 8px solid white;
+  margin: 0.8em;
   font-size: 8em;
-  font-weight: bold;
+  font-weight: 500;
   color: white;
   font-style: italic;
   text-align: center;
@@ -94,6 +102,7 @@ section.main {
 
 #memory_container {
   z-index: 200;
+  opacity: 0;
 }
 
 .memory {

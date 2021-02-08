@@ -5,26 +5,28 @@
     <script src='/socket.io/socket.io.js'></script>
   </head>
   <body>
-    <section class='main'>
+    <div id='wrapper'>
 
-      <div id='memory_container' class='fs'></div>
-      <div id='meditation_container' class='fs'>
-        <div id='meditation_text'></div>
-      </div>
-      <div id='background_container' class='fs'>
-        <div id='background-1' class='fs'></div>
-        <div id='background-2' class='fs'></div>
-        <img id='loader' />
-      </div>
+      <section class='main'>
+
+        <div id='memory_container' class='fs'></div>
+        <div id='meditation_container' class='fs'>
+          <div id='meditation_text'></div>
+        </div>
+        <div id='background_container' class='fs'>
+          <div id='background-1' class='fs'></div>
+          <div id='background-2' class='fs'></div>
+          <img id='loader' />
+        </div>
+        
+      </section>
       
-    </section>
-    
-    <section id='loading'>
-      <div>
-        <h1>Loading...</h1>
-        <h1 id='loading-emotion'></h1>
-      </div>
-    </section>
-
+      <section id='loading'>
+        <div>
+          <h1 id='loading-title'>Loading</h1>
+          <h1 id='loading-emotion'></h1>
+        </div>
+      </section>
+    </div>
   </body>
 </html>

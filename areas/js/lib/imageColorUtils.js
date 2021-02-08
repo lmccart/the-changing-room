@@ -69,7 +69,7 @@ export function hexToRgb(hex, returnFractionalValue) {
 }
 
 // returns 'white' or 'black' for a hexcolor, depending on the contrast
-export function getTextColorForBackground(hexcolor0, hexColor1) {
+export function getTextColorForBackground(hexColor0, hexColor1) {
   let yiq = 0;
   for (let a of arguments) {
     const hex = a.replace('#', '');
@@ -79,7 +79,7 @@ export function getTextColorForBackground(hexcolor0, hexColor1) {
     yiq += ((r * 299) + (g * 587) + (b * 114)) / 1000;
   }
   yiq /= arguments.length;
-  return (yiq > 140) ? '#000000' : '#FFFFFF';
+  return (yiq > 140) ? 'black' : 'white';
 }
 
 

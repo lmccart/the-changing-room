@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>AMApplicationBuild</key>
-	<string>509</string>
+	<string>492</string>
 	<key>AMApplicationVersion</key>
 	<string>2.10</string>
 	<key>AMDocumentVersion</key>
@@ -169,17 +169,15 @@
 						<string>4</string>
 					</dict>
 				</dict>
-				<key>conversionLabel</key>
-				<integer>0</integer>
 				<key>isViewVisible</key>
-				<integer>1</integer>
+				<true/>
 				<key>location</key>
 				<string>309.000000:252.000000</string>
 				<key>nibPath</key>
 				<string>/System/Library/Automator/Run Shell Script.action/Contents/Resources/Base.lproj/main.nib</string>
 			</dict>
 			<key>isViewVisible</key>
-			<integer>1</integer>
+			<true/>
 		</dict>
 		<dict>
 			<key>action</key>
@@ -283,14 +281,14 @@
 					</dict>
 				</dict>
 				<key>isViewVisible</key>
-				<integer>1</integer>
+				<true/>
 				<key>location</key>
-				<string>309.000000:354.000000</string>
+				<string>309.000000:356.000000</string>
 				<key>nibPath</key>
 				<string>/System/Library/Automator/Pause.action/Contents/Resources/Base.lproj/main.nib</string>
 			</dict>
 			<key>isViewVisible</key>
-			<integer>1</integer>
+			<true/>
 		</dict>
 		<dict>
 			<key>action</key>
@@ -341,8 +339,8 @@
 				<key>ActionParameters</key>
 				<dict>
 					<key>COMMAND_STRING</key>
-					<string>cd /Users/lmccart/Documents/the-changing-room/ &amp;
-/usr/local/bin/python3 /Users/lmccart/Documents/the-changing-room/install/multibrowse-source/multibrowse.py https://localhost:3000/00-intro https://localhost:3000/05-convo2 https://localhost:3000/06-passive</string>
+					<string>cd /Users/venessacastagnoli2/Desktop/the-changing-room/ &amp;
+/usr/local/bin/python3 /Users/venessacastagnoli2/Desktop/the-changing-room/install/multibrowse-source/multibrowse.py https://localhost:3000/00-intro https://localhost:3000/05-convo2 https://localhost:3000/06-passive</string>
 					<key>CheckedForUserDefaultShell</key>
 					<true/>
 					<key>inputMethod</key>
@@ -453,31 +451,31 @@
 					</dict>
 				</dict>
 				<key>isViewVisible</key>
-				<integer>1</integer>
+				<true/>
 				<key>location</key>
-				<string>309.000000:536.000000</string>
+				<string>309.000000:538.000000</string>
 				<key>nibPath</key>
 				<string>/System/Library/Automator/Run Shell Script.action/Contents/Resources/Base.lproj/main.nib</string>
 			</dict>
 			<key>isViewVisible</key>
-			<integer>1</integer>
+			<true/>
 		</dict>
 	</array>
 	<key>connectors</key>
 	<dict>
-		<key>01119D41-D4A6-49B7-A759-B5DAF85BE59D</key>
-		<dict>
-			<key>from</key>
-			<string>9F3A5034-28EF-4A12-8B66-A42B55C72DAF - 9F3A5034-28EF-4A12-8B66-A42B55C72DAF</string>
-			<key>to</key>
-			<string>9D7BFA19-9B52-4921-82F7-509FD64BB20D - 9D7BFA19-9B52-4921-82F7-509FD64BB20D</string>
-		</dict>
-		<key>8886BFD9-CB24-4E8E-B4C2-E60C093FB445</key>
+		<key>02DBD987-12C6-4F25-A6BA-BA8D20D63AFB</key>
 		<dict>
 			<key>from</key>
 			<string>DDB819DD-7FD9-467F-8912-5E4120BC5332 - DDB819DD-7FD9-467F-8912-5E4120BC5332</string>
 			<key>to</key>
 			<string>9F3A5034-28EF-4A12-8B66-A42B55C72DAF - 9F3A5034-28EF-4A12-8B66-A42B55C72DAF</string>
+		</dict>
+		<key>719A867C-A531-423B-AD16-6EF994700C88</key>
+		<dict>
+			<key>from</key>
+			<string>9F3A5034-28EF-4A12-8B66-A42B55C72DAF - 9F3A5034-28EF-4A12-8B66-A42B55C72DAF</string>
+			<key>to</key>
+			<string>9D7BFA19-9B52-4921-82F7-509FD64BB20D - 9D7BFA19-9B52-4921-82F7-509FD64BB20D</string>
 		</dict>
 	</dict>
 	<key>workflowMetaData</key>

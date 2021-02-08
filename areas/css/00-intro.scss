@@ -22,11 +22,12 @@ body {
 .text
 {
    height: 100%;
-   font-size: 4.5em;
+   font-size: 6.5em;
+   line-height: 1.25;
    overflow: auto;
    font-weight: 700;
    font-style: italic;
-   padding: 1em;
+   padding: 1em 0.5em 1em 1em;
 //    scroll-behavior: smooth;
 }
 

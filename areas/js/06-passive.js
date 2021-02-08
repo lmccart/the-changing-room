@@ -8,10 +8,10 @@ import '../css/06-passive.scss';
 import './shared.js';
 import { getImgUrls, addSvgFilterForElement, getTextColorForBackground, getPopupUrls } from './lib/imageColorUtils.js';
 
-const basePopupRate = 10000; // adjusted based on emotion intensity
-const minDisplayTime = 45000; // minimum time a popup shows on screen
+const basePopupRate = 8000; // adjusted based on emotion intensity
+const minDisplayTime = 60000; // minimum time a popup shows on screen
 const displayVariation = 10000;
-const overlapAllowance = 0.60; // allows 60% overlap when a new element is created
+const overlapAllowance = 0.50; // allows 60% overlap when a new element is created
 const backgroundChangeTime = 20000; // adjusted based on emotion intensity
 const portionFiltered = 1;//0.5; // portion of popups with svg filter applied
 
@@ -142,7 +142,7 @@ function PopupFactory(emotionObj) {
   const factoryThis = this;
 
   // note that the destruction rate is set in each individual popup for a little randomness
-  const emotionLevelMultiplier = 2 ** emotionObj.level; // exponential scale
+  const emotionLevelMultiplier = 1 ** emotionObj.level; // exponential scale
   const popupRate = basePopupRate / emotionLevelMultiplier; // base rate of ~3 seconds, gets faster with higher emotion level
   let creationInterval;
   const colors = window.baseColors[curEmotion.base][emotionObj.level - 1];
@@ -266,12 +266,12 @@ function PopupFactory(emotionObj) {
         childThis.$element.css('color', textColor);
       } else if (type === POPUP.TEXT) {
         let n = rng();
-        if (n < 0.33) {
-          childThis.$element.css('background', `radial-gradient(${colors[0]},${colors[1]})`);
-        } else if (n < 0.66) {
+        if (n < 0.25) {
           childThis.$element.css('background', colors[0]);
-        } else {
+        } else if (n < 0.5) {
           childThis.$element.css('background', colors[1]);
+        } else {
+          childThis.$element.css('background', `radial-gradient(${colors[0]},${colors[1]})`);
         }
       }
 
@@ -331,11 +331,23 @@ function PopupFactory(emotionObj) {
     let t = (window.innerHeight - $element.height()) / 2;
     let l = (window.innerWidth - $element.width()) / 2;
     $element.css('top', t);
-    $element.css('left', l);  
-    $element.delay(300).fadeOut(0).delay(300).fadeIn(0).delay(300).fadeOut(0).delay(300).fadeIn(0).delay(300).animate({
-      top: randomXY[0],
-      left: randomXY[1]
-    }, slideTime);
+    $element.css('left', l); 
+    let blinkDur = 1500; 
+    $element.delay(blinkDur / 5).fadeOut(0).delay(blinkDur / 5).fadeIn(0).delay(blinkDur / 5).fadeOut(0).delay(blinkDur / 5).fadeIn(0).delay(blinkDur / 5).fadeIn(0, moveAll);
+  }
+
+  function moveAll() {
+    console.log('move all');
+    for (let i = 0; i < factoryThis.activeElements.length; i++) {
+    
+      let slideTime = Math.random() * 300 + 200;
+      let $element = factoryThis.activeElements[i].$element;
+      let randomXY = factoryThis.getRandomPosition($element);
+      $element.animate({
+        top: randomXY[0],
+        left: randomXY[1]
+      }, slideTime);
+    }
   }
 
   const newEl = new PopupEl(emotionObj.level);
@@ -349,4 +361,5 @@ function PopupFactory(emotionObj) {
       factoryThis.activeElements.push(newEl);
     }, popupRate);
   }, screenNumber * 150);
+
 }

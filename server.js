@@ -1,10 +1,8 @@
 require('dotenv').config();
 const fs = require('fs');
 
-// const key = fs.readFileSync('./localhost+1.pem');
-// const cert = fs.readFileSync('./localhost+1-key.pem');
-const key = fs.readFileSync('./lmccartbook.local+4-key.pem');
-const cert = fs.readFileSync('./lmccartbook.local+4.pem');
+const key = fs.readFileSync(process.env.SSL_KEY);
+const cert = fs.readFileSync(process.env.SSL_CERT);
 
 const express = require('express');
 const app = express();

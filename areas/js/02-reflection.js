@@ -21,6 +21,7 @@ let imgURLs = [];
 let thisScreenParams;
 let sharedSeed = 0;
 let emotionChanged = false;
+let skipToMemories = false;
 
 // 10s before meditation
 // 10s per instruction
@@ -32,18 +33,22 @@ let emotionChanged = false;
 //// Screen parameters
 
 const screenParams = {
-  0: { id: 0, name: 'LEFT', width: 1631, height: 1080 },
-  1: { id: 1, name: 'CENTER', width: 1768, height: 1080 },
-  2: { id: 2, name: 'RIGHT', width: 1700, height: 1080 },
-  999: { id: 999, name: 'FULLSCREEN', width: 0, height: 1080 },
+  0: { id: 0, name: 'LEFT', width: 1802, height: 1080, display: 'left projector'},
+  1: { id: 1, name: 'CENTER', width: 1897, height: 1080, display: 'center projector' },
+  2: { id: 2, name: 'RIGHT', width: 1889, height: 1080, display: 'right projector' },
+  999: { id: 999, name: 'FULLSCREEN', width: 0, height: 1080, display: 'fullscreen' },
 };
 screenParams[999].width = screenParams[0].width + screenParams[1].width + screenParams[2].width;
 
 
+let urlParams = new URLSearchParams(window.location.search);
+let screenNumber = Number(urlParams.get('screen'));
+document.title = '02 reflection: screen ' + screenNumber;
+
 ////////////// MEDITATION TIMINGS /////////////
 
 // We pause before meditation starts,
-let meditations_fadein_pause = 9500; 
+let meditations_fadein_pause = 10000; // should be same as meditation_interval to match sound
 
 // and slowly, the meditation fades in.
 let meditations_fadein_duration = 500; 
@@ -82,18 +87,18 @@ let memories_fadein_duration = 500;
 //////// The memory sequence starts.
 
 // Each memory arrives at this interval,
-let num_memories = 50;
+let num_memories = 25;
 
-let memory_interval = 2000;
+let memory_interval = 4000;
 
 // and fades in
 let each_memory_fadein_duration = 500;
 
 // pauses
-let each_memory_pause_duration = 10000;
+let each_memory_pause_duration = 15000;
 
 // and fades out.
-let each_memory_fadeout_duration = 500;
+let each_memory_fadeout_duration = 300;
 
 /////// The memories are over.
 
@@ -128,6 +133,8 @@ window.init = () => {
 
     socket.emit('emotion:get');
   });
+
+  $(document).on('keypress', handleKey);
 };
 
 
@@ -157,30 +164,38 @@ function updateInterface() {
 // DATA AND PARAMS
 //////////////////////////
 
+function handleKey(e) {
+  if (e.key === '0' | e.key === '1' | e.key === '2') {
+    editMode = Number(e.key);
+    console.log('editing screen ', editMode);
+  } 
+  if (editMode > -1) {
+    if (e.key === 'l') {
+      screenParams[screenNumber].width++;
+    } else if (e.key === 'r') {
+      screenParams[screenNumber].width--;
+    }
+    adjustScreen();
+  }
+}
 
 function setScreen() {
-  let urlParams = new URLSearchParams(window.location.search);
-  let screenNumber = urlParams.get('screen');
-  if (screenNumber) {
-    screenNumber = Number(screenNumber);
-    $('body').addClass('screen-' + screenNumber);
-    $('body').addClass('partialscreen');
-    thisScreenParams = screenParams[screenNumber];
-    $('body').width(thisScreenParams.width).height(thisScreenParams.height);
-    $('.main').width(thisScreenParams.width).height(thisScreenParams.height);
-    $('#loading').width(thisScreenParams.width).height(thisScreenParams.height);
+  if (screenNumber < 3) {
+    $('#wrapper').addClass('screen-' + screenNumber);
+    $('#wrapper').addClass('partialscreen');
+    adjustScreen();
   } else {
-    $('body').addClass('fullscreen');
+    $('#wrapper').addClass('fullscreen');
   }
-  if (screenNumber === 0) {
-    $('#area-extra').text('left projector');
-  } else if (screenNumber === 1) {
-    $('#area-extra').text('center projector');
-  } else if (screenNumber === 2) {
-    $('#area-extra').text('right projector');
-  } else {
-    $('#area-extra').text('missing screen id');
-  }
+  $('#area-extra').text(screenParams[screenNumber].display);
+}
+
+function adjustScreen() {
+  thisScreenParams = screenParams[screenNumber];
+  $('#wrapper').width(thisScreenParams.width).height(thisScreenParams.height);
+  $('.main').width(thisScreenParams.width).height(thisScreenParams.height);
+  $('#loading').width(thisScreenParams.width).height(thisScreenParams.height);
+  console.log(thisScreenParams);
 }
 
 function loadData(cb) {
@@ -268,7 +283,7 @@ function setColorsAndBackgrounds() {
   // secondaryColors = window.baseColors[curEmotion.base][curEmotion.level % 3];
   backgroundTextColor = getTextColorForBackground(primaryColors[0]);
   $('#meditation_text').css('color', backgroundTextColor);
-  $('#meditation_container').css('border-color', backgroundTextColor);
+  $('#meditation_container').css('border-color', primaryColors[0]);
 
 
   // const bg = $('#background');
@@ -317,11 +332,6 @@ function setColorsAndBackgrounds() {
         }
       }
     
-      
-      // setTimeout(() => {
-      //   console.log(`removing #${prevSvgId}`);
-      //   $(`#${prevSvgId}`).remove();
-      // }, 1000);
     });
 }
 
@@ -343,6 +353,7 @@ function generateMeditationTexts() {
       for (let k in thisDataMeditationInserts) {
         newm = newm.replace(`[${k}]`, thisDataMeditationInserts[k]); 
       }
+      newm = newm.replace('[EMOTION]', curEmotion.name);
       
       return newm;
     })
@@ -353,10 +364,12 @@ function generateMeditationTexts() {
 
 function displayMeditationPhrase(opts) {
   let parts = opts.text.match(/[^\.!\?]+[\.!\?]+/g);
+  console.log(parts);
   let text;
   if (parts.length > 1) {
     let id = thisScreenParams.id < 3 ? thisScreenParams.id : 0;
-    text = id <= parts.length ? parts[id] : '';
+    console.log(id);
+    text = id < parts.length ? parts[id] : parts[0];
   } else {
     text = opts.text;
   }
@@ -383,7 +396,7 @@ function pickMemoryPairs() {
 
   let rng = seedrandom(sharedSeed);
 
-  let screenNumber = -1;
+  let screenN = -1;
   let lastScreen = -1;
 
   for (let i = 0; i < num_memories; i++) {
@@ -393,17 +406,22 @@ function pickMemoryPairs() {
     let text = thisEmotionMemories[i % thisEmotionMemories.length];
 
     // randomly pick screen
-    while (screenNumber === lastScreen) {
-      screenNumber = Math.floor(rng() * 3);
+
+    if (i < 3) {
+      screenN = i;
+    } else {
+      while (screenN === lastScreen) {
+        screenN = Math.floor(rng() * 3);
+      }
     }
-    lastScreen = screenNumber;
+    lastScreen = screenN;
 
     let thisMempair = [];
 
     thisMempair.push({
       type: 'image',
       url: img0,
-      screenNumber: screenNumber,
+      screenNumber: screenN,
       mempairNumber: i,
     });
 
@@ -411,14 +429,14 @@ function pickMemoryPairs() {
       thisMempair.push({ 
         type: 'text',
         text: text,
-        screenNumber: screenNumber,
+        screenNumber: screenN,
         mempairNumber: i,
       });
     } else {
       thisMempair.push({
         type: 'image',
         url: img1,
-        screenNumber: screenNumber,
+        screenNumber: screenN,
         mempairNumber: i,
       });
     }
@@ -456,6 +474,7 @@ function loadMedia(memory, index, i, contrast) {
     memory.id = `memory-${index}-${i}`;
     memdiv.addClass('memory');
     memdiv.attr('id', memory.id);
+    memdiv.css('box-shadow', '0 0 30px gray');
     memdiv.hide();
     memdiv.appendTo('#memory_container');
 
@@ -657,44 +676,45 @@ function resetHTML(cb) {
 async function queueEvents(timeline) {
   window.timeline = timeline;
 
-
   let timeMarker = 0;
 
-  /////// MEDITATIONS FADE IN
-  timeMarker += meditations_fadein_pause;
-  timeline.add({ time: timeMarker, event: function() { 
-    $('#meditation_container').fadeIn(meditations_fadein_duration);
-    console.log('TIMELINE STARTING');
-  } });
-
-  /////// QUEUE MEDITATIONS
- 
-  let mts = generateMeditationTexts();
-  mts.forEach((mt, i) => {
-    // if (i < 2) { // temp for testing
+  if (!skipToMemories) {
+    /////// MEDITATIONS FADE IN
+    timeMarker += meditations_fadein_pause;
     timeline.add({ time: timeMarker, event: function() { 
-      displayMeditationPhrase({ text: mt, fadeIn: each_meditation_fadein_duration, fadeOut: each_meditation_fadeout_duration});
+      $('#meditation_container').fadeIn(meditations_fadein_duration);
+      console.log('TIMELINE STARTING');
     } });
 
-    if (meditation_long_indices.includes(i)) {
-      timeMarker += meditation_long_interval; 
-    } else {
-      timeMarker += meditation_interval; 
-    }
-    // }
+    /////// QUEUE MEDITATIONS
+  
+    let mts = generateMeditationTexts();
+    mts.forEach((mt, i) => {
+      // if (i < 2) { // temp for testing
+      timeline.add({ time: timeMarker, event: function() { 
+        displayMeditationPhrase({ text: mt, fadeIn: each_meditation_fadein_duration, fadeOut: each_meditation_fadeout_duration});
+      } });
 
-  });
+      if (meditation_long_indices.includes(i)) {
+        timeMarker += meditation_long_interval; 
+      } else {
+        timeMarker += meditation_interval; 
+      }
+      // }
 
-  /////// MEDITATION FADES OUT
+    });
 
-  timeMarker += meditations_fadeout_pause;
-  timeline.add({ time: timeMarker, event: function() { 
-    $('#meditation_container').fadeOut(meditations_fadeout_duration);
-  } });
+    /////// MEDITATION FADES OUT
+
+    timeMarker += meditations_fadeout_pause;
+    timeline.add({ time: timeMarker, event: function() { 
+      $('#meditation_container').fadeOut(meditations_fadeout_duration);
+    } });
+  }
 
   // timeMarker += memories_fadein_pause;
   timeline.add({ time: timeMarker, event: function() { 
-    $('#memory_container').fadeTo(1, memories_fadein_duration);
+    $('#memory_container').fadeTo(memories_fadein_duration, 1);
   } });
 
 
@@ -712,7 +732,11 @@ async function queueEvents(timeline) {
         console.log('...SCREEN ', mempair.data[0].screenNumber, ' is displaying memory pair #', i, '...');
       }
     } }); 
-    timeMarker += memory_interval;
+    if (i < 2) {
+      timeMarker += memory_interval * 0.5;
+    } else {
+      timeMarker += memory_interval;
+    }
   });
  
   
@@ -720,7 +744,7 @@ async function queueEvents(timeline) {
 
   timeline.add({ time: timeMarker, event: function() { 
     $('#meditation_text').empty();
-    $('#memory_container').fadeOut(memories_fadeout_duration, function() {
+    $('#memory_container').fadeTo(memories_fadeout_duration, 0, () => {
       $(this).children().each((i, elt) => {
         let svgId = $(elt).data('svgId');
         $(`#${svgId}`).remove();
@@ -791,5 +815,4 @@ function seedShuffle(array, seed) {
 function randomBetween(a, b) {
   return a + (Math.random() * (b - a));
 }
-
 

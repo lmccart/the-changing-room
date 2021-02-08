@@ -4,8 +4,8 @@ import './shared.js';
 import { getImgUrls, getTextColorForBackground, addSvgFilterForElement } from './lib/imageColorUtils.js';
 
 /* VARIABLES */
-const scroll_up_time = 5000;
-const scroll_down_time = 200000;
+const scroll_up_time = 20000;
+const scroll_down_time = 500000;
 const scroll_pause_time = 3000;
 
 let video = true;
