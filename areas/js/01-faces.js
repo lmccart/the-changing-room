@@ -2,23 +2,18 @@
 import $ from 'jquery';
 import '../css/01-faces.scss';
 import './shared.js';
-import { camvas } from './lib/camvas.js';
-import { pico } from './lib/pico.js';
 import 'fancy-textfill/es2015/jquery.plugin';
 import { getTextColorForBackground } from './lib/imageColorUtils.js';
 import Papa from 'papaparse';
-const cascadeurl = '/static/facefinder_cascade.txt';
 
 const ipadWidth = 1620;
 const ipadHeight = 2160;
 const typingSpeed = 60;
 let phraseInterval = 5000; 
-const delaySeconds = 1; // seconds to wait before showing/hiding video
-const update_memory = pico.instantiate_detection_memory(5); // use the detecions of the last 5 frames
+const delaySeconds = 0.5; // seconds to wait before showing/hiding video
+const poseThresh = 0.15;
 
-let emotions;
 let curEmotion;
-let emotionalMessage = '';
 let spellOut = false; // used to determine when to animate text
 let phraseTimeout;
 let typingTimeout;
@@ -26,30 +21,32 @@ let phrases;
 let emotionPhrases;
 let curPhrase = 0;
 
-let facefinderClassifyRegion;
 let watchdog = 0; // used to delay showing/hiding video
 let faceFound = false;
 let faceInitialized = false;
-let face_threshold = 0.01; // 0.2;
 
 const coverEl = $('#video-cover');
 const videoEl = $('#face-stream');
 const canvas = document.createElement('canvas');
-const ctx = canvas.getContext('2d');
 
+let net;
 
 window.init = () => {
+  colorFrame('white');
   loadText()
-    .then(loadClassifier)
-    .then(() => {
+    .then(setupPosenet)
+    .then(_net => {
+      net = _net;
+      console.log(net);
       socket.on('emotion:update', updateEmotion);
       socket.emit('emotion:get');
-      $('body').on('click', setupFaceDetection);
+      $('body').on('click', setupCamera);
       document.addEventListener('touchmove', (e) => { 
         e.preventDefault(); 
       }, { passive:false });
     });
 };
+
 
 window.loadingComplete = () => {
   if (faceFound) {
@@ -58,41 +55,46 @@ window.loadingComplete = () => {
   $('#hand-container').delay(1000).fadeIn();
 };
 
-async function loadText() {
-  await Papa.parse('/static/data/01_reflections.tsv', {
-    download: true,
-    header: true,
-    skipEmptyLines: 'greedy',
-    complete: function(results) {
-      const rawResults = results.data;
+function loadText() {
+  return new Promise(resolve => {
+    Papa.parse('/static/data/01_reflections.tsv', {
+      download: true,
+      header: true,
+      skipEmptyLines: 'greedy',
+      complete: function(results) {
+        const rawResults = results.data;
 
-      const reordered = {};
-      const keys = Object.keys(rawResults[0]);
-      keys.forEach(key => reordered[key] = []);
+        const reordered = {};
+        const keys = Object.keys(rawResults[0]);
+        keys.forEach(key => reordered[key] = []);
 
-      for (var i = 0; i < rawResults.length; i++) {
-        const resultRow = rawResults[i];
-        keys.forEach(key => resultRow[key].trim().length > 0 && reordered[key].push(resultRow[key]));
+        for (var i = 0; i < rawResults.length; i++) {
+          const resultRow = rawResults[i];
+          keys.forEach(key => resultRow[key].trim().length > 0 && reordered[key].push(resultRow[key]));
+        }
+        console.log(phrases);
+        phrases = reordered;
+        console.log(phrases, 'REORDERED!');
+        resolve(phrases);
       }
-      phrases = reordered;
-      console.log(phrases, 'REORDERED!');
-      return phrases;
-    }
-  });
-}
-
-async function loadClassifier() {
-  await fetch(cascadeurl).then(function(response) {
-    response.arrayBuffer().then(function(buffer) {
-      const bytes = new Int8Array(buffer);
-      facefinderClassifyRegion = pico.unpack_cascade(bytes);
-      console.log('* cascade loaded');
-      return;
     });
   });
 }
 
-async function setupFaceDetection(e) {
+function setupPosenet() {
+  return new Promise(resolve => {
+    posenet.load({
+      architecture: 'MobileNetV1',
+      outputStride: 16,
+      inputResolution: { width: 640, height: 480 },
+      multiplier: 0.75
+    }).then((net) => {
+      resolve(net);
+    });
+  });
+}
+
+async function setupCamera(e) {
   if (!faceInitialized) {
     try {
       console.log('connecting user media');
@@ -101,16 +103,42 @@ async function setupFaceDetection(e) {
       const stream = await navigator.mediaDevices.getUserMedia({video:true, audio:false});
       console.log('connected user media');
       videoEl[0].srcObject = stream;
-      new camvas(ctx, processfn, stream, 10); // 10 here is the target fps for checking for faces
-      resizeLayout();
-      removeCover(true);
-      $('#hand-container').remove();
+      videoEl.on('loadeddata', () => {
+        resizeLayout();
+        removeCover(true);
+        $('#hand-container').remove();
+        setupFaceDetection(videoEl[0]);
+      });
+      
     } catch (e) {
       console.log(e);
     }
   }
 }
 
+function setupFaceDetection(videoEl) {
+  setInterval(() => {
+    net.estimateSinglePose(videoEl, {
+      flipHorizontal: true
+    })
+    .then(function(pose){
+
+      if (pose.score > poseThresh) {
+        watchdog = watchdog < 0 ? 0 : watchdog + 1;
+        if (watchdog > (delaySeconds * 10)) {
+          faceFound = true;
+          removeCover();
+        }
+      } else {
+        watchdog = watchdog > 0 ? 0 : watchdog - 1;
+        if (watchdog < -(delaySeconds * 10)) {
+          faceFound = false;
+          showCover();
+        }
+      }
+    })
+  }, 100);
+}
 
 
 function resizeLayout() {
@@ -144,58 +172,6 @@ function resizeLayout() {
 }
 
 
-// This function is called by camvas at 10 fps
-const processfn = (video) => {
-  ctx.drawImage(video, 0, 0);
-  var rgba = ctx.getImageData(0, 0, 1280, 720).data;
-  const image = {
-    'pixels': rgba_to_grayscale(rgba, 720, 1280),
-    'nrows': 720,
-    'ncols': 1280,
-    'ldim': 1280
-  };
-  const params = {
-    'shiftfactor': 0.1, // move the detection window by 10% of its size
-    'minsize': 100, // minimum size of a face
-    'maxsize': 1000, // maximum size of a face
-    'scalefactor': 1.1 // for multiscale processing: resize the detection window by 10% when moving to the higher scale
-  };
-  // run the cascade over the frame and cluster the obtained detections
-  // dets is an array that contains (r, c, s, q) quadruplets
-  // (representing row, column, scale and detection score)
-  let dets = pico.run_cascade(image, facefinderClassifyRegion, params);
-  dets = update_memory(dets);
-  dets = pico.cluster_detections(dets, face_threshold); // set IoU threshold to 0.2
-
-  let faceTempFound = false;
-  for (let i = 0; i < dets.length; ++i) {
-    // check the detection score
-    // if it's above the threshold increment watchdog
-    // (the constant 50.0 is empirical: other cascades might require a different one)
-    if (dets[i][3] > 5.0) {
-      faceTempFound = true;
-    } 
-  }
-
-  // if watchdog is > 20 that means a face has been detected for 2 seconds
-  if (faceTempFound) {
-    watchdog = watchdog < 0 ? 0 : watchdog + 1;
-
-    if (watchdog > (delaySeconds * 10)) {
-      faceFound = true;
-      removeCover();
-
-    }
-  } else {
-    watchdog = watchdog > 0 ? 0 : watchdog - 1;
-
-    if (watchdog < -(delaySeconds * 10)) {
-      faceFound = false;
-      showCover();
-    }
-  }
-};
-
 
 function updateInterface() {
   $('#debug-info').text('CURRENT EMOTION: ' + curEmotion.name + ' (base: ' + curEmotion.base + ', level: ' + curEmotion.level + ')');
@@ -208,27 +184,10 @@ function updateInterface() {
 
   ////// CHANGING BACKGROUND COLOR
   let emotion_colors = baseColors[curEmotion.base][curEmotion.level - 1];
-
-  console.log('setting css');
-  $('.filtered').css('background', `radial-gradient(${emotion_colors[0]},${emotion_colors[1]})`);
-  $('#video-cover').css('background-color', emotion_colors[0]);
-
-  // $('#video-cover').css('background', `linear-gradient(${emotion_colors[0]},${emotion_colors[1]})`);
-
-
-  /////// CHANGING PHRASES
-  // shuffle phrases
-  // cycle through phrases 
-
+  colorView(emotion_colors[0], emotion_colors[1]);
   emotionPhrases = phrases[curEmotion.base];
 
-  $('.textbox').css('visibility', 'hidden');
-  $('#face-stream').css('visibility', 'hidden');
-
 }
-
-
-
 
 function updateEmotion(msg) {
   console.log('UPDATE EMOTION');
@@ -240,13 +199,24 @@ function updateEmotion(msg) {
   }
 }
 
+function colorView(color0, color1) {
+  $('#video-cover').css('background-color', color0);
+  if (color1) $('.filtered').css('background', `radial-gradient(${color0},${color1})`);
+}
+
+function colorFrame(color0) {
+  $('.textbox').css('color', color0);
+  $('.md').css('background-color', color0);
+  $('.mdiv').css('background-color', color0);
+  $('.text-container').css('border-color', color0);
+}
+
 
 
 function removeCover(loadCam) {
+  let emotion_colors = baseColors[curEmotion.base][curEmotion.level - 1];
+  colorFrame(emotion_colors[0]);
   coverEl.hide();
-  $('.filtered').css('visibility', 'visible');
-  $('.textbox').css('visibility', 'visible');
-  $('#face-stream').css('visibility', 'visible');
   if (spellOut === false && !loadCam) {
     spellOut = true;
     console.log('flip spell out switch');
@@ -256,10 +226,8 @@ function removeCover(loadCam) {
 
 function showCover() {
   console.log('show cover');
+  colorFrame('white');
   coverEl.show();
-  $('.filtered').css('visibility', 'hidden');
-  $('.textbox').css('visibility', 'hidden');
-  $('#face-stream').css('visibility', 'hidden');
 
   if (spellOut === true) {
     spellOut = false;

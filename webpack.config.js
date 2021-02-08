@@ -111,10 +111,10 @@ module.exports = {
       chunks: [''],
       minify: false,
     }),
-    new ESLintPlugin({
-      exclude: ['node_modules/', 'areas/js/lib/pico.js'],
-      fix: false
-    }),
+    // new ESLintPlugin({
+    //   exclude: ['node_modules/', 'areas/js/lib/pico.js'],
+    //   fix: false
+    // }),
     new CleanWebpackPlugin({
       // verbose: true,
       // cleanOnceBeforeBuildPatterns: ['**/*', '!static/images/**', '!static/popups/**']

@@ -24,7 +24,7 @@ body {
 }
 
 #face-stream {
-  visibility: hidden;
+  // visibility: hidden;
   -webkit-transform: scaleX(-1);
   transform: scaleX(-1);
   width: 100vw;
@@ -32,7 +32,7 @@ body {
 }
 
 .filtered {
-  visibility: hidden;
+  // visibility: hidden;
   position: fixed;
   width: 100vw;
   height: 100vh;
@@ -46,7 +46,7 @@ body {
 }
 
 .filtered .stream-wrapper {
-  mix-blend-mode: screen;
+  mix-blend-mode: soft-light;
 }
 
 
