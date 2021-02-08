@@ -81,7 +81,7 @@ function updateEmotion(msg) {
   if (!curEmotion || curEmotion.name !== msg.name) {
     curEmotion = msg;
     console.log('emotion has been updated to: ' + msg.name + ' (base: ' + msg.base + ', level: ' + msg.level + ')');
-    $('body').addClass('notouch').delay(window.loadingDur).queue(next => {
+    $('body').addClass('notouch').delay(window.loadingDur - 1000).queue(next => {
       $('body').removeClass('notouch');
       next();
     });
@@ -98,8 +98,18 @@ function updateInterface() {
   //get color of selected emotion colors
   let emotion_colors = baseColors[curEmotion.base][curEmotion.level - 1];
 
-  const elm = '#option-' + curEmotion.name;
-  $(elm).fadeIn(fade_time, function() {
+  const $elm = $('#option-' + curEmotion.name);
+  let prevEmotion = $elm.prev().html();
+  let nextEmotion = $elm.next().html();
+  $elm.prev().html('<div class="loading-title">Loading</div>');
+  $elm.next().html('<div class="loading-title">Loading</div>');
+
+  setTimeout(() => {
+    $elm.prev().html(prevEmotion);
+    $elm.next().html(nextEmotion);
+  }, window.loadingDur - 1000);
+  
+  $elm.fadeIn(fade_time, function() {
     scrollToEmotion(curEmotion.name, curEmotion.base);
 
     //transition to color of selected emotion colors
@@ -112,8 +122,9 @@ function updateInterface() {
   
   //transition to font color to white
   setTimeout(function() {
-    $(elm).addClass('selected_emotion');
+    $elm.addClass('selected_emotion');
   }, fade_time);
+
 }
 
 ////////////////// PARSING SELECTION TEXT TO PANELS

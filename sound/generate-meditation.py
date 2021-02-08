@@ -3,7 +3,7 @@ import csv
 
 short_clip_dur = 10
 long_clip_dur = 15
-total_dur = 308
+total_dur = 318
 
 test_one = True # test one of each emotion first
 
@@ -76,10 +76,10 @@ def mix_clips(meditation, base):
   os.system(command)
   # trim
   output_trim = meditation.replace("2.wav", "4.wav")
-  os.system("ffmpeg -loglevel quiet -i " + output_mix + " -ss 00:00:00 -t 00:05:08 -async 1 " + output_trim) # total dur update here, too!
+  os.system("ffmpeg -loglevel quiet -i " + output_mix + " -ss 00:00:00 -t 00:05:18 -async 1 " + output_trim) # total dur update here, too!
   # fade
   output_final = meditation.replace("2.wav", ".wav")
-  os.system("ffmpeg -loglevel quiet -i " + output_trim + " -af afade=t=out:st=" + str(total_dur - 10) + ":d=10 " + output_final) 
+  os.system("ffmpeg -loglevel quiet -i " + output_trim + " -af afade=t=out:st=" + str(total_dur - 15) + ":d=15 " + output_final) 
 
 def cleanup_clips(base, emotion):
   i = 1

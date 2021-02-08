@@ -120,41 +120,42 @@ body.black ::-webkit-scrollbar-thumb {
     font-style: italic;
   }
 
-  #loading-title:after {
+}
+
+.loading-title:after {
+  content: '\00A0\00A0\00A0';
+  animation: showDots 1s linear infinite;
+}
+
+@keyframes showDots {
+  0% {
     content: '\00A0\00A0\00A0';
-    animation: showDots 1s linear infinite;
   }
-
-  @keyframes showDots {
-    0% {
-      content: '\00A0\00A0\00A0';
-    }
-    33% {
-      content: '.\00A0\00A0';
-    }
-    66% {
-      content: '..\00A0';
-    }
-    100% {
-      content: '...';
-    }
+  33% {
+    content: '.\00A0\00A0';
   }
-
-  .loading-blink {
-    -webkit-animation: blink 1s ease-in-out infinite;
+  66% {
+    content: '..\00A0';
   }
+  100% {
+    content: '...';
+  }
+}
+
+.loading-blink {
+  -webkit-animation: blink 1s ease-in-out infinite;
+}
 
 
-  @keyframes blink {
-    0% {
-      opacity: 0;
-    }
-    50% {
-      opacity: 1.0;
-    }
-    100% {
-      opacity: 0;
-    }
+@keyframes blink {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1.0;
+  }
+  100% {
+    opacity: 0;
   }
 }
 
