@@ -9,8 +9,8 @@ import './shared.js';
 import { getImgUrls, addSvgFilterForElement, getTextColorForBackground, getPopupUrls } from './lib/imageColorUtils.js';
 
 const basePopupRate = 10000; // adjusted based on emotion intensity
-const minDisplayTime = 30000; // minimum time a popup shows on screen
-const displayVariation = 4000;
+const minDisplayTime = 45000; // minimum time a popup shows on screen
+const displayVariation = 10000;
 const overlapAllowance = 0.60; // allows 60% overlap when a new element is created
 const backgroundChangeTime = 20000; // adjusted based on emotion intensity
 const portionFiltered = 1;//0.5; // portion of popups with svg filter applied
