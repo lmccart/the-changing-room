@@ -42,7 +42,7 @@ section.main {
 }
 
 
-
+#background-0,
 #background-1, 
 #background-2 {
   z-index: 1;
@@ -58,12 +58,12 @@ section.main {
     filter: FlipH;
     -ms-filter: "FlipH";
   }
-
-  // .screen-2 & {
-  //   background-position: 100% 0;
-  // }
 }
 
+.screen-0 #loading {
+  right: 0;
+  left: unset;
+}
 
 #loader {
   position: absolute;
@@ -80,7 +80,7 @@ section.main {
   border: 5px solid white;
   margin: 0.8em;
   font-size: 8em;
-  font-weight: bold;
+  font-weight: 500;
   color: white;
   font-style: italic;
   text-align: center;

@@ -1,5 +1,6 @@
 const { DeviceDiscovery, Sonos } = require('sonos');
 
+const quiet = false;
 const areas = {
   rest: false,
   reflection: false
@@ -30,8 +31,8 @@ DeviceDiscovery((device) => {
 const playEmotion = (emotion) => {
   if (!areas.rest) return;
   let track = process.env.HTTP_SERVER + 'sound/sounds/' + emotion.base + '.wav';
-  areas.rest.setVolume(15);
-  // areas.rest.setVolume(70 + emotion.level * 10);
+  if (quiet) areas.rest.setVolume(15);
+  else areas.rest.setVolume(70 + emotion.level * 10);
   areas.rest.play(track).then(() => { console.log('SOUND: rest playing '+track); }).catch(err => { console.log(err) })
 };
 
@@ -39,8 +40,8 @@ const playEmotionReflection = (emotion) => {
   if (!areas.reflection) return;
   console.log('play emotion');
   let reflectionTrack = process.env.HTTP_SERVER + 'sound/sounds-reflection/' + emotion.base + '-' + emotion.name + '.wav';
-  // areas.reflection.setVolume(70 + emotion.level * 10);
-  areas.reflection.setVolume(15);
+  if (quiet) areas.reflection.setVolume(15);
+  else areas.reflection.setVolume(50 + emotion.level * 10);
   areas.reflection.play(reflectionTrack).then(() => { console.log('SOUND: reflection playing '+reflectionTrack); }).catch(err => { console.log(err) })
 };
 
