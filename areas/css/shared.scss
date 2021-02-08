@@ -30,13 +30,38 @@ body {
   box-sizing: border-box;
 }
 
+#debug-screen {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1000;
+  background: #ede42c;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#area-info {
+  font-size: 6em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+#area-extra {
+  color: #f16a29;
+}
+
 #debug {
   position: fixed;
   bottom: 1vh;
   right: 1vw;
-  z-index: 1000;
+  z-index: 1001;
 
-  background: lime;
+  background: #f16a29;
+  color: white;
+  padding: 0.5em 1em;
   text-align: right;
 }
 

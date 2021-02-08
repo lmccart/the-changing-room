@@ -23,6 +23,14 @@ let popupFactory; // used to reference the function that produces popups
 window.emotionStrings = [];
 
 window.init = () => {
+  let urlParams = new URLSearchParams(window.location.search);
+  let screenNumber = urlParams.get('screen');
+  if (screenNumber) {
+    $('#area-extra').text('screen ' + screenNumber); 
+  } else {
+    $('#area-extra').text('missing screen id');
+  }
+
   Promise.all([parseDirections(), parseReflections(), getPopupUrls()])
     .then((results) => {
       results[2].forEach(url => {

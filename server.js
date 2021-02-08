@@ -68,11 +68,14 @@ io.on('connection', (socket) => {
 
   socket.on('disconnect', () => { console.debug('user disconnected: ' + socket.id); });
   socket.on('emotion:pick', setEmotion);
-  socket.on('emotion:get', function() {
+  socket.on('emotion:get', () => {
     socket.emit('emotion:update', curEmotion);
   });
   socket.on('chat:send', handleChat);
   socket.on('reflection:end', restartReflectionAudio);
+  socket.on('debug:toggle', msg => {
+    io.emit('debug:toggle', msg);
+  });
 });
 
 // SERVER SETUP

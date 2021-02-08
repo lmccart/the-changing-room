@@ -43,7 +43,7 @@
 - `/popups/manifest` GET - returns array of image urls for all 06-passive popups
 
 ## Global variables
-- `window.baseColors` or `baseColors` correspond to the data in `static/data/colors.json` can be used like `basecolors[curEmotion.base][0]` which is `['a6588d', 'ffffff']`
+- `window.baseColors` or `baseColors` correspond to the data in `static/data/data.json` can be used like `basecolors[curEmotion.base][0]` which is `['a6588d', 'ffffff']`
 
 ## `areas/js/lib` functions and helpers
 - can generally be used by importing like so:

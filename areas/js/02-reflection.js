@@ -163,6 +163,7 @@ function setScreen() {
   let urlParams = new URLSearchParams(window.location.search);
   let screenNumber = urlParams.get('screen');
   if (screenNumber) {
+    screenNumber = Number(screenNumber);
     $('body').addClass('screen-' + screenNumber);
     $('body').addClass('partialscreen');
     thisScreenParams = screenParams[screenNumber];
@@ -172,7 +173,16 @@ function setScreen() {
   } else {
     $('body').addClass('fullscreen');
   }
+  if (screenNumber === 0) {
+    $('#area-extra').text('left projector');
+  } else if (screenNumber === 1) {
+    $('#area-extra').text('center projector');
 
+  } else if (screenNumber === 2) {
+    $('#area-extra').text('right projector');
+  } else {
+    $('#area-extra').text('missing screen id');
+  }
 }
 
 function loadData(cb) {

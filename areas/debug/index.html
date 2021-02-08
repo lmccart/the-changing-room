@@ -10,14 +10,19 @@
         margin: 2em;
         font-size: 1vw;
         line-height: 1.5;
-        font-family: 
       }
       select {
         font-family: 'Favorit Mono', monospace;
         font-size: 1vw;
         margin-top: 1vw;
         margin-right: 1vw;
-
+      }
+      button {
+        font-family: 'Favorit Mono', monospace;
+        font-size: 1em;
+        background: white;
+        margin-top: 1em;
+        cursor: pointer;
       }
     </style>
   </head>
@@ -39,6 +44,8 @@
         <option value='3'>3 (HIGH)</option>
       </select>
     </section>
+
+    <button id='toggleDebug'>SHOW DEBUG</button>
 
     <script>
 let emotions;
@@ -69,6 +76,12 @@ fetch('/emotions')
       $('#base').append('<option value="'+base+'">'+base+'</option>');
     });
   });
+
+$('#toggleDebug').on('click', () => { 
+  let val = $('#toggleDebug').text() === 'SHOW DEBUG';
+  $('#toggleDebug').text(val ? 'HIDE DEBUG' : 'SHOW DEBUG');
+  socket.emit('debug:toggle', { val: val});
+});
 
 $('#emotion').change(selectEmotion);
 $('#base').on('change', selectBase);

@@ -6,19 +6,31 @@ window.loadingDur = 2000;
 window.loadingFadeDur = 300;
 
 window.socket = io();
+window.socket.on('debug:toggle', debugToggle);
 
 document.title = $('#debug-area').text();
 console.log($('#debug-area').text());
 
-// getting colors from the data file
-fetch('/static/data/colors.json').then(res => {
-  return res.json();
-}).then(colors => {
-  window.baseColors = colors;
-  if (window.init) {
-    window.init();
-  }
-});
+// getting areas and colors from the data file
+fetch('/static/data/data.json')
+  .then(res => { return res.json(); })
+  .then(data => {
+    window.baseColors = data.colors;
+
+    appendDebug();
+
+    let areaName = window.location.pathname.substring(1);
+    let areaData = data.areas[areaName];
+    if (areaData) {
+      $('#area-name').text(areaName);
+      $('#area-display').text(areaData.display);
+      $('#debug-area').text(areaName);
+    }
+
+    if (window.init) {
+      window.init(areaData);
+    }
+  });
 
 window.showLoadingOverlay = (newEmotion) => {
   const colors = window.baseColors[newEmotion.base][newEmotion.level - 1];
@@ -87,9 +99,31 @@ window.switchVideoBackgrounds = (emotion, fadeDur, colors) => {
   });
 };
 
+function appendDebug() {
+  $('body').append(`<section id='debug-screen'>
+    <div id='area-info'>
+      <div id='area-name'></div>
+      <div id='area-display'></div>
+      <div id='area-extra'></div>
+    </div>
+  </section>
+  <section id='debug'>
+    AREA: <span id='debug-area'></span>
+    <div id='debug-info'></div>
+  </section>`);
+
+  setTimeout(function() {
+    $('#debug-screen').hide();
+  }, 5 * 1000);
+}
 
 // for hot reloading
 if (module.hot) {
   module.hot.accept(); 
 }
 
+function debugToggle(msg) {
+  console.log('debug toggle');
+  if (msg.val) $('#debug-screen').show();
+  else $('#debug-screen').hide();
+}

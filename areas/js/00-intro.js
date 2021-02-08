@@ -13,7 +13,6 @@ let curEmotion;
 let imgUrls = [];
 
 window.init = () => {
-
   if (video) {
     $('.backgrounds').hide();
     $('.backgrounds-video').show();
@@ -23,6 +22,7 @@ window.init = () => {
   }
 
   socket.on('emotion:update', updateEmotion);
+  socket.on('debug:toggle', debugToggle);
   socket.emit('emotion:get');
   fetch('/static/data/00_intro.txt')
     .then(res => res.blob())
@@ -85,3 +85,7 @@ function scrollUp() {
   }, scroll_pause_time);
 }
 
+
+function debugToggle(msg) {
+  console.log(msg);
+}
