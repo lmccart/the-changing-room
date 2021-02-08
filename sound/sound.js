@@ -24,6 +24,7 @@ DeviceDiscovery((device) => {
         }
       });
       console.log(areas);
+      areas.reflection.setVolume(85);
     });
   }
 });
@@ -40,9 +41,8 @@ const playEmotionReflection = (emotion) => {
   if (!areas.reflection) return;
   console.log('play emotion');
   let reflectionTrack = process.env.HTTP_SERVER + 'sound/sounds-reflection/' + emotion.base + '-' + emotion.name + '.wav';
-  // if (quiet) areas.reflection.setVolume(0); // TEMP!
-  areas.reflection.setVolume(90);
-  areas.reflection.play(reflectionTrack).then(() => { console.log('SOUND: reflection playing '+reflectionTrack); }).catch(err => { console.log(err) })
+  if (quiet) areas.reflection.setVolume(0); // TEMP!
+  else areas.reflection.play(reflectionTrack).then(() => { console.log('SOUND: reflection playing '+reflectionTrack); }).catch(err => { console.log(err) })
 };
 
 const stopAll = () => {

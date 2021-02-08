@@ -119,7 +119,9 @@ window.init = () => {
   loadData(() => {
     console.log('Data loaded!');
     socket.on('emotion:update', updateEmotionCurried(() => {
-      socket.emit('reflection:end');
+      if (thisScreenParams.id === 1) { 
+        socket.emit('reflection:end');
+      }
     }));
 
     socket.on('reflection:restart', (msg) => {

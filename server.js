@@ -61,10 +61,9 @@ setEmotion(emotionName, true);
 
 // SOCKET
 io.on('connection', (socket) => {
-  console.debug('user connected: ' + socket.id);
   socket.emit('emotion:update', curEmotion);
 
-  socket.on('disconnect', () => { console.debug('user disconnected: ' + socket.id); });
+  socket.on('disconnect', () => { });
   socket.on('emotion:pick', setEmotion);
   socket.on('emotion:get', () => {
     socket.emit('emotion:update', curEmotion);
