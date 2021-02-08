@@ -7,12 +7,12 @@ import '../css/06-passive.scss';
 import './shared.js';
 import { getImgUrls, addSvgFilterForElement, getTextColorForBackground, getPopupUrls } from './lib/imageColorUtils.js';
 
-const basePopupRate = 1000; // adjusted based on emotion intensity
-const minDisplayTime = 10000; // minimum time a popup shows on screen
+const basePopupRate = 10000; // adjusted based on emotion intensity
+const minDisplayTime = 30000; // minimum time a popup shows on screen
 const displayVariation = 4000;
 const overlapAllowance = 0.60; // allows 60% overlap when a new element is created
 const backgroundChangeTime = 20000; // adjusted based on emotion intensity
-const portionFiltered = 0.5; // portion of popups with svg filter applied
+const portionFiltered = 1;//0.5; // portion of popups with svg filter applied
 
 let curEmotion;
 let backgroundInterval;
@@ -56,7 +56,9 @@ async function updateInterface(durations) {
   $('#debug-info').text('CURRENT EMOTION: ' + curEmotion.name + ' (base: ' + curEmotion.base + ', level: ' + curEmotion.level + ')');
   imgUrls = await getImgUrls(curEmotion.base, curEmotion.level);
   const colors = window.baseColors[curEmotion.base][curEmotion.level - 1];
-  switchBackgrounds(imgUrls, durations[1] - durations[0] - 500, colors);
+  // switchBackgrounds(imgUrls, durations[1] - durations[0] - 500, colors);
+  $('body').css('background', `radial-gradient(${colors[1]},${colors[0]})`);
+  $('.backgrounds').hide();
 
   if (backgroundInterval) clearInterval(backgroundInterval);
   backgroundInterval = setInterval(() => {
@@ -131,6 +133,7 @@ function PopupFactory(emotionObj) {
   const emotionLevelMultiplier = 2 ** emotionObj.level; // exponential scale
   const popupRate = basePopupRate / emotionLevelMultiplier; // base rate of ~3 seconds, gets faster with higher emotion level
   const colors = window.baseColors[curEmotion.base][emotionObj.level - 1];
+  console.log(colors);
 
   factoryThis.emotion = emotionObj.name;
   factoryThis.activeElements = [];
@@ -201,8 +204,22 @@ function PopupFactory(emotionObj) {
       // attach a color modified image
       const imageURL = imgUrls[Math.floor(Math.random() * imgUrls.length)];
       const imgEl = $(`<img src="${imageURL}">`);
+      const contrast = Math.random() < 0.5 ? '#FFFFFF' : '#000000';
       if (Math.random() < portionFiltered) {
-        let svgId = addSvgFilterForElement(imgEl, window.baseColors[curEmotion.base][Math.floor(Math.random() * 3)]);
+        let n = Math.random();
+        let svgColors = [colors[0], colors[1]];
+        if (n < 0.33) {
+          // let contrast = getTextColorForBackground(colors[1]);
+          svgColors[0] = contrast;
+        } else if (n < 0.66) {
+          // let contrast = getTextColorForBackground(colors[0]);
+          svgColors[1] = contrast;
+        } else {
+          // let contrast = getTextColorForBackground(colors[0]);
+          // svgColors[1] = contrast;
+
+        }
+        let svgId = addSvgFilterForElement(imgEl, svgColors);
         imgEl.attr('data-svgId', svgId);
       }
       childThis.$element.append(imgEl);
@@ -223,7 +240,14 @@ function PopupFactory(emotionObj) {
         childThis.$element.css('border-color', `#${colors[0]}`);
         childThis.$element.css('color', textColor);
       } else if (type === 2) {
-        childThis.$element.css('background', `radial-gradient(${colors[0]},${colors[1]})`);
+        let n = Math.random();
+        if (n < 0.33) {
+          childThis.$element.css('background', `radial-gradient(${colors[0]},${colors[1]})`);
+        } else if (n < 0.66) {
+          childThis.$element.css('background', colors[0]);
+        } else {
+          childThis.$element.css('background', colors[1]);
+        }
       }
 
       childThis.$element.append(textEl);
@@ -275,9 +299,15 @@ function PopupFactory(emotionObj) {
         randomXY = factoryThis.getRandomPosition($element);
       }
     }
-    $element.css('top', randomXY[0]);
-    $element.css('left', randomXY[1]);
+    // $element.css('top', randomXY[0]);
+    // $element.css('left', randomXY[1]);
     $element.css('visibility', 'visible');
+    $element.css('top', '40%');
+    $element.css('left', '40%');  
+    $element.delay(3000).animate({
+      top: randomXY[0],
+      left: randomXY[1]
+    }, 1000);
   }
 
   const newEl = new PopupEl(emotionObj.level);
