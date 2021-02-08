@@ -20,8 +20,8 @@ let timeline;
 let imgURLs = [];
 let thisScreenParams;
 let sharedSeed = 0;
-let emotionChanged = false;
-let skipToMemories = false;
+// let emotionChanged = false;
+let skipToMemories = true;
 
 // 10s before meditation
 // 10s per instruction
@@ -87,7 +87,7 @@ let memories_fadein_duration = 500;
 //////// The memory sequence starts.
 
 // Each memory arrives at this interval,
-let num_memories = 25;
+let num_memories = 5;
 
 let memory_interval = 4000;
 
@@ -118,9 +118,7 @@ window.init = () => {
   setScreen();
   loadData(() => {
     console.log('Data loaded!');
-    socket.on('emotion:update', updateEmotionCurried(() => {
-      socket.emit('reflection:end');
-    }));
+    socket.on('emotion:update', updateEmotion);
 
     socket.on('reflection:restart', (msg) => {
       sharedSeed = msg.seed;
@@ -137,26 +135,27 @@ window.init = () => {
   $(document).on('keypress', handleKey);
 };
 
+window.loadingComplete = () => {
+  if (thisScreenParams.id === 1) { 
+    socket.emit('reflection:end');
+  }
+};
 
-function updateEmotionCurried(callback) {
-  return function(msg) {
-    if (!curEmotion || curEmotion.name !== msg.name) {
-      curEmotion = msg;
-      emotionChanged = true;
-      console.log('emotion has been updated to: ' + msg.name + ' (base: ' + msg.base + ', level: ' + msg.level + ')');
-      
-      getImgUrls(curEmotion.base, curEmotion.level)
-        .then(images => {
-          imgURLs = images;
-          updateInterface();
-          callback();
-        });
-    }
-  };
-}
 
-function updateInterface() {
-  $('#debug-info').text('CURRENT EMOTION: ' + curEmotion.name + ' (base: ' + curEmotion.base + ', level: ' + curEmotion.level + ')');
+function updateEmotion(msg) {
+
+  // if (!curEmotion || curEmotion.name !== msg.name) {
+  curEmotion = msg;
+  let debug = 'CURRENT EMOTION: ' + curEmotion.name + ' (base: ' + curEmotion.base + ', level: ' + curEmotion.level + ')';
+  console.log(debug);
+  $('#debug-info').text(debug);
+  showLoadingOverlay(curEmotion);
+  
+  getImgUrls(curEmotion.base, curEmotion.level)
+    .then(images => {
+      imgURLs = images;  
+    });
+  // }
 }
 
 
@@ -283,7 +282,7 @@ function setColorsAndBackgrounds() {
   // secondaryColors = window.baseColors[curEmotion.base][curEmotion.level % 3];
   backgroundTextColor = getTextColorForBackground(primaryColors[0]);
   $('#meditation_text').css('color', backgroundTextColor);
-  $('#meditation_container').css('border-color', backgroundTextColor);
+  $('#meditation_container').css('border-color', primaryColors[0]);
 
 
   // const bg = $('#background');
@@ -767,11 +766,11 @@ async function queueEvents(timeline) {
     }
   } });
 
-  if (emotionChanged) {
-    let overlay_dur = showLoadingOverlay(curEmotion)[1];
-    timeMarker += overlay_dur;
-    emotionChanged = false;
-  }
+  // if (emotionChanged) {
+  //   let overlay_dur = showLoadingOverlay(curEmotion)[1];
+  //   // timeMarker += overlay_dur;
+  //   emotionChanged = false;
+  // }
 
   timeline.setDuration(timeMarker); 
 
