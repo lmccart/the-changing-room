@@ -38,11 +38,12 @@ export function getDimensions(url) {
 // used like const imageUrls = await getImgUrls('angry', 1);
 // or getImgUrls('angry', 1).then(imageUrls => {do whatever u want here})
 export function getImgUrls(baseEmotion, level) {
+  console.log(baseEmotion, level);
   return new Promise(resolve => {
     fetch(`/images/${baseEmotion}/manifest`)
       .then(res => { return res.json(); })
       .then(data => {
-        resolve(data[level]);
+        resolve(data[level - 1]);
       });
   });
 }
@@ -78,7 +79,7 @@ export function getTextColorForBackground(hexcolor0, hexColor1) {
     yiq += ((r * 299) + (g * 587) + (b * 114)) / 1000;
   }
   yiq /= arguments.length;
-  return (yiq > 140) ? 'black' : 'white';
+  return (yiq > 140) ? '#000000' : '#FFFFFF';
 }
 
 
