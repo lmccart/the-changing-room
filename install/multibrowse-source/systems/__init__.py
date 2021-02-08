@@ -34,7 +34,7 @@ class BaseSystem(metaclass=ABCMeta):
             '--user-data-dir={}'.format(user_dir),
             '--window-size={},{}'.format(display['width'], display['height']),
             '--window-position={},{}'.format(display['x'], display['y']),
-            # '--kiosk',
+            '--kiosk',
             '--profile-directory=Default',
             '--app={}'.format(url),
         ] + flags

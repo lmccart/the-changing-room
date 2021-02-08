@@ -32,12 +32,17 @@ let emotionChanged = false;
 //// Screen parameters
 
 const screenParams = {
-  0: { id: 0, name: 'LEFT', width: 1631, height: 1080 },
-  1: { id: 1, name: 'CENTER', width: 1768, height: 1080 },
-  2: { id: 2, name: 'RIGHT', width: 1700, height: 1080 },
+  0: { id: 0, name: 'LEFT', width: 1802, height: 1080 },
+  1: { id: 1, name: 'CENTER', width: 1897, height: 1080 },
+  2: { id: 2, name: 'RIGHT', width: 1889, height: 1080 },
   999: { id: 999, name: 'FULLSCREEN', width: 1631 + 1768 + 1700, height: 1080 },
 };
+let editMode = -1;
 
+
+let urlParams = new URLSearchParams(window.location.search);
+let screenNumber = urlParams.get('screen');
+document.title = '02 reflection: screen ' + screenNumber;
 
 ////////////// MEDITATION TIMINGS /////////////
 
@@ -129,6 +134,8 @@ window.init = () => {
 
     socket.emit('emotion:get');
   });
+
+  $(document).on('keypress', handleKey);
 };
 
 
@@ -158,21 +165,38 @@ function updateInterface() {
 // DATA AND PARAMS
 //////////////////////////
 
+function handleKey(e) {
+  if (e.key === '0' | e.key === '1' | e.key === '2') {
+    editMode = Number(e.key);
+    console.log('editing screen ', editMode);
+  } 
+  if (editMode > -1) {
+    if (e.key === 'l') {
+      screenParams[screenNumber].width++;
+    } else if (e.key === 'r') {
+      screenParams[screenNumber].width--;
+    }
+    adjustScreen();
+  }
+}
 
 function setScreen() {
-  let urlParams = new URLSearchParams(window.location.search);
-  let screenNumber = urlParams.get('screen');
   if (screenNumber) {
-    $('body').addClass('screen-' + screenNumber);
-    $('body').addClass('partialscreen');
-    thisScreenParams = screenParams[screenNumber];
-    $('body').width(thisScreenParams.width).height(thisScreenParams.height);
-    $('.main').width(thisScreenParams.width).height(thisScreenParams.height);
-    $('#loading').width(thisScreenParams.width).height(thisScreenParams.height);
+    $('#wrapper').addClass('screen-' + screenNumber);
+    $('#wrapper').addClass('partialscreen');
+    adjustScreen();
   } else {
-    $('body').addClass('fullscreen');
+    $('#wrapper').addClass('fullscreen');
   }
 
+}
+
+function adjustScreen() {
+  thisScreenParams = screenParams[screenNumber];
+  $('#wrapper').width(thisScreenParams.width).height(thisScreenParams.height);
+  $('.main').width(thisScreenParams.width).height(thisScreenParams.height);
+  $('#loading').width(thisScreenParams.width).height(thisScreenParams.height);
+  console.log(thisScreenParams);
 }
 
 function loadData(cb) {
@@ -335,6 +359,7 @@ function generateMeditationTexts() {
       for (let k in thisDataMeditationInserts) {
         newm = newm.replace(`[${k}]`, thisDataMeditationInserts[k]); 
       }
+      newm = newm.replace('[EMOTION]', curEmotion.name);
       
       return newm;
     })
