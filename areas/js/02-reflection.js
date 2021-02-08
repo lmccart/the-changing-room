@@ -354,15 +354,20 @@ function generateMeditationTexts() {
 }
 
 function displayMeditationPhrase(opts) {
-  // opts: { text: mt, fadeIn: 100, fadeOut: 100 };
-  if (thisScreenParams.id !== 1) { 
-    console.log('...displaying meditation on screen 1...');
+  let parts = opts.text.match(/[^\.!\?]+[\.!\?]+/g);
+  let text;
+  if (parts.length > 1) {
+    let id = thisScreenParams.id < 3 ? thisScreenParams.id : 0;
+    text = id <= parts.length ? parts[id] : '';
+  } else {
+    text = opts.text;
   }
-  let sizeClass = opts.text.length > 80 ? 'smaller_meditation_text' : '';
+
+  let sizeClass = text.length > 80 ? 'smaller_meditation_text' : '';
   $('#meditation_text')
     .fadeOut(opts.fadeOut, function() {
       $(this)
-        .text(opts.text)
+        .text(text)
         .attr('class', sizeClass)
         .fadeIn(opts.fadeIn);
     });
