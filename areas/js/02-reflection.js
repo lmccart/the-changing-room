@@ -114,9 +114,7 @@ window.init = () => {
   loadData(() => {
     console.log('Data loaded!');
     socket.on('emotion:update', updateEmotionCurried(() => {
-      if (!timeline) { 
-        socket.emit('reflection:end');
-      }
+      socket.emit('reflection:end');
     }));
 
     socket.on('reflection:restart', (msg) => {
