@@ -1,8 +1,8 @@
-fetch('/static/data/colors.json')
+fetch('/static/data/data.json')
 .then(res => res.json())
 .then(data => {
-  console.log(data);
-  renderColors(data);
+  console.log(data.colors);
+  renderColors(data.colors);
 });
 
 function renderColors(data) {

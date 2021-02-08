@@ -1,7 +1,7 @@
 const v3 = require('node-hue-api').v3;
 const GroupLightState = v3.lightStates.GroupLightState;
 const fs = require('fs');
-const colors = JSON.parse(fs.readFileSync('static/data/colors.json'));
+const colors = JSON.parse(fs.readFileSync('static/data/data.json'))['colors'];
 let api;
 const lights = true;
 let lightsInit = false;
