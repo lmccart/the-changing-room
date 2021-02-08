@@ -114,7 +114,7 @@ function appendDebug() {
 
   setTimeout(function() {
     $('#debug-screen').hide();
-  }, 5 * 1000);
+  }, 5 * 100);
 }
 
 // for hot reloading

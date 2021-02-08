@@ -35,8 +35,9 @@ const screenParams = {
   0: { id: 0, name: 'LEFT', width: 1631, height: 1080 },
   1: { id: 1, name: 'CENTER', width: 1768, height: 1080 },
   2: { id: 2, name: 'RIGHT', width: 1700, height: 1080 },
-  999: { id: 999, name: 'FULLSCREEN', width: 1631 + 1768 + 1700, height: 1080 },
+  999: { id: 999, name: 'FULLSCREEN', width: 0, height: 1080 },
 };
+screenParams[999].width = screenParams[0].width + screenParams[1].width + screenParams[2].width;
 
 
 ////////////// MEDITATION TIMINGS /////////////
@@ -81,7 +82,7 @@ let memories_fadein_duration = 500;
 //////// The memory sequence starts.
 
 // Each memory arrives at this interval,
-let num_memories = 8;
+let num_memories = 50;
 
 let memory_interval = 2000;
 
@@ -89,7 +90,7 @@ let memory_interval = 2000;
 let each_memory_fadein_duration = 500;
 
 // pauses
-let each_memory_pause_duration = 2000;
+let each_memory_pause_duration = 10000;
 
 // and fades out.
 let each_memory_fadeout_duration = 500;
@@ -177,7 +178,6 @@ function setScreen() {
     $('#area-extra').text('left projector');
   } else if (screenNumber === 1) {
     $('#area-extra').text('center projector');
-
   } else if (screenNumber === 2) {
     $('#area-extra').text('right projector');
   } else {
@@ -380,7 +380,8 @@ function pickMemoryPairs() {
 
   let rng = seedrandom(sharedSeed);
 
-  let screenNumber;
+  let screenNumber = -1;
+  let lastScreen = -1;
 
   for (let i = 0; i < num_memories; i++) {
 
@@ -389,15 +390,11 @@ function pickMemoryPairs() {
     let text = thisEmotionMemories[i % thisEmotionMemories.length];
 
     // randomly pick screen
-    let r = rng(); // temp
-    if (r < 0.333) { 
-      screenNumber = 0;
-    } else if (r < 0.666) {
-      screenNumber = 1;
-    } else {
-      screenNumber = 2;
+    while (screenNumber === lastScreen) {
+      screenNumber = Math.floor(rng() * 3);
     }
-    
+    lastScreen = screenNumber;
+
     let thisMempair = [];
 
     thisMempair.push({
@@ -430,12 +427,14 @@ function pickMemoryPairs() {
 
 async function loadMempair(mempair, index) {
   if (!mempair.display) { return mempair; }
-  await loadMedia(mempair.data[0], index, 0);
-  await loadMedia(mempair.data[1], index, 1);
+
+  let contrast = Math.random() > 0.5 ? primaryColors[0] : primaryColors[1];
+  await loadMedia(mempair.data[0], index, 0, contrast);
+  await loadMedia(mempair.data[1], index, 1, contrast);
 }
 
 
-function loadMedia(memory, index, i) {
+function loadMedia(memory, index, i, contrast) {
   return new Promise(resolve => {
     let memdiv;
     if (memory.type === 'text') {
@@ -447,7 +446,7 @@ function loadMedia(memory, index, i) {
       memdiv = $('<img></img>');
       memdiv.addClass('image');
       memdiv.attr('src', memory.url);
-      let svgId = addSvgFilterForElement(memdiv, primaryColors);
+      let svgId = addSvgFilterForElement(memdiv, ['#000000', contrast]);
       memdiv.data('svgId', svgId);
     } 
 
@@ -466,8 +465,12 @@ function loadMedia(memory, index, i) {
       memdiv.on('load', () => {
         memory.naturalWidth = memdiv.get(0).naturalWidth;
         memory.naturalHeight = memdiv.get(0).naturalHeight;
-        memory.width = randomBetween(300, 600); // IMAGE SIZE PARAMETERS
-        memory.height = memory.width / memory.naturalWidth * memory.naturalHeight;
+        if (memory.naturalWidth / memory.naturalHeight > 0.75) {
+          memory.width = randomBetween(300, 600); // IMAGE SIZE PARAMETERS
+        } else {
+          memory.width = randomBetween(200, 300); 
+        }
+        memory.height = memory.naturalHeight * (memory.width / memory.naturalWidth);
         memdiv.width(memory.width);
         memdiv.height(memory.height);
         resolve(memdiv);
@@ -514,7 +517,7 @@ function positionMempair(mempair, index) {
 
   // either:
   let sr = Math.random();
-  if (sr <= 0.25) {
+  if (sr <= 1) {
     // m2 is on right side of m1, slid up and down
     m2.x = m1.width * overlapcoeff;
     m2.y = randomBetween(m1.y - m2.height, m1.y + m1.height); 
@@ -543,10 +546,37 @@ function positionMempair(mempair, index) {
     m2.y = 0;
   }
 
+
   //////////////////
 
-
   // get boundingbox of both overlapping rectangles
+
+  // adjust so not taller than screen
+  let bb = getBoundingBox(m1, m2);
+  if (bb.height > thisScreenParams.height - 2 * memoryPadding) {
+    m2.y = m1.y + (Math.random() * 200);
+    bb = getBoundingBox(m1, m2);
+  }
+
+  // SO now we position the bounding box randomly within the screen
+  bb.screenX = randomBetween(memoryPadding, thisScreenParams.width - bb.width - memoryPadding);
+  bb.screenY = randomBetween(memoryPadding, thisScreenParams.height - bb.height - memoryPadding);
+
+  // and then drive memdiv screen locations from that
+  mempair.data[0].screenX = m1.screenX = m1.x - bb.x1 + bb.screenX;
+  mempair.data[0].screenY = m1.screenY = m1.y - bb.y1 + bb.screenY;
+  mempair.data[1].screenX = m2.screenX = m2.x - bb.x1 + bb.screenX;
+  mempair.data[1].screenY = m2.screenY = m2.y - bb.y1 + bb.screenY;
+
+  $('#' + mempair.data[0].id).css({ top: mempair.data[0].screenY, left: mempair.data[0].screenX, 'z-index': 2 * index });
+  $('#' + mempair.data[1].id).css({ top: mempair.data[1].screenY, left: mempair.data[1].screenX, 'z-index': 2 * index + 1 });
+
+  mempair.bb = bb;
+
+  return mempair;
+}
+
+function getBoundingBox(m1, m2) {
   let bb = {};
   bb.x1 = Math.min(m1.x, m2.x); 
   bb.y1 = Math.min(m1.y, m2.y); 
@@ -554,29 +584,7 @@ function positionMempair(mempair, index) {
   bb.y2 = Math.max(m1.y + m1.height, m2.y + m2.height); 
   bb.width = bb.x2 - bb.x1;
   bb.height = bb.y2 - bb.y1;
-
-  // SO now we position the bounding box randomly within the screen
-  bb.screenX = randomBetween(memoryPadding, thisScreenParams.width - bb.width - memoryPadding);
-  bb.screenY = randomBetween(memoryPadding, thisScreenParams.height - bb.height - memoryPadding);
-
-
-  // and then drive memdiv screen locations from that
-  m1.screenX = m1.x + bb.screenX;
-  m1.screenY = m1.y + bb.screenY;
-  m2.screenX = m2.x + bb.screenX;
-  m2.screenY = m2.y + bb.screenY;
-
-  mempair.data[0].screenX = m1.x + bb.screenX;
-  mempair.data[0].screenY = m1.y + bb.screenY;
-  mempair.data[1].screenX = m2.x + bb.screenX;
-  mempair.data[1].screenY = m2.y + bb.screenY;
-
-  $('#' + mempair.data[0].id).css({ top: mempair.data[0].screenY, left: mempair.data[0].screenX });
-  $('#' + mempair.data[1].id).css({ top: mempair.data[1].screenY, left: mempair.data[1].screenX });
-
-  mempair.bb = bb;
-
-  return mempair;
+  return bb;
 }
 
 
@@ -619,7 +627,7 @@ function displayMemoryPair(mempair) {
   // mem looks like: { id: '#memory-0-1', ... }
 
   mempair.data.forEach(mem => {
-    $('#' + mem.id).fadeIn(each_memory_fadein_duration).delay(each_memory_pause_duration).fadeOut(each_memory_fadeout_duration);
+    $('#' + mem.id).fadeIn(each_memory_fadein_duration).delay(each_memory_pause_duration + Math.random() * 3000).fadeOut(each_memory_fadeout_duration * 0.5);
   });
 
 }
@@ -638,7 +646,7 @@ function resetHTML(cb) {
     $(`#${svgId}`).remove();
     $(elt).remove();
   });
-  $('#memory_container').hide();
+  $('#memory_container').css('opacity', 0);
 }
 
 
@@ -649,17 +657,16 @@ async function queueEvents(timeline) {
 
   let timeMarker = 0;
 
+  /////// MEDITATIONS FADE IN
   timeMarker += meditations_fadein_pause;
-
   timeline.add({ time: timeMarker, event: function() { 
     $('#meditation_container').fadeIn(meditations_fadein_duration);
     console.log('TIMELINE STARTING');
   } });
 
-
-  ///////// QUEUE MEDITATIONS
+  /////// QUEUE MEDITATIONS
+ 
   let mts = generateMeditationTexts();
-
   mts.forEach((mt, i) => {
     // if (i < 2) { // temp for testing
     timeline.add({ time: timeMarker, event: function() { 
@@ -675,24 +682,21 @@ async function queueEvents(timeline) {
 
   });
 
-  ///////// MEDITATION FADES OUT
-  //
+  /////// MEDITATION FADES OUT
 
   timeMarker += meditations_fadeout_pause;
-
   timeline.add({ time: timeMarker, event: function() { 
     $('#meditation_container').fadeOut(meditations_fadeout_duration);
   } });
 
-  timeMarker += memories_fadein_pause;
-
+  // timeMarker += memories_fadein_pause;
   timeline.add({ time: timeMarker, event: function() { 
-    $('#memory_container').fadeIn(memories_fadein_duration);
+    $('#memory_container').fadeTo(1, memories_fadein_duration);
   } });
 
 
   ///////// QUEUE MEMORIES
-  
+
   let mempairs = await generateAndPreloadMemoryPairs();
 
   mempairs.forEach((mempair, i) => {
@@ -702,7 +706,7 @@ async function queueEvents(timeline) {
         displayMemoryPair(mempair);
         console.log('...WE are displaying memory pair #', i, '...');
       } else {
-        console.log('...SOMEONE ELSE is displaying memory pair #', i, '...');
+        console.log('...SCREEN ', mempair.data[0].screenNumber, ' is displaying memory pair #', i, '...');
       }
     } }); 
     timeMarker += memory_interval;
