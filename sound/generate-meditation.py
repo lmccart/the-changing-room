@@ -3,7 +3,9 @@ import csv
 
 short_clip_dur = 10
 long_clip_dur = 15
-total_dur = 360
+total_dur = 308
+
+test_one = True # test one of each emotion first
 
 
 def generate_script(row):
@@ -33,7 +35,7 @@ def generate_script(row):
   # concat phrases
   output = concat_clips(pad_dir, base, emotion)
   # mix with base audio
-  mix_clips(output, "sounds-long/" + base + ".aif")
+  mix_clips(output, "sounds-longer/" + base + ".aif")
   cleanup_clips(base, emotion)
 
 
@@ -70,14 +72,14 @@ def concat_clips(dir, base, emotion):
 def mix_clips(meditation, base):
   output_mix = meditation.replace("2.wav", "3.wav")
   command = "ffmpeg -loglevel quiet -i " + meditation + " -i " + base;
-  command += " -shortest -filter_complex '[0]adelay="+str(short_clip_dur * 1000)+"|"+str(short_clip_dur * 1000)+",volume=0.8[a]; [1]volume=1.0[b]; [a][b]amix=inputs=2[out]' -map '[out]' " + output_mix
+  command += " -shortest -filter_complex '[0]adelay="+str(short_clip_dur * 1000)+"|"+str(short_clip_dur * 1000)+",volume=0.4[a]; [1]volume=1.0[b]; [a][b]amix=inputs=2[out]' -map '[out]' " + output_mix
   os.system(command)
   # trim
   output_trim = meditation.replace("2.wav", "4.wav")
-  os.system("ffmpeg -loglevel quiet -i " + output_mix + " -ss 00:00:00 -t 00:06:00 -async 1 " + output_trim)
+  os.system("ffmpeg -loglevel quiet -i " + output_mix + " -ss 00:00:00 -t 00:05:08 -async 1 " + output_trim) # total dur update here, too!
   # fade
   output_final = meditation.replace("2.wav", ".wav")
-  os.system("ffmpeg -loglevel quiet -i " + output_trim + " -af afade=t=out:st=357:d=3 " + output_final)
+  os.system("ffmpeg -loglevel quiet -i " + output_trim + " -af afade=t=out:st=" + str(total_dur - 10) + ":d=10 " + output_final) 
 
 def cleanup_clips(base, emotion):
   i = 1
@@ -97,12 +99,15 @@ read_tsv = csv.reader(tsv_file, delimiter="\t")
 k = 0
 
 # generate audio file per row of tsv
+last_base = "TESTING"
 for row in read_tsv:
   if ("BASE" in row[0]):
-  # if (row[0] and "envious" not in row[0]):
+    pass
+  elif (test_one and row[0] and last_base in row[0]): # to test one for each emotion
     pass
   elif (row[1] and row[2] and row[3]):
     print("\n\nEMOTION "+row[1])
+    last_base = row[0]
     generate_script(row)
   else:
     print("MISSING DATA")
