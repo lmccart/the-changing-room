@@ -78,7 +78,7 @@ svg {
 
   p {
     position: absolute;
-    top: 45%;
+    top: 35%;
     left: 0;
 
     width: 100%;
@@ -86,6 +86,7 @@ svg {
     padding: 1em;
     text-transform: uppercase;
     font-weight: 500;
+    font-size: 2em;
     text-align: center;
 
     &.solo {

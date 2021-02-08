@@ -2,6 +2,7 @@
 import $ from 'jquery';
 import 'imagesloaded';
 const Papa = require('papaparse');
+import seedrandom from 'seedrandom';
 
 import '../css/06-passive.scss';
 import './shared.js';
@@ -14,17 +15,26 @@ const overlapAllowance = 0.60; // allows 60% overlap when a new element is creat
 const backgroundChangeTime = 20000; // adjusted based on emotion intensity
 const portionFiltered = 1;//0.5; // portion of popups with svg filter applied
 
+const POPUP = {
+  IMAGE: 0,
+  IMAGE_TEXT: 1,
+  TEXT: 2,
+  EXTRA: 3
+};
+
 let curEmotion;
 let backgroundInterval;
 let imgUrls = [];
 let preloadedExtras = [];
 let popupFactory; // used to reference the function that produces popups
+let sharedSeed;
+
+let urlParams = new URLSearchParams(window.location.search);
+let screenNumber = urlParams.get('screen');
 
 window.emotionStrings = [];
 
 window.init = () => {
-  let urlParams = new URLSearchParams(window.location.search);
-  let screenNumber = urlParams.get('screen');
   if (screenNumber) {
     $('#area-extra').text('screen ' + screenNumber); 
   } else {
@@ -46,7 +56,8 @@ window.init = () => {
 function updateEmotion(msg) {
   if (!curEmotion || curEmotion.name !== msg.name) {
     curEmotion = msg;
-    console.log('emotion has been updated to: ' + msg.name + ' (base: ' + msg.base + ', level: ' + msg.level + ')');
+    console.log('emotion has been updated to: ' + msg.name + ' (base: ' + msg.base + ', level: ' + msg.level + ', seed: ' + msg.seed + ')');
+    sharedSeed = msg.seed;
     const durations = showLoadingOverlay(curEmotion);
     updateInterface(durations);
   }
@@ -125,6 +136,7 @@ function parseReflections() {
 // elements can be images, short text and popups
 
 function PopupFactory(emotionObj) {
+  let rng = seedrandom(emotionObj.seed);
   // expects emotionObj to be the standard emotion data object we are using
   const parentEl = $('.main');
   const factoryThis = this;
@@ -132,8 +144,8 @@ function PopupFactory(emotionObj) {
   // note that the destruction rate is set in each individual popup for a little randomness
   const emotionLevelMultiplier = 2 ** emotionObj.level; // exponential scale
   const popupRate = basePopupRate / emotionLevelMultiplier; // base rate of ~3 seconds, gets faster with higher emotion level
+  let creationInterval;
   const colors = window.baseColors[curEmotion.base][emotionObj.level - 1];
-  console.log(colors);
 
   factoryThis.emotion = emotionObj.name;
   factoryThis.activeElements = [];
@@ -150,7 +162,7 @@ function PopupFactory(emotionObj) {
   factoryThis.cleanup = () => {
     // remove all popups
     parentEl.empty();
-    clearInterval(creationInterval);
+    if (creationInterval) clearInterval(creationInterval);
   };
 
   factoryThis.getPercentOverlap = (existingEl, newEl) => {
@@ -192,21 +204,34 @@ function PopupFactory(emotionObj) {
     // 2 text -> just text
     // 3+ popup -> random popup assets
 
-    const type = Math.floor(Math.random() * 5); // generates random number between 0 - 3;
-    const hasImage = type !== 2; // should be a random chance either true or false
+    let type;
+    switch (Math.floor(rng() * 5)) {
+    case 0: 
+      type = POPUP.IMAGE;
+      break;
+    case 1:
+      type = POPUP.IMAGE_TEXT;
+      break;
+    case 2:
+      type = POPUP.TEXT;
+      break;
+    default:
+      type = POPUP.EXTRA;
+    }
+
     const stringFallback = 'There is nothing you are afraid of.'; // used if string retrieval fails for some reason
     childThis.$element = $(`<div class='popup window ${type >= 3 ? 'extra' : ''}' id=${childThis.id}></div>`);
 
     // hide it so we can calculate it's position
     childThis.$element.css('visibility', 'hidden');
 
-    if (type === 0 || type === 1) {
+    if (type === POPUP.IMAGE || type === POPUP.IMAGE_TEXT) {
       // attach a color modified image
-      const imageURL = imgUrls[Math.floor(Math.random() * imgUrls.length)];
+      const imageURL = imgUrls[Math.floor(rng() * imgUrls.length)];
       const imgEl = $(`<img src="${imageURL}">`);
-      const contrast = Math.random() < 0.5 ? '#FFFFFF' : '#000000';
-      if (Math.random() < portionFiltered) {
-        let n = Math.random();
+      const contrast = rng() < 0.5 ? '#FFFFFF' : '#000000';
+      if (rng() < portionFiltered) {
+        let n = rng();
         let svgColors = [colors[0], colors[1]];
         if (n < 0.33) {
           // let contrast = getTextColorForBackground(colors[1]);
@@ -225,13 +250,13 @@ function PopupFactory(emotionObj) {
       childThis.$element.append(imgEl);
     }
 
-    if (type === 1 || type === 2) {
+    if (type === POPUP.IMAGE_TEXT || type === POPUP.TEXT) {
       // window.emotionStings is an array of objects with a length of 2
-      const selectedData = window.emotionStrings[Math.floor(Math.random() * 2)][curEmotion.base];
-      const string = selectedData[Math.floor(Math.random() * selectedData.length)] || stringFallback;
+      const selectedData = window.emotionStrings[Math.floor(rng() * 2)][curEmotion.base];
+      const string = selectedData[Math.floor(rng() * selectedData.length)] || stringFallback;
       const textEl = $(`<p class=${type === 1 ? 'text' : 'solo text'}>${string}</p>`);
 
-      if (type === 1) {
+      if (type === POPUP.IMAGE_TEXT) {
         // set text color based on color to make it easier to read
         const textColor = getTextColorForBackground(colors[0]);
         childThis.$element.css('color', textColor);
@@ -239,8 +264,8 @@ function PopupFactory(emotionObj) {
         // set border color to match text on just text elements
         childThis.$element.css('border-color', `#${colors[0]}`);
         childThis.$element.css('color', textColor);
-      } else if (type === 2) {
-        let n = Math.random();
+      } else if (type === POPUP.TEXT) {
+        let n = rng();
         if (n < 0.33) {
           childThis.$element.css('background', `radial-gradient(${colors[0]},${colors[1]})`);
         } else if (n < 0.66) {
@@ -253,18 +278,19 @@ function PopupFactory(emotionObj) {
       childThis.$element.append(textEl);
     }
 
-    if (type >= 3) {
-      const randomExtra = preloadedExtras[Math.floor(Math.random() * preloadedExtras.length)];
+    if (type === POPUP.EXTRA) {
+      const randomExtra = preloadedExtras[Math.floor(rng() * preloadedExtras.length)];
       const imgEl = $(`<img src='${randomExtra.src}'>`);
       childThis.$element.append(imgEl);
     }
 
     childThis.$element.css('border-color', `#${colors[0]}`);
+    childThis.$element.css('box-shadow', '0 0 30px gray');
 
     // append just the element, which is the first item in a jquery object's array
     parentEl.append(childThis.$element[0]);
 
-    if (hasImage) {
+    if (type === POPUP.IMAGE || type === POPUP.IMAGE_TEXT || type === POPUP.EXTRA) {
       // we need to wait for the image to load before we measure it
       childThis.$element.imagesLoaded(() => {
         positionElement(childThis.$element);
@@ -290,6 +316,7 @@ function PopupFactory(emotionObj) {
 
   function positionElement($element) {
     let randomXY = factoryThis.getRandomPosition($element);
+    let slideTime = Math.random() * 300 + 200;
   
     for (let i = factoryThis.activeElements.length - 1; i >= 0; i--) {
       const testEl = factoryThis.activeElements[i];
@@ -299,24 +326,27 @@ function PopupFactory(emotionObj) {
         randomXY = factoryThis.getRandomPosition($element);
       }
     }
-    // $element.css('top', randomXY[0]);
-    // $element.css('left', randomXY[1]);
     $element.css('visibility', 'visible');
-    $element.css('top', '40%');
-    $element.css('left', '40%');  
-    $element.delay(3000).animate({
+
+    let t = (window.innerHeight - $element.height()) / 2;
+    let l = (window.innerWidth - $element.width()) / 2;
+    $element.css('top', t);
+    $element.css('left', l);  
+    $element.delay(300).fadeOut(0).delay(300).fadeIn(0).delay(300).fadeOut(0).delay(300).fadeIn(0).delay(300).animate({
       top: randomXY[0],
       left: randomXY[1]
-    }, 1000);
+    }, slideTime);
   }
 
   const newEl = new PopupEl(emotionObj.level);
   factoryThis.activeElements.push(newEl);
 
-  const creationInterval = setInterval(() => {
-    // create a new element every so often
-    const newEl = new PopupEl(emotionObj.level);
+  setTimeout(() => {
+    creationInterval = setInterval(() => {
+      // create a new element every so often
+      const newEl = new PopupEl(emotionObj.level);
 
-    factoryThis.activeElements.push(newEl);
-  }, popupRate);
+      factoryThis.activeElements.push(newEl);
+    }, popupRate);
+  }, screenNumber * 150);
 }
