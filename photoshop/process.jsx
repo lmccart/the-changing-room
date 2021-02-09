@@ -22,10 +22,10 @@ var emotions = [
     // 'judgemental',
     // 'loving',
     // 'peaceful',
-    // 'positive',
+    'positive',
     // 'open',
     // 'sad',*
-    'strong'
+    // 'strong'
 ]
 
 for (var e=0; e<emotions.length; e++) {
@@ -55,7 +55,7 @@ function processImage(emotion, i) {
         doc.activeLayer.desaturate();
     } catch (e) {}
 
-    for (var t=2; t<3; t++) {//textures.length; t++) {
+    for (var t=0; t<1; t++) {//textures.length; t++) {
         for (var b=0; b<blends.length; b++) {
             for (var v=0; v<3; v++) {
                 textureImage(doc, emotion, i, t, b, v);
@@ -68,20 +68,21 @@ function processImage(emotion, i) {
 
 function textureImage(doc, emotion, i, t, b, v) {
     placeFile(textures[t]);
-    // if (b ===0 && v === 1) doc.activeLayer.blendMode = BlendMode.MULTIPLY;
+    doc.activeLayer.blendMode = BlendMode[blends[b]];
+    if (b ===0 && v === 2) doc.activeLayer.blendMode = BlendMode.MULTIPLY;
+    if (b ===1 && v === 2) doc.activeLayer.blendMode = BlendMode.SOFTLIGHT;
     // else if (b ===0) doc.activeLayer.blendMode = BlendMode.SOFTLIGHT;
     // else if (b ===1) doc.activeLayer.blendMode = BlendMode.OVERLAY;
-    doc.activeLayer.blendMode = BlendMode[blends[b]];
 
     if (b === 0) {
         // doc.activeLayer.opacity = 80;
     }
-    // doc.activeLayer.rotate(Math.random() * 360 - 180);
+    doc.activeLayer.rotate(Math.random() * 360 - 180);
     // doc.activeLayer.rotate(Math.random() * 90 - 45);
-    if (Math.random() < 0.5) {
-        doc.activeLayer.rotate(90);
-    }
-    var scale = Math.random()*300 + 100; // 150-450%;
+    // if (Math.random() < 0.5) {
+    //     doc.activeLayer.rotate(90);
+    // }
+    var scale = Math.random()*300 + 150; // 150-450%;
     var x = Math.random() * -400;
     var y = Math.random() * -400;
 
