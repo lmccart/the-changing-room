@@ -358,15 +358,17 @@ function PopupFactory(emotionObj) {
       let slideTime = Math.random() * 300 + 200;
       let $element = factoryThis.activeElements[i].$element;
       let randomXY = factoryThis.getRandomPosition($element);
-      $element.animate({
-        top: randomXY[0],
-        left: randomXY[1]
-      }, slideTime);
-      if (i === factoryThis.activeElements.length - 1) {
-        $element.degree = 0;
-        $element.timer;
-        rotate($element);
+      if (Math.random() < 0.2 || i === factoryThis.activeElements.length - 1) {
+        $element.animate({
+          top: randomXY[0],
+          left: randomXY[1]
+        }, slideTime);
       }
+      // if (i === factoryThis.activeElements.length - 1) {
+      //   $element.degree = 0;
+      //   $element.timer;
+      //   rotate($element);
+      // }
     }
   }
   
