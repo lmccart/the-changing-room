@@ -64,7 +64,6 @@ async function updateInterface(durations) {
   $('body').removeClass().addClass(textColor);
   $('.intro-text-container').css('border-color', textColor);
   $('.text').css('color', textColor);
-  $('#loading').css('color', textColor);
 }
 
 function scrollDown() {
