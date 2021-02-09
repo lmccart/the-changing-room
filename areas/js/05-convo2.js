@@ -12,7 +12,7 @@ let initTimeout;
 let typeTimeout;
 let loadingTimeout;
 const typingSpeed = 200;
-const pauseOnInstructionTime = 30 * 1000;
+const pauseOnInstructionTime = 20 * 1000;
 const pauseVariationTime = 20 * 1000;
 const loadingBarTime = 4000;
 let curInstruction = 0;
@@ -49,7 +49,7 @@ async function updateInterface() {
   $('.bar-container').css('color', textColor);
   $('#loading-bar').removeClass();
   $('#loading-bar').addClass(textColor);
-  $('.instruction-container').css('border-color', textColor);
+  $('.instruction-container').css('border-color', colors[1]);
   $('#instruction').css('color', textColor);
 }
 
