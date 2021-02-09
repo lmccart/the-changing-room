@@ -83,7 +83,9 @@ function resetChat() {
   chatInput.val('');
   messageViewerContainer.hide();
   messageViewer.empty();
-  introEl.text(introText);
+  // introEl.text(introText);
+  typeMessageByWord(introText, introEl);
+  
   introEl.show(); 
 }
 
@@ -145,33 +147,39 @@ function handleNewMessage(data) {
   if (data.id !== socketid) { // only show modified to partner
     console.log('speak ' + data.modified);
     speak(data.modified);
-    typeMessageByWord(data.modified);
+    typeMessageByWord(data.modified, messageViewer);
   } else {
-    typeMessageByWord(data.original); 
+    typeMessageByWord(data.original, messageViewer); 
   }
   
 }
 
-function typeMessageByWord(string, iteration) {
+function typeMessageByWord(string, el, iteration) {
   var iteration = iteration || 0;
   const words = string.split(' ');
   
   // Prevent our code executing if there are no letters left
   if (iteration === words.length) {
-    showChatTimeout = setTimeout(() => { 
-      showChatInput();
-    }, pauseOnMessageTime);
+    if (introEl.is(':hidden')) {
+      showChatTimeout = setTimeout(() => { 
+        showChatInput();
+      }, pauseOnMessageTime);
+    }
     return;
+  }
+  
+  if (iteration === 0) {
+    el.empty();
   }
   
   setTimeout(function() {
     // Set the instruction to the current text + the next character
     // whilst incrementing the iteration variable
-    messageViewer.text(messageViewer.text() + ' ' + words[iteration++]);
-    messageViewer.animate({ scrollTop: messageViewer[0].scrollHeight}, 1);
-    startResetTimeout();
+    el.text(el.text() + ' ' + words[iteration++]);
+    el.animate({ scrollTop: el[0].scrollHeight}, 1);
+    if (introEl.is(':hidden')) startResetTimeout();
     // Re-trigger our function
-    typeMessageByWord(string, iteration);
+    typeMessageByWord(string, el, iteration);
   }, typingSpeed);
 }
 
