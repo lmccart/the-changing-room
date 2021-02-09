@@ -12,6 +12,9 @@ let video = true;
 let curEmotion;
 let imgUrls = [];
 
+let selectedVoiceIndex = 9999;
+let selectedVoice;
+
 window.init = () => {
   if (video) {
     $('.backgrounds').hide();
@@ -36,6 +39,19 @@ window.loadingComplete = () => {
   $('.intro-text-container').css('visibility', 'visible');
   scrollDown();
 };
+
+window.speechSynthesis.onvoiceschanged = function() {
+  let voiceOptions = ['Ava', 'Allison', 'Samantha', 'Susan', 'Vicki', 'Kathy', 'Victoria'];
+  let voices = window.speechSynthesis.getVoices();
+  for (let v in voices) {
+    let ind = voiceOptions.indexOf(voices[v].voiceURI);
+    if (ind !== -1 && ind < selectedVoiceIndex) {
+      selectedVoice = voices[v];
+      selectedVoiceIndex = ind;
+    }
+  }
+};
+
 
 function updateEmotion(msg) {
   if (!curEmotion || curEmotion.name !== msg.name) {

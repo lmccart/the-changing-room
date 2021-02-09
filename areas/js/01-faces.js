@@ -5,11 +5,12 @@ import './shared.js';
 import 'fancy-textfill/es2015/jquery.plugin';
 import { getTextColorForBackground } from './lib/imageColorUtils.js';
 import Papa from 'papaparse';
+// import { enableAutoTTS, speak} from './lib/speech.js';
 
 const ipadWidth = 810;
 const ipadHeight = 1060;
 const typingSpeed = 60;
-let phraseInterval = 5000; 
+let phraseInterval = 15000; 
 const delaySeconds = 0.5; // seconds to wait before showing/hiding video
 const poseThresh = 0.15;
 
@@ -45,6 +46,7 @@ window.init = () => {
         e.preventDefault(); 
       }, { passive:false });
     });
+    // enableAutoTTS();
 };
 
 
@@ -72,7 +74,6 @@ function loadText() {
           const resultRow = rawResults[i];
           keys.forEach(key => resultRow[key].trim().length > 0 && reordered[key].push(resultRow[key]));
         }
-        console.log(phrases);
         phrases = reordered;
         console.log(phrases, 'REORDERED!');
         resolve(phrases);
@@ -254,6 +255,7 @@ function queueText() {
   }
 
   playInstruction(emotionPhrases[curPhrase]);
+  // speak(emotionPhrases[curPhrase]);
   phraseTimeout = setTimeout(queueText, phraseInterval);
 }
 
