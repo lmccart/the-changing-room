@@ -24,7 +24,7 @@ fetch('/static/data/data.json')
     if (areaData) {
       $('#area-name').text(areaName);
       $('#area-display').text(areaData.display);
-      $('#debug-area').text(areaName);
+      $('#debug-area').text(`${areaName} DIMS: ${window.innerWidth} ${window.innerHeight}`);
     }
 
     if (window.init) {

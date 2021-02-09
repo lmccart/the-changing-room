@@ -6,8 +6,8 @@ import 'fancy-textfill/es2015/jquery.plugin';
 import { getTextColorForBackground } from './lib/imageColorUtils.js';
 import Papa from 'papaparse';
 
-const ipadWidth = 1620;
-const ipadHeight = 2160;
+const ipadWidth = 810;
+const ipadHeight = 1060;
 const typingSpeed = 60;
 let phraseInterval = 5000; 
 const delaySeconds = 0.5; // seconds to wait before showing/hiding video
