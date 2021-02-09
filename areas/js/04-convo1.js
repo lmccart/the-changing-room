@@ -2,14 +2,13 @@ import $ from 'jquery';
 import { getTextColorForBackground } from './lib/imageColorUtils.js';
 import '../css/04-convo1.scss';
 import './shared.js';
+import { enableAutoTTS, speak} from './lib/speech.js';
 
 let curEmotion = '';
 let introText = '';
-let uiResetTimeout;
+let uiResetTimeout, showChatTimeout;
 let resetWaitTime = 30 * 1000;
 let socketid;
-let selectedVoiceIndex = 9999;
-let selectedVoice;
 const typingSpeed = 200; // milliseconds
 const pauseOnMessageTime = 2000; // 3s
 
@@ -24,18 +23,6 @@ const messageViewer = $('#chat-viewer');
 socket.on('connect', function() {
   socketid = socket.id;
 });
-
-window.speechSynthesis.onvoiceschanged = function() {
-  let voiceOptions = ['Ava', 'Allison', 'Samantha', 'Susan', 'Vicki', 'Kathy', 'Victoria'];
-  let voices = window.speechSynthesis.getVoices();
-  for (let v in voices) {
-    let ind = voiceOptions.indexOf(voices[v].voiceURI);
-    if (ind !== -1 && ind < selectedVoiceIndex) {
-      selectedVoice = voices[v];
-      selectedVoiceIndex = ind;
-    }
-  }
-};
 
 window.init = () => {
   // get intro text
@@ -71,6 +58,8 @@ window.init = () => {
     startResetTimeout();
   });
 
+  messageViewerContainer.on('click', showChatInput);
+
   document.addEventListener('touchmove', (e) => { 
     e.preventDefault(); 
   }, { passive:false });
@@ -94,7 +83,9 @@ function resetChat() {
   chatInput.val('');
   messageViewerContainer.hide();
   messageViewer.empty();
-  introEl.text(introText);
+  // introEl.text(introText);
+  typeMessageByWord(introText, introEl);
+  
   introEl.show(); 
 }
 
@@ -104,6 +95,7 @@ function startResetTimeout() {
 }
 
 function showChatInput() {
+  if (showChatTimeout) clearTimeout(showChatTimeout);
   messageViewerContainer.hide(); 
   messageViewer.empty();
   introEl.hide();
@@ -154,58 +146,40 @@ function handleNewMessage(data) {
   console.log(data.id, socketid);
   if (data.id !== socketid) { // only show modified to partner
     console.log('speak ' + data.modified);
-    const speechMessage = new SpeechSynthesisUtterance(data.modified);
-    speechSynthesis.speak(speechMessage);
-    typeMessageByWord(data.modified);
+    speak(data.modified);
+    typeMessageByWord(data.modified, messageViewer);
   } else {
-    typeMessageByWord(data.original); 
+    typeMessageByWord(data.original, messageViewer); 
   }
   
 }
 
-function typeMessageByWord(string, iteration) {
+function typeMessageByWord(string, el, iteration) {
   var iteration = iteration || 0;
   const words = string.split(' ');
   
   // Prevent our code executing if there are no letters left
   if (iteration === words.length) {
-    setTimeout(() => { 
-      showChatInput();
-    }, pauseOnMessageTime);
+    if (introEl.is(':hidden')) {
+      showChatTimeout = setTimeout(() => { 
+        showChatInput();
+      }, pauseOnMessageTime);
+    }
     return;
+  }
+  
+  if (iteration === 0) {
+    el.empty();
   }
   
   setTimeout(function() {
     // Set the instruction to the current text + the next character
     // whilst incrementing the iteration variable
-    messageViewer.text(messageViewer.text() + ' ' + words[iteration++]);
-    messageViewer.animate({ scrollTop: messageViewer[0].scrollHeight}, 1);
-    startResetTimeout();
+    el.text(el.text() + ' ' + words[iteration++]);
+    el.animate({ scrollTop: el[0].scrollHeight}, 1);
+    if (introEl.is(':hidden')) startResetTimeout();
     // Re-trigger our function
-    typeMessageByWord(string, iteration);
+    typeMessageByWord(string, el, iteration);
   }, typingSpeed);
 }
 
-function speak(msg, vol) {
-  if (arguments.length === 1) {
-    vol = 1;
-  }
-  const utterance = new SpeechSynthesisUtterance(msg);
-  utterance.volume = vol;
-  if (selectedVoice) utterance.voice = selectedVoice;
-  speechSynthesis.speak(utterance);
-}
-
-// function for making sure text to speech is available on iOS Safari
-function enableAutoTTS() {
-  if (typeof window === 'undefined') {
-    return; 
-  }
-  
-  const simulateSpeech = () => {
-    speak('Hello', 0);
-    document.removeEventListener('click', simulateSpeech);
-  };
-
-  document.addEventListener('click', simulateSpeech);
-}

@@ -6,12 +6,12 @@ body {
 
 #face-stream {
   object-fit: cover;
-  width: 1620px;
-  height: 2160px;
 }
 
 .main {
   position: relative;
+  width: 100vw;
+  height: 100vh;
 }
 
 #video-cover {

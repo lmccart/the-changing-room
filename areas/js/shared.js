@@ -24,7 +24,7 @@ fetch('/static/data/data.json')
     if (areaData) {
       $('#area-name').text(areaName);
       $('#area-display').text(areaData.display);
-      $('#debug-area').text(areaName);
+      $('#debug-area').text(`${areaName} DIMS: ${window.innerWidth} ${window.innerHeight}`);
     }
 
     if (window.init) {
@@ -78,7 +78,6 @@ window.switchBackgrounds = (imgUrls, fadeDur, colors) => {
     });
   });
 };
-
 
 window.switchVideoBackgrounds = (emotion, fadeDur, colors) => {
   const bgToHide = $('#video-1').is(':visible') ? $('#video-1') : $('#video-2');
