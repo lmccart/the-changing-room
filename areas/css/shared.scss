@@ -123,6 +123,16 @@ body.black ::-webkit-scrollbar-thumb {
 
 }
 
+#loading-bg {
+  width: 100vw;
+  height: 100vh;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: white;
+  z-index: -1;
+}
+
 .loading-title:after {
   content: '\00A0\00A0\00A0';
   animation: showDots 1s linear infinite;

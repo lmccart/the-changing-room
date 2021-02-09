@@ -33,7 +33,7 @@
     "helpless": [["#4f2549", "#f2ceee"], ["#4f2549", "#ffe3be"], ["#4f2549", "#cef2f2"]],
     "hurt": [["#b76a34", "#f0bfc0"], ["#b76a34", "#77ac8f"], ["#b76a34", "#7798ac"]],
     "indifferent": [["#5dbe9d", "#e1d8ff"], ["#5dbe9d", "#f2ceee"], ["#5dbe9d", "#ffdfa2"]],
-    "interested": [["#b1cd54", "#f0b5ff"], ["#b1cd54", "#b5d1ff"], ["#b1cd54", "#ffd8b5"]],
+    "interested": [["#b1cd54", "#f0b5ff"], ["#b1cd54", "#ffd8b5"], ["#b1cd54", "#b5d1ff"]],
     "judgemental": [["#f16a29", "#cbc6eb"], ["#f16a29", "#f2b3eb"], ["#f16a29", "#c4e861"]],
     "loving": [["#ec2490", "#cbc6eb"], ["#ec2490", "#9efde1"], ["#ec2490", "#ffb0a0"]],
     "open": [["#3e98d4", "#ffb0a0"], ["#3e98d4", "#f2ceee"], ["#3e98d4", "#ffede9"]],
