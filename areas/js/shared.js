@@ -77,7 +77,6 @@ window.switchBackgrounds = (imgUrls, fadeDur, colors) => {
   });
 };
 
-
 window.switchVideoBackgrounds = (emotion, fadeDur, colors) => {
   const bgToHide = $('#video-1').is(':visible') ? $('#video-1') : $('#video-2');
   const bgToShow = $('#video-1').is(':visible') ? $('#video-2') : $('#video-1');

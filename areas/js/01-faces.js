@@ -186,7 +186,7 @@ function updateInterface() {
   ////// CHANGING BACKGROUND COLOR
   let emotion_colors = baseColors[curEmotion.base][curEmotion.level - 1];
   colorView(emotion_colors[0], emotion_colors[1]);
-  emotionPhrases = phrases[curEmotion.base];
+  emotionPhrases = shuffle(phrases[curEmotion.base]);
 
 }
 
@@ -298,3 +298,15 @@ const rgba_to_grayscale = (rgba, nrows, ncols) => {
   }
   return gray;
 };
+
+function shuffle(array) {
+  var currentIndex = array.length, temporaryValue, randomIndex;
+  while (0 !== currentIndex) {
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex -= 1;
+    temporaryValue = array[currentIndex];
+    array[currentIndex] = array[randomIndex];
+    array[randomIndex] = temporaryValue;
+  }
+  return array;
+}
