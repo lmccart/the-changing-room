@@ -117,7 +117,6 @@ let timeline_end_pause = 1000;
 window.init = () => {
   setScreen();
   loadData(() => {
-    console.log('Data loaded!');
     socket.on('emotion:update', updateEmotionCurried(() => {
       if (thisScreenParams.id === 1) { 
         socket.emit('reflection:end');
@@ -126,7 +125,6 @@ window.init = () => {
 
     socket.on('reflection:restart', (msg) => {
       sharedSeed = msg.seed;
-      console.log('shared seed = ', sharedSeed);
 
       resetTimeline(); 
       timeline.start();
@@ -197,7 +195,6 @@ function adjustScreen() {
   $('#wrapper').width(thisScreenParams.width).height(thisScreenParams.height);
   $('.main').width(thisScreenParams.width).height(thisScreenParams.height);
   $('#loading').width(thisScreenParams.width).height(thisScreenParams.height);
-  console.log(thisScreenParams);
 }
 
 function loadData(cb) {
@@ -222,7 +219,6 @@ function loadData(cb) {
       const rawResults = results.data;
       // the data comes in as [{ 'EMOTION': 'annoyed', ' BODY AREA': 'Feel that...', ...} ...]
       // I (dan) think it should be { 'annoyed': { 'BODY AREA': 'string, 'PERSON': 'string' } ... }
-      console.log(rawResults);
       const reordered = {};
 
       for (let i = 0; i < rawResults.length; i++) {
@@ -294,6 +290,7 @@ function setColorsAndBackgrounds() {
 
 
   $('#memory_container').css('background', `radial-gradient(${primaryColors[0]},${primaryColors[1]})`);
+  $('#wrapper').css('background', `radial-gradient(${primaryColors[0]},${primaryColors[1]})`);
   switchBackgrounds([imgUrl], 2000, primaryColors)
     .then(() => {
       let nw = $('#loader')[0].naturalWidth;
@@ -366,11 +363,9 @@ function generateMeditationTexts() {
 
 function displayMeditationPhrase(opts) {
   let parts = opts.text.match(/[^\.!\?]+[\.!\?]+/g);
-  console.log(parts);
   let text;
   if (parts.length > 1) {
     let id = thisScreenParams.id < 3 ? thisScreenParams.id : 0;
-    console.log(id);
     text = id < parts.length ? parts[id] : parts[0];
   } else {
     text = opts.text;
@@ -692,15 +687,16 @@ async function queueEvents(timeline) {
     /////// QUEUE MEDITATIONS
   
     let mts = generateMeditationTexts();
+    let ind = sharedSeed + 1;
     mts.forEach((mt, i) => {
       // if (i < 2) { // temp for testing
       timeline.add({ time: timeMarker, event: function() { 
         displayMeditationPhrase({ text: mt, fadeIn: each_meditation_fadein_duration, fadeOut: each_meditation_fadeout_duration});
-        // if (i%4 === 0) {
-        //   let rng = seedrandom(sharedSeed);
-        //   let imgUrl = imgURLs[Math.floor(rng() % imgURLs.length)];
-        //   switchBackgrounds([imgUrl], 2000, primaryColors);
-        // }
+        if (i%3 === 1) {
+          let imgUrl = imgURLs[ind % imgURLs.length];
+          switchBackgrounds([imgUrl], 15000, primaryColors);
+          ind++;
+        }
       } });
 
       if (meditation_long_indices.includes(i)) {

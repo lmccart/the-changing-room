@@ -10,7 +10,6 @@ window.socket.on('debug:toggle', debugToggle);
 window.socket.on('debug:reload', reload);
 
 document.title = $('#debug-area').text();
-console.log($('#debug-area').text());
 
 // getting areas and colors from the data file
 fetch('/static/data/data.json')
@@ -128,7 +127,6 @@ if (module.hot) {
 }
 
 function debugToggle(msg) {
-  console.log('debug toggle');
   if (msg.val) $('#debug-screen').show();
   else $('#debug-screen').hide();
 }
