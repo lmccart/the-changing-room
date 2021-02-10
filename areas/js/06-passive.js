@@ -8,7 +8,7 @@ import '../css/06-passive.scss';
 import './shared.js';
 import { getImgUrls, addSvgFilterForElement, getTextColorForBackground, getPopupUrls } from './lib/imageColorUtils.js';
 
-const basePopupRate = 2000; // adjusted based on emotion intensity
+const basePopupRate = 3000; // adjusted based on emotion intensity
 const minDisplayTime = 15000; // minimum time a popup shows on screen
 const displayVariation = 30000;
 const overlapAllowance = 0.50; // allows 60% overlap when a new element is created
@@ -23,10 +23,10 @@ const POPUP = {
 };
 
 const WIDTHS = [
-  [600, 800],
-  [500, 900],
+  [600, 900],
   [600, 1000],
-  [200, 300]
+  [600, 1100],
+  [300, 400]
 ];
 
 let curEmotion;
@@ -44,8 +44,10 @@ window.emotionStrings = [];
 window.init = () => {
   if (screenNumber) {
     $('#area-extra').text('screen ' + screenNumber); 
+    screenNumber = Number(screenNumber);
   } else {
     $('#area-extra').text('missing screen id');
+    screenNumber = 0;
   }
 
   Promise.all([parseDirections(), parseReflections(), getPopupUrls()])
@@ -76,6 +78,11 @@ async function updateInterface(durations) {
   const colors = window.baseColors[curEmotion.base][curEmotion.level - 1];
   // switchBackgrounds(imgUrls, durations[1] - durations[0] - 500, colors);
   $('body').css('background', `radial-gradient(${colors[1]},${colors[0]})`);
+  let s;
+  for (let i = 0; i<100; i++) {
+    s += curEmotion.name + ' ';
+  }
+  $('#textBg').html(s);
   $('.backgrounds').hide();
 
   if (backgroundInterval) clearInterval(backgroundInterval);
@@ -149,7 +156,7 @@ function PopupFactory(emotionObj) {
   const factoryThis = this;
 
   // note that the destruction rate is set in each individual popup for a little randomness
-  const emotionLevelMultiplier = 1 ** emotionObj.level; // exponential scale
+  const emotionLevelMultiplier = 1 * emotionObj.level * (screenNumber+1); // exponential scale
   const popupRate = basePopupRate / emotionLevelMultiplier; // base rate of ~3 seconds, gets faster with higher emotion level
   let creationInterval;
   const colors = window.baseColors[curEmotion.base][emotionObj.level - 1];
@@ -273,6 +280,9 @@ function PopupFactory(emotionObj) {
           childThis.$element.css('background', colors[0]);
         } else if (n < 0.5) {
           childThis.$element.css('background', colors[1]);
+        } else if (n < 0.75) {
+          childThis.$element.css('background', 'black');
+          childThis.$element.css('color', 'white');
         } else {
           childThis.$element.css('background', `radial-gradient(${colors[0]},${colors[1]})`);
         }
@@ -320,17 +330,17 @@ function PopupFactory(emotionObj) {
       } else {
         pos.top = y + w;
       }
-      childThis.$element.stop(true).animate(pos, 1000, () => {
-        // remove element from dom and from currentElement array
-        childThis.$element.remove();
-        for (let c of childThis.$element.children()) {
-          let svgId = $(c).attr('data-svgId');
-          if (svgId) {
-            $(`#${svgId}`).remove();
-          }
-        }
+      // childThis.$element.stop(true).animate(pos, 1000, () => {
+      //   // remove element from dom and from currentElement array
+      //   childThis.$element.remove();
+      //   for (let c of childThis.$element.children()) {
+      //     let svgId = $(c).attr('data-svgId');
+      //     if (svgId) {
+      //       $(`#${svgId}`).remove();
+      //     }
+      //   }
         factoryThis.removeEl(childThis.id);
-      });
+      // });
     };
     setTimeout(childThis.destroy, destroyRate);
   }
@@ -338,6 +348,8 @@ function PopupFactory(emotionObj) {
 
   function positionElement(popup) {
     let $element = popup.$element;
+    let f = 1 / ((Number(screenNumber) * 0.8) +1);
+    $element.css({transform: `scaleX(${f}) scaleY(${f})`});
     let randomXY = factoryThis.getRandomPosition($element);
     let slideTime = Math.random() * 300 + 200;
   
@@ -357,16 +369,18 @@ function PopupFactory(emotionObj) {
     let h = $element.height();
     let fs = $element.css('font-size');
     fs = fs.substring(0, fs.length - 2);
-    $element.css('top', t);
-    $element.css('left', l); 
-    let blinkDur = 800; 
-    $element.delay(blinkDur / 5)
-    .animate({ width: w * 1.2, height: h * 1.2, top: t - w * .1, left: l - h * .1, fontSize: fs * 1.2}, blinkDur * 0.2)
-    .animate({ width: w, height: h, top: t, left: l, fontSize: fs}, blinkDur * 0.2)
-    .animate({ width: w * 1.2, height: h * 1.2, top: t - w * .1, left: l - h * .1, fontSize: fs * 1.2}, blinkDur * 0.2)
-    .animate({ width: w, height: h, top: t, left: l, fontSize: fs * 1}, blinkDur * 0.2)
-    .delay(blinkDur / 5)
-    .fadeIn(0, function() { moveAll(popup);} );
+    $element.css('top', randomXY[0]);
+    $element.css('left', randomXY[1]); 
+    // $element.css('top', t);
+    // $element.css('left', l); 
+    // let blinkDur = 800; 
+    // $element.delay(blinkDur / 5)
+    // .animate({ width: w * 1.2, height: h * 1.2, top: t - w * .1, left: l - h * .1, fontSize: fs * 1.2}, blinkDur * 0.2)
+    // .animate({ width: w, height: h, top: t, left: l, fontSize: fs}, blinkDur * 0.2)
+    // .animate({ width: w * 1.2, height: h * 1.2, top: t - w * .1, left: l - h * .1, fontSize: fs * 1.2}, blinkDur * 0.2)
+    // .animate({ width: w, height: h, top: t, left: l, fontSize: fs * 1}, blinkDur * 0.2)
+    // .delay(blinkDur / 5)
+    // .fadeIn(0, function() { moveAll(popup);} );
   }
 
   function moveAll(popup) {

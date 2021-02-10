@@ -110,3 +110,18 @@ svg {
 svg {
   display: none;
 }
+
+#textBg {
+  font-size: 6vw;
+  width: 200vw;
+  height: 200vh;
+  position: absolute;
+  left: -4vw;
+  top: -42vh;
+  font-style: italic;
+  text-transform: capitalize;
+  mix-blend-mode: overlay;
+  line-height: 1.1;
+  opacity: 0.5;
+  font-weight: 500;
+}

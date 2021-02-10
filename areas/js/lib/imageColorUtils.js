@@ -110,17 +110,7 @@ export function addSvgFilterForElement($imgEl, arrayOfColors) {
     <svg id='${svgId}'>
       <filter id='${filterId}'>
           <!-- Grab the SourceGraphic (implicit) and convert it to grayscale -->
-          <feColorMatrix type='matrix' values='.33 .33 .33 0 0
-                .33 .33 .33 0 0
-                .33 .33 .33 0 0
-                0 0 0 1 0'>
-          </feColorMatrix>
-          <feComponentTransfer color-interpolation-filters='sRGB'>
-            <feFuncR type='gamma' exponent='1.5' amplitude='1.3' offset='0'></feFuncR>
-            <feFuncG type='gamma' exponent='1.5' amplitude='1.3' offset='0'></feFuncG>
-            <feFuncB type='gamma' exponent='1.5' amplitude='1.3' offset='0'></feFuncB>
-         </feComponentTransfer> 
-  
+
           <!-- Map the grayscale result to the gradient map provided in tableValues -->
           <feComponentTransfer color-interpolation-filters='sRGB'>
               <feFuncR type='table' tableValues='${redTableValue}'></feFuncR>
