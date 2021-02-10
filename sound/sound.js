@@ -1,6 +1,6 @@
 const { DeviceDiscovery, Sonos } = require('sonos');
 
-const quiet = true;
+const quiet = false;
 const areas = {
   rest: false,
   reflection: false
@@ -19,12 +19,13 @@ DeviceDiscovery((device) => {
         newDevice.setPlayMode('REPEAT_ONE');
         if (group.Name === 'Digital Art Gallery') {
           areas.reflection = newDevice;
+          areas.reflection.setVolume(80);
         } else {
           areas.rest = newDevice;
+          areas.rest.setVolume(85);
         }
       });
       console.log(areas);
-      areas.reflection.setVolume(85);
     });
   }
 });
@@ -33,7 +34,7 @@ const playEmotion = (emotion) => {
   if (!areas.rest) return;
   let track = process.env.HTTP_SERVER + 'sound/sounds/' + emotion.base + '.wav';
   if (quiet) areas.rest.setVolume(0);
-  else areas.rest.setVolume(70 + emotion.level * 10);
+  // else areas.rest.setVolume(70 + emotion.level * 10);
   areas.rest.play(track).then(() => { console.log('SOUND: rest playing '+track); }).catch(err => { console.log(err) })
 };
 
@@ -41,8 +42,8 @@ const playEmotionReflection = (emotion) => {
   if (!areas.reflection) return;
   console.log('play emotion');
   let reflectionTrack = process.env.HTTP_SERVER + 'sound/sounds-reflection/' + emotion.base + '-' + emotion.name + '.wav';
-  if (quiet) areas.reflection.setVolume(0); // TEMP!
-  else areas.reflection.play(reflectionTrack).then(() => { console.log('SOUND: reflection playing '+reflectionTrack); }).catch(err => { console.log(err) })
+  if (quiet) areas.setVolume(0);
+  areas.reflection.play(reflectionTrack).then(() => { console.log('SOUND: reflection playing '+reflectionTrack); }).catch(err => { console.log(err) })
 };
 
 const stopAll = () => {

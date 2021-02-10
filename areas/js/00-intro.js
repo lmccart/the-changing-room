@@ -6,7 +6,7 @@ import { getImgUrls, getTextColorForBackground, addSvgFilterForElement } from '.
 /* VARIABLES */
 const scroll_up_time = 20000;
 const scroll_down_time = 500000;
-const scroll_pause_time = 3000;
+const scroll_pause_time = 2000;
 
 let video = true;
 let curEmotion;
@@ -97,7 +97,7 @@ function scrollUp() {
     $('.text').animate({
       scrollTop: 0
     }, scroll_up_time, 'linear', scrollDown);
-  }, scroll_pause_time);
+  }, 500);
 }
 
 

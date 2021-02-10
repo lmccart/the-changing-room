@@ -107,12 +107,15 @@ function appendDebug() {
       <div id='area-display'></div>
       <div id='area-extra'></div>
     </div>
-  </section>
+  </section>`);
+
+  /*
   <section id='debug'>
     AREA: <span id='debug-area'></span>
     <div id='debug-info'></div>
-  </section>`);
-
+  </section>
+  */
+ 
   setTimeout(function() {
     $('#debug-screen').hide();
   }, 5 * 100);
