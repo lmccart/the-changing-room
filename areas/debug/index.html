@@ -69,6 +69,8 @@ let curEmotion;
 const socket = io();
 socket.on('emotion:update', updateEmotion);
 socket.on('emotion:get', updateEmotion);
+$('#soundOff').on('click', soundOff);
+$('#lightsOff').on('click', lightsOff);
 
 fetch('/emotions')
   .then(response => response.json())
