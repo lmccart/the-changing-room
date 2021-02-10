@@ -24,15 +24,11 @@ body {
 }
 
 #face-stream {
-  // visibility: hidden;
-  -webkit-transform: scaleX(-1);
-  transform: scaleX(-1);
-  width: 100vw;
-  height: 100vh;
+  -webkit-transform: scaleX(-2) scaleY(2);
+  transform: scaleX(-2) scaleY(2);
 }
 
 .filtered {
-  // visibility: hidden;
   position: fixed;
   width: 100vw;
   height: 100vh;
