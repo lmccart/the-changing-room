@@ -389,7 +389,7 @@ function PopupFactory(emotionObj) {
       //   rotate($element);
       // }
   }
-  setInterval(moveAll, 3000);
+  // setInterval(moveAll, 3000);
   
   // function rotate($element) {
   //   $element.css({ WebkitTransform: 'rotate(' + $element.degree + 'deg)'});                   
