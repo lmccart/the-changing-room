@@ -1,6 +1,6 @@
 const { DeviceDiscovery, Sonos } = require('sonos');
 
-const quiet = true;
+const quiet = false;
 const areas = {
   rest: false,
   reflection: false
@@ -19,7 +19,7 @@ DeviceDiscovery((device) => {
         newDevice.setPlayMode('REPEAT_ONE');
         if (group.Name === 'Digital Art Gallery') {
           areas.reflection = newDevice;
-          areas.reflection.setVolume(80);
+          areas.reflection.setVolume(90);
         } else {
           areas.rest = newDevice;
           areas.rest.setVolume(85);

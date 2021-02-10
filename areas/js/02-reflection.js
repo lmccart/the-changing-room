@@ -110,7 +110,7 @@ let memories_fadeout_duration = 1000;
 
 // Finally,
 // we pause before we end the timeline
-let timeline_end_pause = 3000;
+let timeline_end_pause = 1000;
 
 
 
@@ -678,6 +678,7 @@ function resetHTML(cb) {
 async function queueEvents(timeline) {
   window.timeline = timeline;
 
+
   let timeMarker = 0;
 
   if (!skipToMemories) {
@@ -695,6 +696,11 @@ async function queueEvents(timeline) {
       // if (i < 2) { // temp for testing
       timeline.add({ time: timeMarker, event: function() { 
         displayMeditationPhrase({ text: mt, fadeIn: each_meditation_fadein_duration, fadeOut: each_meditation_fadeout_duration});
+        // if (i%4 === 0) {
+        //   let rng = seedrandom(sharedSeed);
+        //   let imgUrl = imgURLs[Math.floor(rng() % imgURLs.length)];
+        //   switchBackgrounds([imgUrl], 2000, primaryColors);
+        // }
       } });
 
       if (meditation_long_indices.includes(i)) {
@@ -757,17 +763,18 @@ async function queueEvents(timeline) {
 
   timeMarker += timeline_end_pause;
 
+  if (emotionChanged) {
+    let overlay_dur = showLoadingOverlay(curEmotion)[1];
+    timeMarker += overlay_dur;
+    emotionChanged = false;
+  }
+
   timeline.add({ time: timeMarker, event: function() { 
     if (thisScreenParams.id === 1) { 
       socket.emit('reflection:end');
     }
   } });
 
-  if (emotionChanged) {
-    let overlay_dur = showLoadingOverlay(curEmotion)[1];
-    timeMarker += overlay_dur;
-    emotionChanged = false;
-  }
 
   timeline.setDuration(timeMarker); 
 

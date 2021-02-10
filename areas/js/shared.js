@@ -35,9 +35,9 @@ fetch('/static/data/data.json')
 window.showLoadingOverlay = (newEmotion) => {
   const colors = window.baseColors[newEmotion.base][newEmotion.level - 1];
   const textColor = getTextColorForBackground(colors[0]);
-  $('#loading').css('color', 'black');
-  $('#loading-bg').show();
-  $('#loading-bg').delay(2000).fadeOut(1000);
+  $('#loading').css('color', textColor);
+  // $('#loading-bg').show();
+  // $('#loading-bg').delay(2000).fadeOut(1000);
 
   $('#loading-emotion').text(newEmotion.name);
   $('#loading').fadeIn(window.loadingFadeDur);

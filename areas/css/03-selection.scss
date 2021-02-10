@@ -13,9 +13,9 @@ body {
   width: 10vw;
   transform: rotateZ(-30deg);
 }
-
+	
 .scroll {
-	width: 33.3%;
+	width: 1166px;
 	padding: 2vw;
 	height: 100vh;
 	box-sizing: border-box;
@@ -35,7 +35,7 @@ body {
 
 #wrapper_joined {
 	font-size: 13.2vw;
-	line-height: 1.2em;
+	line-height: 1.1em;
 	display: flex;
 	overflow-y: scroll;
 	overflow-x: hidden;
@@ -84,13 +84,13 @@ body {
 	}
 	.scroll {
 		// border: 1px solid #000;
-		font-size: 4.5vw;
+		font-size: 4.1vw;
 		overflow-y: scroll;
 	}
 
 	.margin {
 		width: 140px;
-		background: red;
+		// background: red;
 	}
 }
 

@@ -5,8 +5,8 @@ import './shared.js';
 
 // VARIABLES
 const num_panels = 4;
-const idle_timeout = 10;
-const scroll_timeout = 3;
+const idle_timeout = 30;
+const scroll_timeout = 5;
 const scroll_down_time = 990000;
 const scroll_up_time = 9000;
 const hand_blink_time = 700;
@@ -63,7 +63,7 @@ window.init = () => {
       socket.emit('emotion:get');
       separatemode();
       setHandInterval();
-      setInterval(testTrigger, 10 * 60 * 1000); // test every 10 mins
+      // setInterval(testTrigger, 10 * 60 * 1000); // test every 10 mins
     });
 
   // READ IN SELECTION TEXT
