@@ -26,7 +26,7 @@ const WIDTHS = [
   [600, 800],
   [500, 900],
   [600, 1000],
-  [300, 500]
+  [200, 300]
 ];
 
 let curEmotion;
@@ -285,9 +285,11 @@ function PopupFactory(emotionObj) {
       const randomExtra = preloadedExtras[Math.floor(rng() * preloadedExtras.length)];
       const imgEl = $(`<img src='${randomExtra.src}'>`);
       childThis.$element.append(imgEl);
+      imgEl.width(randomBetween(WIDTHS[childThis.type]));
+    } else {
+      childThis.$element.width(randomBetween(WIDTHS[childThis.type]));
     }
 
-    childThis.$element.css('width', randomBetween(WIDTHS[childThis.type]));
     childThis.$element.css('border-color', `#${colors[0]}`);
     childThis.$element.css('box-shadow', '0 0 30px gray');
 
