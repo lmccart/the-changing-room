@@ -7,6 +7,7 @@ window.loadingFadeDur = 300;
 
 window.socket = io();
 window.socket.on('debug:toggle', debugToggle);
+window.socket.on('debug:reload', reload);
 
 document.title = $('#debug-area').text();
 console.log($('#debug-area').text());
@@ -130,4 +131,8 @@ function debugToggle(msg) {
   console.log('debug toggle');
   if (msg.val) $('#debug-screen').show();
   else $('#debug-screen').hide();
+}
+
+function reload() {
+  window.location.reload();
 }
