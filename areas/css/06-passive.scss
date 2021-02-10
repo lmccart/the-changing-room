@@ -93,7 +93,7 @@ svg {
       position: relative;
       padding: 0 1em;
 
-      font-size: 4em;
+      font-size: 3em;
       text-transform: none;
       text-align: left;
     }
@@ -122,6 +122,15 @@ svg {
   text-transform: capitalize;
   mix-blend-mode: overlay;
   line-height: 1.1;
-  opacity: 0.5;
+  opacity: 0.3;
   font-weight: 500;
+}
+
+#textBg-holder {
+  width: 100vw;
+  height: 100vh;
+  position: absolute;
+  top: 0;
+  left: 0;
+  overflow: hidden;
 }
