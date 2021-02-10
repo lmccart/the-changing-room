@@ -32,12 +32,12 @@ svg {
   &:after {
     content: '' !important;
   }
+
+  img {
+    width: 100%;
+  }
 }
 
-.extra img {
-  max-height: 22vh;
-  max-width: 30vh;
-}
 
 .popup {
   position: absolute;
@@ -50,16 +50,19 @@ svg {
   z-index: 100;
   font-style: italic;
 
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+
   &:after {
     color: black;
   }
   img {
-    display: block;
-    max-height: 55vh;
-
-    &.popup {
-      max-height: 35vh;
-    }
+    min-width: 100%;
+    min-height: 100%;
+    object-fit: cover;
   }
   &.popup {
     &:after {
@@ -77,10 +80,7 @@ svg {
 
 
   p {
-    position: absolute;
-    top: 18%;
-    left: 0;
-
+    position: inherit;
     width: 100%;
 
     padding: 1em;
@@ -91,10 +91,9 @@ svg {
 
     &.solo {
       position: relative;
-      max-width: 38vw;
-      padding: 1em;
+      padding: 0 1em;
 
-      font-size: 5em;
+      font-size: 4em;
       text-transform: none;
       text-align: left;
     }
