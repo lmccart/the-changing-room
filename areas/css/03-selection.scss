@@ -13,9 +13,9 @@ body {
   width: 10vw;
   transform: rotateZ(-30deg);
 }
-
+	
 .scroll {
-	width: 33.3%;
+	width: 1166px;
 	padding: 2vw;
 	height: 100vh;
 	box-sizing: border-box;
@@ -30,12 +30,12 @@ body {
 
 .wrapper {
 	position: fixed;
-	width: 4200px; /* HARVEY: CHANGE THIS FOR BEZELS */
+	width: 5082px; /* HARVEY: CHANGE THIS FOR BEZELS */
 }
 
 #wrapper_joined {
 	font-size: 13.2vw;
-	line-height: 1.2em;
+	line-height: 1.1em;
 	display: flex;
 	overflow-y: scroll;
 	overflow-x: hidden;
@@ -83,14 +83,14 @@ body {
 		display: none;
 	}
 	.scroll {
-		border: 1px solid #000;
-		font-size: 4.5vw;
+		// border: 1px solid #000;
+		font-size: 4.1vw;
 		overflow-y: scroll;
 	}
 
 	.margin {
 		width: 140px;
-		background: red;
+		// background: red;
 	}
 }
 

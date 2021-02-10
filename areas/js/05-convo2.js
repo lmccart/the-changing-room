@@ -17,6 +17,7 @@ const pauseVariationTime = 20 * 1000;
 const loadingBarTime = 4000;
 let curInstruction = 0;
 let instructions;
+let colors;
 
 window.init = () => {
   socket.on('emotion:update', updateEmotion);
@@ -41,7 +42,7 @@ async function updateInterface() {
   const durations = showLoadingOverlay(curEmotion);
   reset();
   imgUrls = await getImgUrls(curEmotion.base, curEmotion.level);
-  const colors = window.baseColors[curEmotion.base][curEmotion.level - 1];
+  colors = window.baseColors[curEmotion.base][curEmotion.level - 1];
   switchBackgrounds(imgUrls, durations[1] - durations[0] - 500, colors);
   
   const textColor = getTextColorForBackground(colors[0], colors[1]);
@@ -99,6 +100,8 @@ function showConvoLoading() {
     }
     
     const instruction = instructions[curEmotion.base][curInstruction];
+
+    switchBackgrounds(imgUrls, 1000, colors);
     typeInstruction(instruction);
   }, loadingBarTime);
 }

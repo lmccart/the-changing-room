@@ -2,7 +2,7 @@ import $ from 'jquery';
 import { getTextColorForBackground, addSvgFilterForElement } from './lib/imageColorUtils.js';
 
 
-window.loadingDur = 1000; //7000
+window.loadingDur = 7000;
 window.loadingFadeDur = 300;
 
 window.socket = io();
@@ -36,9 +36,9 @@ fetch('/static/data/data.json')
 window.showLoadingOverlay = (newEmotion) => {
   const colors = window.baseColors[newEmotion.base][newEmotion.level - 1];
   const textColor = getTextColorForBackground(colors[0]);
-  $('#loading').css('color', 'black');
-  $('#loading-bg').show();
-  $('#loading-bg').delay(2000).fadeOut(1000);
+  $('#loading').css('color', textColor);
+  // $('#loading-bg').show();
+  // $('#loading-bg').delay(2000).fadeOut(1000);
 
   $('#loading-emotion').text(newEmotion.name);
   $('#loading').fadeIn(window.loadingFadeDur);
@@ -119,7 +119,7 @@ function appendDebug() {
  
   setTimeout(function() {
     $('#debug-screen').hide();
-  }, 5 * 100);
+  }, 1 * 1000);
 }
 
 // for hot reloading
