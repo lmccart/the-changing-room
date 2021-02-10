@@ -47,13 +47,9 @@ const playEmotionReflection = (emotion) => {
 };
 
 const stopAll = () => {
-  // console.debug('stop sound');
-  // for (area of areas.rest) {
-  //   area.stop();
-  // }  
-  // for (area of areas.reflection) {
-  //   area.stop();
-  // } 
+  console.debug('stop sound');
+  areas.rest.stop();
+  areas.reflection.stop();
 }
 
 module.exports.playEmotion = playEmotion;

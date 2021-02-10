@@ -6,7 +6,7 @@
     <script src='/socket.io/socket.io.js'></script>
     <style>
       body {
-      font-family: 'Favorit Mono', monospace;
+        font-family: 'Favorit Mono', monospace;
         margin: 2em;
         font-size: 3em;
         line-height: 1.5;
@@ -23,6 +23,18 @@
         background: white;
         margin-top: 1em;
         cursor: pointer;
+        border: none;
+        padding: 0.5em;
+      }
+      #emotionPick {
+        border: 2px solid black; 
+      }
+      #toggleDebug {
+        background: #ede42c;
+      }
+      #soundOff, #lightsOff {
+        background: #f16a29;
+        color: white;
       }
     </style>
   </head>
@@ -44,8 +56,12 @@
         <option value='3'>3 (HIGH)</option>
       </select>
     </section>
+    <button id='emotionPick'>SET EMOTION</button><br>
 
     <button id='toggleDebug'>SHOW DEBUG</button>
+
+    <button id='soundOff'>SOUND OFF</button>
+    <button id='lightsOff'>LIGHTS OFF</button>
 
     <script>
 let emotions;
@@ -86,6 +102,7 @@ $('#toggleDebug').on('click', () => {
 $('#emotion').change(selectEmotion);
 $('#base').on('change', selectBase);
 $('#level').on('change', selectLevel);
+$('#emotionPick').on('click', pickEmotion);
 
 function selectEmotion() {
   let name = $('#emotion').val();
@@ -120,7 +137,17 @@ function setEmotion(emotion) {
   $('#emotion').val(emotion.name);
   $('#base').val(emotion.base);
   $('#level').val(emotion.level);
+}
+
+function pickEmotion() {
   socket.emit('emotion:pick', curEmotion.name);
+}
+
+function soundOff() {
+  socket.emit('sound:off', curEmotion.name);
+}
+function lightsOff() {
+  socket.emit('lights:off', curEmotion.name);
 }
 
 function updateEmotion(msg) {

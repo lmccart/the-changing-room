@@ -127,13 +127,13 @@ function hex2cie(hex) {
 
 
 const stopAll = () => {
-  // console.debug('stop lights');
-  // const state = new GroupLightState().off();
-  // api.groups.setGroupState(0, state)
-  //   .then(result => {
-  //     console.log(`LIGHTS: Successfully set group light state OFF? ${result}`);
-  //   })
-  //   .catch(err => { console.error(err); });
+  console.debug('stop lights');
+  const state = new GroupLightState().off();
+  api.groups.setGroupState(0, state)
+    .then(result => {
+      console.log(`LIGHTS: Successfully set group light state OFF? ${result}`);
+    })
+    .catch(err => { console.error(err); });
 }
 
 

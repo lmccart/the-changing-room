@@ -70,9 +70,13 @@ io.on('connection', (socket) => {
   });
   socket.on('chat:send', handleChat);
   socket.on('reflection:end', restartReflectionAudio);
+
+  // debug stuff
   socket.on('debug:toggle', msg => {
     io.emit('debug:toggle', msg);
   });
+  socket.on('sound:off', Sound.stopAll);
+  socket.on('lights:off', Lights.stopAll);
 });
 
 // SERVER SETUP
