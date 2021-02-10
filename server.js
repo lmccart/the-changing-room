@@ -77,6 +77,9 @@ io.on('connection', (socket) => {
   });
   socket.on('sound:off', Sound.stopAll);
   socket.on('lights:off', Lights.stopAll);
+  socket.on('debug:reload', msg => {
+    io.emit('debug:reload', msg);
+  });
 });
 
 // SERVER SETUP

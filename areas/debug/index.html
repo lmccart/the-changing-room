@@ -70,9 +70,9 @@ let curEmotion;
 const socket = io();
 socket.on('emotion:update', updateEmotion);
 socket.on('emotion:get', updateEmotion);
-$('#soundOff').on('click', socket.emit('sound:off', curEmotion.name););
-$('#lightsOff').on('click', socket.emit('lights:off', curEmotion.name););
-$('#reload').on('click', () => { socket.emit('debug:reload');});
+$('#soundOff').on('click', () => { socket.emit('sound:off', curEmotion.name); });
+$('#lightsOff').on('click', () => { socket.emit('lights:off', curEmotion.name); });
+$('#reload').on('click', () => { socket.emit('debug:reload'); });
 
 
 fetch('/emotions')
@@ -107,7 +107,7 @@ $('#toggleDebug').on('click', () => {
 $('#emotion').change(selectEmotion);
 $('#base').on('change', selectBase);
 $('#level').on('change', selectLevel);
-$('#emotionPick').on('click', pickEmotion);
+$('#emotionPick').on('click', () => { socket.emit('emotion:pick', curEmotion.name); });
 
 function selectEmotion() {
   let name = $('#emotion').val();
