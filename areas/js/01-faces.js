@@ -12,7 +12,6 @@ const ipadHeight = 1060;
 const typingSpeed = 60;
 let phraseInterval = 15000; 
 const delaySeconds = 0.5; // seconds to wait before showing/hiding video
-const poseThresh = 0.15;
 
 let curEmotion;
 let spellOut = false; // used to determine when to animate text
@@ -129,8 +128,8 @@ function setupFaceDetection(videoEl) {
       flipHorizontal: true
     })
     .then(function(pose){
-
-      if (pose.score > poseThresh) {
+      let hip = (pose.keypoints[11].score + pose.keypoints[12].score) / 2;
+      if (pose.score > 0.15 && hip < 0.3) {
         watchdog = watchdog < 0 ? 0 : watchdog + 1;
         if (watchdog > (delaySeconds * 10)) {
           faceFound = true;
