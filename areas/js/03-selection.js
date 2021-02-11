@@ -14,17 +14,11 @@ const hand_blink_time = 700;
 const hand_delay = 30000;
 const fade_time = 1000;
 
-// const separate_scroll_times = [
-//   110 * 1000,
-//   78 * 1000,
-//   95 * 1000,
-//   52 * 1000
-// ];
 const separate_scroll_times = [
-  5 * 1000,
-  5 * 1000,
-  5 * 1000,
-  5 * 1000
+  110 * 1000,
+  78 * 1000,
+  95 * 1000,
+  52 * 1000
 ];
 
 let curEmotion;
@@ -80,24 +74,6 @@ window.init = () => {
     .then(() => selection_txt_parse(sel_intro_content));
 
   $('#wrapper_separate').hide();
-
-  document.addEventListener('gesturestart', function(e) {
-    e.preventDefault();
-    // special hack to prevent zoom-to-tabs gesture in safari
-    document.body.style.zoom = 0.99;
-});
-
-document.addEventListener('gesturechange', function(e) {
-    e.preventDefault();
-    // special hack to prevent zoom-to-tabs gesture in safari
-    document.body.style.zoom = 0.99;
-});
-
-document.addEventListener('gestureend', function(e) {
-    e.preventDefault();
-    // special hack to prevent zoom-to-tabs gesture in safari
-    document.body.style.zoom = 0.99;
-});
 
 };
 

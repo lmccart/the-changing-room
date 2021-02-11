@@ -1,6 +1,6 @@
 const { DeviceDiscovery, Sonos } = require('sonos');
 
-const volume = 10; // mastervolume
+const volume = 70; // mastervolume
 const areas = {
   rest: [],
   reflection: []
