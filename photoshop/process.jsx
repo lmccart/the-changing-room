@@ -14,13 +14,13 @@ var emotions = [
     // 'confused',
     // 'depressed',
     // 'envious',
-    // 'happy',
+    'happy',
     // 'helpless',
     // 'hurt',
     // 'indifferent',
     // 'interested',
     // 'judgemental',
-    'loving',
+    // 'loving',
     // 'peaceful',
     // 'positive',
     // 'open',
@@ -55,7 +55,7 @@ function processImage(emotion, i) {
         doc.activeLayer.desaturate();
     } catch (e) {}
 
-    for (var t=0; t<2; t++) {//textures.length; t++) {
+    for (var t=1; t<3; t++) {//textures.length; t++) {
         for (var b=0; b<blends.length; b++) {
             for (var v=0; v<3; v++) {
                 textureImage(doc, emotion, i, t, b, v);

@@ -9,15 +9,22 @@ const idle_timeout = 30;
 const scroll_timeout = 5;
 const scroll_down_time = 990000;
 const scroll_up_time = 9000;
+const scroll_pause_time = 1500;
 const hand_blink_time = 700;
 const hand_delay = 30000;
 const fade_time = 1000;
 
+// const separate_scroll_times = [
+//   110 * 1000,
+//   78 * 1000,
+//   95 * 1000,
+//   52 * 1000
+// ];
 const separate_scroll_times = [
-  110 * 1000,
-  78 * 1000,
-  95 * 1000,
-  52 * 1000
+  5 * 1000,
+  5 * 1000,
+  5 * 1000,
+  5 * 1000
 ];
 
 let curEmotion;
@@ -148,7 +155,8 @@ function updateInterface() {
 
 ////////////////// PARSING SELECTION TEXT TO PANELS
 function selection_txt_parse(sel_intro_content) {
-  let sel_intro_sent = sel_intro_content.match(/[^\.!\?]+[\.!\?]+/g);
+  let sel_intro_sent = sel_intro_content.replace(' ', '\n');
+  sel_intro_sent = sel_intro_sent.match(/[^\.!\?]+[\.!\?]+/g);
   let num_sents_panels = Math.ceil(sel_intro_sent.length / num_panels);
   const panel_array = new Array(Math.ceil(sel_intro_sent.length / num_sents_panels))
     .fill()
@@ -209,12 +217,12 @@ function scrollDown(el, scroll_dur) {
   if (!dur) {
     dur = (1 - ($('#wrapper_joined').scrollTop() / $('#wrapper_joined')[0].scrollHeight)) * scroll_down_time;
   }
-  // console.log($('#wrapper_joined').scrollTop(), $('#wrapper_joined')[0].scrollHeight);
-  // console.log('scroll dur down is ' + dur);
   el.animate({
-    scrollTop: el.get(0).scrollHeight
-  }, dur, 'linear', function() {
-    scrollUp(el, scroll_dur);
+    scrollTop: el.get(0).scrollHeight - 1920
+  }, dur, 'linear', () => {
+    setTimeout(() => {
+      scrollUp(el, scroll_dur);
+    }, scroll_pause_time);
   });
 }; 
 
@@ -223,11 +231,12 @@ function scrollUp(el, scroll_dur) {
   if (!dur) {
     dur = ($('#wrapper_joined').scrollTop() / $('#wrapper_joined')[0].scrollHeight) * scroll_up_time;
   }
-  // console.log('scroll dur up is ' + dur);
   el.animate({
     scrollTop: 0
-  }, dur, function() {
-    scrollDown(el, scroll_dur);
+  }, dur, 'linear', () => {
+    setTimeout(() => {
+      scrollDown(el, scroll_dur);
+    }, scroll_pause_time);
   });
 };
 
