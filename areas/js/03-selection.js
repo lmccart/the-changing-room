@@ -193,7 +193,7 @@ function scrollDown(el, scroll_dur) {
   if (!dur) {
     dur = (1 - ($('#wrapper_joined').scrollTop() / $('#wrapper_joined')[0].scrollHeight)) * scroll_down_time;
   }
-  el.animate({
+  el.stop(true).animate({
     scrollTop: el.get(0).scrollHeight - 1920
   }, dur, 'linear', () => {
     setTimeout(() => {
@@ -207,7 +207,7 @@ function scrollUp(el, scroll_dur) {
   if (!dur) {
     dur = ($('#wrapper_joined').scrollTop() / $('#wrapper_joined')[0].scrollHeight) * scroll_up_time;
   }
-  el.animate({
+  el.stop(true).animate({
     scrollTop: 0
   }, dur, 'linear', () => {
     setTimeout(() => {
