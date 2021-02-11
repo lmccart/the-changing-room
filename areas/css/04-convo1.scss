@@ -116,3 +116,32 @@ body {
   right: 0.5em;
   font-size: 1.5em !important;
 }
+
+#hand-indicator {
+  width: 23vw;
+  position: absolute;
+  z-index: 300;
+  top: 40vw;
+  left: 64vw;
+  transform: rotate(-20deg);
+  -webkit-animation: blink 1.5s ease-in-out infinite;
+  display: none;
+}
+
+@keyframes blink {
+  0% {
+    opacity: 0;
+  }
+  25% {
+    opacity: 1.0;
+  }
+  50% {
+    opacity: 1.0;
+  }
+  75% {
+    opacity: 1.0;
+  }
+  100% {
+    opacity: 0;
+  }
+}

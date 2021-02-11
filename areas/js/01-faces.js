@@ -41,7 +41,7 @@ window.init = () => {
       console.log(net);
       socket.on('emotion:update', updateEmotion);
       socket.emit('emotion:get');
-      $('body').on('click', setupCamera);
+      $('body').on('click', handleClick);
       document.addEventListener('touchmove', (e) => { 
         e.preventDefault(); 
       }, { passive:false });
@@ -95,25 +95,31 @@ function setupPosenet() {
   });
 }
 
-async function setupCamera(e) {
+function handleClick(e) {
   if (!faceInitialized) {
-    try {
-      console.log('connecting user media');
-      e.target.disabled = true;
+    setupCamera(e);
+  } else {
+    queueText();
+  }
+}
+
+async function setupCamera(e) {
+  try {
+    console.log('connecting user media');
+    e.target.disabled = true;
+    const stream = await navigator.mediaDevices.getUserMedia({video:true, audio:false});
+    console.log('connected user media');
+    videoEl[0].srcObject = stream;
+    videoEl.on('loadeddata', () => {
+      resizeLayout();
+      removeCover(true);
+      $('#hand-container').remove();
+      setupFaceDetection(videoEl[0]);
       faceInitialized = true;
-      const stream = await navigator.mediaDevices.getUserMedia({video:true, audio:false});
-      console.log('connected user media');
-      videoEl[0].srcObject = stream;
-      videoEl.on('loadeddata', () => {
-        resizeLayout();
-        removeCover(true);
-        $('#hand-container').remove();
-        setupFaceDetection(videoEl[0]);
-      });
-      
-    } catch (e) {
-      console.log(e);
-    }
+    });
+    
+  } catch (e) {
+    console.log(e);
   }
 }
 

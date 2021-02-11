@@ -1,6 +1,6 @@
 const { DeviceDiscovery, Sonos } = require('sonos');
 
-const volume = 0; // mastervolume
+const volume = 10; // mastervolume
 const areas = {
   rest: [],
   reflection: []
@@ -25,7 +25,7 @@ DeviceDiscovery((foundDevice) => {
 
 const playEmotion = (emotion) => {
   if (!areas.rest) return;
-  let track = process.env.HTTP_SERVER + 'sound/sounds/' + emotion.base + '.mp3';
+  let track = process.env.HTTP_SERVER + 'sound/sounds/' + emotion.base + '.flac';
   for (let device of areas.rest) {
     device.play(track).then(() => { console.log(`SOUND: rest ${device.name} ${device.host} playing ${track}`); }).catch(err => { console.log(err) })
   }

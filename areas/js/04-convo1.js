@@ -87,19 +87,26 @@ function resetChat() {
   typeMessageByWord(introText, introEl);
   
   introEl.show(); 
+  let introTime = introText.split(' ').length * typingSpeed;
+  setTimeout(() => { 
+    if (introEl.is(':visible')) $('#hand-indicator').show(); 
+  }, introTime);
 }
 
 function startResetTimeout() {
   clearTimeout(uiResetTimeout);
   uiResetTimeout = setTimeout(resetChat, resetWaitTime);
+  console.log('start reset timeout '+uiResetTimeout);
 }
 
 function showChatInput() {
   if (showChatTimeout) clearTimeout(showChatTimeout);
+  $('#hand-indicator').hide();
   messageViewerContainer.hide(); 
   messageViewer.empty();
   introEl.hide();
   chatForm.show();
+  startResetTimeout();
   if (chatInput.val()) {
     chatInput.trigger('focus'); // this may not work on iPad, unless triggered by click
   }
@@ -126,16 +133,19 @@ function updateEmotion(msg) {
 }
 
 function updateInterface() {
-  showLoadingOverlay(curEmotion);
-  resetChat();
+  let durations = showLoadingOverlay(curEmotion);
+  setTimeout(resetChat, window.loadingDur); 
   const colors = window.baseColors[curEmotion.base][curEmotion.level - 1];
   const textColor = getTextColorForBackground(colors[0], colors[1]);
   $('body').css('color', textColor);
+  introEl.css('color', textColor);
   chatInput.css('color', textColor);
   if (textColor === 'white') {
     chatSubmit.css('filter', 'invert(1)');
+    $('#hand-indicator').css('filter', 'invert(1)');
   } else {
     chatSubmit.css('filter', 'none');
+    $('#hand-indicator').css('filter', 'none');
   }
   $('body').css('background', `radial-gradient(${colors[0]},${colors[1]})`);
   $('#debug-info').text(screen.width + ' ' + screen.height);//CURRENT EMOTION: ' + curEmotion.name + ' (base: ' + curEmotion.base + ', level: ' + curEmotion.level +')')
@@ -165,6 +175,7 @@ function typeMessageByWord(string, el, iteration) {
         showChatInput();
       }, pauseOnMessageTime);
     }
+    startResetTimeout();
     return;
   }
   
@@ -177,9 +188,9 @@ function typeMessageByWord(string, el, iteration) {
     // whilst incrementing the iteration variable
     el.text(el.text() + ' ' + words[iteration++]);
     el.animate({ scrollTop: el[0].scrollHeight}, 1);
-    if (introEl.is(':hidden')) startResetTimeout();
     // Re-trigger our function
     typeMessageByWord(string, el, iteration);
   }, typingSpeed);
 }
+
 
