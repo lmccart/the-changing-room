@@ -225,7 +225,7 @@ function scrollToEmotion(emotion_name, base_emotion) {
     const elHeight = $(elm).height() * 0.9;
     const currentPosition = $(elm).offset().top;
     const currentScroll = $('#wrapper_joined').scrollTop();
-    const middle = $(window).height() / 2;
+    const middle = $(window).height() / 2 - 58;
     const scrollVal = currentScroll + (currentPosition - middle + (elHeight / 2));
     const scrollDiff = Math.abs(scrollVal - currentScroll);
     const scrollTime = 0.3 * scrollDiff;
