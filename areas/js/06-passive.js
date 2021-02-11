@@ -8,10 +8,10 @@ import '../css/06-passive.scss';
 import './shared.js';
 import { getImgUrls, addSvgFilterForElement, getTextColorForBackground, getPopupUrls } from './lib/imageColorUtils.js';
 
-const basePopupRate = 3000; // adjusted based on emotion intensity
-const minDisplayTime = 1000; // minimum time a popup shows on screen
+const basePopupRate = 2000; // adjusted based on emotion intensity
+const minDisplayTime = 3000; // minimum time a popup shows on screen
 const displayVariation = 2000;
-const overlapAllowance = 0.30; // allows 60% overlap when a new element is created
+const overlapAllowance = 0.10; // allows 60% overlap when a new element is created
 const backgroundChangeTime = 20000; // adjusted based on emotion intensity
 const portionFiltered = 1;//0.5; // portion of popups with svg filter applied
 
@@ -26,7 +26,7 @@ const WIDTHS = [
   [600, 800],
   [400, 800],
   [400, 800],
-  [250, 350]
+  [400, 410]
 ];
 
 let curEmotion;
@@ -50,6 +50,11 @@ window.init = () => {
   } else {
     $('#area-extra').text('missing screen id');
     screenNumber = 0;
+  }
+
+  for (let w of WIDTHS) {
+    w[0] -= screenNumber * 90;
+    w[1] -= screenNumber * 100;
   }
 
   Promise.all([parseDirections(), parseReflections(), getPopupUrls()])
@@ -163,7 +168,7 @@ function PopupFactory(emotionObj) {
   const factoryThis = this;
 
   // note that the destruction rate is set in each individual popup for a little randomness
-  const emotionLevelMultiplier = 1 * emotionObj.level * (screenNumber+1); // exponential scale
+  const emotionLevelMultiplier = 1 * emotionObj.level * (1.5*screenNumber+1); // exponential scale
   const popupRate = basePopupRate / emotionLevelMultiplier; // base rate of ~3 seconds, gets faster with higher emotion level
   let creationInterval;
   const colors = window.baseColors[curEmotion.base][emotionObj.level - 1];
@@ -225,7 +230,7 @@ function PopupFactory(emotionObj) {
     // 2 text -> just text
     // 3+ popup -> random popup assets
 
-    switch (Math.floor(rng() * 4)) {
+    switch (Math.floor(rng() * 5)) {
     case 0: 
       childThis.type = POPUP.IMAGE;
       break;
@@ -368,23 +373,27 @@ function PopupFactory(emotionObj) {
       }
     }
     if (screenNumber === 2) {  
-    } if (screenNumber === 3) {
-      let r = Math.random() * 8 - 4;
+    } if (screenNumber === 3 && Math.random() < 0.5) {
+      let r = Math.random() * 3 - 1.5;
       $element.css({ WebkitTransform: `rotate(${r}deg)`});   
     }
     $element.css('visibility', 'visible');
 
     $element.css('top', randomXY[0]);
     $element.css('left', randomXY[1]); 
+
+
+    let fs = $element.css('font-size');
+    fs = fs.substring(0, fs.length - 2);
+    fs -= (screenNumber * 3);
+    console.log(fs);
+    $element.css('font-size', fs);
    
-    if (popup.type === POPUP.EXTRA && factoryThis.activeElements.length < 5) {
+    if (popup.type === POPUP.EXTRA && factoryThis.activeElements.length < 7) {
       let t = randomXY[0];
       let l = randomXY[1];
-        
       let w = $element.width();
       let h = $element.height();
-      let fs = $element.css('font-size');
-      fs = fs.substring(0, fs.length - 2);
       let blinkDur = 800; 
       $element.delay(blinkDur / 5)
       .animate({ width: w * 1.2, height: h * 1.2, top: t - w * .1, left: l - h * .1, fontSize: fs * 1.2}, blinkDur * 0.2)

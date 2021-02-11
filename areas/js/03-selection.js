@@ -73,6 +73,25 @@ window.init = () => {
     .then(() => selection_txt_parse(sel_intro_content));
 
   $('#wrapper_separate').hide();
+
+  document.addEventListener('gesturestart', function(e) {
+    e.preventDefault();
+    // special hack to prevent zoom-to-tabs gesture in safari
+    document.body.style.zoom = 0.99;
+});
+
+document.addEventListener('gesturechange', function(e) {
+    e.preventDefault();
+    // special hack to prevent zoom-to-tabs gesture in safari
+    document.body.style.zoom = 0.99;
+});
+
+document.addEventListener('gestureend', function(e) {
+    e.preventDefault();
+    // special hack to prevent zoom-to-tabs gesture in safari
+    document.body.style.zoom = 0.99;
+});
+
 };
 
 function updateEmotion(msg) {
@@ -228,7 +247,7 @@ function scrollToEmotion(emotion_name, base_emotion) {
     console.log(currentScroll, currentPosition, scrollVal, scrollDiff, scrollTime);
     $('#wrapper_joined').stop(true).animate({
       scrollTop: scrollVal
-    }, scrollTime, 'linear', resolve);
+    }, scrollTime, 'swing', resolve);
   });
 }
 
@@ -239,6 +258,7 @@ function separatemode() {
   $('#wrapper_separate').stop(true).fadeIn(fade_time);
   $('#wrapper_separate').css('display','flex');
   setTimeout(scroll_separate_panels, 500);
+
 }
 
 // detect manual scroll
