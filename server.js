@@ -72,14 +72,11 @@ io.on('connection', (socket) => {
   socket.on('reflection:end', restartReflectionAudio);
 
   // debug stuff
-  socket.on('debug:toggle', msg => {
-    io.emit('debug:toggle', msg);
-  });
+  socket.on('debug:toggle', msg => { io.emit('debug:toggle', msg); });
   socket.on('sound:off', Sound.stopAll);
   socket.on('lights:off', Lights.stopAll);
-  socket.on('debug:reload', msg => {
-    io.emit('debug:reload', msg);
-  });
+  socket.on('debug:reload', msg => { io.emit('debug:reload', msg); });
+  socket.on('volume:set', msg => { Sound.setVolume(msg.val); });
 });
 
 // SERVER SETUP
@@ -105,6 +102,7 @@ app.get('/images/:baseEmotion/manifest', (req, res) => {
 
 function setEmotion(emotionName, init) {
   curEmotion = emotions[emotionName];
+  curEmotion.volume = Sound.volume;
   curEmotion.seed = Math.round(Math.random() * 10000);
   console.debug(curEmotion);
   Lights.playEmotion(curEmotion);

@@ -102,13 +102,19 @@ function updateInterface() {
 
   const $elm = $('#option-' + curEmotion.name);
   let prevEmotion = $elm.prev().html();
+  let prevPrevEmotion = $elm.prev().prev().html();
   let nextEmotion = $elm.next().html();
+  let nextNextEmotion = $elm.next().next().html();
   $elm.prev().html('<div class="loading-title">Loading</div>');
+  $elm.prev().prev().html('<div class="loading-title">Loading</div>');
   $elm.next().html('<div class="loading-title">Loading</div>');
+  $elm.next().next().html('<div class="loading-title">Loading</div>');
 
   setTimeout(() => {
     $elm.prev().html(prevEmotion);
+    $elm.prev().prev().html(prevPrevEmotion);
     $elm.next().html(nextEmotion);
+    $elm.next().next().html(nextNextEmotion);
   }, window.loadingDur - 1000);
   
   $elm.fadeIn(fade_time, function() {
@@ -233,6 +239,7 @@ function scrollToEmotion(emotion_name, base_emotion) {
     $('#wrapper_joined').stop(true).animate({
       scrollTop: scrollVal
     }, scrollTime, 'swing', resolve);
+    $('#wrapper_joined').css('opacity', 1);
   });
 }
 
