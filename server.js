@@ -8,8 +8,8 @@ const express = require('express');
 const app = express();
 const http = require('http').createServer(app);
 const https = require('https').createServer({key: key, cert: cert}, app);
-http.listen(3001, () => { console.debug('http listening on *:3001'); });
-https.listen(3000, () => { console.debug('https listening on *:3000'); });
+http.listen(3001, () => { console.log('http listening on *:3001'); });
+https.listen(3000, () => { console.log('https listening on *:3000'); });
 const io = require('socket.io')(https);
 
 const Sound = require('./sound/sound');
@@ -34,22 +34,6 @@ app.use(require('webpack-dev-middleware')(compiler, {
 app.use(require('webpack-hot-middleware')(compiler, {
   path: '/__webpack_hmr', heartbeat: 10 * 1000
 }));
-
-// LOGGING
-const log4js = require('log4js');
-log4js.configure({
-  appenders: {
-    chatLogs: { type: 'file', filename: 'logs/chat.log', daysToKeep: 1, pattern: 'yy-MM-dd.log'  },
-    consoleLogs: { type: 'file', filename: 'logs/console.log', daysToKeep: 1, pattern: 'yy-MM-dd.log' },
-    console: { type: 'console' }
-  },
-  categories: {
-    chat: { appenders: ['chatLogs'], level: 'ALL' },
-    default: { appenders: ['console', 'consoleLogs'], level: 'ALL' }
-  }
-});
-const console = log4js.getLogger();
-const chatLogger = log4js.getLogger('chat');
 
 // DATA INIT
 const emotions = JSON.parse(fs.readFileSync('all-emotions.json')); // read all emotions
@@ -104,7 +88,7 @@ function setEmotion(emotionName, init) {
   curEmotion = emotions[emotionName];
   curEmotion.volume = Sound.volume;
   curEmotion.seed = Math.round(Math.random() * 10000);
-  console.debug(curEmotion);
+  console.log(curEmotion);
   Lights.playEmotion(curEmotion);
   if (!init) {
     io.emit('emotion:update', curEmotion);
@@ -190,7 +174,7 @@ function getAllFiles(dir) {
 
 // CLEANUP
 // function cleanup() {
-//   console.debug('stop all');
+//   console.log('stop all');
 //   Sound.stopAll();
 //   Lights.stopAll();
 // };

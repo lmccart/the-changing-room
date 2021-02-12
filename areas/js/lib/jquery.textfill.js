@@ -60,10 +60,10 @@
 		function _debug() {
 			if (!Opts.debug
 				||  typeof console       == 'undefined'
-				||  typeof console.debug == 'undefined') {
+				||  typeof console.log == 'undefined') {
 				return;
 			}
-			console.debug.apply(console, arguments);
+			console.log.apply(console, arguments);
 		}
 
 		// Output arguments to the Warning console

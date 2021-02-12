@@ -64,6 +64,7 @@ window.init = () => {
       socket.emit('emotion:get');
       separatemode();
       setHandInterval();
+
       // setInterval(testTrigger, 10 * 60 * 1000); // test every 10 mins
     });
 
@@ -74,6 +75,11 @@ window.init = () => {
     .then(() => selection_txt_parse(sel_intro_content));
 
   $('#wrapper_separate').hide();
+    // DO ANY OTHER INIT JQUERY STUFF
+    $(document).on("contextmenu", function(){
+      return false;
+    });
+
 
 };
 

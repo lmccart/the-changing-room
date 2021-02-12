@@ -53,7 +53,7 @@ const setVolume = (val) => {
 }
 
 const stopAll = () => {
-  console.debug('stop sound');
+  console.log('stop sound');
   for (let device of areas.rest) {
     device.stop();
   }

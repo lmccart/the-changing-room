@@ -19,7 +19,6 @@
     "fancy-textfill": "^1.2.5",
     "imagesloaded": "^4.1.4",
     "jquery": "^3.5.1",
-    "log4js": "^6.3.0",
     "nanoid": "^3.1.20",
     "node-hue-api": "^4.0.10",
     "papaparse": "^5.3.0",

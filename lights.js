@@ -128,7 +128,7 @@ function hex2cie(hex) {
 
 
 const stopAll = () => {
-  console.debug('stop lights');
+  console.log('stop lights');
   const state = new GroupLightState().off();
   api.groups.setGroupState(0, state)
     .then(result => {
