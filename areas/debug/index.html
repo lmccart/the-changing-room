@@ -26,6 +26,9 @@
         border: none;
         padding: 0.5em;
       }
+      #debug-info {
+        margin-top: 0.5em;
+      }
       #emotionPick, #reload {
         border: 2px solid black; 
       }
@@ -36,15 +39,45 @@
         background: #f16a29;
         color: white;
       }
+      #volume-holder {
+        margin-top:1em;
+        display: block;
+      }
+
+      #volume {
+        width: 100%;
+        width: 40em;
+      }
+
+      #emotion-controls {
+        margin-top: 2em;
+      }
+      h1 {
+        font-size: 1em;
+        margin: 0;
+        padding: 0;
+      }
     </style>
   </head>
   <body id='debug-page'>
-    <section id='debug'>
-      AREA: <span id='debug-area'>DEBUG</span>
-      <div id='debug-info'></div>
+    <section id='controls'>
+      <h1>Main Controls</h1>
+      <button id='reload'>RELOAD BROWSER</button>
+      <button id='toggleDebug'>SHOW DEBUG</button>
+
+      <button id='soundOff'>SOUND OFF</button>
+      <button id='lightsOff'>LIGHTS OFF</button>
+
+      <div id='volume-holder'>
+        <label for='volume'>Volume</label>
+        <input type='range' id='volume' name='volume' min='0' max='100'>
+      </div>
     </section>
 
-    <section id='controls'>  
+    <section id='emotion-controls'>  
+      <h1>Emotion Controls</h1>
+      <div id='debug-info'></div>
+
       <select id='emotion'>
       </select>
 
@@ -58,11 +91,6 @@
     </section>
     <button id='emotionPick'>SET EMOTION</button><br>
 
-    <button id='toggleDebug'>SHOW DEBUG</button>
-
-    <button id='soundOff'>SOUND OFF</button>
-    <button id='lightsOff'>LIGHTS OFF</button>
-    <button id='reload'>RELOAD BROWSER</button>
 
     <script>
 let emotions;
@@ -103,11 +131,17 @@ $('#toggleDebug').on('click', () => {
   $('#toggleDebug').text(val ? 'HIDE DEBUG' : 'SHOW DEBUG');
   socket.emit('debug:toggle', { val: val});
 });
+$('#volume').on('change', () => {
+  let val = Number($('#volume').val());
+  socket.emit('volume:set', {val: val});
+});
 
 $('#emotion').change(selectEmotion);
 $('#base').on('change', selectBase);
 $('#level').on('change', selectLevel);
 $('#emotionPick').on('click', () => { socket.emit('emotion:pick', curEmotion.name); });
+
+
 
 function selectEmotion() {
   let name = $('#emotion').val();
@@ -156,6 +190,11 @@ function updateInterface() {
   $('#emotion').val(curEmotion.name);
   $('#base').val(curEmotion.base);
   $('#level').val(curEmotion.level);
+  $('#volume').val(curEmotion.volume);
+}
+
+function reload() {
+  window.location.reload();
 }
 
       

@@ -14,7 +14,7 @@ const setup = false;
 if (lights && !setup) {
   v3.discovery.nupnpSearch()
     .then(searchResults => {
-      const host = searchResults[0].ipaddress;
+      const host = '10.1.10.77';//searchResults[0].ipaddress;
       console.log('LIGHTS: hue search successful');
       console.log(searchResults);
       return v3.api.createLocal(host).connect(process.env.HUE_USER);
@@ -64,6 +64,7 @@ if (setup) {
   }
   async function discoverAndCreateUser() {
     const ipAddress = await discoverBridge();
+    console.log(ipAddress);
     // Create an unauthenticated instance of the Hue API so that we can create a new user
     const unauthenticatedApi = await hueApi.createLocal(ipAddress).connect();
     let createdUser;

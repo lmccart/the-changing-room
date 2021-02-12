@@ -1,6 +1,6 @@
 const { DeviceDiscovery, Sonos } = require('sonos');
 
-const volume = 70; // mastervolume
+let volume = 90; // main volume
 const areas = {
   rest: [],
   reflection: []
@@ -40,6 +40,18 @@ const playEmotionReflection = (emotion) => {
   }
 };
 
+const setVolume = (val) => {
+  if (typeof volume !== 'number') return;
+  volume = val;
+  console.log(`SOUND: setting volume to ${val}`);
+  for (let device of areas.rest) {
+    device.setVolume(val);
+  }
+  for (let device of areas.reflection) {
+    device.setVolume(Math.max(val - 5, 0));
+  }  
+}
+
 const stopAll = () => {
   console.debug('stop sound');
   for (let device of areas.rest) {
@@ -62,4 +74,6 @@ function hasDevice(device) {
 
 module.exports.playEmotion = playEmotion;
 module.exports.playEmotionReflection = playEmotionReflection;
+module.exports.setVolume = setVolume;
 module.exports.stopAll = stopAll;
+module.exports.volume = volume;
