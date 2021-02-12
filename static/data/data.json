@@ -25,7 +25,7 @@
   "colors": {
     "afraid": [["#69161e", "#d8a0a1"], ["#69161e", "#abd3b1"], ["#69161e", "#cbc6eb"]],
     "alive": [["#789751", "#ffd8b5"], ["#789751", "#ec9de3"], ["#789751", "#9dd0ff"]],
-    "angry": [["#ec2024", "#a5a5a5"], ["#ec2024", "#f4b9e4"], ["#ec2024", "#97b1bf"]],
+    "angry": [["#ec2024", "#a5a5a5"], ["#ec2024", "#97b1bf"], ["#ec2024", "#4f2549"]],
     "confused": [["#31dafd", "#b4e4c5"], ["#31dafd", "#ffdfa2"], ["#31dafd", "#ebffd8"]],
     "depressed": [["#3c4363", "#e9bfe6"], ["#3c4363", "#cee9ac"], ["#3c4363", "#b6c0ff"]],
     "envious": [["#80de55", "#fad0d0"], ["#80de55", "#f0e622"], ["#80de55", "#cef8f4"]],
@@ -33,7 +33,7 @@
     "helpless": [["#4f2549", "#f2ceee"], ["#4f2549", "#ffe3be"], ["#4f2549", "#cef2f2"]],
     "hurt": [["#b76a34", "#f0bfc0"], ["#b76a34", "#77ac8f"], ["#b76a34", "#7798ac"]],
     "indifferent": [["#5dbe9d", "#e1d8ff"], ["#5dbe9d", "#f2ceee"], ["#5dbe9d", "#ffdfa2"]],
-    "interested": [["#b1cd54", "#f0b5ff"], ["#b1cd54", "#ffd8b5"], ["#b1cd54", "#b5d1ff"]],
+    "interested": [["#b1cd54", "#69161e"], ["#b1cd54", "#b76a34"], ["#b1cd54", "#3e98d4"]],
     "judgemental": [["#f16a29", "#cbc6eb"], ["#f16a29", "#f2b3eb"], ["#f16a29", "#c4e861"]],
     "loving": [["#ec2490", "#cbc6eb"], ["#ec2490", "#9efde1"], ["#ec2490", "#ffb0a0"]],
     "open": [["#3e98d4", "#ffb0a0"], ["#3e98d4", "#f2ceee"], ["#3e98d4", "#ffede9"]],
