@@ -33,10 +33,10 @@ const playEmotion = (emotion) => {
   if (!lights || !lightsInit) return;
   
   let hex = colors[emotion.base][emotion.level-1][0].substring(1);
-  let avgHex = avgcolor(hex, '#FFFFFF');
+  let avgHex = avgcolor(hex, 'FFFFFF', 0.3 + emotion.level*0.1);
   let cie = hex2cie(avgHex);
 
-  let sat = emotion.level * 30 + 164;
+  let sat = 0;//emotion.level * 8 + 13;
   console.log(`LIGHTS: Setting group light state to ${hex} ${sat}`);
   const state = new GroupLightState().on().xy(cie.x, cie.y).sat(sat).brightness(100).transitiontime(10);
   api.groups.setGroupState(0, state)
@@ -126,20 +126,20 @@ function hex2cie(hex) {
 	return {x: Number(x), y: Number(y)};
 }
 
-function avgcolor(color1,color2){
-  var avg  = function(a,b){ return (a+b)/2; },
-    t16  = function(c){ return parseInt((''+c).replace('#',''),16) },
-    hex  = function(c){ var t = (c>>0).toString(16);
-                        return t.length == 2 ? t : '0' + t },
-    hex1 = t16(color1),
-    hex2 = t16(color2),
-    r    = function(hex){ return hex >> 16 & 0xFF},
-    g    = function(hex){ return hex >> 8 & 0xFF},
-    b    = function(hex){ return hex & 0xFF},
-    res  = '#' + hex(avg(r(hex1),r(hex2))) 
-                + hex(avg(g(hex1),g(hex2))) 
-                + hex(avg(b(hex1),b(hex2)));
-  return res;
+function avgcolor(color1, color2, ratio){
+  var hex = function(x) {
+      x = x.toString(16);
+      return (x.length == 1) ? '0' + x : x;
+  };
+  
+  var r = Math.ceil(parseInt(color1.substring(0,2), 16) * ratio + parseInt(color2.substring(0,2), 16) * (1-ratio));
+  var g = Math.ceil(parseInt(color1.substring(2,4), 16) * ratio + parseInt(color2.substring(2,4), 16) * (1-ratio));
+  var b = Math.ceil(parseInt(color1.substring(4,6), 16) * ratio + parseInt(color2.substring(4,6), 16) * (1-ratio));
+  
+  var middle = hex(r) + hex(g) + hex(b);
+  console.log(r, g, b);
+  console.log(color1, color2, middle);
+  return middle;
 }
 
 const stopAll = () => {

@@ -87,9 +87,9 @@ let memories_fadein_duration = 500;
 //////// The memory sequence starts.
 
 // Each memory arrives at this interval,
-let num_memories = 25;
+let num_memories = 30;
 
-let memory_interval = 4000;
+let memory_interval = 2500;
 
 // and fades in
 let each_memory_fadein_duration = 500;

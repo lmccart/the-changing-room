@@ -37,6 +37,7 @@ let emotions;
 let timer;
 let timer_to_idle;
 let hand_interval;
+let isSwiping = 0;
 
 window.init = () => {
   //READ IN EMOTION JSON
@@ -53,11 +54,12 @@ window.init = () => {
           let emotion_div = $('<div>', {
             'id': `option-${emotion}`,
             'class': 'emotion', 
-            text: `${emotion}`,
-            'click': function() {
-              socket.emit('emotion:pick', `${emotion}`);
-            }
-          });
+            text: `${emotion}`});
+            emotion_div.on('touchend', (e) => {
+              if (isSwiping < 10) {
+                socket.emit('emotion:pick', `${emotion}`);
+              }
+            });
           $('#scroll_joined').append(emotion_div);
         });
       socket.on('emotion:update', updateEmotion);
@@ -67,6 +69,13 @@ window.init = () => {
 
       // setInterval(testTrigger, 10 * 60 * 1000); // test every 10 mins
     });
+
+  $(document).on('touchstart', () => { 
+    isSwiping = 0; 
+  });
+  $(document).on('touchmove', () => { 
+    isSwiping++; 
+  });
 
   // READ IN SELECTION TEXT
   fetch(sel_txt_url)
@@ -160,6 +169,11 @@ function selection_txt_parse(sel_intro_content) {
 
 ////////////////// JOINED MODE
 function joinedmode() {
+  $('body').addClass('notouch').delay(1000).queue(next => {
+    $('body').removeClass('notouch');
+    next();
+  });
+
   $('#wrapper_joined').stop(true).fadeIn(fade_time, function() {
     scrollToEmotion(curEmotion.name, curEmotion.base).then(joinedTimer);
   });
