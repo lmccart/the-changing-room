@@ -56,7 +56,7 @@ window.init = () => {
             'class': 'emotion', 
             text: `${emotion}`});
             emotion_div.on('touchend', (e) => {
-              if (isSwiping < 10) {
+              if (isSwiping < 5) {
                 socket.emit('emotion:pick', `${emotion}`);
               }
             });

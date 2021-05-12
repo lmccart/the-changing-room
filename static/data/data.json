@@ -22,6 +22,26 @@
       "display": "upstairs hallway"
     }
   },
+  "lights": {
+    "afraid": "#ff808c",
+    "alive": "#b0ff4d",
+    "angry": "#ff808c",
+    "confused": "#1cd9ff",
+    "depressed": "#6f758f",
+    "envious": "#aad696",
+    "happy": "#f7f28f",
+    "helpless": "#b07da8",
+    "hurt": "#bd8d6c",
+    "indifferent": "#84bdaa",
+    "interested": "#b8c97f",
+    "judgemental": "#f5a57d",
+    "loving": "#fc92cb",
+    "open": "#84b2d1",
+    "peaceful": "#dec0fc",
+    "positive": "#fcd89d",
+    "sad": "#7e839e",
+    "strong": "#8c7473"
+  },
   "colors": {
     "afraid": [["#69161e", "#d8a0a1"], ["#69161e", "#abd3b1"], ["#69161e", "#cbc6eb"]],
     "alive": [["#789751", "#ffd8b5"], ["#789751", "#ec9de3"], ["#789751", "#9dd0ff"]],

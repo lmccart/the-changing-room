@@ -1,7 +1,7 @@
 const v3 = require('node-hue-api').v3;
 const GroupLightState = v3.lightStates.GroupLightState;
 const fs = require('fs');
-const colors = JSON.parse(fs.readFileSync('static/data/data.json'))['colors'];
+const colors = JSON.parse(fs.readFileSync('static/data/data.json'))['lights'];
 let api;
 const lights = true;
 let lightsInit = false;
@@ -32,9 +32,9 @@ const playEmotion = (emotion) => {
   curEmotion = emotion;
   if (!lights || !lightsInit) return;
   
-  let hex = colors[emotion.base][emotion.level-1][0].substring(1);
-  let avgHex = avgcolor(hex, 'FFFFFF', 0.3 + emotion.level*0.1);
-  let cie = hex2cie(avgHex);
+  let hex = colors[emotion.base].substring(1);
+  // let avgHex = avgcolor(hex, 'FFFFFF', 0.65 + emotion.level*0.05);
+  let cie = hex2cie(hex);
 
   let sat = 0;//emotion.level * 8 + 13;
   console.log(`LIGHTS: Setting group light state to ${hex} ${sat}`);
