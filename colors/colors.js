@@ -5,6 +5,7 @@ fetch('/static/data/data.json')
   renderColors(data.colors);
 });
 
+
 function renderColors(data) {
   for (let e in data) {
     let emotionDiv = $(`<div id='${e}-colors' class='emotion-div'></div>`);
@@ -17,6 +18,20 @@ function renderColors(data) {
       let image = generateImage(e, p, pair);
       emotionDiv.append(image);
     }
+    const label = `
+    <p style="font-size:80%">
+    base color: ${hexToRgb(data[e][0][0]).r}, ${hexToRgb(data[e][0][0]).g}, ${hexToRgb(data[e][0][0]).b} /
+    accent 1: ${hexToRgb(data[e][0][1]).r}, ${hexToRgb(data[e][0][1]).g}, ${hexToRgb(data[e][0][1]).b} / 
+    accent 2: ${hexToRgb(data[e][1][1]).r}, ${hexToRgb(data[e][1][1]).g}, ${hexToRgb(data[e][1][1]).b} /
+    accent 3: ${hexToRgb(data[e][2][1]).r}, ${hexToRgb(data[e][2][1]).g}, ${hexToRgb(data[e][2][1]).b}
+    </p>
+    `;
+    $(emotionDiv).append(label);
+
+
+
+
+
   }
 }
 
@@ -101,6 +116,7 @@ function addSvgFilterForElement($imgEl, arrayOfColors) {
           </feComponentTransfer>
       </filter>
     </svg>`;
+    
 
   // add avg filter to body
   $('body').append(svg);

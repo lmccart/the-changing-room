@@ -12,10 +12,11 @@ http.listen(3001, () => { console.log('http listening on *:3001'); });
 https.listen(3000, () => { console.log('https listening on *:3000'); });
 const io = require('socket.io')(https);
 
-const Sound = require('./sound/sound');
-const Lights = require('./lights');
+// const Sound = require('./sound/sound-sonos');
+const Sound = require('./sound/server-sound-node');
+const Lights = require('./server-lights');
 
-const { getChatSubData } = require('./fileUtils');
+const { getChatSubData } = require('./server-fileUtils');
 let chatSubs;
 getChatSubData().then(data => chatSubs = data).catch(err => console.log('error', err));
 
@@ -61,6 +62,8 @@ io.on('connection', (socket) => {
   socket.on('lights:off', Lights.stopAll);
   socket.on('debug:reload', msg => { io.emit('debug:reload', msg); });
   socket.on('volume:set', msg => { Sound.setVolume(msg.val); });
+
+  Sound.init(socket, curEmotion);
 });
 
 // SERVER SETUP
@@ -104,7 +107,7 @@ function setEmotion(emotionName, init) {
 function restartReflectionAudio() {
   let opt = { 'seed' : Math.round( Math.random() * 10000 )};
   io.emit('reflection:restart', opt); 
-  Sound.playEmotionReflection(curEmotion);
+  // Sound.playEmotionReflection(curEmotion);
 }
 
 function handleChat(data) {
@@ -129,13 +132,13 @@ function handleChat(data) {
 function generateBases() {
   let bases = [];
   Object.keys(emotions)
-  .sort()
-  .forEach((emotion, i) => {
-    let base = emotions[emotion].base;
-    if (!bases.includes(base)) {
-      bases.push(base);
-    }
-  });
+    .sort()
+    .forEach((emotion, i) => {
+      let base = emotions[emotion].base;
+      if (!bases.includes(base)) {
+        bases.push(base);
+      }
+    });
   return bases;
 }
 

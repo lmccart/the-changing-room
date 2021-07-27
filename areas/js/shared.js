@@ -2,14 +2,26 @@ import $ from 'jquery';
 import { getTextColorForBackground, addSvgFilterForElement } from './lib/imageColorUtils.js';
 
 
+let debugScreenTime = 5;//5 * 60 * 1000;
+
 window.loadingDur = 6000;
 window.loadingFadeDur = 300;
 
 window.socket = io();
 window.socket.on('debug:toggle', debugToggle);
 window.socket.on('debug:reload', reload);
+window.socket.on('sound:play', playSound);
+window.socket.on('sound:stop', stopSound);
 
 document.title = $('#debug-area').text();
+
+let urlParams = new URLSearchParams(window.location.search);
+let sound;
+let soundType = urlParams.get('sound');
+if (soundType) {
+  sound = new Audio();
+}
+
 
 // getting areas and colors from the data file
 fetch('/static/data/data.json')
@@ -29,6 +41,7 @@ fetch('/static/data/data.json')
 
     if (window.init) {
       window.init(areaData);
+      $('#debug-screen').on('click', debugToggle);
     }
   });
 
@@ -118,7 +131,7 @@ function appendDebug() {
  
   setTimeout(function() {
     $('#debug-screen').hide();
-  }, 5 * 60 * 1000);
+  }, debugScreenTime);
 }
 
 // for hot reloading
@@ -133,4 +146,22 @@ function debugToggle(msg) {
 
 function reload() {
   window.location.reload();
+}
+
+function playSound(data) {
+  console.log(soundType, data);
+  if (!sound) return;
+  sound.pause();
+  if ((soundType === 'reflection' && data.reflection) || (soundType === 'environment' && !data.reflection)) {
+    console.log(`playing ${data.track}`);
+    sound.src = data.track;
+    sound.volume = data.vol;
+    console.log(sound);
+    sound.play();
+  }
+}
+
+function stopSound(url) {
+  if (!sound) return;
+  sound.pause();
 }
