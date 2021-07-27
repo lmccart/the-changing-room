@@ -68,11 +68,8 @@
 ## Install Notes
 
 * OCA1 MacPro will be driving the 4 Passive Influence Monitors.
-User: Venessa Castagnoli 1, Pwd: OCA2020
 * OCA2 MacPro is driving the large projector in the main floor, and the stitched projection.
-User: Venessa Castagnoli 2, Pwd: OCA2020
 * OCA3 MacPro will be driving the 4 touch-screen monitors.
-User: Venessa Castagnoli 3, Pwd: OCA2020
 * OCA4 (TBD Mac) will be driving the 2 projections in the Conversation Room 2
 
 ### Mac Setup
