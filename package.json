@@ -11,6 +11,7 @@
     "build": "./node_modules/.bin/webpack"
   },
   "dependencies": {
+    "audio-play": "^2.3.1",
     "babel-eslint": "^10.1.0",
     "blob-polyfill": "^4.0.20200601",
     "dat.gui": "^0.7.7",

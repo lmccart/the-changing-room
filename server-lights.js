@@ -3,7 +3,7 @@ const GroupLightState = v3.lightStates.GroupLightState;
 const fs = require('fs');
 const colors = JSON.parse(fs.readFileSync('static/data/data.json'))['lights'];
 let api;
-const lights = true;
+const lights = false;//true;
 let lightsInit = false;
 let curEmotion;
 

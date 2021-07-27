@@ -22,17 +22,33 @@
   - `mkcert OCA2.local localhost`
 
 ## Repository Structure
+
+### Client
 * `areas/` holds all served files related to the 7 different areas of the installation.
   - `areas/js/shared.js` includes some helper functions that get used on multiple pages.
   - `areas/js/lib/` contains extra script files imported by the main area scripts.
-* `logs/` holds all console and chat logs. Log files are rolled over daily. [log4js-node](https://github.com/log4js-node/log4js-node) handles the logging.
-* `install/` holds script files for installation boot. [multibrowse](https://github.com/foxxyz/multibrowse) is used to open full-screen browser windows over multiple monitor setups.
 * `dist/` holds the served html/js/css files after they have been compiled by webpack.
-* `static/` holds static files that get served directly (images, txt, etc).
+* `images/` should contain all images and videos (see Mac setup section for where to place files).
+* `sound/sounds/` contains the sound files played by either the server or client depending on soundType.
+* `static/` holds static files that get served directly to the client (data, txt, etc), but because it's copied in build, it does not hold large files (images, videos, audio).
   - These files can be reached by URL in html, css, js `/static/filename`.
-  - Fonts are located in `static/fonts/` and are ignored by git, so you will need to add them (message sam if you need the link to the files)
-* `server.js` is the main server file
+  - `static/data/` holds all text and content data for installation. It does not include `all-eomtions.json` because this is used server-side only.
+  - Fonts are located in `static/fonts/` and are ignored by git, so you will need to add them
 
+### Server
+* `server.js` is the main server file.
+* `server-lights.js` is the main lights server file.
+* `server-fileUtils.js` is the main fileUtils file.
+* `sound/` contains the main sound server files.
+  * `sound/server-sound-*` are three different options for playing sound. See the README in the sound folder for more info.
+  * `sound/sounds/` contains the sound files played by either the server or client depending on soundType.
+
+### Utils
+* `colors/` holds utils for testing colors.
+* `install/` holds script files for installation boot. [multibrowse](https://github.com/foxxyz/multibrowse) is used to open full-screen browser windows over multiple monitor setups.
+* `logs/` holds all console and chat logs. Log files are rolled over daily. [log4js-node](https://github.com/log4js-node/log4js-node) handles the logging.
+* `photoshop/` holds util scripts for processing images.
+  
 
 ## Overview
 * This software is designed to work without outside internet connection. Server and all clients will be on the same LAN.
@@ -65,12 +81,7 @@
 * https://github.com/peter-murray/node-hue-api#readme
 * https://developers.meethue.com/develop/get-started-2/
   
-## Install Notes
 
-* OCA1 MacPro will be driving the 4 Passive Influence Monitors.
-* OCA2 MacPro is driving the large projector in the main floor, and the stitched projection.
-* OCA3 MacPro will be driving the 4 touch-screen monitors.
-* OCA4 (TBD Mac) will be driving the 2 projections in the Conversation Room 2
 
 ### Mac Setup
 1. System Prefs
@@ -87,8 +98,8 @@
    * [Add key to GitHub](https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/adding-a-new-ssh-key-to-your-github-account)
    * Clone respository: `cd ~/Desktop && git clone git@github.com:lmccart/the-changing-room.git`
    * Install dependencies: `cd the-changing-room && npm install`
-   * Add [font files](https://drive.google.com/file/d/1uY_hy7aX85moy8OlNFx_nO7liEZoGIL-/view?usp=sharing) to `static/fonts/` (should look like `static/fonts/ABC...`)
-   * Add [image files](https://drive.google.com/file/d/1SsSHYPwk1jwX-A4SABYmn7RZQqwPsv2_/view?usp=sharing) to `images/` (should look like `images/angry/image file name.jpg`)
+   * Add [font files](#) to `static/fonts/` (should look like `static/fonts/ABC...`)
+   * Add [image files](#) to `images/` (should look like `images/angry/image file name.jpg`)
    * Add [video files](#) to `images/videos`
    * Add [popup files](#) to `images/popups/` 
    * Add [sound files](#)to `sound/sounds/`
@@ -105,3 +116,11 @@
    * Testing:
      * `launchctl start com.TCR.plist`
      * `launchctl stop com.TCR.plist`
+
+
+## TODO
+* Add feature for mode switching on big projection (and ipads?)
+* Write install notes
+
+
+## Install Notes

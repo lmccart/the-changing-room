@@ -23,6 +23,12 @@ DeviceDiscovery((foundDevice) => {
   });
 });
 
+
+const init = (s, e) => {
+  return this;
+};
+
+
 const playEmotion = (emotion) => {
   if (!areas.rest) return;
   let track = process.env.HTTP_SERVER + 'sound/sounds/' + emotion.base + '.flac';
@@ -72,6 +78,7 @@ function hasDevice(device) {
   return false;
 }
 
+module.exports.init = init;
 module.exports.playEmotion = playEmotion;
 module.exports.playEmotionReflection = playEmotionReflection;
 module.exports.setVolume = setVolume;
