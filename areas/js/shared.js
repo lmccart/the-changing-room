@@ -2,6 +2,8 @@ import $ from 'jquery';
 import { getTextColorForBackground, addSvgFilterForElement } from './lib/imageColorUtils.js';
 
 
+let debugScreenTime = 5;//5 * 60 * 1000;
+
 window.loadingDur = 6000;
 window.loadingFadeDur = 300;
 
@@ -118,7 +120,7 @@ function appendDebug() {
  
   setTimeout(function() {
     $('#debug-screen').hide();
-  }, 5 * 60 * 1000);
+  }, debugScreenTime);
 }
 
 // for hot reloading

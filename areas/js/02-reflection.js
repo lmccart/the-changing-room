@@ -118,7 +118,7 @@ window.init = () => {
   setScreen();
   loadData(() => {
     socket.on('emotion:update', updateEmotionCurried(() => {
-      if (thisScreenParams.id === 1) { 
+      if (thisScreenParams.id === 1 || thisScreenParams.id === 999) { 
         socket.emit('reflection:end');
       }
     }));
@@ -183,10 +183,10 @@ function setScreen() {
   if (screenNumber < 3) {
     $('#wrapper').addClass('screen-' + screenNumber);
     $('#wrapper').addClass('partialscreen');
-    adjustScreen();
   } else {
     $('#wrapper').addClass('fullscreen');
   }
+  adjustScreen();
   $('#area-extra').text(screenParams[screenNumber].display);
 }
 
@@ -766,7 +766,7 @@ async function queueEvents(timeline) {
   }
 
   timeline.add({ time: timeMarker, event: function() { 
-    if (thisScreenParams.id === 1) { 
+    if (thisScreenParams.id === 1 || thisScreenParams.id === 999) { 
       socket.emit('reflection:end');
     }
   } });
