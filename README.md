@@ -118,9 +118,3 @@
      * `launchctl stop com.TCR.plist`
 
 
-## TODO
-* Add feature for mode switching on big projection (and ipads?)
-* Write install notes
-
-
-## Install Notes
