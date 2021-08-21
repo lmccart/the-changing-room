@@ -14,7 +14,7 @@ const io = require('socket.io')(https);
 let socket;
 
 // const Sound = require('./sound/sound-sonos');
-const Sound = require('./sound/server-sound-node');
+const Sound = require('./sound/server-sound-browser');
 const Lights = require('./server-lights');
 
 const { getChatSubData } = require('./server-fileUtils');
@@ -93,6 +93,7 @@ app.get('/images/:baseEmotion/manifest', (req, res) => {
 });
 
 function setEmotion(emotionName, init) {
+  console.log('SET EMOTION')
   curEmotion = emotions[emotionName];
   curEmotion.volume = Sound.volume;
   curEmotion.seed = Math.round(Math.random() * 10000);
@@ -103,11 +104,6 @@ function setEmotion(emotionName, init) {
     fs.writeFileSync('current.txt', emotionName);
     if (rotating_mode === 'passive') Sound.playEmotion(curEmotion);
     else Sound.playEmotionReflection(curEmotion);
-  } else { // give time for sonos to find itself
-    setTimeout(() => {
-      if (rotating_mode === 'passive') Sound.playEmotion(curEmotion);
-      else Sound.playEmotionReflection(curEmotion);
-    }, 10000);
   }
 }
 

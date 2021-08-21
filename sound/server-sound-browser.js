@@ -3,7 +3,6 @@ let volume = 50;
 
 const init = (s, e) => {
   socket = s;
-  playEmotion(e);
   return this;
 };
 

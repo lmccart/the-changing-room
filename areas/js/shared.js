@@ -17,7 +17,7 @@ document.title = $('#debug-area').text();
 
 let urlParams = new URLSearchParams(window.location.search);
 let sound;
-let soundType = urlParams.get('sound');
+let soundType = window.location.href.includes('reflection') ? 'reflection' : 'environment';
 if (soundType) {
   sound = new Audio();
 }
@@ -152,6 +152,7 @@ function playSound(data) {
   console.log(soundType, data);
   if (!sound) return;
   sound.pause();
+  if (!window.soundEnabled) return;
   if ((soundType === 'reflection' && data.reflection) || (soundType === 'environment' && !data.reflection)) {
     console.log(`playing ${data.track}`);
     sound.src = data.track;

@@ -8,6 +8,8 @@ import './shared.js';
 import Timeline from './lib/Timeline.js';
 import { getImgUrls, addSvgFilterForElement, getTextColorForBackground } from './lib/imageColorUtils.js';
 
+window.soundEnabled = true;
+
 let curEmotion;
 let primaryColors;
 let backgroundTextColor;

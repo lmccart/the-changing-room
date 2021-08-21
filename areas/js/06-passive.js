@@ -8,6 +8,8 @@ import '../css/06-passive.scss';
 import './shared.js';
 import { getImgUrls, addSvgFilterForElement, getTextColorForBackground, getPopupUrls } from './lib/imageColorUtils.js';
 
+window.soundEnabled = true;
+
 const basePopupRate = 3000; // adjusted based on emotion intensity
 const minDisplayTime = 2000; // minimum time a popup shows on screen
 const displayVariation = 1000;
