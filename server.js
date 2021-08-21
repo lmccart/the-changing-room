@@ -11,6 +11,7 @@ const https = require('https').createServer({key: key, cert: cert}, app);
 http.listen(3001, () => { console.log('http listening on *:3001'); });
 https.listen(3000, () => { console.log('https listening on *:3000'); });
 const io = require('socket.io')(https);
+let socket;
 
 // const Sound = require('./sound/sound-sonos');
 const Sound = require('./sound/server-sound-node');
@@ -44,8 +45,12 @@ const imagesManifest = generateImagesManifest();
 const emotionName = fs.readFileSync('current.txt', {encoding:'utf8', flag:'r'}).replace(/\s/g, '');  // remove whitespace
 setEmotion(emotionName, true);
 
+let rotating_mode = 'passive';
+// setInterval(toggleRotating, 5000);
+
 // SOCKET
 io.on('connection', (socket) => {
+  socket = socket;
   socket.emit('emotion:update', curEmotion);
 
   socket.on('disconnect', () => { });
@@ -96,18 +101,20 @@ function setEmotion(emotionName, init) {
   if (!init) {
     io.emit('emotion:update', curEmotion);
     fs.writeFileSync('current.txt', emotionName);
-    Sound.playEmotion(curEmotion);
+    if (rotating_mode === 'passive') Sound.playEmotion(curEmotion);
+    else Sound.playEmotionReflection(curEmotion);
   } else { // give time for sonos to find itself
     setTimeout(() => {
-      Sound.playEmotion(curEmotion);
+      if (rotating_mode === 'passive') Sound.playEmotion(curEmotion);
+      else Sound.playEmotionReflection(curEmotion);
     }, 10000);
   }
 }
 
 function restartReflectionAudio() {
-  let opt = { 'seed' : Math.round( Math.random() * 10000 )};
-  io.emit('reflection:restart', opt); 
-  // Sound.playEmotionReflection(curEmotion);
+  toggleRotating();
+  let opt = { 'seed' : Math.round(Math.random() * 10000)};
+  io.emit('reflection:restart', opt);
 }
 
 function handleChat(data) {
@@ -173,6 +180,12 @@ function getAllFiles(dir) {
     list.push(staticURLPrefix + encodeURI(file));
   });
   return list;
+}
+
+function toggleRotating() {
+  if (rotating_mode === 'passive') rotating_mode = 'reflection';
+  else rotating_mode = 'passive';
+  io.emit('rotating:mode', {mode: rotating_mode});
 }
 
 // CLEANUP

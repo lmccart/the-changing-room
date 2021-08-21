@@ -1,0 +1,29 @@
+@import './shared.scss';
+
+iframe {
+  border: none;
+  outline: none;
+  overflow: hidden;
+  float: left;
+}
+
+#passive-iframe {
+  width: 100vw;
+  height: 100vh;
+}
+
+#reflection-section iframe {
+  height: 100vh;
+}
+
+#reflection0-iframe {
+  width: 1920px;
+}
+
+#reflection1-iframe {
+  width: 1920px;
+}
+
+// #reflection2-iframe {
+//   width: 1000px;
+// }

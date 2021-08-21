@@ -386,7 +386,7 @@ function PopupFactory(emotionObj) {
     let fs = $element.css('font-size');
     fs = fs.substring(0, fs.length - 2);
     fs -= (screenNumber * 3);
-    console.log(fs);
+    // console.log(fs);
     $element.css('font-size', fs);
    
     if (popup.type === POPUP.EXTRA && factoryThis.activeElements.length < 7) {
@@ -410,7 +410,7 @@ function PopupFactory(emotionObj) {
     let mover = popup ? popup : pickRandom(factoryThis.activeElements);
     let slideTime = Math.random() * 1000 + 200;
     let randomXY = factoryThis.getRandomPosition(mover.$element);
-    console.log(mover);
+    // console.log(mover);
     if (mover.type === POPUP.EXTRA || mover.type === POPUP.TEXT) {
       mover.$element.animate({
         top: randomXY[0],

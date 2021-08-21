@@ -1,25 +1,28 @@
 {
   "areas": {
     "00-intro": {
-      "display": "main gallery projector"
+      "display": "front room screen"
     },
     "01-faces": {
-      "display": "main gallery ipad"
+      "display": "seating area"
     },
     "02-reflection": {
-      "display": "digital art gallery"
+      "display": "main projection rotating"
     },
     "03-selection": {
-      "display": "artist studio 1 touchscreens"
+      "display": "vertical touchscreens"
     },
     "04-convo1": {
-      "display": "stair landing ipad"
+      "display": "seating area tablets"
     },
     "05-convo2": {
-      "display": "studio 2 projector"
+      "display": "seating area screens"
     },
     "06-passive": {
-      "display": "upstairs hallway"
+      "display": "main projection rotating"
+    },
+    "07-rotating": {
+      "display": "mian projection rotating"
     }
   },
   "lights": {
