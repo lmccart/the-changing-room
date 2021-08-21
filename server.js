@@ -45,12 +45,8 @@ const imagesManifest = generateImagesManifest();
 const emotionName = fs.readFileSync('current.txt', {encoding:'utf8', flag:'r'}).replace(/\s/g, '');  // remove whitespace
 setEmotion(emotionName, true);
 
-let rotating_mode = 'passive';
-// setInterval(toggleRotating, 5000);
-
 // SOCKET
 io.on('connection', (socket) => {
-  socket = socket;
   socket.emit('emotion:update', curEmotion);
 
   socket.on('disconnect', () => { });
@@ -68,7 +64,7 @@ io.on('connection', (socket) => {
   socket.on('debug:reload', msg => { io.emit('debug:reload', msg); });
   socket.on('volume:set', msg => { Sound.setVolume(msg.val); });
 
-  Sound.init(socket, curEmotion);
+  Sound.setup(io, curEmotion);
 });
 
 // SERVER SETUP
@@ -102,13 +98,12 @@ function setEmotion(emotionName, init) {
   if (!init) {
     io.emit('emotion:update', curEmotion);
     fs.writeFileSync('current.txt', emotionName);
-    if (rotating_mode === 'passive') Sound.playEmotion(curEmotion);
-    else Sound.playEmotionReflection(curEmotion);
+    Sound.playEmotion(curEmotion);
+    Sound.playEmotionReflection(curEmotion);
   }
 }
 
 function restartReflectionAudio() {
-  toggleRotating();
   let opt = { 'seed' : Math.round(Math.random() * 10000)};
   io.emit('reflection:restart', opt);
 }
@@ -176,12 +171,6 @@ function getAllFiles(dir) {
     list.push(staticURLPrefix + encodeURI(file));
   });
   return list;
-}
-
-function toggleRotating() {
-  if (rotating_mode === 'passive') rotating_mode = 'reflection';
-  else rotating_mode = 'passive';
-  io.emit('rotating:mode', {mode: rotating_mode});
 }
 
 // CLEANUP

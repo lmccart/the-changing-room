@@ -3,7 +3,7 @@ const GroupLightState = v3.lightStates.GroupLightState;
 const fs = require('fs');
 const colors = JSON.parse(fs.readFileSync('static/data/data.json'))['lights'];
 let api;
-const lights = false;//true;
+const lights = true;
 let lightsInit = false;
 let curEmotion;
 
@@ -14,7 +14,7 @@ const setup = false;
 if (lights && !setup) {
   v3.discovery.nupnpSearch()
     .then(searchResults => {
-      const host = '10.1.10.77';//searchResults[0].ipaddress;
+      const host = process.env.HUE_IP;
       console.log('LIGHTS: hue search successful');
       console.log(searchResults);
       return v3.api.createLocal(host).connect(process.env.HUE_USER);
