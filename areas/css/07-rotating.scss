@@ -1,9 +1,13 @@
 @import './shared.scss';
 
+body {
+  background: black;
+}
+
 section {
   position: absolute;
-  top: 240px;
-  left: 80px;
+  top: 225px;
+  left: 72px;
 }
 
 
@@ -15,13 +19,13 @@ iframe {
 }
 
 #passive-iframe {
-  width: 1760px;
-  height: 500px;
+  width: 1766px;
+  height: 520px;
 }
 
 #reflection-section iframe {
-  width: 880px;
-  height: 500px;
+  width: 883px;
+  height: 520px;
 }
 
 
