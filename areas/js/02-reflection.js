@@ -33,9 +33,9 @@ let skipToMemories = false;
 //// Screen parameters
 
 const screenParams = {
-  0: { id: 0, name: 'LEFT', width: 1920, height: 1080, display: 'left projector'},
-  1: { id: 1, name: 'CENTER', width: 1920, height: 1080, display: 'center projector' },
-  2: { id: 2, name: 'RIGHT', width: 1920, height: 1080, display: 'right projector' },
+  0: { id: 0, name: 'LEFT', width: 960, height: 880, display: 'left projector'},
+  1: { id: 1, name: 'CENTER', width: 960, height: 880, display: 'center projector' },
+  2: { id: 2, name: 'RIGHT', width: 960, height: 880, display: 'right projector' },
   999: { id: 999, name: 'FULLSCREEN', width: 0, height: 1080, display: 'fullscreen' },
 };
 screenParams[999].width = screenParams[0].width + screenParams[1].width + screenParams[2].width;

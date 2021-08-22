@@ -1,5 +1,14 @@
 @import './shared.scss';
 
+section {
+  position: absolute;
+  top: 100px;
+  left: 100px;
+  width: 1720px;
+  height: 880px;
+}
+
+
 iframe {
   border: none;
   outline: none;
@@ -8,21 +17,15 @@ iframe {
 }
 
 #passive-iframe {
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: 100%;
 }
 
 #reflection-section iframe {
-  height: 100vh;
+  height: 100%;
+  width: 50%;
 }
 
-#reflection0-iframe {
-  width: 1920px;
-}
-
-#reflection1-iframe {
-  width: 1920px;
-}
 
 // #reflection2-iframe {
 //   width: 1000px;

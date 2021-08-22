@@ -151,10 +151,10 @@ function reload() {
 function playSound(data) {
   console.log('PLAY SOUND');
   if (!sound) return;
-  sound.pause();
   if (!window.soundEnabled) return;
   console.log(soundType, data);
   if ((soundType === 'reflection' && data.reflection) || (soundType === 'environment' && !data.reflection)) {
+    sound.pause();
     console.log(`playing ${data.track}`);
     sound.src = data.track;
     sound.volume = data.vol;
