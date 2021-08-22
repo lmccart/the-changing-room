@@ -107,6 +107,14 @@ function showConvoLoading() {
 }
 
 function typeInstruction(string, iteration) {
+
+  console.log(string, string.length)
+  if (string.length > 60) {
+    $('#instruction').addClass('smaller_convo_text');
+  } else {
+    $('#instruction').removeClass('smaller_convo_text');
+  }
+
   var iteration = iteration || 0;
   
   // Prevent our code executing if there are no letters left
