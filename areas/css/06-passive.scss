@@ -70,7 +70,7 @@ svg {
       position: absolute;
       top: 0.85em;
       right: 1em;
-      font-size: 2em;
+      font-size: 1em;
     }
   }
   
@@ -86,14 +86,14 @@ svg {
     padding: 1em;
     text-transform: uppercase;
     font-weight: 500;
-    font-size: 2em;
+    font-size: 1em;
     text-align: center;
 
     &.solo {
       position: relative;
       padding: 0 1em;
 
-      font-size: 3em;
+      font-size: 1.5em;
       text-transform: none;
       text-align: left;
     }
@@ -112,12 +112,12 @@ svg {
 }
 
 #textBg {
-  font-size: 6vw;
+  font-size: 5vw;
   width: 200vw;
   height: 200vh;
   position: absolute;
-  left: -4vw;
-  top: -42vh;
+  left: -10vw;
+  top: -2vw;
   font-style: italic;
   text-transform: capitalize;
   mix-blend-mode: overlay;
@@ -127,10 +127,28 @@ svg {
 }
 
 #textBg-holder {
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: 100%;
   position: absolute;
   top: 0;
   left: 0;
   overflow: hidden;
+}
+
+#loading h1 {
+  display: inline-block;
+}
+
+.loading-title {
+  margin-right: 0.25em;
+}
+
+.loading-title:after {
+  content: '' !important;
+  animation: none !important;
+}
+
+#loading-emotion:after {
+  content: '\00A0\00A0\00A0';
+  animation: showDots 1s linear infinite;
 }

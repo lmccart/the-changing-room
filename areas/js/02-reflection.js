@@ -476,7 +476,7 @@ function loadMedia(memory, index, i, contrast) {
     memdiv.appendTo('#memory_container');
 
     if (memory.type === 'text') {
-      memory.width = 500;
+      memory.width = 300;
       memdiv.width(memory.width);
       memory.height = memdiv.height();
       resolve(memdiv);
@@ -485,9 +485,9 @@ function loadMedia(memory, index, i, contrast) {
         memory.naturalWidth = memdiv.get(0).naturalWidth;
         memory.naturalHeight = memdiv.get(0).naturalHeight;
         if (memory.naturalWidth / memory.naturalHeight > 0.75) {
-          memory.width = randomBetween(300, 600); // IMAGE SIZE PARAMETERS
+          memory.width = randomBetween(200, 300); // IMAGE SIZE PARAMETERS
         } else {
-          memory.width = randomBetween(200, 300); 
+          memory.width = randomBetween(100, 200); 
         }
         memory.height = memory.naturalHeight * (memory.width / memory.naturalWidth);
         memdiv.width(memory.width);
@@ -578,9 +578,14 @@ function positionMempair(mempair, index) {
   }
 
   // SO now we position the bounding box randomly within the screen
-  bb.screenX = randomBetween(memoryPadding, thisScreenParams.width - bb.width - memoryPadding);
-  bb.screenY = randomBetween(memoryPadding, thisScreenParams.height - bb.height - memoryPadding);
-
+  if (screenNumber === 0) {
+    bb.screenX = randomBetween(memoryPadding, thisScreenParams.width - bb.width - memoryPadding * 0.5);
+    bb.screenY = randomBetween(memoryPadding, thisScreenParams.height - bb.height - memoryPadding);
+  } else {
+    bb.screenX = randomBetween(memoryPadding * 0.5, thisScreenParams.width - bb.width - memoryPadding);
+    bb.screenY = randomBetween(memoryPadding, thisScreenParams.height - bb.height - memoryPadding);
+  }
+ 
   // and then drive memdiv screen locations from that
   mempair.data[0].screenX = m1.screenX = m1.x - bb.x1 + bb.screenX;
   mempair.data[0].screenY = m1.screenY = m1.y - bb.y1 + bb.screenY;

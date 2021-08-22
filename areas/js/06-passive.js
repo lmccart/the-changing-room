@@ -8,9 +8,9 @@ import '../css/06-passive.scss';
 import './shared.js';
 import { getImgUrls, addSvgFilterForElement, getTextColorForBackground, getPopupUrls } from './lib/imageColorUtils.js';
 
-const basePopupRate = 3000; // adjusted based on emotion intensity
-const minDisplayTime = 2000; // minimum time a popup shows on screen
-const displayVariation = 1000;
+const basePopupRate = 2000; // adjusted based on emotion intensity
+const minDisplayTime = 5000; // minimum time a popup shows on screen
+const displayVariation = 5000;
 const overlapAllowance = 0.10; // allows 60% overlap when a new element is created
 const backgroundChangeTime = 20000; // adjusted based on emotion intensity
 const portionFiltered = 1;//0.5; // portion of popups with svg filter applied
@@ -23,10 +23,10 @@ const POPUP = {
 };
 
 const WIDTHS = [
-  [600, 800],
-  [400, 800],
-  [400, 800],
-  [400, 410]
+  [300, 400],
+  [200, 400],
+  [400, 500],
+  [200, 210]
 ];
 
 let curEmotion;
@@ -91,7 +91,7 @@ async function updateInterface(durations) {
   // switchBackgrounds(imgUrls, durations[1] - durations[0] - 500, colors);
   $('body').css('background', `radial-gradient(${colors[1]},${colors[0]})`);
   let s;
-  for (let i = 0; i<200; i++) {
+  for (let i = 0; i < 200; i++) {
     s += curEmotion.name + ' ';
   }
   $('#textBg').hide();
@@ -389,17 +389,17 @@ function PopupFactory(emotionObj) {
     // console.log(fs);
     $element.css('font-size', fs);
    
-    if (popup.type === POPUP.EXTRA && factoryThis.activeElements.length < 7) {
+    if (popup.type === POPUP.EXTRA && factoryThis.activeElements.length < 500) {
       let t = randomXY[0];
       let l = randomXY[1];
       let w = $element.width();
       let h = $element.height();
       let blinkDur = 800; 
       $element.delay(blinkDur / 5)
-      .animate({ width: w * 1.2, height: h * 1.2, top: t - w * .1, left: l - h * .1, fontSize: fs * 1.2}, blinkDur * 0.2)
-      .animate({ width: w, height: h, top: t, left: l, fontSize: fs}, blinkDur * 0.2)
-      .animate({ width: w * 1.2, height: h * 1.2, top: t - w * .1, left: l - h * .1, fontSize: fs * 1.2}, blinkDur * 0.2)
-      .animate({ width: w, height: h, top: t, left: l, fontSize: fs * 1}, blinkDur * 0.2)
+        .animate({ width: w * 1.2, height: h * 1.2, top: t - w * .1, left: l - h * .1, fontSize: fs * 1.2}, blinkDur * 0.2)
+        .animate({ width: w, height: h, top: t, left: l, fontSize: fs}, blinkDur * 0.2)
+        .animate({ width: w * 1.2, height: h * 1.2, top: t - w * .1, left: l - h * .1, fontSize: fs * 1.2}, blinkDur * 0.2)
+        .animate({ width: w, height: h, top: t, left: l, fontSize: fs * 1}, blinkDur * 0.2)
 
     }
 
