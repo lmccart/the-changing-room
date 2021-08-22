@@ -49,8 +49,7 @@ section.main {
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
-  width: 1920px;
-  height: 1080px;
+  height: 880px;
 
   .screen-2 &, .screen-0 & {
     -moz-transform: scaleX(-1);
@@ -93,7 +92,7 @@ section.main {
   align-items: center;
   border: 8px solid white;
   margin: 0.8em;
-  font-size: 8em;
+  font-size: 5em;
   font-weight: 500;
   color: white;
   font-style: italic;
