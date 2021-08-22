@@ -53,6 +53,8 @@ io.on('connection', (socket) => {
   socket.on('emotion:pick', setEmotion);
   socket.on('emotion:get', () => {
     socket.emit('emotion:update', curEmotion);
+    Sound.playEmotion(curEmotion);
+    Sound.playEmotionReflection(curEmotion);
   });
   socket.on('chat:send', handleChat);
   socket.on('reflection:end', restartReflectionAudio);
@@ -89,7 +91,7 @@ app.get('/images/:baseEmotion/manifest', (req, res) => {
 });
 
 function setEmotion(emotionName, init) {
-  console.log('SET EMOTION')
+  console.log('SET EMOTION');
   curEmotion = emotions[emotionName];
   curEmotion.volume = Sound.volume;
   curEmotion.seed = Math.round(Math.random() * 10000);

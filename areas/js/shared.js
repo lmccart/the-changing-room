@@ -12,14 +12,15 @@ window.socket.on('debug:toggle', debugToggle);
 window.socket.on('debug:reload', reload);
 window.socket.on('sound:play', playSound);
 window.socket.on('sound:stop', stopSound);
+window.socket.on('sound:volume', setSoundVolume);
 
 document.title = $('#debug-area').text();
 
-let urlParams = new URLSearchParams(window.location.search);
 let sound;
 let soundType = window.location.href.includes('reflection') ? 'reflection' : 'environment';
 if (soundType) {
   sound = new Audio();
+  sound.loop = true;
 }
 
 
@@ -149,21 +150,30 @@ function reload() {
 }
 
 function playSound(data) {
-  console.log('PLAY SOUND');
-  if (!sound) return;
-  if (!window.soundEnabled) return;
-  console.log(soundType, data);
-  if ((soundType === 'reflection' && data.reflection) || (soundType === 'environment' && !data.reflection)) {
+  if (!sound || !window.soundType) {
+    // console.log('IGNORE SOUND: not listening');
+    return;
+  }
+  else if (window.soundType === data.soundType) {
+    console.log('PLAY SOUND', window.soundType, data);
     sound.pause();
     console.log(`playing ${data.track}`);
     sound.src = data.track;
     sound.volume = data.vol;
     console.log(sound);
     sound.play();
+  } else {
+    // console.log('IGNORE SOUND listening for', window.soundType, 'but received', data.soundType);
+
   }
 }
 
 function stopSound(url) {
   if (!sound) return;
   sound.pause();
+}
+
+function setSoundVolume(data) {
+  if (!sound) return;
+  sound.volume = data.vol;
 }
