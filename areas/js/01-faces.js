@@ -21,23 +21,21 @@ let phrases;
 let emotionPhrases;
 let curPhrase = 0;
 
-let watchdog = 0; // used to delay showing/hiding video
-let faceFound = false;
 let faceInitialized = false;
 
 const coverEl = $('#video-cover');
 const videoEl = $('#face-stream');
 const canvas = document.createElement('canvas');
 
+const resetWaitTime = 5 * 1000;
+let uiResetTimeout;
+
 let net;
 
 window.init = () => {
   colorFrame('white');
   loadText()
-    .then(setupPosenet)
-    .then(_net => {
-      net = _net;
-      console.log(net);
+    .then(() => {
       socket.on('emotion:update', updateEmotion);
       socket.emit('emotion:get');
       $('body').on('click', handleClick);
@@ -45,16 +43,21 @@ window.init = () => {
         e.preventDefault(); 
       }, { passive:false });
     });
-    // enableAutoTTS();
 };
 
 
 window.loadingComplete = () => {
-  if (faceFound) {
-    queueText();
-  }
   $('#hand-container').delay(1000).fadeIn();
 };
+
+
+
+function startResetTimeout() {
+  clearTimeout(uiResetTimeout);
+  uiResetTimeout = setTimeout(showCover, resetWaitTime);
+  console.log('start reset timeout '+uiResetTimeout);
+}
+
 
 function loadText() {
   return new Promise(resolve => {
@@ -95,9 +98,11 @@ function setupPosenet() {
 }
 
 function handleClick(e) {
+  startResetTimeout();
   if (!faceInitialized) {
     setupCamera(e);
   } else {
+    if (coverEl.is(':visible')) coverEl.hide();
     queueText();
   }
 }
@@ -110,40 +115,15 @@ async function setupCamera(e) {
     console.log('connected user media');
     videoEl[0].srcObject = stream;
     videoEl.on('loadeddata', () => {
+      console.log('loaded data');
       resizeLayout();
-      removeCover(true);
-      $('#hand-container').remove();
-      setupFaceDetection(videoEl[0]);
+      removeCover();
       faceInitialized = true;
     });
     
   } catch (e) {
     console.log(e);
   }
-}
-
-function setupFaceDetection(videoEl) {
-  setInterval(() => {
-    net.estimateSinglePose(videoEl, {
-      flipHorizontal: true
-    })
-    .then(function(pose){
-      let hip = (pose.keypoints[11].score + pose.keypoints[12].score) / 2;
-      if (pose.score > 0.15) {
-        watchdog = watchdog < 0 ? 0 : watchdog + 1;
-        if (watchdog > (delaySeconds * 10)) {
-          faceFound = true;
-          removeCover();
-        }
-      } else {
-        watchdog = watchdog > 0 ? 0 : watchdog - 1;
-        if (watchdog < -(delaySeconds * 10)) {
-          faceFound = false;
-          showCover();
-        }
-      }
-    })
-  }, 100);
 }
 
 
@@ -231,6 +211,7 @@ function removeCover(loadCam) {
 }
 
 function showCover() {
+  if (phraseTimeout) clearTimeout(phraseTimeout);
   console.log('show cover');
   colorFrame('white');
   coverEl.show();
@@ -238,8 +219,8 @@ function showCover() {
   if (spellOut === true) {
     spellOut = false;
     console.log('switch off');
-    cleanupText();
   }
+  cleanupText();
 }
 
 function cleanupText() {
@@ -251,6 +232,7 @@ function cleanupText() {
 }
 
 function queueText() {
+  cleanupText();
   curPhrase++;
   if (curPhrase >= emotionPhrases.length) {
     curPhrase = 0;

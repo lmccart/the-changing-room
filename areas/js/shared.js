@@ -2,7 +2,7 @@ import $ from 'jquery';
 import { getTextColorForBackground, addSvgFilterForElement } from './lib/imageColorUtils.js';
 
 
-let debugScreenTime = 5 * 1000;
+let debugScreenTime = 2 * 1000;
 
 window.loadingDur = 6000;
 window.loadingFadeDur = 300;
