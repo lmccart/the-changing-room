@@ -110,7 +110,7 @@ svg {
   .instruction-container {
     width: 100%;
     height: 100%;
-    border: .4vw solid white;
+    border: .7vw solid white;
 
     display: flex;
     align-items: center;
@@ -121,6 +121,10 @@ svg {
 
       width: 90%;
       margin: 0 auto;
+    }
+
+    #instruction.smaller_convo_text {
+      font-size: 6vw;
     }
   }
 }

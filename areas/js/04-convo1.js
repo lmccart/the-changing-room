@@ -2,7 +2,7 @@ import $ from 'jquery';
 import { getTextColorForBackground } from './lib/imageColorUtils.js';
 import '../css/04-convo1.scss';
 import './shared.js';
-import { enableAutoTTS, speak} from './lib/speech.js';
+import { enableAutoTTS, speak} from './lib/speech-responsivevoice.js';
 
 let curEmotion = '';
 let introText = '';

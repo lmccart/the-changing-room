@@ -1,4 +1,7 @@
 @import "./shared.scss";
+body {
+  overflow: hidden;
+}
 
 .backgrounds {
   overflow: hidden;
@@ -112,7 +115,7 @@ svg {
 }
 
 #textBg {
-  font-size: 5vw;
+  font-size: 4.2vw;
   width: 200vw;
   height: 200vh;
   position: absolute;
