@@ -14,7 +14,8 @@ body {
 
   font-weight: bold;
   font-style: italic;
-  font-size: 3.8vw;
+  font-size: 3.1vw;
+  line-height: 1.5;
 }
 
 #intro-text, #message-container {
@@ -37,7 +38,7 @@ body {
     font-family: 'Favorit Mono', monospace;
     font-weight: bold;
     font-style: italic;
-    font-size: 3.8vw;
+    font-size: 6.2vw;
 
     width: 100%;
     height: 100%;
@@ -66,7 +67,7 @@ body {
 
   input {
     position: absolute;
-    bottom: 2vh;
+    bottom: 0;
     right: 2vw;
     font-size: 10vw;
     
@@ -81,7 +82,7 @@ body {
     tap-highlight-color:transparent;
   }
   input.focused {
-    bottom: 60vh;
+    bottom: 0;
   }
   input[type='submit']{
     cursor: pointer;
