@@ -1,5 +1,5 @@
 let io;
-let volume = 50;
+let volume = 100;
 let initialized = false;
 
 const setup = (i, e) => {
