@@ -20,7 +20,7 @@ const separate_scroll_times = [
   125 * 1000,
   52 * 1000
 ];
-let play_speed = 10;
+let play_speed = 1;
 
 let curEmotion;
 
@@ -65,7 +65,7 @@ window.init = () => {
         });
       socket.on('emotion:update', updateEmotion);
       socket.emit('emotion:get');
-      separatemode();
+      separateMode();
       setHandInterval();
 
       // setInterval(testTrigger, 10 * 60 * 1000); // test every 10 mins
@@ -169,11 +169,16 @@ function selection_txt_parse(sel_intro_content) {
 }
 
 ////////////////// JOINED MODE
-function joinedmode() {
+function joinedMode() {
   $('body').addClass('notouch').delay(1000).queue(next => {
     $('body').removeClass('notouch');
     next();
   });
+
+  // reset separate panels
+  for (let s in separate_panels) {
+    scrollUp(`scroll${s}`, true);
+  }
 
   $('#wrapper_joined').stop(true).fadeIn(fade_time, function() {
     scrollToEmotion(curEmotion.name, curEmotion.base).then(joinedTimer);
@@ -201,7 +206,7 @@ function joinedTimer() {
     // console.log('seconds to idle ' + sec_to_idle);
     if (sec_to_idle === -1) {
       clearInterval(timer_to_idle);
-      separatemode();
+      separateMode();
     }
   }, 1000);
 }
@@ -233,7 +238,7 @@ function scrollDown(id) {
   });
 }; 
 
-function scrollUp(id) {
+function scrollUp(id, pause) {
   let el = $(`#${id}`);
   let dur;
   if (id === 'wrapper_joined') {
@@ -244,9 +249,11 @@ function scrollUp(id) {
   el.stop(true).animate({
     scrollTop: 0
   }, dur, 'linear', () => {
-    setTimeout(() => {
-      scrollDown(id);
-    }, scroll_pause_time);
+    if (!pause) {
+      setTimeout(() => {
+        scrollDown(id);
+      }, scroll_pause_time);
+    }
   });
 };
 
@@ -272,20 +279,19 @@ function scrollToEmotion(emotion_name, base_emotion) {
 }
 
 ////////////////// SEPARATE MODE
-function separatemode() {
+function separateMode() {
   $('#wrapper_joined').stop(true).fadeOut(fade_time);
   $('#wrapper_joined').css('display','none');
   $('#wrapper_separate').stop(true).fadeIn(fade_time);
   $('#wrapper_separate').css('display','flex');
-  setTimeout(scroll_separate_panels, 500);
-
+  setTimeout(scrollSeparatePanels, 500);
 }
 
 // detect manual scroll
-$('#wrapper_separate .scroll').on('click wheel DOMMouseScroll mousewheel keyup touchmove', joinedmode);
+$('#wrapper_separate .scroll').on('click wheel DOMMouseScroll mousewheel keyup touchmove', joinedMode);
 
 // auto scrolling
-function scroll_separate_panels() {
+function scrollSeparatePanels() {
   for (let s in separate_panels) {
     setTimeout(() => {
       scrollDown(`scroll${s}`);
