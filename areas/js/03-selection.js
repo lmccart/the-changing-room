@@ -20,7 +20,7 @@ const separate_scroll_times = [
   125 * 1000,
   52 * 1000
 ];
-let play_speed = 10;
+let play_speed = 1;
 
 let curEmotion;
 
