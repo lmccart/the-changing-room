@@ -5,11 +5,11 @@ import './shared.js';
 
 // VARIABLES
 const num_panels = 4;
-const idle_timeout = 30;
+const idle_timeout = 45;
 const scroll_timeout = 5;
 const scroll_down_time = 990000;
 const scroll_up_time = 9000;
-const scroll_pause_time = 1500;
+const scroll_pause_time = 1000;
 const hand_blink_time = 700;
 const hand_delay = 30000;
 const fade_time = 1000;
@@ -17,9 +17,10 @@ const fade_time = 1000;
 const separate_scroll_times = [
   110 * 1000,
   78 * 1000,
-  95 * 1000,
+  125 * 1000,
   52 * 1000
 ];
+let play_speed = 10;
 
 let curEmotion;
 
@@ -192,7 +193,7 @@ function joinedTimer() {
     if (sec === -1) {
       console.log('restart autoscroll');
       clearInterval(timer);
-      scrollDown($('#wrapper_joined'));
+      scrollDown('wrapper_joined');
     }
   }, 1000);
   timer_to_idle = setInterval(function() {
@@ -214,30 +215,37 @@ $('#wrapper_joined').on('click wheel DOMMouseScroll mousewheel keyup touchmove',
   setHandInterval();
 });
 
-function scrollDown(el, scroll_dur) {
-  let dur = scroll_dur;
-  if (!dur) {
-    dur = (1 - ($('#wrapper_joined').scrollTop() / $('#wrapper_joined')[0].scrollHeight)) * scroll_down_time;
+function scrollDown(id) {
+  let el = $(`#${id}`);
+  let dur;
+  if (id === 'wrapper_joined') {
+    dur = (1 - (el.scrollTop() / el[0].scrollHeight)) * scroll_down_time / play_speed;
+  } else {
+
+    dur = separate_scroll_times[id.substring(6)] / play_speed;
   }
   el.stop(true).animate({
     scrollTop: el.get(0).scrollHeight - 1920
   }, dur, 'linear', () => {
     setTimeout(() => {
-      scrollUp(el, scroll_dur);
+      scrollUp(id);
     }, scroll_pause_time);
   });
 }; 
 
-function scrollUp(el, scroll_dur) {
-  let dur = scroll_dur;
-  if (!dur) {
-    dur = ($('#wrapper_joined').scrollTop() / $('#wrapper_joined')[0].scrollHeight) * scroll_up_time;
+function scrollUp(id) {
+  let el = $(`#${id}`);
+  let dur;
+  if (id === 'wrapper_joined') {
+    dur = (el.scrollTop() / el[0].scrollHeight) * scroll_up_time / play_speed;
+  } else {
+    dur = el.scrollTop() * 0.25 / play_speed;
   }
   el.stop(true).animate({
     scrollTop: 0
   }, dur, 'linear', () => {
     setTimeout(() => {
-      scrollDown(el, scroll_dur);
+      scrollDown(id);
     }, scroll_pause_time);
   });
 };
@@ -280,7 +288,7 @@ $('#wrapper_separate .scroll').on('click wheel DOMMouseScroll mousewheel keyup t
 function scroll_separate_panels() {
   for (let s in separate_panels) {
     setTimeout(() => {
-      scrollDown($('#scroll' + s), separate_scroll_times[s]);
+      scrollDown(`scroll${s}`);
     }, 0);
   }
 }
