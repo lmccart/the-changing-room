@@ -371,7 +371,7 @@ function displayMeditationPhrase(opts) {
     text = opts.text;
   }
 
-  let sizeClass = text.length > 40 ? 'smaller_meditation_text' : '';
+  let sizeClass = text.length > 60 ? 'smaller_meditation_text' : '';
   $('#meditation_text')
     .fadeOut(opts.fadeOut, function() {
       $(this)

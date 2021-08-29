@@ -27,7 +27,7 @@ const coverEl = $('#video-cover');
 const videoEl = $('#face-stream');
 const canvas = document.createElement('canvas');
 
-const resetWaitTime = 5 * 1000;
+const resetWaitTime = 30 * 1000;
 let uiResetTimeout;
 
 let net;

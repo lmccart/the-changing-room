@@ -8,7 +8,7 @@ import '../css/06-passive.scss';
 import './shared.js';
 import { getImgUrls, addSvgFilterForElement, getTextColorForBackground, getPopupUrls } from './lib/imageColorUtils.js';
 
-const basePopupRate = 2000; // adjusted based on emotion intensity
+const basePopupRate = 3000; // adjusted based on emotion intensity
 const minDisplayTime = 5000; // minimum time a popup shows on screen
 const displayVariation = 5000;
 const overlapAllowance = 0.10; // allows 60% overlap when a new element is created
