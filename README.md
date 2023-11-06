@@ -6,8 +6,13 @@
 3. Install dependencies: `npm install`
 4. Add font files to `static/fonts/`
 5. Add [image files](https://drive.google.com/file/d/1SsSHYPwk1jwX-A4SABYmn7RZQqwPsv2_/view?usp=sharing) to `images/` (should look like `images/angry/image file name.jpg`)
-5. Start server and webpack watcher: `npm start`
-6. Individual areas can be visited at the following paths (or on http at port 3001):
+6. The server runs on both HTTP (port 3001) and HTTPS (port 3000) to support this. To use with HTTPS, it requires either the installation of SSL certificates, or just clicking proceed anyway to get past browser warnings. On chrome if you don't see an option to proceed you can type thisisunsafe at the warning screen and it should proceed. [mkcert](https://github.com/FiloSottile/mkcert) will help setup a CA and certs, you'll need [homebrew](https://brew.sh/) to install mkcert.
+  - `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`
+  - `brew install mkcert`
+  - `mkcert -install`
+  - `mkcert [localname].local localhost`
+7. Start server and webpack watcher: `npm start` (you may need to set: `export NODE_OPTIONS=--openssl-legacy-provider`)
+8. Individual areas can be visited at the following paths (or on http at port 3001):
    - https://localhost:3000/00-intro
    - https://localhost:3000/01-faces
    - https://localhost:3000/02-reflection?screen=0,1,2
@@ -15,11 +20,7 @@
    - https://localhost:3000/04-convo1
    - https://localhost:3000/05-convo2
    - https://localhost:3000/06-passive
-7. The server runs on both HTTP (port 3001) and HTTPS (port 3000) to support this. To use with HTTPS, it requires either the installation of SSL certificates, or just clicking proceed anyway to get past browser warnings. On chrome if you don't see an option to proceed you can type thisisunsafe at the warning screen and it should proceed. [mkcert](https://github.com/FiloSottile/mkcert) will help setup a CA and certs, you'll need [homebrew](https://brew.sh/) to install mkcert.
-  - `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`
-  - `brew install mkcert`
-  - `mkcert -install`
-  - `mkcert OCA2.local localhost`
+
 
 ## Repository Structure
 
