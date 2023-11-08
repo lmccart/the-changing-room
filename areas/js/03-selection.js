@@ -2,6 +2,9 @@
 import $ from 'jquery';
 import '../css/03-selection.scss';
 import './shared.js';
+import i18next from 'i18next';
+import translationEN from './locales/en/translation.json';
+import translationFR from './locales/fr/translation.json';
 
 // VARIABLES
 const num_panels = 4;
@@ -40,6 +43,15 @@ let timer_to_idle;
 let hand_interval;
 let isSwiping = 0;
 
+const resources = {
+  en: {
+    translation: translationEN
+  },
+  fr: {
+    translation: translationFR
+  }
+};
+
 window.init = () => {
   //READ IN EMOTION JSON
   fetch(apiURL_emotions)
@@ -56,11 +68,11 @@ window.init = () => {
             'id': `option-${emotion}`,
             'class': 'emotion', 
             text: `${emotion}`});
-            emotion_div.on('touchend', (e) => {
-              if (isSwiping < 5) {
-                socket.emit('emotion:pick', `${emotion}`);
-              }
-            });
+          emotion_div.on('touchend', (e) => {
+            if (isSwiping < 5) {
+              socket.emit('emotion:pick', `${emotion}`);
+            }
+          });
           $('#scroll_joined').append(emotion_div);
         });
       socket.on('emotion:update', updateEmotion);
@@ -85,12 +97,22 @@ window.init = () => {
     .then(() => selection_txt_parse(sel_intro_content));
 
   $('#wrapper_separate').hide();
-    // DO ANY OTHER INIT JQUERY STUFF
-    $(document).on("contextmenu", function(){
-      return false;
-    });
+  // DO ANY OTHER INIT JQUERY STUFF
+  $(document).on('contextmenu', function() {
+    return false;
+  });
 
-
+  i18next.init({
+    lng: 'fr',
+    preload: ['en', 'fr'],
+    fallbackLang: 'en',
+    ns: ['translation'],
+    defaultNS: 'translation',
+    initImmediate: false,
+    resources
+  }
+  );
+  
 };
 
 function updateEmotion(msg) {
@@ -121,10 +143,10 @@ function updateInterface() {
   let prevPrevEmotion = $elm.prev().prev().html();
   let nextEmotion = $elm.next().html();
   let nextNextEmotion = $elm.next().next().html();
-  $elm.prev().html('<div class="loading-title">Loading</div>');
-  $elm.prev().prev().html('<div class="loading-title">Loading</div>');
-  $elm.next().html('<div class="loading-title">Loading</div>');
-  $elm.next().next().html('<div class="loading-title">Loading</div>');
+  $elm.prev().html('<div class="loading-title">' + i18next.t('loading') + '</div>');
+  $elm.prev().prev().html('<div class="loading-title">' + i18next.t('loading') + '</div>');
+  $elm.next().html('<div class="loading-title">' + i18next.t('loading') + '</div>');
+  $elm.next().next().html('<div class="loading-title">' + i18next.t('loading') + '</div>');
 
   setTimeout(() => {
     $elm.prev().html(prevEmotion);

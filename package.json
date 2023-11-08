@@ -18,6 +18,7 @@
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "fancy-textfill": "^1.2.5",
+    "i18next": "^23.6.0",
     "imagesloaded": "^4.1.4",
     "jquery": "^3.5.1",
     "nanoid": "^3.1.20",
