@@ -1,0 +1,34 @@
+@import './shared.scss';
+
+body {
+  background: black;
+}
+
+section {
+  position: absolute;
+  top: 225px;
+  left: 72px;
+}
+
+
+iframe {
+  border: none;
+  outline: none;
+  overflow: hidden;
+  float: left;
+}
+
+#passive-iframe {
+  width: 1766px;
+  height: 520px;
+}
+
+#reflection-section iframe {
+  width: 883px;
+  height: 520px;
+}
+
+
+// #reflection2-iframe {
+//   width: 1000px;
+// }
