@@ -3,8 +3,6 @@ import $ from 'jquery';
 import '../css/03-selection.scss';
 import './shared.js';
 import i18next from 'i18next';
-import translationEN from './locales/en/translation.json';
-import translationFR from './locales/fr/translation.json';
 
 // VARIABLES
 const num_panels = 4;
@@ -33,7 +31,7 @@ for (let i = 0; i < num_panels; i++) {
 }
 
 const handIndicator = $('#hand-indicator');
-const sel_txt_url = '/static/data/03_selection_intro.txt';
+const sel_txt_url = i18next.t('03_selection_intro');
 const apiURL_emotions = '/emotions';
 let sel_intro_content;
 let emotions;
@@ -42,15 +40,6 @@ let timer;
 let timer_to_idle;
 let hand_interval;
 let isSwiping = 0;
-
-const resources = {
-  en: {
-    translation: translationEN
-  },
-  fr: {
-    translation: translationFR
-  }
-};
 
 window.init = () => {
   //READ IN EMOTION JSON
@@ -64,6 +53,7 @@ window.init = () => {
         .sort()
         .forEach(function(emotion, i) {
           let base_emotion = emotions[emotion].base;
+          // translate here
           let emotion_div = $('<div>', {
             'id': `option-${emotion}`,
             'class': 'emotion', 
@@ -102,16 +92,16 @@ window.init = () => {
     return false;
   });
 
-  i18next.init({
-    lng: 'fr',
-    preload: ['en', 'fr'],
-    fallbackLang: 'en',
-    ns: ['translation'],
-    defaultNS: 'translation',
-    initImmediate: false,
-    resources
-  }
-  );
+  // i18next.init({
+  //   lng: 'fr',
+  //   preload: ['en', 'fr'],
+  //   fallbackLang: 'en',
+  //   ns: ['translation'],
+  //   defaultNS: 'translation',
+  //   initImmediate: false,
+  //   resources
+  // }
+  // );
   
 };
 
@@ -143,10 +133,10 @@ function updateInterface() {
   let prevPrevEmotion = $elm.prev().prev().html();
   let nextEmotion = $elm.next().html();
   let nextNextEmotion = $elm.next().next().html();
-  $elm.prev().html('<div class="loading-title">' + i18next.t('loading') + '</div>');
-  $elm.prev().prev().html('<div class="loading-title">' + i18next.t('loading') + '</div>');
-  $elm.next().html('<div class="loading-title">' + i18next.t('loading') + '</div>');
-  $elm.next().next().html('<div class="loading-title">' + i18next.t('loading') + '</div>');
+  $elm.prev().html('<div class="loading-title">Loading</div>');
+  $elm.prev().prev().html('<div class="loading-title">Loading</div>');
+  $elm.next().html('<div class="loading-title">Loading</div>');
+  $elm.next().next().html('<div class="loading-title">Loading</div>');
 
   setTimeout(() => {
     $elm.prev().html(prevEmotion);

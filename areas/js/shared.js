@@ -1,6 +1,8 @@
 import $ from 'jquery';
 import { getTextColorForBackground, addSvgFilterForElement } from './lib/imageColorUtils.js';
-
+import i18next from 'i18next';
+import translationEN from './locales/en/translation.json';
+import translationFR from './locales/fr/translation.json';
 
 let debugScreenTime = 5;//5 * 60 * 1000;
 
@@ -21,6 +23,30 @@ let soundType = urlParams.get('sound');
 if (soundType) {
   sound = new Audio();
 }
+
+// internationalization
+window.lang = 'fr';
+window.lang0 = 'fr';
+window.lang1 = 'en';
+
+i18next.init({
+  lng: window.lang,
+  preload: ['en', 'fr'],
+  fallbackLang: 'en',
+  ns: ['translation'],
+  defaultNS: 'translation',
+  initImmediate: false,
+  resources: {
+    en: {
+      translation: translationEN
+    },
+    fr: {
+      translation: translationFR
+    }
+  }
+}
+);
+window.i18next = i18next;
 
 
 // getting areas and colors from the data file
