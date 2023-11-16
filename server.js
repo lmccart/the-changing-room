@@ -12,8 +12,7 @@ http.listen(3001, () => { console.log('http listening on *:3001'); });
 https.listen(3000, () => { console.log('https listening on *:3000'); });
 const io = require('socket.io')(https);
 
-// const Sound = require('./sound/sound-sonos');
-const Sound = require('./sound/server-sound-node');
+const Sound = require('./sound/server-sound-browser');
 const Lights = require('./server-lights');
 
 const { getChatSubData } = require('./server-fileUtils');
@@ -58,9 +57,9 @@ io.on('connection', (socket) => {
 
   // debug stuff
   socket.on('debug:toggle', msg => { io.emit('debug:toggle', msg); });
+  socket.on('debug:reload', msg => { io.emit('debug:reload', msg); });
   socket.on('sound:off', Sound.stopAll);
   socket.on('lights:off', Lights.stopAll);
-  socket.on('debug:reload', msg => { io.emit('debug:reload', msg); });
   socket.on('volume:set', msg => { Sound.setVolume(msg.val); });
 
   Sound.init(socket, curEmotion);
@@ -88,6 +87,7 @@ app.get('/images/:baseEmotion/manifest', (req, res) => {
 });
 
 function setEmotion(emotionName, init) {
+  console.log('SET EMOTION');
   curEmotion = emotions[emotionName];
   curEmotion.volume = Sound.volume;
   curEmotion.seed = Math.round(Math.random() * 10000);
@@ -97,17 +97,14 @@ function setEmotion(emotionName, init) {
     io.emit('emotion:update', curEmotion);
     fs.writeFileSync('current.txt', emotionName);
     Sound.playEmotion(curEmotion);
-  } else { // give time for sonos to find itself
-    setTimeout(() => {
-      Sound.playEmotion(curEmotion);
-    }, 10000);
+    Sound.playEmotionReflection(curEmotion);
   }
 }
 
 function restartReflectionAudio() {
   let opt = { 'seed' : Math.round(Math.random() * 10000)};
-  io.emit('reflection:restart', opt); 
-  // Sound.playEmotionReflection(curEmotion);
+  io.emit('reflection:restart', opt);
+  Sound.playEmotionReflection(curEmotion);
 }
 
 function handleChat(data) {
