@@ -78,7 +78,7 @@ window.showLoadingOverlay = (newEmotion) => {
   // $('#loading-bg').show();
   // $('#loading-bg').delay(2000).fadeOut(1000);
 
-  $('#loading-emotion').text(newEmotion.name);
+  $('#loading-emotion').text(i18next.t(newEmotion.name));
   $('#loading').fadeIn(window.loadingFadeDur);
 
 

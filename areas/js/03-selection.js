@@ -53,11 +53,11 @@ window.init = () => {
         .sort()
         .forEach(function(emotion, i) {
           let base_emotion = emotions[emotion].base;
-          // translate here
+          let emotion_t = i18next.t(emotion);
           let emotion_div = $('<div>', {
             'id': `option-${emotion}`,
             'class': 'emotion', 
-            text: `${emotion}`});
+            text: `${emotion_t}`});
           emotion_div.on('touchend', (e) => {
             if (isSwiping < 5) {
               socket.emit('emotion:pick', `${emotion}`);
@@ -91,17 +91,6 @@ window.init = () => {
   $(document).on('contextmenu', function() {
     return false;
   });
-
-  // i18next.init({
-  //   lng: 'fr',
-  //   preload: ['en', 'fr'],
-  //   fallbackLang: 'en',
-  //   ns: ['translation'],
-  //   defaultNS: 'translation',
-  //   initImmediate: false,
-  //   resources
-  // }
-  // );
   
 };
 
