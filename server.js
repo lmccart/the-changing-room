@@ -41,7 +41,7 @@ const emotions = JSON.parse(fs.readFileSync('all-emotions.json')); // read all e
 const baseEmotions = generateBases();
 const imagesManifest = generateImagesManifest();
 
-const emotionName = fs.readFileSync('current.txt', {encoding:'utf8', flag:'r'}).replace(/\s/g, '');  // remove whitespace
+const emotionName = fs.readFileSync('current.txt', {encoding:'utf8', flag:'r'}).replace(/\s/g, ''); // remove whitespace
 setEmotion(emotionName, true);
 
 // SOCKET
@@ -105,14 +105,14 @@ function setEmotion(emotionName, init) {
 }
 
 function restartReflectionAudio() {
-  let opt = { 'seed' : Math.round( Math.random() * 10000 )};
+  let opt = { 'seed' : Math.round(Math.random() * 10000)};
   io.emit('reflection:restart', opt); 
   // Sound.playEmotionReflection(curEmotion);
 }
 
 function handleChat(data) {
   // called by area 04 when user hits "send" on a chat message
-  const wordsToSubArray = chatSubs[curEmotion.base]
+  const wordsToSubArray = chatSubs[curEmotion.base];
   const subArray = chatSubs[`${curEmotion.base}-subs`];
 
   // splits message into array of words, spaces and punctuation marks
@@ -150,8 +150,8 @@ function generateImagesManifest() {
   for (let base of baseEmotions) {
     if (!manifest.hasOwnProperty(base)) {
       manifest[base] = [];
-      for (let i=0; i<3; i++) {
-        manifest[base][i] = getAllFiles(`/images/${base}/${i+1}/`);
+      for (let i = 0; i < 3; i++) {
+        manifest[base][i] = getAllFiles(`/images/${base}/${i + 1}/`);
       }
     }
   }

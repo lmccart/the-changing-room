@@ -1,9 +1,9 @@
 const fs = require('fs');
 const Papa = require('papaparse');
 
-const getChatSubData = async () => {
-  const tsvFile = fs.readFileSync('./static/data/04_substitutions.tsv')
-  const tsvData = tsvFile.toString()  
+const getChatSubData = async() => {
+  const tsvFile = fs.readFileSync('./static/data/04_substitutions.tsv');
+  const tsvData = tsvFile.toString();
   return new Promise(resolve => {
     Papa.parse(tsvData, {
       header: true,
@@ -28,4 +28,4 @@ const getChatSubData = async () => {
 
 module.exports = {
   getChatSubData,
-}
+};
