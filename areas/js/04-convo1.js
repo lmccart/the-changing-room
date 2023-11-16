@@ -3,6 +3,7 @@ import { getTextColorForBackground } from './lib/imageColorUtils.js';
 import '../css/04-convo1.scss';
 import './shared.js';
 import { enableAutoTTS, speak} from './lib/speech.js';
+import i18next from 'i18next';
 
 let curEmotion = '';
 let introText = '';
@@ -26,7 +27,7 @@ socket.on('connect', function() {
 
 window.init = () => {
   // get intro text
-  fetch('/static/data/04_convo1_intro.txt')
+  fetch(i18next.t('04_convo1_intro.txt'))
     .then(res => res.text())
     .then(text => {
       introText = text;
@@ -96,7 +97,7 @@ function resetChat() {
 function startResetTimeout() {
   clearTimeout(uiResetTimeout);
   uiResetTimeout = setTimeout(resetChat, resetWaitTime);
-  console.log('start reset timeout '+uiResetTimeout);
+  console.log('start reset timeout ' + uiResetTimeout);
 }
 
 function showChatInput() {

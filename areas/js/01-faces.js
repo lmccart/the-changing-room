@@ -45,7 +45,7 @@ window.init = () => {
         e.preventDefault(); 
       }, { passive:false });
     });
-    // enableAutoTTS();
+  // enableAutoTTS();
 };
 
 
@@ -58,7 +58,7 @@ window.loadingComplete = () => {
 
 function loadText() {
   return new Promise(resolve => {
-    Papa.parse('/static/data/01_reflections.tsv', {
+    Papa.parse(i18next.t('01_reflections.tsv'), {
       download: true,
       header: true,
       skipEmptyLines: 'greedy',
@@ -127,22 +127,22 @@ function setupFaceDetection(videoEl) {
     net.estimateSinglePose(videoEl, {
       flipHorizontal: true
     })
-    .then(function(pose){
-      let hip = (pose.keypoints[11].score + pose.keypoints[12].score) / 2;
-      if (pose.score > 0.15) {
-        watchdog = watchdog < 0 ? 0 : watchdog + 1;
-        if (watchdog > (delaySeconds * 10)) {
-          faceFound = true;
-          removeCover();
+      .then(function(pose) {
+        let hip = (pose.keypoints[11].score + pose.keypoints[12].score) / 2;
+        if (pose.score > 0.15) {
+          watchdog = watchdog < 0 ? 0 : watchdog + 1;
+          if (watchdog > (delaySeconds * 10)) {
+            faceFound = true;
+            removeCover();
+          }
+        } else {
+          watchdog = watchdog > 0 ? 0 : watchdog - 1;
+          if (watchdog < -(delaySeconds * 10)) {
+            faceFound = false;
+            showCover();
+          }
         }
-      } else {
-        watchdog = watchdog > 0 ? 0 : watchdog - 1;
-        if (watchdog < -(delaySeconds * 10)) {
-          faceFound = false;
-          showCover();
-        }
-      }
-    })
+      });
   }, 100);
 }
 

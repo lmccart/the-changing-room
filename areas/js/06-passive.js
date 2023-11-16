@@ -7,6 +7,7 @@ import seedrandom from 'seedrandom';
 import '../css/06-passive.scss';
 import './shared.js';
 import { getImgUrls, addSvgFilterForElement, getTextColorForBackground, getPopupUrls } from './lib/imageColorUtils.js';
+import i18next from 'i18next';
 
 const basePopupRate = 3000; // adjusted based on emotion intensity
 const minDisplayTime = 2000; // minimum time a popup shows on screen
@@ -91,7 +92,7 @@ async function updateInterface(durations) {
   // switchBackgrounds(imgUrls, durations[1] - durations[0] - 500, colors);
   $('body').css('background', `radial-gradient(${colors[1]},${colors[0]})`);
   let s;
-  for (let i = 0; i<200; i++) {
+  for (let i = 0; i < 200; i++) {
     s += curEmotion.name + ' ';
   }
   $('#textBg').hide();
@@ -112,7 +113,7 @@ async function updateInterface(durations) {
 
 function parseDirections() {
   return new Promise(resolve => {
-    Papa.parse('/static/data/05_directions.tsv', {
+    Papa.parse(i18next.t('05_directions.tsv'), {
       download: true,
       header: true,
       skipEmptyLines: 'greedy',
@@ -135,7 +136,7 @@ function parseDirections() {
 
 function parseReflections() {
   return new Promise(resolve => {
-    Papa.parse('/static/data/01_reflections.tsv', {
+    Papa.parse(i18next.t('01_reflections.tsv'), {
       download: true,
       header: true,
       skipEmptyLines: 'greedy',
@@ -168,7 +169,7 @@ function PopupFactory(emotionObj) {
   const factoryThis = this;
 
   // note that the destruction rate is set in each individual popup for a little randomness
-  const emotionLevelMultiplier = 1 * emotionObj.level * (1.5*screenNumber+1); // exponential scale
+  const emotionLevelMultiplier = 1 * emotionObj.level * (1.5 * screenNumber + 1); // exponential scale
   const popupRate = basePopupRate / emotionLevelMultiplier; // base rate of ~3 seconds, gets faster with higher emotion level
   let creationInterval;
   const colors = window.baseColors[curEmotion.base][emotionObj.level - 1];
@@ -244,7 +245,7 @@ function PopupFactory(emotionObj) {
       childThis.type = POPUP.EXTRA;
     }
 
-    const stringFallback = 'There is nothing you are afraid of.'; // used if string retrieval fails for some reason
+    const stringFallback = i18next.t('fallback'); // used if string retrieval fails for some reason
     childThis.$element = $(`<div class='popup window ${childThis.type >= 3 ? 'extra' : ''}' id=${childThis.id}></div>`);
 
     // hide it so we can calculate it's position
@@ -396,10 +397,10 @@ function PopupFactory(emotionObj) {
       let h = $element.height();
       let blinkDur = 800; 
       $element.delay(blinkDur / 5)
-      .animate({ width: w * 1.2, height: h * 1.2, top: t - w * .1, left: l - h * .1, fontSize: fs * 1.2}, blinkDur * 0.2)
-      .animate({ width: w, height: h, top: t, left: l, fontSize: fs}, blinkDur * 0.2)
-      .animate({ width: w * 1.2, height: h * 1.2, top: t - w * .1, left: l - h * .1, fontSize: fs * 1.2}, blinkDur * 0.2)
-      .animate({ width: w, height: h, top: t, left: l, fontSize: fs * 1}, blinkDur * 0.2)
+        .animate({ width: w * 1.2, height: h * 1.2, top: t - w * .1, left: l - h * .1, fontSize: fs * 1.2}, blinkDur * 0.2)
+        .animate({ width: w, height: h, top: t, left: l, fontSize: fs}, blinkDur * 0.2)
+        .animate({ width: w * 1.2, height: h * 1.2, top: t - w * .1, left: l - h * .1, fontSize: fs * 1.2}, blinkDur * 0.2)
+        .animate({ width: w, height: h, top: t, left: l, fontSize: fs * 1}, blinkDur * 0.2);
 
     }
 
@@ -419,11 +420,11 @@ function PopupFactory(emotionObj) {
     } else {
       mover.$element.css({top: randomXY[0], left: randomXY[1]});
     }
-      // if (i === factoryThis.activeElements.length - 1) {
-      //   $element.degree = 0;
-      //   $element.timer;
-      //   rotate($element);
-      // }
+    // if (i === factoryThis.activeElements.length - 1) {
+    //   $element.degree = 0;
+    //   $element.timer;
+    //   rotate($element);
+    // }
   }
   // setInterval(moveAll, 3000);
   
@@ -466,5 +467,5 @@ function randomBetween(a, b) {
 }
 
 function pickRandom(arr) {
-  return arr[Math.floor(Math.random() * (arr.length-1))]; // skip most recent elt
+  return arr[Math.floor(Math.random() * (arr.length - 1))]; // skip most recent elt
 }

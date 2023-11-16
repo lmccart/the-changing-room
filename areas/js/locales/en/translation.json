@@ -1,3 +1,9 @@
 {
-    "loading": "Loading"
+    "loading": "Loading",
+    "intro": "/static/data/en/00_intro.txt",
+    "01_reflections.tsv": "/static/data/en/01_reflections.tsv",
+    "03_selection_intro": "/static/data/en/03_selection_intro.txt",
+    "04_convo1_intro.txt": "/static/data/en/04_convo1_intro.txt",
+    "05_directions.tsv": "/static/data/en/05_directions.tsv",
+    "fallback": "There is nothing you are afraid of."
 }

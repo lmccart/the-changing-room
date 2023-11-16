@@ -5,6 +5,7 @@ import Papa from 'papaparse';
 import '../css/05-convo2.scss';
 import './shared.js';
 import { getImgUrls, getTextColorForBackground } from './lib/imageColorUtils.js';
+import i18next from 'i18next';
 
 let curEmotion;
 let imgUrls = [];
@@ -55,7 +56,7 @@ async function updateInterface() {
 }
 
 
-Papa.parse('/static/data/05_directions.tsv', {
+Papa.parse(i18next.t('05_directions.tsv'), {
   download: true,
   header: true,
   skipEmptyLines: 'greedy',
