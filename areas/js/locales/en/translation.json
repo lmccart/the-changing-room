@@ -1,10 +1,11 @@
 {
     "loading": "Loading",
-    "intro": "/static/data/en/00_intro.txt",
-    "01_reflections.tsv": "/static/data/en/01_reflections.tsv",
-    "03_selection_intro": "/static/data/en/03_selection_intro.txt",
-    "04_convo1_intro.txt": "/static/data/en/04_convo1_intro.txt",
-    "05_directions.tsv": "/static/data/en/05_directions.tsv",
+    "intro": "/static/data/en/00_intro_en.txt",
+    "01_reflections.tsv": "/static/data/en/01_reflections_en.tsv",
+    "03_selection_intro": "/static/data/en/03_selection_intro_en.txt",
+    "04_convo1_intro.txt": "/static/data/en/04_convo1_intro_en.txt",
+    "04_substitutions.tsv": "./static/data/en/04_substitutions_en.tsv",
+    "05_directions.tsv": "/static/data/en/05_directions_en.tsv",
     "fallback": "There is nothing you are afraid of.",
     "type_a_message": "Type a message to your partner...",
     "next_instruction_shortly": "Next instruction coming up shortly..."
