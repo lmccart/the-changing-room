@@ -23,6 +23,10 @@ let colors;
 window.init = () => {
   socket.on('emotion:update', updateEmotion);
   socket.emit('emotion:get');
+
+  // Instructions loading i18n
+  const loading = i18next.t('next_instruction_shortly', {lng: window.lang0}) + '<br/>' + i18next.t('next_instruction_shortly', {lng: window.lang1});
+  $('#loading-text').html(loading);
 };
 
 window.loadingComplete = () => {
