@@ -7,8 +7,10 @@ import i18next from 'i18next';
 
 let curEmotion = '';
 let introText = '';
+let introText0 = '';
+let introText1 = '';
 let uiResetTimeout, showChatTimeout;
-let resetWaitTime = 30 * 1000;
+let resetWaitTime = 30 * 1000; // Time before intro reset && inactivity timer
 let socketid;
 const typingSpeed = 200; // milliseconds
 const pauseOnMessageTime = 2000; // 3s
@@ -26,14 +28,19 @@ socket.on('connect', function() {
 });
 
 window.init = () => {
-  // get intro text
-  fetch(i18next.t('04_convo1_intro.txt'))
-    .then(res => res.text())
-    .then(text => {
-      introText = text;
-      socket.on('emotion:update', updateEmotion);
-      socket.on('chat:new', handleNewMessage);
-      socket.emit('emotion:get');
+
+  fetch(i18next.t('04_convo1_intro.txt', {lng: window.lang0}))
+    .then(res0 => res0.text())
+    .then(text0 => {
+      introText0 = text0;
+      fetch(i18next.t('04_convo1_intro.txt', {lng: window.lang1}))
+        .then(res1 => res1.text())
+        .then(text1 => {
+          introText1 = text1;
+          socket.on('emotion:update', updateEmotion);
+          socket.on('chat:new', handleNewMessage);
+          socket.emit('emotion:get');
+        }); 
     });
   
   enableAutoTTS();
@@ -64,6 +71,10 @@ window.init = () => {
   document.addEventListener('touchmove', (e) => { 
     e.preventDefault(); 
   }, { passive:false });
+
+  // translation for chat input placeholder
+  const placeholderT = i18next.t('type_a_message', {lng: window.lang0}) + ' ' + i18next.t('type_a_message', {lng: window.lang1});
+  $('#chat-input').attr('placeholder', placeholderT);
 };
 
 function sendMessage(e) {
@@ -85,13 +96,17 @@ function resetChat() {
   messageViewerContainer.hide();
   messageViewer.empty();
   // introEl.text(introText);
-  typeMessageByWord(introText, introEl);
-  
-  introEl.show(); 
-  let introTime = introText.split(' ').length * typingSpeed;
+
+  const introTime0 = introText0.split(' ').length * typingSpeed;
+  typeMessageByWord(introText0, introEl, 0, false);
+  introEl.show();
+  // Wait for 1st language intro to finish then begin 2nd
+  setTimeout(() => { typeMessageByWord(introText1, introEl, 0, true); }, introTime0 + 2000);
+
+  // Show hand-indicator just after 2nd language intro begins
   setTimeout(() => { 
     if (introEl.is(':visible')) $('#hand-indicator').show(); 
-  }, introTime);
+  }, introTime0 + 3000);
 }
 
 function startResetTimeout() {
@@ -158,25 +173,29 @@ function handleNewMessage(data) {
   if (data.id !== socketid) { // only show modified to partner
     console.log('speak ' + data.modified);
     speak(data.modified);
-    typeMessageByWord(data.modified, messageViewer);
+    typeMessageByWord(data.modified, messageViewer, 0, true);
   } else {
-    typeMessageByWord(data.original, messageViewer); 
+    typeMessageByWord(data.original, messageViewer, 0, true); 
   }
   
 }
 
-function typeMessageByWord(string, el, iteration) {
+function typeMessageByWord(string, el, iteration, secondLang) {
   var iteration = iteration || 0;
   const words = string.split(' ');
-  
+
   // Prevent our code executing if there are no letters left
   if (iteration === words.length) {
+    // Check to see if intro has been clicked away
     if (introEl.is(':hidden')) {
       showChatTimeout = setTimeout(() => { 
         showChatInput();
       }, pauseOnMessageTime);
     }
-    startResetTimeout();
+    // Check to see if second language has gone before resetting
+    if (secondLang) { 
+      startResetTimeout();
+    }
     return;
   }
   
@@ -190,7 +209,7 @@ function typeMessageByWord(string, el, iteration) {
     el.text(el.text() + ' ' + words[iteration++]);
     el.animate({ scrollTop: el[0].scrollHeight}, 1);
     // Re-trigger our function
-    typeMessageByWord(string, el, iteration);
+    typeMessageByWord(string, el, iteration, secondLang);
   }, typingSpeed);
 }
 

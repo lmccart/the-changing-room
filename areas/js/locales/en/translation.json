@@ -5,5 +5,7 @@
     "03_selection_intro": "/static/data/en/03_selection_intro.txt",
     "04_convo1_intro.txt": "/static/data/en/04_convo1_intro.txt",
     "05_directions.tsv": "/static/data/en/05_directions.tsv",
-    "fallback": "There is nothing you are afraid of."
+    "fallback": "There is nothing you are afraid of.",
+    "type_a_message": "Type a message to your partner...",
+    "next_instruction_shortly": "Next instruction coming up shortly..."
 }
