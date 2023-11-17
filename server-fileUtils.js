@@ -1,8 +1,9 @@
 const fs = require('fs');
 const Papa = require('papaparse');
+const i18next = require('i18next');
 
-const getChatSubData = async() => {
-  const tsvFile = fs.readFileSync('./static/data/04_substitutions.tsv');
+const getChatSubData = async(lang) => {
+  const tsvFile = fs.readFileSync(`./static/data/${lang}/04_substitutions_${lang}.tsv`); // Change to desired filename
   const tsvData = tsvFile.toString();
   return new Promise(resolve => {
     Papa.parse(tsvData, {

@@ -17,7 +17,7 @@ const Lights = require('./server-lights');
 
 const { getChatSubData } = require('./server-fileUtils');
 let chatSubs;
-getChatSubData().then(data => chatSubs = data).catch(err => console.log('error', err));
+getChatSubData(process.env.LANG0).then(data => chatSubs = data).catch(err => console.log('error', err));
 
 let curEmotion;
 
@@ -62,7 +62,7 @@ io.on('connection', (socket) => {
   socket.on('lights:off', Lights.stopAll);
   socket.on('volume:set', msg => { Sound.setVolume(msg.val); });
 
-  Sound.init(socket, curEmotion);
+  Sound.setup(io, curEmotion);
 });
 
 // SERVER SETUP
