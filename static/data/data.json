@@ -1,4 +1,8 @@
 {
+  "settings": {
+    "lang0": "fr",
+    "lang1": "en"
+  },
   "areas": {
     "00-intro": {
       "display": "main gallery projector"

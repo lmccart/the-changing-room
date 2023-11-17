@@ -25,36 +25,39 @@ if (soundType) {
   sound.loop = true;
 }
 
-
 // internationalization
-window.lang0 = 'fr';
-window.lang1 = 'en';
+function i18nInit(settings) {
+  window.lang0 = settings.lang0;
+  window.lang1 = settings.lang1;
 
-i18next.init({
-  lng: window.lang0,
-  preload: ['en', 'fr'],
-  fallbackLang: 'en',
-  ns: ['translation'],
-  defaultNS: 'translation',
-  initImmediate: false,
-  resources: {
-    en: {
-      translation: translationEN
-    },
-    fr: {
-      translation: translationFR
+  i18next.init({
+    lng: window.lang0,
+    preload: ['en', 'fr'],
+    fallbackLang: 'en',
+    ns: ['translation'],
+    defaultNS: 'translation',
+    initImmediate: false,
+    resources: {
+      en: {
+        translation: translationEN
+      },
+      fr: {
+        translation: translationFR
+      }
     }
   }
-}
-);
-window.i18next = i18next;
+  );
+  window.i18next = i18next;
 
+}
 
 // getting areas and colors from the data file
 fetch('/static/data/data.json')
   .then(res => { return res.json(); })
   .then(data => {
     window.baseColors = data.colors;
+    
+    i18nInit(data.settings);
 
     appendDebug();
 
