@@ -27,12 +27,11 @@ if (soundType) {
 
 
 // internationalization
-window.lang = 'fr';
 window.lang0 = 'fr';
 window.lang1 = 'en';
 
 i18next.init({
-  lng: window.lang,
+  lng: window.lang0,
   preload: ['en', 'fr'],
   fallbackLang: 'en',
   ns: ['translation'],
