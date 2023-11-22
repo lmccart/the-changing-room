@@ -9,10 +9,11 @@ images/popups/*
 images/*/*.jpg
 images/*/*.jpeg
 images/*/*.JPG
-mages/*/*.JPEG
+images/*/*.JPEG
 images/*/*.png
 images/*
 sound/sounds/*
+sound/sounds-longer/*
 sound/sounds-orig/*
 sound/sounds-reflection/*
 sound/recordings/*
