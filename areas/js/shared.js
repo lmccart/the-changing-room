@@ -19,10 +19,11 @@ window.socket.on('sound:volume', setSoundVolume);
 document.title = $('#debug-area').text();
 
 let sound;
-let soundType = window.location.href.includes('reflection') ? 'reflection' : 'environment';
-if (soundType) {
+window.soundType = window.location.href.includes('reflection') ? 'reflection' : 'environment';
+if (window.soundType) {
   sound = new Audio();
   sound.loop = true;
+  console.log(sound);
 }
 
 // internationalization
@@ -180,7 +181,9 @@ function reload() {
 
 function playSound(data) {
   if (!sound || !window.soundType) {
-    // console.log('IGNORE SOUND: not listening');
+    // console.log(sound);
+    // console.log(window.soundType);
+    console.log('IGNORE SOUND: not listening');
     return;
   }
   else if (window.soundType === data.soundType) {
