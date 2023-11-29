@@ -69,3 +69,7 @@ After creating audio files in other languages, remember to reset System Speech L
 * https://github.com/audiojs/audio-play
 
 * https://github.com/audiojs/audio-loader
+
+* https://github.com/Hugo22O/chrome-autoplay
+
+* https://developer.chrome.com/blog/autoplay/#developer-switches

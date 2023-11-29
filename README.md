@@ -78,6 +78,51 @@
         - `const imageDims = await getDimensions('/images/confused/image.jpeg');`
         - or `getDimensions('/images/confused/image.jpeg').then(imageDims => {do whatever u want here})`
 
+## Translation
+
+To accommodate non-English settings, *The Changing Room* uses the [i18next](https://www.i18next.com/) package for internationalization.
+
+### Changing the language
+
+*The Changing Room* uses a primary and secondary language system in order to function properly. It is recommended that English is always kept as the secondary language as a fallback for any translation failures. In most instances, the primary language is the only one shown, but sometimes both the primary and secondary langauges are shown, such as the 04-convo introduction.
+
+In order to change the primary or secondary language, you will need to change the languages in two locations.
+
+1. Change the language in `/static/data/data.json` to the desired langauge code. Often, these are two letters that represent the language (e.g. "en" for English or "fr" for French). You must use this same code for Step 2.
+2. Change the language and voice in your `.env` file (see `.env-sample` for an example). For the language, use the desired langauge code. For the voice, you should use the desired voice for the Mac `say` command generate spoken audios for 02-reflection. Please see the [sound README](https://github.com/lmccart/the-changing-room/blob/main/sound/README.md) for more information on selecting a voice.
+3. If you need to generate new audios for this selected language, please see the [sound README](https://github.com/lmccart/the-changing-room/blob/main/sound/README.md) for information on editing the Python script to do so.
+
+**If you would like to use only one language for *The Changing Room*, change both the primary and secondary languages to the same language code, rather than leaving secondary blank.**
+
+### Adding a new language
+
+In order to add a new language to *The Changing Room*, you must take some steps in addition to the ones above. After deciding a language code to use for the new language, such as "es" for Spanish, you will need to generate several files with translated information.
+
+1. First, you must generate translated versions of all .txt and .tsv resources; tese files contain text assets used throughout the installation. These files will go in `/static/data/YOUR-LANG-CODE` (e.g. `/static/data/es`). The original of each file that needs to be translated can be found in `/static/data/en`. Here is the complete list of files needed:
+
+* `00_intro_YOUR-LANG-CODE.txt`
+* `01_self_YOUR-LANG-CODE.tsv`
+* `02_meditation_emotion_specific_YOUR-LANG-CODE.tsv`
+* `02_meditation_YOUR-LANG-CODE.txt`
+* `02_memories_YOUR-LANG-CODE.tsv`\*
+* `03_selection_intro_YOUR-LANG-CODE.txt`
+* `04_convo1_intro_YOUR-LANG-CODE.txt`
+* `04_substitutions_YOUR-LANG-CODE.tsv`\*
+* `05_directions_YOUR-LANG-CODE.tsv`
+
+\*Some .tsv files contain information in multiple langauges. For `02_memories.tsv`, this allows for memories in both languages to appear in the experience. For `04-substitutions.tsv`, this allows for substitutions across several languages.
+
+2. Next, you will need to generate an internationalization resource JSON called `translation.json` and place it in `/areas/js/locales/YOUR_LANG_CODE` (e.g. `/areas/js/locales/es`). This list should have several key-value pairs that i18next uses to serve the desired translations. You will need key-value pairs for the following:
+
+* Each of the possible emotions
+* Each of the file resources created in Step 1
+* Various phrases used through out the app, such as fallback phrases. (*To ensure that phrases aren't missed, you should use another langauge's `translation.json` as a starting place.*)
+
+If you create new keys not in other language's `translation.json`` files, you MUST add those new keys to these files or they may not return properly translated values in the future.
+
+3. Lastly, in `areas/js/shared.js`, you must import the necessary translations and add them to the i18next resources on initialization (the `i18nInit` function). This should be fairly straightforward following the pre-exisiting examples. After you add these, they can stay here and do not be deleted in the future, even if you are not using them. By changing the primary and secondary langauges as in the previous section, you will ensure that extra languages are not used.
+
+
 ## References
 * https://github.com/peter-murray/node-hue-api#readme
 * https://developers.meethue.com/develop/get-started-2/
