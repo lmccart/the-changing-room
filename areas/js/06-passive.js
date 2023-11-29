@@ -93,6 +93,7 @@ async function updateInterface(durations) {
   $('body').css('background', `radial-gradient(${colors[1]},${colors[0]})`);
   let s;
   for (let i = 0; i < 200; i++) {
+    s += i18next.t(curEmotion.name, { lng: window.lang1}) + ' ';
     s += i18next.t(curEmotion.name) + ' ';
   }
   $('#textBg').hide();
