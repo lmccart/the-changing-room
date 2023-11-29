@@ -58,7 +58,7 @@ window.loadingComplete = () => {
 
 function loadText() {
   return new Promise(resolve => {
-    Papa.parse(i18next.t('01_reflections.tsv'), {
+    Papa.parse(i18next.t('01_self.tsv'), {
       download: true,
       header: true,
       skipEmptyLines: 'greedy',

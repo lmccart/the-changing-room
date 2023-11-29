@@ -1,7 +1,7 @@
 {
     "loading": "Loading",
-    "intro": "/static/data/en/00_intro_en.txt",
-    "01_reflections.tsv": "/static/data/en/01_reflections_en.tsv",
+    "00_intro.txt": "/static/data/en/00_intro_en.txt",
+    "01_self.tsv": "/static/data/en/01_self_en.tsv",
     "02_meditation.txt": "/static/data/en/02_meditation_en.txt",
     "02_meditation_emotion_specific.tsv": "/static/data/en/02_meditation_emotion_specific_en.tsv",
     "02_memories.tsv": "/static/data/en/02_memories_en.tsv",

@@ -27,7 +27,7 @@ window.init = () => {
   socket.on('emotion:update', updateEmotion);
   socket.on('debug:toggle', debugToggle);
   socket.emit('emotion:get');
-  fetch(i18next.t('intro')) // translate for the proper text
+  fetch(i18next.t('00_intro.txt')) // translate for the proper text
     .then(res => res.blob())
     .then(blob => blob.text())
     .then(text => {
