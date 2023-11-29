@@ -1,0 +1,18 @@
+Où dans votre corps ressentez-vous [EMOTION] ?
+Concentrez-vous sur cette zone.
+Dirigez votre attention vers elle.
+Quelle couleur voyez-vous ?
+Quelle texture ressentez-vous ?
+Pouvez-vous en suivre le contour ?
+[BODY AREA]
+Quel endroit vous vient à l'esprit lorsque vous ressentez [EMOTION] ?
+Imaginez-vous dans cet endroit.
+Comment est la lumière ?
+À quoi ressent-on le poids de l'air ici ?
+Qui est présent avec vous ?
+[PERSON]
+Que voulez-vous leur dire ?
+Maintenant, d'autres personnes se joignent à vous.
+Elles ressentent toutes la même chose que vous.
+Comment cela fait-il d'être parmi elles ?
+Écoutez. Que disent-elles ?

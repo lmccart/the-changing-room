@@ -7,6 +7,7 @@ import '../css/02-reflection.scss';
 import './shared.js';
 import Timeline from './lib/Timeline.js';
 import { getImgUrls, addSvgFilterForElement, getTextColorForBackground } from './lib/imageColorUtils.js';
+import i18next from 'i18next';
 
 let curEmotion;
 let primaryColors;
@@ -200,7 +201,7 @@ function adjustScreen() {
 function loadData(cb) {
   let dataLoaded = -3; // this is a bit hacky but simpler than Promises.all
 
-  fetch('/static/data/02_meditation.txt')
+  fetch(i18next.t('02_meditation.txt'))
     .then(res => res.blob())
     .then(blob => blob.text())
     .then(text => {
@@ -211,7 +212,7 @@ function loadData(cb) {
       } 
     });
 
-  Papa.parse('/static/data/02_meditation_emotion_specific.tsv', {
+  Papa.parse(i18next.t('02_meditation_emotion_specific.tsv'), {
     download: true,
     header: true,
     skipEmptyLines: 'greedy',
@@ -239,7 +240,7 @@ function loadData(cb) {
     }
   });
 
-  Papa.parse('/static/data/02_memories.tsv', {
+  Papa.parse(i18next.t('02_memories.tsv'), {
     download: true,
     header: true,
     skipEmptyLines: 'greedy',
@@ -350,10 +351,9 @@ function generateMeditationTexts() {
     .map((m) => {
       let newm = m;
       for (let k in thisDataMeditationInserts) {
-        newm = newm.replace(`[${k}]`, thisDataMeditationInserts[k]); 
+        newm = newm.replace(`[${k}]`, thisDataMeditationInserts[k]);
       }
-      newm = newm.replace('[EMOTION]', curEmotion.name);
-      
+      newm = newm.replace(curEmotion.name, i18next.t(curEmotion.name)); // replace english with translation here, avoid messing up inserts 
       return newm;
     })
     .filter((m) => {
@@ -692,7 +692,7 @@ async function queueEvents(timeline) {
       // if (i < 2) { // temp for testing
       timeline.add({ time: timeMarker, event: function() { 
         displayMeditationPhrase({ text: mt, fadeIn: each_meditation_fadein_duration, fadeOut: each_meditation_fadeout_duration});
-        if (i%3 === 1) {
+        if (i % 3 === 1) {
           let imgUrl = imgURLs[ind % imgURLs.length];
           switchBackgrounds([imgUrl], 15000, primaryColors);
           ind++;
