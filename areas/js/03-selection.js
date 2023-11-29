@@ -50,7 +50,9 @@ window.init = () => {
       console.log(emotions);
 
       Object.keys(emotions)
-        .sort()
+        .sort((a, b) => { // sorts based on the translated value
+          return i18next.t(a).localeCompare(i18next.t(b));
+        })
         .forEach(function(emotion, i) {
           let base_emotion = emotions[emotion].base;
           let emotion_t = i18next.t(emotion);
