@@ -444,7 +444,7 @@ function generateMeditationTexts() {
       for (let k in thisDataMeditationInserts) {
         newm = newm.replace(`[${k}]`, thisDataMeditationInserts[k]);
       }
-      newm = newm.replace(curEmotion.name, i18next.t(curEmotion.name)); // replace english with translation here, avoid messing up inserts 
+      newm = newm.replace(curEmotion.name, i18next.t(curEmotion.name, {lng: window.lang})); // translation here, avoid messing up inserts tsv headers
       return newm;
     })
     .filter((m) => {
