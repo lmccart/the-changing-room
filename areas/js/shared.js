@@ -31,6 +31,8 @@ function i18nInit(settings) {
   window.lang0 = settings.lang0;
   window.lang1 = settings.lang1;
   window.lang = window.lang0;
+  // randomly chooses language to show loading emotion in
+  window.langLoading = Math.round(Math.random()) === 0 ? settings.lang0 : settings.lang1;
 
   i18next.init({
     lng: window.lang0,
@@ -84,7 +86,7 @@ window.showLoadingOverlay = (newEmotion) => {
   // $('#loading-bg').show();
   // $('#loading-bg').delay(2000).fadeOut(1000);
 
-  $('#loading-emotion').text(i18next.t(newEmotion.name));
+  $('#loading-emotion').text(i18next.t(newEmotion.name, {lng: window.langLoading}));
   $('#loading').fadeIn(window.loadingFadeDur);
 
 
