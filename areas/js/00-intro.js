@@ -27,12 +27,7 @@ window.init = () => {
   socket.on('emotion:update', updateEmotion);
   socket.on('debug:toggle', debugToggle);
   socket.emit('emotion:get');
-  fetch(i18next.t('00_intro.txt')) // translate for the proper text
-    .then(res => res.blob())
-    .then(blob => blob.text())
-    .then(text => {
-      $('.text').text(text);
-    });
+  loadText();
 };
 
 window.loadingComplete = () => {
@@ -52,6 +47,31 @@ window.speechSynthesis.onvoiceschanged = function() {
   }
 };
 
+function loadText() {
+  if (window.lang0 === window.lang1) { // if only one langauge, remove second text div
+    $('#lang1-intro').remove();
+    fetch(i18next.t('00_intro.txt'))
+      .then(res => res.blob())
+      .then(blob => blob.text())
+      .then(text => {
+        $('.text').text(text);
+      });
+  } else { // otherwise, change font and add both texts
+    $('.text').css('font-size', '3em');
+    fetch(i18next.t('00_intro.txt', {lng: window.lang0}))
+      .then(res0 => res0.blob())
+      .then(blob0 => blob0.text())
+      .then(text0=> {
+        $('#lang0-intro').text(text0);
+        fetch(i18next.t('00_intro.txt', {lng: window.lang1}))
+          .then(res1 => res1.blob())
+          .then(blob1 => blob1.text())
+          .then(text1 => {
+            $('#lang1-intro').text(text1);
+          });
+      });
+  }
+}
 
 function updateEmotion(msg) {
   if (!curEmotion || curEmotion.name !== msg.name) {
@@ -83,18 +103,18 @@ async function updateInterface(durations) {
 }
 
 function scrollDown() {
-  $('.text').scrollTop(0);
-  $('.text').stop();
+  $('.holder').scrollTop(0);
+  $('.holder').stop();
   setTimeout(() => {
-    $('.text').animate({
-      scrollTop: $('.text').prop('scrollHeight')
+    $('.holder').animate({
+      scrollTop: $('.holder').prop('scrollHeight')
     }, scroll_down_time, 'linear', scrollUp);
   }, scroll_pause_time);
 }
 
 function scrollUp() {
   setTimeout(() => {
-    $('.text').animate({
+    $('.holder').animate({
       scrollTop: 0
     }, scroll_up_time, 'linear', scrollDown);
   }, 500);
