@@ -90,7 +90,7 @@ In order to change the primary or secondary language, you will need to change th
 
 1. Change the language in `/static/data/data.json` to the desired langauge code. Often, these are two letters that represent the language (e.g. "en" for English or "fr" for French). You must use this same code for Step 2.
 2. Change the language and voice in your `.env` file (see `.env-sample` for an example). For the language, use the desired langauge code. For the voice, you should use the desired voice for the Mac `say` command generate spoken audios for 02-reflection. Please see the [sound README](https://github.com/lmccart/the-changing-room/blob/main/sound/README.md) for more information on selecting a voice.
-3. If you need to generate new audios for this selected language, please see the [sound README](https://github.com/lmccart/the-changing-room/blob/main/sound/README.md) for information on editing the Python script to do so.
+3. If you need to generate audios for this selected language, please see the [sound README](https://github.com/lmccart/the-changing-room/blob/main/sound/README.md) for information on editing the Python script to do so.
 
 **If you would like to use only one language for *The Changing Room*, change both the primary and secondary languages to the same language code, rather than leaving secondary blank.**
 
@@ -112,7 +112,9 @@ In order to add a new language to *The Changing Room*, you must take some steps 
 
 \*Some .tsv files contain information in multiple langauges. For `02_memories.tsv`, this allows for memories in both languages to appear in the experience. For `04-substitutions.tsv`, this allows for substitutions across several languages.
 
-2. Next, you will need to generate an internationalization resource JSON called `translation.json` and place it in `/areas/js/locales/YOUR_LANG_CODE` (e.g. `/areas/js/locales/es`). This list should have several key-value pairs that i18next uses to serve the desired translations. You will need key-value pairs for the following:
+2. You will also need to generate new audios for this language. Please see the [sound README](https://github.com/lmccart/the-changing-room/blob/main/sound/README.md) for information on editing the Python script to do so.
+
+3. Next, you will need to generate an internationalization resource JSON called `translation.json` and place it in `/areas/js/locales/YOUR_LANG_CODE` (e.g. `/areas/js/locales/es`). This list should have several key-value pairs that i18next uses to serve the desired translations. You will need key-value pairs for the following:
 
 * Each of the possible emotions
 * Each of the file resources created in Step 1
@@ -120,7 +122,7 @@ In order to add a new language to *The Changing Room*, you must take some steps 
 
 If you create new keys not in other language's `translation.json`` files, you MUST add those new keys to these files or they may not return properly translated values in the future.
 
-3. Lastly, in `areas/js/shared.js`, you must import the necessary translations and add them to the i18next resources on initialization (the `i18nInit` function). This should be fairly straightforward following the pre-exisiting examples. After you add these, they can stay here and do not be deleted in the future, even if you are not using them. By changing the primary and secondary langauges as in the previous section, you will ensure that extra languages are not used.
+4. Lastly, in `areas/js/shared.js`, you must import the necessary translations and add them to the i18next resources on initialization (the `i18nInit` function). This should be fairly straightforward following the pre-exisiting examples. After you add these, they can stay here and do not be deleted in the future, even if you are not using them. By changing the primary and secondary langauges as in the previous section, you will ensure that extra languages are not used.
 
 
 ## References

@@ -3,16 +3,28 @@ import csv
 import json
 from dotenv import load_dotenv 
 
+# True generates audios in primary language
+# False generates audios in secondary language
+use_primary = False
+
 load_dotenv()
 LANG0 = os.getenv("LANG0")
 LANG0_V = os.getenv("LANG0_VOICE")
+LANG1 = os.getenv("LANG1")
+LANG1_V = os.getenv("LANG1_VOICE")
 
-translation_JSON = open(f"../areas/js/locales/{LANG0}/translation.json")
+LANG = LANG0
+LANG_V = LANG0_V
+if not use_primary:
+  LANG = LANG1
+  LANG_V = LANG1_V
+
+translation_JSON = open(f"../areas/js/locales/{LANG}/translation.json")
 translation = json.load(translation_JSON)
 translation_JSON.close()
 
 mp3_source_path = "recordings/final"
-mp3_dest_path = "sounds-reflection"
+mp3_dest_path = f"sounds-reflection/{LANG}"
 
 short_clip_dur = 10
 long_clip_dur = 15
@@ -58,7 +70,7 @@ def record_phrase(phrase, base, emotion, n, clip_dur):
   orig_clip = "recordings/" + base + "/" + emotion + "/orig/" + str(n) + ".aac"
   pad_clip = "recordings/" + base + "/" + emotion + "/pad/" + str(n) + ".wav"
   # uses voice from .env file
-  orig_command = "say \"" + phrase + f"\" -v {LANG0_V} -o " + orig_clip 
+  orig_command = "say \"" + phrase + f"\" -v {LANG_V} -o " + orig_clip 
   print(orig_clip)
   print(orig_command)
   os.system(orig_command)
@@ -95,7 +107,7 @@ def mix_clips(meditation, base):
   output_trim = meditation.replace("2.wav", "4.wav")
   os.system("ffmpeg -loglevel quiet -i " + output_mix + " -ss 00:00:00 -t 00:06:00 -async 1 " + output_trim) # total dur update here, too!
   # fade - NOTE: OUTPUTS MP3 FILE
-  output_final = meditation.replace("2.wav", ".mp3")
+  output_final = meditation.replace("2.wav", f"-{LANG}.mp3")
   os.system("ffmpeg -loglevel quiet -i " + output_trim + " -af afade=t=out:st=" + str(total_dur - 10) + ":d=10 " + output_final) 
 
 def cleanup_clips(base, emotion):
@@ -107,8 +119,9 @@ def cleanup_clips(base, emotion):
     i += 1
   # os.system("rm -rf recordings/" + base + "/" + emotion)
 
-# move all files to the correct folder
 def move_clips(source, destination):
+  print("\MOVING CLIPS\n")
+  os.system("mkdir " + destination)
   final_recordings = os.listdir(source)
   for r in final_recordings:
     source_path = os.path.join(source, r)
@@ -116,10 +129,10 @@ def move_clips(source, destination):
     os.rename(source_path, dest_path)
 
 # read text from txt and tsv
-contents = open(f"../static/data/{LANG0}/02_meditation_{LANG0}.txt", "r").read()
+contents = open(f"../static/data/{LANG}/02_meditation_{LANG}.txt", "r").read()
 phrases =  contents.split("\n")
 print(phrases)
-tsv_file = open(f"../static/data/{LANG0}/02_meditation_emotion_specific_{LANG0}.tsv")
+tsv_file = open(f"../static/data/{LANG}/02_meditation_emotion_specific_{LANG}.tsv")
 read_tsv = csv.reader(tsv_file, delimiter="\t")
 k = 0
 
@@ -137,4 +150,5 @@ for row in read_tsv:
   else:
     print("MISSING DATA")
 
+# move all files to the correct folder
 move_clips(mp3_source_path, mp3_dest_path)

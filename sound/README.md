@@ -6,7 +6,7 @@
 
 2. Run `python prep-sounds.py` to generate longer versions of audio files in `sound/sounds-longer/`. The script creates `sound/sounds-long` along the way, but it should remove this folder by the end.
 
-3. Run `python generate-meditation.py` to create meditation tracks for each emotion (e.g. *afraid-anxious.mp3*). Make sure you have both `ffmpeg` and `sox` packages installed; both can be installed with Homebrew. Missing Python packages can be installed with `pip install`.
+3. Run `python generate-meditation.py` to create meditation tracks for each emotion (e.g. *afraid-anxious.mp3*) for the desired primary or second language. Set `use_primary` to `True` to use the primary language for the intro and `False` to use the secondary language for the intro. Make sure you have both `ffmpeg` and `sox` packages installed; both can be installed with Homebrew. Missing Python packages can be installed with `pip install`.
 
 4. The script should move the created meditation tracks from `sound/recordings/final` to `sound/sounds-reflection`. If this does not happen, you will need to do it manually. You may delete the `sound/recordings` folder after this.
 
