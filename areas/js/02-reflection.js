@@ -24,6 +24,14 @@ let sharedSeed = 0;
 let emotionChanged = false;
 let skipToMemories = false;
 
+// data for lang0 and lang1
+let dataMeditationsL0;
+let dataMeditationsL1;
+let dataMeditationEmotionsL0;
+let dataMeditationEmotionsL1;
+let dataMemoriesL0;
+let dataMemoriesL1;
+
 // 10s before meditation
 // 10s per instruction
 // 15s per long instruction
@@ -166,6 +174,15 @@ function updateInterface() {
 //////////////////////////
 
 function handleKey(e) {
+  if (e.key === 't') {
+    // switch window langauges and assets
+    window.lang = window.lang === window.lang0 ? window.lang1 : window.lang0;
+    dataMeditations = window.lang === window.lang0 ? dataMeditationsL0 : dataMeditationsL1;
+    dataMeditationEmotions = window.lang === window.lang0 ? dataMeditationEmotionsL0 : dataMeditationEmotionsL1;
+    dataMemories = window.lang === window.lang0 ? dataMemoriesL0 : dataMemoriesL1;
+    // trigger reflection restart on server
+    socket.emit('reflection:end');
+  }
   if (e.key === '0' | e.key === '1' | e.key === '2') {
     editMode = Number(e.key);
     console.log('editing screen ', editMode);
@@ -199,20 +216,32 @@ function adjustScreen() {
 }
 
 function loadData(cb) {
-  let dataLoaded = -3; // this is a bit hacky but simpler than Promises.all
+  let dataLoaded = -6; // this is a bit hacky but simpler than Promises.all
 
-  fetch(i18next.t('02_meditation.txt'))
+  fetch(i18next.t('02_meditation.txt', {lng: window.lang0}))
     .then(res => res.blob())
     .then(blob => blob.text())
     .then(text => {
-      dataMeditations = text.split(/\r?\n/);
+      dataMeditationsL0 = text.split(/\r?\n/);
+      dataMeditations = dataMeditationsL0;
+      dataLoaded += 1;
+      if (dataLoaded === 0) {
+        cb(); 
+      } 
+    });
+  
+  fetch(i18next.t('02_meditation.txt', {lng: window.lang1}))
+    .then(res => res.blob())
+    .then(blob => blob.text())
+    .then(text => {
+      dataMeditationsL1 = text.split(/\r?\n/);
       dataLoaded += 1;
       if (dataLoaded === 0) {
         cb(); 
       } 
     });
 
-  Papa.parse(i18next.t('02_meditation_emotion_specific.tsv'), {
+  Papa.parse(i18next.t('02_meditation_emotion_specific.tsv', {lng: window.lang0}), {
     download: true,
     header: true,
     skipEmptyLines: 'greedy',
@@ -232,7 +261,8 @@ function loadData(cb) {
 
         reordered[thisrow['EMOTION'].trim()] = newrow;
       }
-      dataMeditationEmotions = reordered;
+      dataMeditationEmotionsL0 = reordered;
+      dataMeditationEmotions = dataMeditationEmotionsL0;
       dataLoaded += 1;
       if (dataLoaded === 0) {
         cb(); 
@@ -240,7 +270,35 @@ function loadData(cb) {
     }
   });
 
-  Papa.parse(i18next.t('02_memories.tsv'), {
+  Papa.parse(i18next.t('02_meditation_emotion_specific.tsv', {lng: window.lang1}), {
+    download: true,
+    header: true,
+    skipEmptyLines: 'greedy',
+    complete: function(results) {
+      const rawResults = results.data;
+      // the data comes in as [{ 'EMOTION': 'annoyed', ' BODY AREA': 'Feel that...', ...} ...]
+      // I (dan) think it should be { 'annoyed': { 'BODY AREA': 'string, 'PERSON': 'string' } ... }
+      const reordered = {};
+
+      for (let i = 0; i < rawResults.length; i++) {
+        let thisrow = rawResults[i];
+
+        let newrow = {};
+        Object.keys(thisrow).forEach((key) => {
+          newrow[key.trim()] = thisrow[key]; 
+        });
+
+        reordered[thisrow['EMOTION'].trim()] = newrow;
+      }
+      dataMeditationEmotionsL1 = reordered;
+      dataLoaded += 1;
+      if (dataLoaded === 0) {
+        cb(); 
+      } 
+    }
+  });
+
+  Papa.parse(i18next.t('02_memories.tsv', {lng: window.lang0}), {
     download: true,
     header: true,
     skipEmptyLines: 'greedy',
@@ -264,7 +322,40 @@ function loadData(cb) {
           }
         });
       }
-      dataMemories = reordered;
+      dataMemoriesL0 = reordered;
+      dataMemories = dataMemoriesL0;
+      dataLoaded += 1;
+      if (dataLoaded === 0) {
+        cb(); 
+      } 
+    }
+  });
+
+  Papa.parse(i18next.t('02_memories.tsv', {lng: window.lang1}), {
+    download: true,
+    header: true,
+    skipEmptyLines: 'greedy',
+    complete: function(results) {
+      const rawResults = results.data;
+      // the data comes in as [{ 'afraid': 'One time this..', 'alive': 'one day...', ...} ...]
+      // I (dan) think it should be { 'annoyed': [ 'One time', ...], 'alive': ['one day', ..] /// 
+      const reordered = {};
+
+      for (let i = 0; i < rawResults.length; i++) {
+        let thisrow = rawResults[i];
+
+        let newrow = {};
+        Object.keys(thisrow).forEach((key) => { 
+          key = key.trim();
+          if (key !== '' && thisrow[key].trim() !== '') {
+            if (!reordered[key]) {
+              reordered[key] = []; 
+            } 
+            reordered[key].push(thisrow[key]);
+          }
+        });
+      }
+      dataMemoriesL1 = reordered;
       dataLoaded += 1;
       if (dataLoaded === 0) {
         cb(); 
@@ -781,7 +872,7 @@ async function queueEvents(timeline) {
 
 function resetTimeline() {  
 
-  console.log('Reseting timeline');
+  console.log('Resetting timeline');
 
   if (timeline) timeline.clear();
   timeline = new Timeline({ loop: false, duration: 50000, interval: 100 }); 
