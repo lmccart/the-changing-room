@@ -174,7 +174,7 @@ function updateInterface() {
 //////////////////////////
 
 function handleKey(e) {
-  if (e.key === 't') {
+  if (window.lang0 !== window.lang1 && e.key === 't') {
     // switch window langauges and assets
     window.lang = window.lang === window.lang0 ? window.lang1 : window.lang0;
     dataMeditations = window.lang === window.lang0 ? dataMeditationsL0 : dataMeditationsL1;
@@ -216,7 +216,7 @@ function adjustScreen() {
 }
 
 function loadData(cb) {
-  let dataLoaded = -6; // this is a bit hacky but simpler than Promises.all
+  let dataLoaded = window.lang0 === window.lang1 ? -3 : -6; // this is a bit hacky but simpler than Promises.all
 
   fetch(i18next.t('02_meditation.txt', {lng: window.lang0}))
     .then(res => res.blob())
@@ -224,17 +224,6 @@ function loadData(cb) {
     .then(text => {
       dataMeditationsL0 = text.split(/\r?\n/);
       dataMeditations = dataMeditationsL0;
-      dataLoaded += 1;
-      if (dataLoaded === 0) {
-        cb(); 
-      } 
-    });
-  
-  fetch(i18next.t('02_meditation.txt', {lng: window.lang1}))
-    .then(res => res.blob())
-    .then(blob => blob.text())
-    .then(text => {
-      dataMeditationsL1 = text.split(/\r?\n/);
       dataLoaded += 1;
       if (dataLoaded === 0) {
         cb(); 
@@ -263,34 +252,6 @@ function loadData(cb) {
       }
       dataMeditationEmotionsL0 = reordered;
       dataMeditationEmotions = dataMeditationEmotionsL0;
-      dataLoaded += 1;
-      if (dataLoaded === 0) {
-        cb(); 
-      } 
-    }
-  });
-
-  Papa.parse(i18next.t('02_meditation_emotion_specific.tsv', {lng: window.lang1}), {
-    download: true,
-    header: true,
-    skipEmptyLines: 'greedy',
-    complete: function(results) {
-      const rawResults = results.data;
-      // the data comes in as [{ 'EMOTION': 'annoyed', ' BODY AREA': 'Feel that...', ...} ...]
-      // I (dan) think it should be { 'annoyed': { 'BODY AREA': 'string, 'PERSON': 'string' } ... }
-      const reordered = {};
-
-      for (let i = 0; i < rawResults.length; i++) {
-        let thisrow = rawResults[i];
-
-        let newrow = {};
-        Object.keys(thisrow).forEach((key) => {
-          newrow[key.trim()] = thisrow[key]; 
-        });
-
-        reordered[thisrow['EMOTION'].trim()] = newrow;
-      }
-      dataMeditationEmotionsL1 = reordered;
       dataLoaded += 1;
       if (dataLoaded === 0) {
         cb(); 
@@ -331,37 +292,82 @@ function loadData(cb) {
     }
   });
 
-  Papa.parse(i18next.t('02_memories.tsv', {lng: window.lang1}), {
-    download: true,
-    header: true,
-    skipEmptyLines: 'greedy',
-    complete: function(results) {
-      const rawResults = results.data;
-      // the data comes in as [{ 'afraid': 'One time this..', 'alive': 'one day...', ...} ...]
-      // I (dan) think it should be { 'annoyed': [ 'One time', ...], 'alive': ['one day', ..] /// 
-      const reordered = {};
+  // only parse extra files if there is a second langauge
+  if (window.lang0 !== window.lang1) {
 
-      for (let i = 0; i < rawResults.length; i++) {
-        let thisrow = rawResults[i];
+    fetch(i18next.t('02_meditation.txt', {lng: window.lang1}))
+      .then(res => res.blob())
+      .then(blob => blob.text())
+      .then(text => {
+        dataMeditationsL1 = text.split(/\r?\n/);
+        dataLoaded += 1;
+        if (dataLoaded === 0) {
+          cb(); 
+        } 
+      });
 
-        let newrow = {};
-        Object.keys(thisrow).forEach((key) => { 
-          key = key.trim();
-          if (key !== '' && thisrow[key].trim() !== '') {
-            if (!reordered[key]) {
-              reordered[key] = []; 
-            } 
-            reordered[key].push(thisrow[key]);
-          }
-        });
+    Papa.parse(i18next.t('02_meditation_emotion_specific.tsv', {lng: window.lang1}), {
+      download: true,
+      header: true,
+      skipEmptyLines: 'greedy',
+      complete: function(results) {
+        const rawResults = results.data;
+        // the data comes in as [{ 'EMOTION': 'annoyed', ' BODY AREA': 'Feel that...', ...} ...]
+        // I (dan) think it should be { 'annoyed': { 'BODY AREA': 'string, 'PERSON': 'string' } ... }
+        const reordered = {};
+
+        for (let i = 0; i < rawResults.length; i++) {
+          let thisrow = rawResults[i];
+
+          let newrow = {};
+          Object.keys(thisrow).forEach((key) => {
+            newrow[key.trim()] = thisrow[key]; 
+          });
+
+          reordered[thisrow['EMOTION'].trim()] = newrow;
+        }
+        dataMeditationEmotionsL1 = reordered;
+        dataLoaded += 1;
+        if (dataLoaded === 0) {
+          cb(); 
+        } 
       }
-      dataMemoriesL1 = reordered;
-      dataLoaded += 1;
-      if (dataLoaded === 0) {
-        cb(); 
-      } 
-    }
-  });
+    });
+
+    Papa.parse(i18next.t('02_memories.tsv', {lng: window.lang1}), {
+      download: true,
+      header: true,
+      skipEmptyLines: 'greedy',
+      complete: function(results) {
+        const rawResults = results.data;
+        // the data comes in as [{ 'afraid': 'One time this..', 'alive': 'one day...', ...} ...]
+        // I (dan) think it should be { 'annoyed': [ 'One time', ...], 'alive': ['one day', ..] /// 
+        const reordered = {};
+
+        for (let i = 0; i < rawResults.length; i++) {
+          let thisrow = rawResults[i];
+
+          let newrow = {};
+          Object.keys(thisrow).forEach((key) => { 
+            key = key.trim();
+            if (key !== '' && thisrow[key].trim() !== '') {
+              if (!reordered[key]) {
+                reordered[key] = []; 
+              } 
+              reordered[key].push(thisrow[key]);
+            }
+          });
+        }
+        dataMemoriesL1 = reordered;
+        dataLoaded += 1;
+        if (dataLoaded === 0) {
+          cb(); 
+        } 
+      }
+    });
+  }
+
+  
 }
 
 /////////////////////////////////
