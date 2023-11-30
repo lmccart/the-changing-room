@@ -30,6 +30,7 @@ if (window.soundType) {
 function i18nInit(settings) {
   window.lang0 = settings.lang0;
   window.lang1 = settings.lang1;
+  window.lang = window.lang0;
 
   i18next.init({
     lng: window.lang0,
@@ -188,9 +189,15 @@ function playSound(data) {
   }
   else if (window.soundType === data.soundType) {
     console.log('PLAY SOUND', window.soundType, data);
+    let soundPath = data.track;
+    // actually need to add the emotion to the path
+    if (data.soundType === 'reflection') {
+      soundPath = soundPath.replace('/sounds-reflection/', `/sounds-reflection/${window.lang}/`);
+      soundPath = soundPath.replace('.mp3', `-${window.lang}.mp3`);
+    }
     sound.pause();
-    console.log(`playing ${data.track}`);
-    sound.src = data.track;
+    console.log(`playing ${soundPath}`);
+    sound.src = soundPath;
     sound.volume = data.vol;
     console.log(sound);
     sound.play();
