@@ -48,7 +48,7 @@ Sound can be played via `server-sound-node.js`, `server-sound-browser.js` or `se
 
 Meditations are generated using the language and voice as specified in the `.env` file: `LANG0` and `LANG0_VOICE`.
 
-If you encounter trouble in `generate-meditation.py`, it may be a problem with missing voices (e.g. *Voice 'Name' not found.*). You can add and manage new voices in System Settings -> Accessibility -> Spoken Content -> System Voice -> **Manage Voices** (MacOS Sonoma 14.0). You can view a list of each voice and languages by `running say -v \?` in Terminal.
+If you encounter trouble in `generate-meditation.py`, it may be a problem with missing voices (e.g. *Voice 'Name' not found.*). You can add and manage new voices in System Settings -> Accessibility -> Spoken Content -> System Voice -> **Manage Voices** (MacOS Sonoma 14.0). You can view a list of each voice and languages by running `say -v \?` in Terminal.
 
 You may use different voices by editing the chosen voice in `.env` or manually editing the `say` command in `generate-meditation.py` following the `-v` tag. (The former is recommended.)
 
