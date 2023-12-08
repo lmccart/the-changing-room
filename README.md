@@ -1,30 +1,67 @@
 # The Changing Room 2.0
 
 ## Setup
-1. Install [nodejs](https://nodejs.org/) (version 10.16 or newer)
-2. Clone respository: https://github.com/lmccart/the-changing-room.git
-3. Install dependencies: `npm install`
-4. Add font files to `static/fonts/`
-5. Add [image files](https://drive.google.com/file/d/1SsSHYPwk1jwX-A4SABYmn7RZQqwPsv2_/view?usp=sharing) to `images/` (should look like `images/angry/image file name.jpg`)
-6. The server runs on both HTTP (port 3001) and HTTPS (port 3000) to support this. To use with HTTPS, it requires either the installation of SSL certificates, or just clicking proceed anyway to get past browser warnings. On chrome if you don't see an option to proceed you can type thisisunsafe at the warning screen and it should proceed. [mkcert](https://github.com/FiloSottile/mkcert) will help setup a CA and certs, you'll need [homebrew](https://brew.sh/) to install mkcert.
-  - `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`
-  - `brew install mkcert`
-  - `mkcert -install`
-  - `mkcert [localname].local localhost`
-7. Start server and webpack watcher: `npm start` (you may need to set: `export NODE_OPTIONS=--openssl-legacy-provider`)
-8. Individual areas can be visited at the following paths (or on http at port 3001):
-   - https://localhost:3000/00-intro
-   - https://localhost:3000/01-faces
-   - https://localhost:3000/02-reflection?screen=0,1,2
-   - https://localhost:3000/03-selection
-   - https://localhost:3000/04-convo1
-   - https://localhost:3000/05-convo2
-   - https://localhost:3000/06-passive
 
+1. Install Chrome
+2. Install [XCode](https://developer.apple.com/xcode/resources/) and CL tools `xcode-select --install`
+3. Install [nvm](https://github.com/nvm-sh/nvm). *(See [troubleshooting](https://github.com/nvm-sh/nvm#troubleshooting-on-macos), if needed.)*
+4. Install Node.js with `nvm install node`
+     * Install Node v18 with `nvm install 18`.
+     * Your terminal should automatically use this version of Node, but you can double check with `node -v`. If it is using the wrong version, run `nvm use 18` and check once more with `node -v`
+5. Install [VS Code](https://code.visualstudio.com/)
+6. If you plan to commit changes to the repository, [add your key to GitHub](https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/adding-a-new-ssh-key-to-your-github-account). Otherwise, you may skip this step.
+7. Clone respository: `cd ~/Desktop && git clone git@github.com:lmccart/the-changing-room.git`
+8. Install dependencies: `cd the-changing-room && npm install`
+9. Use `.env-sample` to make a `.env` file, replace `localbook` with the name of your machine in all instances.
+10. Add asset files to appropriate locations:
+    * Add font files to `static/fonts/` (should look like `static/fonts/ABCFavoritMono-*.otf`)
+    * Add image giles to `images/` (should look like `images/angry/#/image file name.jpg`)
+    * Add video files to `images/videos`
+    * Add popup files to `images/popups/`
+    * Add sound files to `sound/sounds/` and `sound/sounds/reflection.` See the [sound README](https://github.com/lmccart/the-changing-room/blob/main/sound/README.md) for complete directory diagram.
+11. The server runs on both HTTP (port 3001) and HTTPS (port 3000) to support this. To use with HTTPS, it requires either the installation of SSL certificates, or just clicking proceed anyway to get past browser warnings. On chrome if you don't see an option to proceed you can type thisisunsafe at the warning screen and it should proceed. [mkcert](https://github.com/FiloSottile/mkcert) will help setup a CA and certs, you'll need [homebrew](https://brew.sh/) to install mkcert.
+    * `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`
+    * `brew install mkcert`
+    * `mkcert -install`
+    * `mkcert [localname].local localhost`
+12. Start server and webpack watcher: `npm start` (you may need to set: `export NODE_OPTIONS=--openssl-legacy-provider`)
+13. Individual areas can be visited at the following paths (or on http at port 3001):
+    * https://localhost:3000/00-intro
+    * https://localhost:3000/01-faces
+    * https://localhost:3000/02-reflection?screen=0,1,2
+    * https://localhost:3000/03-selection
+    * https://localhost:3000/04-convo1
+    * https://localhost:3000/05-convo2
+    * https://localhost:3000/06-passive
+
+### System Preferences
+
+* Desktop background / Screensaver OFF
+* Sleep / Display Off NEVER
+* Do Not Disturb ON
+* Software Updates OFF
+* Default Browser CHROME
+* File Sharing, Screen Sharing, Remote Login ON (name computer OCAX)
+
+### Startup Tasks
+
+1. Copy `install/TCR-LOCATIONS.txt` to Desktop
+2. Copy `install/TCR-OCA*.app` to Desktop
+3. Add login item
+4. Install multibrowse
+     * `pip3 install pyobjc`
+     * `cd install/ && git clone https://github.com/foxxyz/multibrowse.git multibrowse-source`
+5. Copy *.plist to `~/Library/LaunchAgents/`
+6. Update paths and load:
+     * `launchctl load com.TCR.plist`
+7. Testing
+     * `launchctl start com.TCR.plist`
+     * `launchctl stop com.TCR.plist`
 
 ## Repository Structure
 
 ### Client
+
 * `areas/` holds all served files related to the 7 different areas of the installation.
   - `areas/js/shared.js` includes some helper functions that get used on multiple pages.
   - `areas/js/lib/` contains extra script files imported by the main area scripts.
@@ -129,40 +166,3 @@ If you create new keys not in other language's `translation.json`` files, you MU
 * https://github.com/peter-murray/node-hue-api#readme
 * https://developers.meethue.com/develop/get-started-2/
   
-
-
-### Mac Setup
-1. System Prefs
-   * Desktop background / Screensaver OFF
-   * Sleep / Display Off NEVER
-   * Do Not Disturb ON
-   * Software Updates OFF
-   * Default Browser CHROME
-   * File Sharing, Screen Sharing, Remote Login ON (name computer OCAX)
-2. Setup software and tools
-   * Install Chrome
-   * Install [nodejs](https://nodejs.org/) (version 10.16 or newer)
-   * Install [VS Code](https://code.visualstudio.com/)
-   * [Add key to GitHub](https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/adding-a-new-ssh-key-to-your-github-account)
-   * Clone respository: `cd ~/Desktop && git clone git@github.com:lmccart/the-changing-room.git`
-   * Install dependencies: `cd the-changing-room && npm install`
-   * Add [font files](#) to `static/fonts/` (should look like `static/fonts/ABC...`)
-   * Add [image files](#) to `images/` (should look like `images/angry/image file name.jpg`)
-   * Add [video files](#) to `images/videos`
-   * Add [popup files](#) to `images/popups/` 
-   * Add [sound files](#)to `sound/sounds/`
-3. Setup startup tasks
-   * Copy `install/TCR-LOCATIONS.txt` to Desktop
-   * Copy `install/TCR-OCA*.app` to Desktop
-   * Add login item
-   * Install multibrowse
-     * `pip3 install pyobjc`
-     * `cd install/ && git clone https://github.com/foxxyz/multibrowse.git multibrowse-source`
-   * Copy *.plist to `~/Library/LaunchAgents/`
-   * Update paths and load:
-     * `launchctl load com.TCR.plist`
-   * Testing:
-     * `launchctl start com.TCR.plist`
-     * `launchctl stop com.TCR.plist`
-
-
