@@ -16,7 +16,8 @@ module.exports = {
     selection: ['./areas/js/03-selection.js', hotMiddlewareScript],
     convo1: ['./areas/js/04-convo1.js', hotMiddlewareScript],
     convo2: ['./areas/js/05-convo2.js', hotMiddlewareScript],
-    passive: ['./areas/js/06-passive.js', hotMiddlewareScript]
+    passive: ['./areas/js/06-passive.js', hotMiddlewareScript],
+    rotating: ['./areas/js/07-rotating.js', hotMiddlewareScript]
   },
   output: {
     filename: 'js/[name].[contenthash].js',
@@ -25,32 +26,32 @@ module.exports = {
   },
   module: {
     rules: [
-    {
-      test: /\.s(a|c)ss$/,
-      sideEffects: true,
-      use: [
-        MiniCssExtractPlugin.loader,
-        {
-          loader: 'css-loader',
-          options: {
-            url: false,
+      {
+        test: /\.s(a|c)ss$/,
+        sideEffects: true,
+        use: [
+          MiniCssExtractPlugin.loader,
+          {
+            loader: 'css-loader',
+            options: {
+              url: false,
+            }
+          },
+          {
+            loader: 'sass-loader',
+            options: {
+              sourceMap: true,
+            }
           }
-        },
-        {
-          loader: 'sass-loader',
-          options: {
-            sourceMap: true,
-          }
-        }
-      ]
-    },
-    {
-      test: require.resolve('jquery'),
-      loader: 'expose-loader',
-      options: {
-        exposes: ['$', 'jQuery'],
+        ]
       },
-    }]
+      {
+        test: require.resolve('jquery'),
+        loader: 'expose-loader',
+        options: {
+          exposes: ['$', 'jQuery'],
+        },
+      }]
   },
   plugins: [
     new CopyPlugin({
@@ -103,6 +104,12 @@ module.exports = {
       filename: '06-passive/index.html',
       template: './areas/06-passive/index.html',
       chunks: ['passive'],
+      minify: false,
+    }),
+    new HtmlWebpackPlugin({  
+      filename: '07-rotating/index.html',
+      template: './areas/07-rotating/index.html',
+      chunks: ['rotating'],
       minify: false,
     }),
     new HtmlWebpackPlugin({  
