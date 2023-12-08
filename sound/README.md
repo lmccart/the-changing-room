@@ -8,9 +8,9 @@
 
 3. Run `python generate-meditation.py` to create meditation tracks for each emotion (e.g. *afraid-anxious.mp3*) for the desired primary or second language. Set `use_primary` to `True` to use the primary language for the intro and `False` to use the secondary language for the intro. Make sure you have both `ffmpeg` and `sox` packages installed; both can be installed with Homebrew. Missing Python packages can be installed with `pip install`.
 
-4. The script should move the created meditation tracks from `sound/recordings/final` to `sound/sounds-reflection`. If this does not happen, you will need to do it manually. You may delete the `sound/recordings` folder after this.
+4. The script should move the created meditation tracks from `sound/recordings/final` to `sound/sounds-reflection`. If this does not happen, you will need to do it manually. You may delete the `sound/recordings` and `sound/sounds-longer` folders after this. You may also delete the `.aif` sound files in `sound/sounds`, but **do not remove the `.mp3` files.**
 
-Your overall sound directory should look like this:
+After generating audios, your sound directory should look like this:
 
 ```
 sound
@@ -20,15 +20,16 @@ sound
 │
 └───sounds
 │   │   base.mp3
-│   │   base.aif
-│   │   ^ for each base
-│
-└───sounds-longer
-│   │   base.aif
 │   │   ^ for each base
 │
 └───sounds-reflection
-    │   base-emotion.mp3
+    |
+    └───lang0
+    │   base-emotion-lang0.mp3
+    │   ^ for each emotion
+    |
+    └───lang1
+    │   base-emotion-lang1.mp3
     │   ^ for each emotion
 ```
 
