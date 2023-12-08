@@ -7,7 +7,7 @@
     "02_memories.tsv": "/static/data/fr/02_memories_fr.tsv",
     "03_selection_intro": "/static/data/fr/03_selection_intro_fr.txt",
     "04_convo1_intro.txt": "/static/data/fr/04_convo1_intro_fr.txt",
-    "04_substitutions.tsv": "./static/data/fr/04_substitutions.tsv",
+    "04_substitutions.tsv": "/static/data/fr/04_substitutions.tsv",
     "05_directions.tsv": "/static/data/fr/05_directions_fr.tsv",
     "fallback": "Il n'y a rien dont tu as peur.",
     "type_a_message": "Écris un message à ton partenaire...",
