@@ -21,12 +21,32 @@ let instructions;
 let colors;
 
 window.init = () => {
-  socket.on('emotion:update', updateEmotion);
-  socket.emit('emotion:get');
-
   // Instructions loading i18n
   const loading = i18next.t('next_instruction_shortly', {lng: window.lang0}) + '<br/>' + i18next.t('next_instruction_shortly', {lng: window.lang1});
   $('#loading-text').html(loading);
+
+  Papa.parse(i18next.t('05_directions.tsv'), {
+    download: true,
+    header: true,
+    skipEmptyLines: 'greedy',
+    complete: function(results) {
+      const rawResults = results.data;
+      // the data comes in as [{angry: 'string', sad: 'string'}, ...]
+      // I (sam) think it should be {angry: ['string', 'string'], sad:['string', 'string']...}
+      const reordered = {};
+      const keys = Object.keys(rawResults[0]);
+      keys.forEach(key => reordered[key] = []);
+  
+      for (var i = 0; i < rawResults.length; i++) {
+        const resultRow = rawResults[i];
+        keys.forEach(key => resultRow[key].trim().length > 0 && reordered[key].push(resultRow[key]));
+      }
+      instructions = reordered;
+    }
+  });
+
+  socket.on('emotion:update', updateEmotion);
+  socket.emit('emotion:get');
 };
 
 window.loadingComplete = () => {
@@ -58,28 +78,6 @@ async function updateInterface() {
   $('.instruction-container').css('border-color', colors[1]);
   $('#instruction').css('color', textColor);
 }
-
-
-Papa.parse(i18next.t('05_directions.tsv'), {
-  download: true,
-  header: true,
-  skipEmptyLines: 'greedy',
-  complete: function(results) {
-    const rawResults = results.data;
-    // the data comes in as [{angry: 'string', sad: 'string'}, ...]
-    // I (sam) think it should be {angry: ['string', 'string'], sad:['string', 'string']...}
-    const reordered = {};
-    const keys = Object.keys(rawResults[0]);
-    keys.forEach(key => reordered[key] = []);
-
-    for (var i = 0; i < rawResults.length; i++) {
-      const resultRow = rawResults[i];
-      keys.forEach(key => resultRow[key].trim().length > 0 && reordered[key].push(resultRow[key]));
-    }
-    instructions = reordered;
-  }
-});
-
 
 function reset() {
   clearTimeout(initTimeout);

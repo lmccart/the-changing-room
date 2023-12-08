@@ -31,7 +31,6 @@ for (let i = 0; i < num_panels; i++) {
 }
 
 const handIndicator = $('#hand-indicator');
-const sel_txt_url = i18next.t('03_selection_intro');
 const apiURL_emotions = '/emotions';
 let sel_intro_content;
 let emotions;
@@ -83,7 +82,7 @@ window.init = () => {
   });
 
   // READ IN SELECTION TEXT
-  fetch(sel_txt_url)
+  fetch(i18next.t('03_selection_intro'))
     .then(response => response.text())
     .then(text => sel_intro_content = text)
     .then(() => selection_txt_parse(sel_intro_content));
