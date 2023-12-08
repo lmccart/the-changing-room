@@ -5,7 +5,9 @@ from dotenv import load_dotenv
 
 # True generates audios in primary language
 # False generates audios in secondary language
-use_primary = False
+use_primary = True
+# Test one of each emotion first
+test_one = True
 
 load_dotenv()
 LANG0 = os.getenv("LANG0")
@@ -30,7 +32,7 @@ short_clip_dur = 10
 long_clip_dur = 15
 total_dur = 360
 
-test_one = True # test one of each emotion first
+
 
 def generate_script(row):
   base = row[0]
