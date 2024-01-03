@@ -77,6 +77,7 @@
 * `server.js` is the main server file.
 * `server-lights.js` is the main lights server file.
 * `server-fileUtils.js` is the main fileUtils file.
+* `lights/` contains light server files for different light controllers.
 * `sound/` contains the main sound server files.
   * `sound/server-sound-*` are three different options for playing sound. See the README in the sound folder for more info.
   * `sound/sounds/` contains the sound files played by either the server or client depending on soundType.

@@ -82,7 +82,7 @@ if (setup) {
       // Do something with the authenticated user/api
       const bridgeConfig = await authenticatedApi.configuration.getConfiguration();
       console.log(`Connected to Hue Bridge: ${bridgeConfig.name} :: ${bridgeConfig.ipaddress}`);
-    } catch(err) {
+    } catch (err) {
       if (err.getHueErrorType() === 101) {
         console.error('The Link button on the bridge was not pressed. Please press the Link button and try again.');
       } else {
@@ -106,35 +106,35 @@ const hex2rgb = (hex) => {
 
 function hex2cie(hex) {
   let rgb = hex2rgb(hex);
-	//Apply a gamma correction to the RGB values, which makes the color more vivid and more the like the color displayed on the screen of your device
-	var red 	= (rgb.r > 0.04045) ? Math.pow((rgb.r + 0.055) / (1.0 + 0.055), 2.4) : (rgb.r / 12.92);
-	var green 	= (rgb.g > 0.04045) ? Math.pow((rgb.g + 0.055) / (1.0 + 0.055), 2.4) : (rgb.g / 12.92);
-	var blue 	= (rgb.b > 0.04045) ? Math.pow((rgb.b + 0.055) / (1.0 + 0.055), 2.4) : (rgb.b / 12.92); 
+  //Apply a gamma correction to the RGB values, which makes the color more vivid and more the like the color displayed on the screen of your device
+  var red 	= (rgb.r > 0.04045) ? Math.pow((rgb.r + 0.055) / (1.0 + 0.055), 2.4) : (rgb.r / 12.92);
+  var green 	= (rgb.g > 0.04045) ? Math.pow((rgb.g + 0.055) / (1.0 + 0.055), 2.4) : (rgb.g / 12.92);
+  var blue 	= (rgb.b > 0.04045) ? Math.pow((rgb.b + 0.055) / (1.0 + 0.055), 2.4) : (rgb.b / 12.92); 
 
-	//RGB values to XYZ using the Wide RGB D65 conversion formula
-	var X 		= red * 0.664511 + green * 0.154324 + blue * 0.162028;
-	var Y 		= red * 0.283881 + green * 0.668433 + blue * 0.047685;
+  //RGB values to XYZ using the Wide RGB D65 conversion formula
+  var X 		= red * 0.664511 + green * 0.154324 + blue * 0.162028;
+  var Y 		= red * 0.283881 + green * 0.668433 + blue * 0.047685;
   var Z 		= red * 0.000088 + green * 0.072310 + blue * 0.986039;
 
-	//Calculate the xy values from the XYZ values
-	var x 		= (X / (X + Y + Z)).toFixed(4);
-	var y 		= (Y / (X + Y + Z)).toFixed(4);
+  //Calculate the xy values from the XYZ values
+  var x 		= (X / (X + Y + Z)).toFixed(4);
+  var y 		= (Y / (X + Y + Z)).toFixed(4);
 
-	if (isNaN(x)) x = 0;
-	if (isNaN(y)) y = 0;
+  if (isNaN(x)) x = 0;
+  if (isNaN(y)) y = 0;
 
-	return {x: Number(x), y: Number(y)};
+  return {x: Number(x), y: Number(y)};
 }
 
-function avgcolor(color1, color2, ratio){
+function avgcolor(color1, color2, ratio) {
   var hex = function(x) {
-      x = x.toString(16);
-      return (x.length == 1) ? '0' + x : x;
+    x = x.toString(16);
+    return (x.length === 1) ? '0' + x : x;
   };
   
-  var r = Math.ceil(parseInt(color1.substring(0,2), 16) * ratio + parseInt(color2.substring(0,2), 16) * (1-ratio));
-  var g = Math.ceil(parseInt(color1.substring(2,4), 16) * ratio + parseInt(color2.substring(2,4), 16) * (1-ratio));
-  var b = Math.ceil(parseInt(color1.substring(4,6), 16) * ratio + parseInt(color2.substring(4,6), 16) * (1-ratio));
+  var r = Math.ceil(parseInt(color1.substring(0,2), 16) * ratio + parseInt(color2.substring(0,2), 16) * (1 - ratio));
+  var g = Math.ceil(parseInt(color1.substring(2,4), 16) * ratio + parseInt(color2.substring(2,4), 16) * (1 - ratio));
+  var b = Math.ceil(parseInt(color1.substring(4,6), 16) * ratio + parseInt(color2.substring(4,6), 16) * (1 - ratio));
   
   var middle = hex(r) + hex(g) + hex(b);
   console.log(r, g, b);
@@ -150,7 +150,7 @@ const stopAll = () => {
       console.log(`LIGHTS: Successfully set group light state OFF? ${result}`);
     })
     .catch(err => { console.error(err); });
-}
+};
 
 
 module.exports.playEmotion = playEmotion;
