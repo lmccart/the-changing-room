@@ -13,7 +13,7 @@ https.listen(3000, () => { console.log('https listening on *:3000'); });
 const io = require('socket.io')(https);
 
 const Sound = require('./sound/server-sound-browser');
-const Lights = require('./lights/server-lights-hue');
+const Lights = require('./lights/server-lights-dmx');
 
 const { getChatSubData } = require('./server-fileUtils');
 let chatSubs;
