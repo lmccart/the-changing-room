@@ -33,6 +33,7 @@
     * https://localhost:3000/04-convo1
     * https://localhost:3000/05-convo2
     * https://localhost:3000/06-passive
+    * https://localhost:3000/07-rotating
 
 ### System Preferences
 
