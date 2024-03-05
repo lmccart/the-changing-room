@@ -58,9 +58,9 @@ window.init = () => {
     w[1] -= screenNumber * 100;
   }
 
-  Promise.all([parseDirections(), parseReflections(), getPopupUrls()])
+  Promise.all([parsePassive(), getPopupUrls()])
     .then((results) => {
-      results[2].forEach(url => {
+      results[1].forEach(url => {
         let img = new Image();
         img.src = url;
         preloadedExtras.push(img);
@@ -112,9 +112,9 @@ async function updateInterface(durations) {
 
 }
 
-function parseDirections() {
+function parsePassive() {
   return new Promise(resolve => {
-    Papa.parse(i18next.t('05_directions.tsv'), {
+    Papa.parse(i18next.t('06_passive.tsv'), {
       download: true,
       header: true,
       skipEmptyLines: 'greedy',
@@ -128,36 +128,12 @@ function parseDirections() {
           const resultRow = rawResults[i];
           keys.forEach(key => resultRow[key].trim().length > 0 && reordered[key].push(resultRow[key]));
         }
-        window.emotionStrings.push(reordered);
+        window.emotionStrings = reordered;
         resolve(window.emotionStrings);
       }
     });
   });
 }
-
-function parseReflections() {
-  return new Promise(resolve => {
-    Papa.parse(i18next.t('01_self.tsv'), {
-      download: true,
-      header: true,
-      skipEmptyLines: 'greedy',
-      complete: function(results) {
-        const rawResults = results.data;
-        const reordered = {};
-        const keys = Object.keys(rawResults[0]);
-        keys.forEach(key => reordered[key] = []);
-
-        for (var i = 0; i < rawResults.length; i++) {
-          const resultRow = rawResults[i];
-          keys.forEach(key => resultRow[key].trim().length > 0 && reordered[key].push(resultRow[key]));
-        }
-        window.emotionStrings.push(reordered);
-        resolve(window.emotionStrings);
-      }
-    });
-  });
-}
-
 
 // add elements at random, with a multiplier based on a single digit integer
 // elements should self destruct, and not overlap too much with current objects on screen
@@ -276,7 +252,7 @@ function PopupFactory(emotionObj) {
 
     if (childThis.type === POPUP.IMAGE_TEXT || childThis.type === POPUP.TEXT) {
       // window.emotionStings is an array of objects with a length of 2
-      const selectedData = window.emotionStrings[Math.floor(rng() * 2)][curEmotion.base];
+      const selectedData = window.emotionStrings[curEmotion.base];
       const string = selectedData[Math.floor(rng() * selectedData.length)] || stringFallback;
       const textEl = $(`<p class=${childThis.type === 1 ? 'text' : 'solo text'}>${string}</p>`);
 

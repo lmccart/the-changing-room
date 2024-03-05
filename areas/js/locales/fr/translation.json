@@ -9,6 +9,7 @@
     "04_convo1_intro.txt": "/static/data/fr/04_convo1_intro_fr.txt",
     "04_substitutions.tsv": "/static/data/fr/04_substitutions.tsv",
     "05_directions.tsv": "/static/data/fr/05_directions_fr.tsv",
+    "06_passive.tsv": "/static/data/fr/06_passive_fr.tsv",
     "fallback": "Il n'y a rien dont tu as peur.",
     "type_a_message": "Écris un message à ton partenaire...",
     "next_instruction_shortly": "Prochaine instruction dans un instant...",
