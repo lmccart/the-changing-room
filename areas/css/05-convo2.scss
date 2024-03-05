@@ -113,10 +113,23 @@ svg {
     border: .4vw solid white;
 
     display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5vh;
     align-items: center;
+    
 
     #instruction {
-      font-size: 8vw;
+      font-size: 4vw;
+      color: white;
+      // height?
+      width: 90%;
+
+      margin: 0 auto;
+    }
+
+    #instruction-i18n {
+      font-size: 4vw;
       color: white;
 
       width: 90%;

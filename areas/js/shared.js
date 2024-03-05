@@ -31,6 +31,7 @@ function i18nInit(settings) {
   window.lang0 = settings.lang0;
   window.lang1 = settings.lang1;
   window.lang = window.lang0;
+  window.bilingual = window.lang0 !== window.lang1 ? true : false;
   // randomly chooses language to show loading emotion in
   window.langLoading = Math.round(Math.random()) === 0 ? settings.lang0 : settings.lang1;
 
