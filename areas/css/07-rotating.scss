@@ -5,9 +5,10 @@ body {
 }
 
 section {
-  position: absolute;
-  top: 225px;
-  left: 72px;
+  // position: absolute;
+  // top: 225px;
+  // left: 72px;
+  // overflow: hidden;
 }
 
 
@@ -18,14 +19,24 @@ iframe {
   float: left;
 }
 
+// #passive-iframe {
+//   width: 1766px;
+//   height: 520px;
+// }
+
+// #reflection-section iframe {
+//   width: 883px;
+//   height: 520px;
+// }
+
 #passive-iframe {
-  width: 1766px;
-  height: 520px;
+  width: 50vw;
+  height: 100vh;
 }
 
 #reflection-section iframe {
-  width: 883px;
-  height: 520px;
+  width: 50vw;
+  height: 100vh;
 }
 
 
