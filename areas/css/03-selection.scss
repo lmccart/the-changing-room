@@ -56,6 +56,12 @@ body {
 		transition-property: all;
     	transition-duration: 2s;
 	}
+	.emotion-t {
+		text-transform: capitalize;
+		transition-property: all;
+    	transition-duration: 2s;
+		color: #ffffff4d;
+	}
 	.selected_emotion_color {
   		-webkit-background-clip: text;
   		-webkit-text-fill-color: transparent;

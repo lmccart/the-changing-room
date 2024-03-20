@@ -49,8 +49,9 @@ window.init = () => {
       console.log(emotions);
 
       Object.keys(emotions)
-        .sort((a, b) => { // sorts based on the translated value
-          return i18next.t(a).localeCompare(i18next.t(b));
+        .sort((a, b) => {
+          // return i18next.t(a).localeCompare(i18next.t(b)); // for sorting on translated value
+          return a.localeCompare(b);
         })
         .forEach(function(emotion, i) {
           let base_emotion = emotions[emotion].base;
@@ -58,13 +59,23 @@ window.init = () => {
           let emotion_div = $('<div>', {
             'id': `option-${emotion}`,
             'class': 'emotion', 
-            text: `${emotion_t}`});
+            text: `${emotion}`});
           emotion_div.on('touchend', (e) => {
             if (isSwiping < 5) {
               socket.emit('emotion:pick', `${emotion}`);
             }
           });
+          let emotion_t_div = $('<div>', {
+            'id': `option-${emotion}-t`,
+            'class': 'emotion-t', 
+            text: `${emotion_t}`});
+          emotion_t_div.on('touchend', (e) => {
+            if (isSwiping < 5) {
+              socket.emit('emotion:pick', `${emotion}`);
+            }
+          });
           $('#scroll_joined').append(emotion_div);
+          $('#scroll_joined').append(emotion_t_div);
         });
       socket.on('emotion:update', updateEmotion);
       socket.emit('emotion:get');
@@ -113,29 +124,49 @@ function updateInterface() {
   $('#debug-info').text('CURRENT EMOTION: ' + curEmotion.name + ' (base: ' + curEmotion.base + ', level: ' + curEmotion.level + ')');
   $('#emotions').val(curEmotion.name);
 
-  $('.emotion').removeAttr('style');
-  $('.emotion').removeClass('selected_emotion');
+  $('.emotion, .emotion-t').removeAttr('style');
+  $('.emotion, .emotion-t').removeClass('selected_emotion');
   //get color of selected emotion colors
   let emotion_colors = baseColors[curEmotion.base][curEmotion.level - 1];
 
   const $elm = $('#option-' + curEmotion.name);
-  let prevEmotion = $elm.prev().html();
-  let prevPrevEmotion = $elm.prev().prev().html();
-  let nextEmotion = $elm.next().html();
-  let nextNextEmotion = $elm.next().next().html();
-  $elm.prev().html('<div class="loading-title">Loading</div>');
-  $elm.prev().prev().html('<div class="loading-title">Loading</div>');
-  $elm.next().html('<div class="loading-title">Loading</div>');
-  $elm.next().next().html('<div class="loading-title">Loading</div>');
+  const $elm_t = $('#option-' + curEmotion.name + '-t');
+
+  let prevEmotions = [];
+  let nextEmotions = [];
+  const numEmotions = 14;
+
+  $elm.prevAll().slice(0, numEmotions).each(function() {
+    prevEmotions.push($(this).html());
+    if ($(this).hasClass('emotion')) {
+      $(this).html('<div class="loading-title">Loading</div>');
+    } else {
+      $(this).html(`<div class="loading-title">${i18next.t('loading')}</div>`);
+    }
+  });
+
+  $elm_t.nextAll().slice(0, numEmotions).each(function() {
+    nextEmotions.push($(this).html());
+    if ($(this).hasClass('emotion')) {
+      $(this).html('<div class="loading-title">Loading</div>');
+    } else {
+      $(this).html(`<div class="loading-title">${i18next.t('loading')}</div>`);
+    }
+  });
 
   setTimeout(() => {
-    $elm.prev().html(prevEmotion);
-    $elm.prev().prev().html(prevPrevEmotion);
-    $elm.next().html(nextEmotion);
-    $elm.next().next().html(nextNextEmotion);
+
+    $elm.prevAll().slice(0, numEmotions).each(function(index) {
+      $(this).html(prevEmotions[index]);
+    });
+  
+    $elm_t.nextAll().slice(0, numEmotions).each(function(index) {
+      $(this).html(nextEmotions[index]);
+    });
+
   }, window.loadingDur - 1000);
   
-  $elm.fadeIn(fade_time, function() {
+  $elm.add($elm_t).fadeIn(fade_time, function() {
     scrollToEmotion(curEmotion.name, curEmotion.base);
 
     //transition to color of selected emotion colors
@@ -149,6 +180,7 @@ function updateInterface() {
   //transition to font color to white
   setTimeout(function() {
     $elm.addClass('selected_emotion');
+    $elm_t.addClass('selected_emotion');
   }, fade_time);
 
 }
