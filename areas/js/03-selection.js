@@ -65,15 +65,6 @@ window.init = () => {
               socket.emit('emotion:pick', `${emotion}`);
             }
           });
-          let emotion_t_div = $('<div>', {
-            'id': `option-${emotion}-t`,
-            'class': 'emotion-t', 
-            text: `${emotion_t}`});
-          emotion_t_div.on('touchend', (e) => {
-            if (isSwiping < 5) {
-              socket.emit('emotion:pick', `${emotion}`);
-            }
-          });
           $('#scroll_joined').append(emotion_div);
           $('#scroll_joined').append(emotion_t_div);
         });
