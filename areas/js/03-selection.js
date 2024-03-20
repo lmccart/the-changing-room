@@ -59,8 +59,17 @@ window.init = () => {
           let emotion_div = $('<div>', {
             'id': `option-${emotion}`,
             'class': 'emotion', 
-            text: `${emotion_t}`});
+            text: `${emotion}`});
           emotion_div.on('click touchend', (e) => {
+            if (isSwiping < 5) {
+              socket.emit('emotion:pick', `${emotion}`);
+            }
+          });
+          let emotion_t_div = $('<div>', {
+            'id': `option-${emotion}-t`,
+            'class': 'emotion-t', 
+            text: `${emotion_t}`});
+          emotion_t_div.on('touchend', (e) => {
             if (isSwiping < 5) {
               socket.emit('emotion:pick', `${emotion}`);
             }
