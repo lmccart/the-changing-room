@@ -11,7 +11,7 @@ images/*/*.jpeg
 images/*/*.JPG
 images/*/*.JPEG
 images/*/*.png
-images/*
+images/*/*.PNG
 sound/sounds/*
 sound/sounds-longer/*
 sound/sounds-orig/*

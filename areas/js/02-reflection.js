@@ -41,10 +41,16 @@ let dataMemoriesL1;
 ///////////////////////////////////////////////
 //// Screen parameters
 
+// const screenParams = {
+//   0: { id: 0, name: 'LEFT', width: 1802, height: 1080, display: 'left projector'},
+//   1: { id: 1, name: 'CENTER', width: 1897, height: 1080, display: 'center projector' },
+//   2: { id: 2, name: 'RIGHT', width: 1889, height: 1080, display: 'right projector' },
+//   999: { id: 999, name: 'FULLSCREEN', width: 0, height: 1080, display: 'fullscreen' },
+// };
 const screenParams = {
-  0: { id: 0, name: 'LEFT', width: 1802, height: 1080, display: 'left projector'},
-  1: { id: 1, name: 'CENTER', width: 1897, height: 1080, display: 'center projector' },
-  2: { id: 2, name: 'RIGHT', width: 1889, height: 1080, display: 'right projector' },
+  0: { id: 0, name: 'LEFT', width: 'AUTO', height: 'AUTO', display: 'left projector'},
+  1: { id: 1, name: 'CENTER', width: 'AUTO', height: 'AUTO', display: 'center projector' },
+  2: { id: 2, name: 'RIGHT', width: 1920, height: 1080, display: 'right projector' },
   999: { id: 999, name: 'FULLSCREEN', width: 0, height: 1080, display: 'fullscreen' },
 };
 screenParams[999].width = screenParams[0].width + screenParams[1].width + screenParams[2].width;
@@ -210,9 +216,17 @@ function setScreen() {
 
 function adjustScreen() {
   thisScreenParams = screenParams[screenNumber];
-  $('#wrapper').width(thisScreenParams.width).height(thisScreenParams.height);
-  $('.main').width(thisScreenParams.width).height(thisScreenParams.height);
-  $('#loading').width(thisScreenParams.width).height(thisScreenParams.height);
+  let w = thisScreenParams.width, h = thisScreenParams.height;
+  if (w == 'AUTO') {
+    w = '100%';
+  }
+  if (h == 'AUTO') {
+    h = '100%';
+  } 
+  console.log('params', w, h)
+  $('#wrapper').width(w).height(h);
+  $('.main').width(w).height(h);
+  $('#loading').width(w).height(h);
 }
 
 function loadData(cb) {

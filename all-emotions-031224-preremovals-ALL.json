@@ -54,6 +54,16 @@
     "level": 3,
     "name": "resentful"
   },
+  "low": {
+    "base": "depressed",
+    "level": 1,
+    "name": "low"
+  },
+  "down": {
+    "base": "depressed",
+    "level": 1,
+    "name": "down"
+  },
   "grouchy": {
     "base": "depressed",
     "level": 1,
@@ -103,6 +113,11 @@
     "base": "depressed",
     "level": 3,
     "name": "hopeless"
+  },
+  "morose": {
+    "base": "depressed",
+    "level": 3,
+    "name": "morose"
   },
   "depressed": {
     "base": "depressed",
@@ -159,6 +174,11 @@
     "level": 3,
     "name": "lost"
   },
+  "unsure": {
+    "base": "confused",
+    "level": 3,
+    "name": "unsure"
+  },
   "confounded": {
     "base": "confused",
     "level": 3,
@@ -168,6 +188,11 @@
     "base": "helpless",
     "level": 1,
     "name": "vulnerable"
+  },
+  "alone": {
+    "base": "helpless",
+    "level": 2,
+    "name": "alone"
   },
   "distressed": {
     "base": "helpless",
@@ -249,6 +274,11 @@
     "level": 1,
     "name": "timid"
   },
+  "wary": {
+    "base": "afraid",
+    "level": 1,
+    "name": "wary"
+  },
   "defensive": {
     "base": "afraid",
     "level": 1,
@@ -329,6 +359,11 @@
     "level": 1,
     "name": "slighted"
   },
+  "pained": {
+    "base": "hurt",
+    "level": 2,
+    "name": "pained"
+  },
   "rejected": {
     "base": "hurt",
     "level": 2,
@@ -373,6 +408,11 @@
     "base": "sad",
     "level": 1,
     "name": "fragile"
+  },
+  "wistful": {
+    "base": "sad",
+    "level": 1,
+    "name": "wistful"
   },
   "sorrowful": {
     "base": "sad",
@@ -539,10 +579,25 @@
     "level": 3,
     "name": "passionate"
   },
+  "thankful": {
+    "base": "happy",
+    "level": 1,
+    "name": "thankful"
+  },
   "statisfied": {
     "base": "happy",
     "level": 1,
     "name": "statisfied"
+  },
+  "glad": {
+    "base": "happy",
+    "level": 1,
+    "name": "glad"
+  },
+  "cheerful": {
+    "base": "happy",
+    "level": 1,
+    "name": "cheerful"
   },
   "mellow": {
     "base": "happy",
@@ -558,6 +613,11 @@
     "base": "happy",
     "level": 2,
     "name": "delighted"
+  },
+  "gleeful": {
+    "base": "happy",
+    "level": 2,
+    "name": "gleeful"
   },
   "jovial": {
     "base": "happy",
@@ -694,6 +754,11 @@
     "level": 3,
     "name": "wonderful"
   },
+  "excited": {
+    "base": "alive",
+    "level": 3,
+    "name": "excited"
+  },
   "aroused": {
     "base": "alive",
     "level": 3,
@@ -709,6 +774,11 @@
     "level": 1,
     "name": "earnest"
   },
+  "hopeful": {
+    "base": "positive",
+    "level": 1,
+    "name": "hopeful"
+  },
   "positive": {
     "base": "positive",
     "level": 2,
@@ -723,6 +793,11 @@
     "base": "positive",
     "level": 2,
     "name": "inspired"
+  },
+  "upbeat": {
+    "base": "positive",
+    "level": 2,
+    "name": "upbeat"
   },
   "motivated": {
     "base": "positive",
@@ -763,6 +838,11 @@
     "base": "peaceful",
     "level": 1,
     "name": "okay"
+  },
+  "fine": {
+    "base": "peaceful",
+    "level": 1,
+    "name": "fine"
   },
   "peaceful": {
     "base": "peaceful",
@@ -824,10 +904,20 @@
     "level": 1,
     "name": "secure"
   },
+  "composed": {
+    "base": "strong",
+    "level": 1,
+    "name": "composed"
+  },
   "sane": {
     "base": "strong",
     "level": 1,
     "name": "sane"
+  },
+  "sure": {
+    "base": "strong",
+    "level": 2,
+    "name": "sure"
   },
   "honest": {
     "base": "strong",
@@ -848,5 +938,10 @@
     "base": "strong",
     "level": 3,
     "name": "excellent"
+  },
+  "energized": {
+    "base": "strong",
+    "level": 3,
+    "name": "energized"
   }
 }
