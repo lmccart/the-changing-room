@@ -9,8 +9,9 @@ let curEmotion = '';
 let introText = '';
 let introText0 = '';
 let introText1 = '';
+let interruptIntro = false;
 let uiResetTimeout, showChatTimeout;
-let resetWaitTime = 30 * 1000; // Time before intro reset && inactivity timer
+let resetWaitTime = 10 * 1000; // Time before intro reset && inactivity timer
 let socketid;
 const typingSpeed = 200; // milliseconds
 const pauseOnMessageTime = 2000; // 3s
@@ -97,6 +98,7 @@ function resetChat() {
   messageViewer.empty();
   // introEl.text(introText);
 
+  interruptIntro = false;
   const introTime0 = introText0.split(' ').length * typingSpeed;
   typeMessageByWord(introText0, introEl, 0, false);
   introEl.show();
@@ -144,6 +146,7 @@ function updateEmotion(msg) {
   if (!curEmotion || curEmotion.name !== msg.name) {
     curEmotion = msg;
     console.log('emotion has been updated to: ' + msg.name + ' (base: ' + msg.base + ', level: ' + msg.level + ')');
+    interruptIntro = true;
     updateInterface();
   }
 }
@@ -181,6 +184,11 @@ function handleNewMessage(data) {
 }
 
 function typeMessageByWord(string, el, iteration, secondLang) {
+  if (interruptIntro) {
+    el.empty();
+    return;
+  }
+
   var iteration = iteration || 0;
   const words = string.split(' ');
 
