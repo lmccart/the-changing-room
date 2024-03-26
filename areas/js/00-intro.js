@@ -41,6 +41,7 @@ window.init = () => {
 window.loadingComplete = () => {
   $('.intro-text-container').css('visibility', 'visible');
   scrollDown();
+  setTimeout(setHandInterval, scroll_pause_time);
 };
 
 window.speechSynthesis.onvoiceschanged = function() {
@@ -79,7 +80,6 @@ function loadText() {
           });
       });
   }
-  setHandInterval();
 }
 
 function updateEmotion(msg) {
@@ -119,6 +119,7 @@ $('.holder').on('click wheel DOMMouseScroll mousewheel keyup touchmove', functio
     scrollResume();
   }, scroll_resume_time);
   setHandInterval();
+
 });
 
 function scrollDown() {
