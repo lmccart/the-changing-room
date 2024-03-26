@@ -82,3 +82,12 @@ video {
   min-width: 100%;
   min-height: 100%;
 }
+
+#hand-indicator {
+  display: none;
+  position: fixed;
+  z-index: 500;
+
+  width: 10vw;
+  transform: rotateZ(-20deg);
+}

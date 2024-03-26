@@ -5,14 +5,14 @@ import './shared.js';
 import i18next from 'i18next';
 
 // VARIABLES
-const num_panels = 4;
-const idle_timeout = 45;
+const num_panels = 3;
+const idle_timeout = 60;
 const scroll_timeout = 5;
 const scroll_down_time = 990000;
-const scroll_up_time = 9000;
+const scroll_up_time = 15000;
 const scroll_pause_time = 1000;
 const hand_blink_time = 700;
-const hand_delay = 30000;
+const hand_delay = 5000;
 const fade_time = 1000;
 
 const separate_scroll_times = [
@@ -69,7 +69,7 @@ window.init = () => {
             'id': `option-${emotion}-t`,
             'class': 'emotion-t', 
             text: `${emotion_t}`});
-          emotion_t_div.on('touchend', (e) => {
+          emotion_t_div.on('click touchend', (e) => {
             if (isSwiping < 5) {
               socket.emit('emotion:pick', `${emotion}`);
             }
@@ -112,7 +112,7 @@ function updateEmotion(msg) {
   if (!curEmotion || curEmotion.name !== msg.name) {
     curEmotion = msg;
     console.log('emotion has been updated to: ' + msg.name + ' (base: ' + msg.base + ', level: ' + msg.level + ')');
-    $('body').addClass('notouch').delay(window.loadingDur - 1000).queue(next => {
+    $('body').addClass('notouch').delay(window.loadingDur - 1000).queue(next => { // 5 second delay before enabled
       $('body').removeClass('notouch');
       next();
     });
@@ -245,7 +245,8 @@ function joinedTimer() {
   }, 1000);
 }
 //stop auto scroll on manual scroll, restart timers
-$('#wrapper_joined').on('click wheel DOMMouseScroll mousewheel keyup touchmove', function(e) {
+// TODO: will need to change this when we fix the scroll/drag situation
+$('#wrapper_joined').on('click wheel DOMMouseScroll mousewheel keyup touchmove', function(e) { 
   if (e.type !== 'click') {
     $('#wrapper_joined').stop(true); 
     $('#wrapper_joined').clearQueue(); 
@@ -314,6 +315,7 @@ function scrollToEmotion(emotion_name, base_emotion) {
 
 ////////////////// SEPARATE MODE
 function separateMode() {
+  console.log('ready to be separate');
   $('#wrapper_joined').stop(true).fadeOut(fade_time);
   $('#wrapper_joined').css('display','none');
   $('#wrapper_separate').stop(true).fadeIn(fade_time);
@@ -322,7 +324,8 @@ function separateMode() {
 }
 
 // detect manual scroll
-$('#wrapper_separate .scroll').on('click wheel DOMMouseScroll mousewheel keyup touchmove', joinedMode);
+// TODO: determine whether mousemove makes sense here later
+$('#wrapper_separate .scroll').on('click wheel DOMMouseScroll mousewheel keyup touchmove mousemove', joinedMode); 
 
 // auto scrolling
 function scrollSeparatePanels() {
@@ -341,7 +344,7 @@ function setHandInterval() {
   if (hand_interval) {
     clearInterval(hand_interval); 
   }
-  handIndicator.finish().fadeOut(0);
+  handIndicator.finish();//.fadeOut(0);
   hand_interval = setInterval(moveHand, hand_delay);
 }
 
@@ -367,9 +370,10 @@ function moveHand() {
     .fadeOut(0)
     .delay(hand_blink_time)
     .fadeIn(0)
-    .delay(hand_blink_time)
-    .fadeOut(0);
+    .delay(hand_blink_time);
+  //.fadeOut(0);
 }
+
 
 
 function testTrigger() {

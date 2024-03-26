@@ -17,9 +17,12 @@ let curEmotion;
 let spellOut = false; // used to determine when to animate text
 let phraseTimeout;
 let typingTimeout;
-let phrases;
-let emotionPhrases;
-let curPhrase = 0;
+let phrasesL0;
+let phrasesL1;
+let emotionPhrasesL0;
+let emotionPhrasesL1;
+let curPhraseL0 = 0;
+let curPhraseL1 = 0;
 
 let watchdog = 0; // used to delay showing/hiding video
 let faceFound = false;
@@ -51,34 +54,89 @@ window.init = () => {
 
 window.loadingComplete = () => {
   if (faceFound) {
-    queueText();
+    queueText(false);
   }
   $('#hand-container').delay(1000).fadeIn();
 };
 
 function loadText() {
-  return new Promise(resolve => {
-    Papa.parse(i18next.t('01_self.tsv'), {
-      download: true,
-      header: true,
-      skipEmptyLines: 'greedy',
-      complete: function(results) {
-        const rawResults = results.data;
 
-        const reordered = {};
-        const keys = Object.keys(rawResults[0]);
-        keys.forEach(key => reordered[key] = []);
+  if (window.bilingual) {
+    return new Promise(resolve => {
+      Papa.parse(i18next.t('01_self.tsv', {lng: window.lang0}), {
+        download: true,
+        header: true,
+        skipEmptyLines: 'greedy',
+        complete: function(results) {
+          const rawResults = results.data;
+  
+          const reordered = {};
+          const keys = Object.keys(rawResults[0]);
+          keys.forEach(key => reordered[key] = []);
+  
+          for (var i = 0; i < rawResults.length; i++) {
+            const resultRow = rawResults[i];
+            keys.forEach(key => resultRow[key].trim().length > 0 && reordered[key].push(resultRow[key]));
+          }
+          phrasesL0 = reordered;
+          console.log(phrasesL0, 'REORDERED!');
 
-        for (var i = 0; i < rawResults.length; i++) {
-          const resultRow = rawResults[i];
-          keys.forEach(key => resultRow[key].trim().length > 0 && reordered[key].push(resultRow[key]));
+          if (phrasesL0 && phrasesL1) {
+            resolve({phrasesL0, phrasesL1});
+          }
         }
-        phrases = reordered;
-        console.log(phrases, 'REORDERED!');
-        resolve(phrases);
-      }
+      });
+      
+      // parse second language
+      Papa.parse(i18next.t('01_self.tsv', {lng: window.lang1}), {
+        download: true,
+        header: true,
+        skipEmptyLines: 'greedy',
+        complete: function(results) {
+          const rawResults = results.data;
+  
+          const reordered = {};
+          const keys = Object.keys(rawResults[0]);
+          keys.forEach(key => reordered[key] = []);
+  
+          for (var i = 0; i < rawResults.length; i++) {
+            const resultRow = rawResults[i];
+            keys.forEach(key => resultRow[key].trim().length > 0 && reordered[key].push(resultRow[key]));
+          }
+          phrasesL1 = reordered;
+          console.log(phrasesL1, 'REORDERED!');
+
+          if (phrasesL0 && phrasesL1) {
+            resolve({phrasesL1, phrasesL1});
+          }
+        }
+      });
     });
-  });
+  } else {
+    return new Promise(resolve => {
+      Papa.parse(i18next.t('01_self.tsv', {lng: window.lang0}), {
+        download: true,
+        header: true,
+        skipEmptyLines: 'greedy',
+        complete: function(results) {
+          const rawResults = results.data;
+  
+          const reordered = {};
+          const keys = Object.keys(rawResults[0]);
+          keys.forEach(key => reordered[key] = []);
+  
+          for (var i = 0; i < rawResults.length; i++) {
+            const resultRow = rawResults[i];
+            keys.forEach(key => resultRow[key].trim().length > 0 && reordered[key].push(resultRow[key]));
+          }
+          phrasesL0 = reordered;
+          console.log(phrasesL0, 'REORDERED!');
+          resolve(phrasesL0);
+        }
+      });
+    });
+  }
+
 }
 
 function setupPosenet() {
@@ -98,7 +156,7 @@ function handleClick(e) {
   if (!faceInitialized) {
     setupCamera(e);
   } else {
-    queueText();
+    queueText(false);
   }
 }
 
@@ -191,8 +249,10 @@ function updateInterface() {
   ////// CHANGING BACKGROUND COLOR
   let emotion_colors = baseColors[curEmotion.base][curEmotion.level - 1];
   colorView(emotion_colors[0], emotion_colors[1]);
-  emotionPhrases = shuffle(phrases[curEmotion.base]);
-
+  emotionPhrasesL0 = shuffle(phrasesL0[curEmotion.base]);
+  if (window.bilingual) {
+    emotionPhrasesL1 = shuffle(phrasesL1[curEmotion.base]);
+  }
 }
 
 function updateEmotion(msg) {
@@ -226,7 +286,7 @@ function removeCover(loadCam) {
   if (spellOut === false && !loadCam) {
     spellOut = true;
     console.log('flip spell out switch');
-    queueText();
+    queueText(false);
   }
 }
 
@@ -250,18 +310,39 @@ function cleanupText() {
 
 }
 
-function queueText() {
-  curPhrase++;
-  if (curPhrase >= emotionPhrases.length) {
-    curPhrase = 0;
-  }
-  if (curPhrase === 0) {
-    emotionPhrases = emotionPhrases.sort(() => Math.random() - 0.5);
+function queueText(secondLang) {
+  console.log('trying to queue text');
+  if (!secondLang) {
+    curPhraseL0++;
+    if (curPhraseL0 >= emotionPhrasesL0.length) {
+      curPhraseL0 = 0;
+    }
+    if (curPhraseL0 === 0) {
+      emotionPhrasesL0 = emotionPhrasesL0.sort(() => Math.random() - 0.5);
+    }
+
+    playInstruction(emotionPhrasesL0[curPhraseL0]);
+    // speak(emotionPhrasesL0[curPhraseL0]);
+    secondLang = true;
+  } else {
+    curPhraseL1++;
+    if (curPhraseL1 >= emotionPhrasesL1.length) {
+      curPhraseL1 = 0;
+    }
+    if (curPhraseL1 === 0) {
+      emotionPhrasesL1 = emotionPhrasesL1.sort(() => Math.random() - 0.5);
+    }
+
+    playInstruction(emotionPhrasesL1[curPhraseL1]);
+    // speak(emotionPhrasesL1[curPhraseL0]);
+    secondLang = false;
   }
 
-  playInstruction(emotionPhrases[curPhrase]);
-  // speak(emotionPhrases[curPhrase]);
-  phraseTimeout = setTimeout(queueText, phraseInterval);
+  if (window.bilingual) {
+    phraseTimeout = setTimeout(() => queueText(secondLang), phraseInterval);
+  } else {
+    phraseTimeout = setTimeout(() => queueText(false), phraseInterval);
+  }
 }
 
 function playInstruction(phrase) {

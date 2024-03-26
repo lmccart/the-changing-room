@@ -7,6 +7,9 @@ import { getImgUrls, getTextColorForBackground, addSvgFilterForElement } from '.
 const scroll_up_time = 20000;
 const scroll_down_time = 500000;
 const scroll_pause_time = 2000;
+const scroll_resume_time = 10000;
+const hand_blink_time = 700;
+const hand_delay = 5000;
 
 let video = true;
 let curEmotion;
@@ -14,6 +17,9 @@ let imgUrls = [];
 
 let selectedVoiceIndex = 9999;
 let selectedVoice;
+
+let hand_interval;
+const handIndicator = $('#hand-indicator');
 
 window.init = () => {
   if (video) {
@@ -71,6 +77,7 @@ function loadText() {
           });
       });
   }
+  setHandInterval();
 }
 
 function updateEmotion(msg) {
@@ -102,14 +109,36 @@ async function updateInterface(durations) {
   $('.text').css('color', textColor);
 }
 
+$('.holder').on('click wheel DOMMouseScroll mousewheel keyup touchmove', function(e) { 
+  if (e.type !== 'click') {
+    $('.holder').stop(true); 
+  }
+  setTimeout(() => {
+    scrollResume();
+  }, scroll_resume_time);
+  setHandInterval();
+});
+
 function scrollDown() {
   $('.holder').scrollTop(0);
-  $('.holder').stop();
+  $('.holder').stop(); // can use a function like this to scroll down all the way, lines 249-274 03-selection.js
   setTimeout(() => {
     $('.holder').animate({
       scrollTop: $('.holder').prop('scrollHeight')
     }, scroll_down_time, 'linear', scrollUp);
   }, scroll_pause_time);
+}
+
+function scrollResume() {
+  $('.holder').stop(true);
+  let remainingDistance = $('.holder').prop('scrollHeight') - $('.holder').scrollTop();
+  let currentPercentage = $('.holder').scrollTop() / $('.holder')[0].scrollHeight;
+
+  $('.holder').animate({
+    scrollTop: '+=' + remainingDistance // Use relative animation to scroll from current position to bottom
+  }, scroll_down_time * (1 - currentPercentage), 'linear', scrollUp);
+
+  setHandInterval();
 }
 
 function scrollUp() {
@@ -120,6 +149,38 @@ function scrollUp() {
   }, 500);
 }
 
+/// HAND ICON ///
+function setHandInterval() {
+  if (hand_interval) {
+    clearInterval(hand_interval); 
+  }
+  handIndicator.finish();//.fadeOut(0);
+  hand_interval = setInterval(moveHand, hand_delay);
+}
+
+function moveHand() {
+  // move hand to random position
+  const w = $(window).width() - handIndicator.width();
+  const h = $(window).height() - handIndicator.height();
+  const nw = Math.floor(Math.random() * w);
+  const nh = Math.floor(Math.random() * h);
+  
+  handIndicator.css({top: `${nh}px`, left: `${nw}px`});
+  // then show hand
+  handIndicator
+    .finish()
+    .fadeIn(0)
+    .delay(hand_blink_time)
+    .fadeOut(0)
+    .delay(hand_blink_time)
+    .fadeIn(0)
+    .delay(hand_blink_time)
+    .fadeOut(0)
+    .delay(hand_blink_time)
+    .fadeIn(0)
+    .delay(hand_blink_time);
+  //.fadeOut(0);
+}
 
 function debugToggle(msg) {
   console.log(msg);
