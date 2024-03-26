@@ -86,7 +86,7 @@ video {
 #hand-indicator {
   display: none;
   position: fixed;
-  z-index: 500;
+  z-index: 300;
 
   width: 10vw;
   transform: rotateZ(-20deg);
