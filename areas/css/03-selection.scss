@@ -15,7 +15,7 @@ body {
 }
 	
 .scroll {
-	width: 1080px;
+	width: 30.67vw;
 	padding: 2vw;
 	height: 100vh;
 	box-sizing: border-box;
@@ -30,12 +30,13 @@ body {
 
 .wrapper {
 	position: fixed;
-	width: 5082px; /* HARVEY: CHANGE THIS FOR BEZELS */
+	// width: 5082px; /* HARVEY: CHANGE THIS FOR BEZELS */
 }
 
 #wrapper_joined {
-	font-size: 8vw;
-	line-height: 1.02em;
+	width: 100%;
+	font-size: 8.5vw;
+	line-height: 1.07em;
 	display: flex;
 	overflow-y: scroll;
 	overflow-x: hidden;
@@ -54,14 +55,20 @@ body {
 	.emotion {
 		text-transform: capitalize;
 		transition-property: all;
-    	transition-duration: 2s;
+		transition-duration: 2s;
 	}
 	.emotion-t {
 		text-transform: capitalize;
 		transition-property: all;
-    	transition-duration: 2s;
+		transition-duration: 2s;
 		color: #ffffff4d;
 	}
+
+	.emotion-loading {
+		transition-duration: 0s !important;
+		color: #ffffff4d;
+	}
+
 	.selected_emotion_color {
   		-webkit-background-clip: text;
   		-webkit-text-fill-color: transparent;
@@ -90,13 +97,12 @@ body {
 	}
 	.scroll {
 		// border: 1px solid #000;
-		font-size: 220px;
+		font-size: 6vw;
 		overflow-y: scroll;
 	}
 
 	.margin {
-		width: 114px;
-		// background: red;
+		width: 4vw;
 	}
 }
 

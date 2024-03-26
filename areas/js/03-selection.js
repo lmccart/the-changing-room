@@ -139,30 +139,40 @@ function updateInterface() {
 
   $elm.prevAll().slice(0, numEmotions).each(function() {
     prevEmotions.push($(this).html());
-    if ($(this).hasClass('emotion')) {
-      $(this).html('<div class="loading-title">Loading</div>');
-    } else {
-      $(this).html(`<div class="loading-title">${i18next.t('loading')}</div>`);
-    }
+    styleLoading($(this), true);
   });
 
   $elm_t.nextAll().slice(0, numEmotions).each(function() {
     nextEmotions.push($(this).html());
-    if ($(this).hasClass('emotion')) {
-      $(this).html('<div class="loading-title">Loading</div>');
-    } else {
-      $(this).html(`<div class="loading-title">${i18next.t('loading')}</div>`);
-    }
+    styleLoading($(this), true);
   });
+
+  function styleLoading(elt, val) {  
+    if (val) {
+      if (elt.hasClass('emotion')) {
+        elt.html('<div class="loading-title">Loading</div>');
+      } else {
+        elt.html(`<div class="loading-title">${i18next.t('loading')}</div>`);
+      }
+      if (window.lang0 !== window.lang1) {
+        elt.addClass('emotion-loading');
+      }
+    } else {
+      elt.removeClass('emotion-loading');
+    }
+
+  }
 
   setTimeout(() => {
 
     $elm.prevAll().slice(0, numEmotions).each(function(index) {
       $(this).html(prevEmotions[index]);
+      styleLoading($(this), false);
     });
   
     $elm_t.nextAll().slice(0, numEmotions).each(function(index) {
       $(this).html(nextEmotions[index]);
+      styleLoading($(this), false);
     });
 
   }, window.loadingDur - 1000);
@@ -299,15 +309,9 @@ function scrollUp(id, pause) {
 function scrollToEmotion(emotion_name, base_emotion) {
   return new Promise(resolve => {
     console.log(emotion_name, base_emotion);
-    const elm = '#option-' + emotion_name;
-    const elHeight = $(elm).height() * 0.9;
-    const currentPosition = $(elm).offset().top;
-    const currentScroll = $('#wrapper_joined').scrollTop();
-    const middle = $(window).height() / 2 - 58;
-    const scrollVal = currentScroll + (currentPosition - middle + (elHeight / 2));
-    const scrollDiff = Math.abs(scrollVal - currentScroll);
+    let scrollVal = calcScrollVal(emotion_name);
+    const scrollDiff = Math.abs(scrollVal - $('#wrapper_joined').scrollTop());
     const scrollTime = 0.3 * scrollDiff;
-    console.log(currentScroll, currentPosition, scrollVal, scrollDiff, scrollTime);
     $('#wrapper_joined').stop(true).animate({
       scrollTop: scrollVal
     }, scrollTime, 'swing', resolve);
@@ -318,17 +322,22 @@ function scrollToEmotion(emotion_name, base_emotion) {
 // jumps to emotion rather than scrolls
 function jumpToEmotion(emotion_name, base_emotion) {
   return new Promise((resolve) => {
-    console.log(emotion_name, base_emotion);
-    const elm = '#option-' + emotion_name;
-    const elHeight = $(elm).height() * 0.9;
-    const currentPosition = $(elm).offset().top;
-    const currentScroll = $('#wrapper_joined').scrollTop();
-    const middle = $(window).height() / 2 - 58;
-    const scrollVal = currentScroll + (currentPosition - middle + (elHeight / 2));
+    let scrollVal = calcScrollVal(emotion_name);
     $('#wrapper_joined').scrollTop(scrollVal);
     $('#wrapper_joined').css('opacity', 1);
     resolve();
   });
+}
+
+function calcScrollVal(emotion_name) {
+  const elm = '#option-' + emotion_name;
+  const elHeight = $(elm).height() * 0.9;
+  const currentPosition = $(elm).offset().top;
+  const currentScroll = $('#wrapper_joined').scrollTop();
+  let middle = $(window).height() / 2 - 58;
+  if (window.lang0 !== window.lang1) middle -= 160;
+  const scrollVal = currentScroll + (currentPosition - middle + (elHeight / 2));
+  return scrollVal;
 }
 
 ////////////////// SEPARATE MODE
