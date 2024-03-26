@@ -97,14 +97,14 @@ function setEmotion(emotionName, init) {
     io.emit('emotion:update', curEmotion);
     fs.writeFileSync('current.txt', emotionName);
     Sound.playEmotion(curEmotion);
-    Sound.playEmotionReflection(curEmotion);
+    // Sound.playEmotionReflection(curEmotion);
   }
 }
 
 function restartReflectionAudio() {
   let opt = { 'seed' : Math.round(Math.random() * 10000)};
   io.emit('reflection:restart', opt);
-  Sound.playEmotionReflection(curEmotion);
+  // Sound.playEmotionReflection(curEmotion);
 }
 
 function handleChat(data) {

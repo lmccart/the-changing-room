@@ -34,6 +34,7 @@ const canvas = document.createElement('canvas');
 
 let net;
 
+window.soundType = 'mute';
 window.init = () => {
   colorFrame('white');
   loadText()

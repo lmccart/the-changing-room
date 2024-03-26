@@ -18,7 +18,7 @@ module.exports = {
     convo2: ['./areas/js/05-convo2.js', hotMiddlewareScript],
     passive: ['./areas/js/06-passive.js', hotMiddlewareScript],
     rotating: ['./areas/js/07-rotating.js', hotMiddlewareScript],
-    rotating: ['./areas/js/07-rotating-single.js', hotMiddlewareScript]
+    rotating: ['./areas/js/07-rotating-double.js', hotMiddlewareScript]
   },
   output: {
     filename: 'js/[name].[contenthash].js',
@@ -114,14 +114,14 @@ module.exports = {
       minify: false,
     }),
     new HtmlWebpackPlugin({  
-      filename: '07-rotating-single/index0.html',
-      template: './areas/07-rotating-single/index0.html',
+      filename: '07-rotating-double/index0.html',
+      template: './areas/07-rotating-double/index0.html',
       chunks: ['rotating'],
       minify: false,
     }),
     new HtmlWebpackPlugin({  
-      filename: '07-rotating-single/index1.html',
-      template: './areas/07-rotating-single/index1.html',
+      filename: '07-rotating-double/index1.html',
+      template: './areas/07-rotating-double/index1.html',
       chunks: ['rotating'],
       minify: false,
     }),

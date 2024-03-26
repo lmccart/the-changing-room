@@ -113,6 +113,7 @@ body.black ::-webkit-scrollbar-thumb {
   display: flex;
   justify-content: center;
   align-items: center;
+  user-select: none;
 
   h1 {
     font-size: 6vmax;

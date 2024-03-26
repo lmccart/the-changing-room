@@ -28,6 +28,7 @@ socket.on('connect', function() {
   socketid = socket.id;
 });
 
+window.soundType = 'mute';
 window.init = () => {
 
   fetch(i18next.t('04_convo1_intro.txt', {lng: window.lang0}))

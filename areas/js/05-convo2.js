@@ -20,6 +20,7 @@ let curInstruction = 0;
 let instructions, instructionsi18n;
 let colors;
 
+window.soundType = 'mute';
 window.init = () => {
   // Instructions loading i18n
   const loading = window.bilingual 

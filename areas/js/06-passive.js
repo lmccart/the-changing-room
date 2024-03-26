@@ -43,6 +43,7 @@ let screenFactor = 1;
 
 window.emotionStrings = [];
 
+window.soundType = 'mute';
 window.init = () => {
   if (screenNumber) {
     $('#area-extra').text('screen ' + screenNumber); 

@@ -34,7 +34,7 @@
     * https://localhost:3000/05-convo2
     * https://localhost:3000/06-passive
     * https://localhost:3000/07-rotating
-    * https://localhost:3000/07-rotating-single
+    * https://localhost:3000/07-rotating-double/index0.html, https://localhost:3000/07-rotating-double/index1.html
 
 ### System Preferences
 

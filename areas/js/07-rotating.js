@@ -2,8 +2,10 @@ import $ from 'jquery';
 import '../css/07-rotating.scss';
 import './shared.js';
 
+let currentMode;
 setMode('passive');
 
+window.soundType = 'mute';
 window.init = () => {
   console.log('init');
   
@@ -14,13 +16,13 @@ window.init = () => {
 };
 
 function toggleMode() {
-  let mode = window.soundType === 'reflection' ? 'environment' : 'reflection';
-  setMode(mode);
+  let currentMode = currentMode == 'reflection' ? 'environment' : 'reflection';
+  setMode(currentMode);
 }
 
 function setMode(m) {
-  console.log('set mode ', m);
-  window.soundType = m;
+  currentMode = m;
+  console.log('set mode ', currentMode);
   if (window.soundType === 'reflection') {
     $('#passive-section').hide();
     $('#reflection-section').show();

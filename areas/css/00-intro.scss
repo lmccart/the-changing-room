@@ -28,7 +28,12 @@ backdrop-filter: blur(4px);
    font-style: italic;
    padding: 1em 0.5em 1em 1em;
    flex: 1;
+   user-select: none; 
 //    scroll-behavior: smooth;
+}
+
+.double-text {
+  font-size: 5em;
 }
 
 .holder {   

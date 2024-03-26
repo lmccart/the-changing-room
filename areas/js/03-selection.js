@@ -40,6 +40,7 @@ let timer_to_idle;
 let hand_interval;
 let isSwiping = 0;
 
+window.soundType = 'mute';
 window.init = () => {
   //READ IN EMOTION JSON
   fetch(apiURL_emotions)

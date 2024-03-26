@@ -19,23 +19,7 @@ window.socket.on('sound:volume', setSoundVolume);
 document.title = $('#debug-area').text();
 
 let sound;
-if (window.location.href.includes('mute')) {
-  window.soundType = 'mute';
-} else if (window.location.href.includes('rotating')) {
-  window.soundType = 'mute';
-} else if (window.location.href.includes('reflection')) {
-  window.soundType =  'reflection';
-} else {
-  window.soundType =  'environment';
-}
 
-
-console.log('soundType set to ', window.soundType);
-if (window.soundType) {
-  sound = new Audio();
-  sound.loop = true;
-  console.log(sound);
-}
 
 // internationalization
 function i18nInit(settings) {
@@ -193,6 +177,16 @@ function debugToggle(msg) {
 function reload() {
   window.location.reload();
 }
+
+
+window.setupSound = (type) => {
+  window.soundType = type;
+  console.log('soundType set to ', window.soundType);
+  sound = new Audio();
+  sound.loop = true;
+  console.log(sound);
+}
+
 
 function playSound(data) {
   if (!sound || !window.soundType) {

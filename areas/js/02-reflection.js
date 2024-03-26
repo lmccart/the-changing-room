@@ -32,6 +32,7 @@ let dataMeditationEmotionsL1;
 let dataMemoriesL0;
 let dataMemoriesL1;
 
+let speech;
 
 // 10s before meditation
 // 10s per instruction
@@ -130,7 +131,9 @@ let timeline_end_pause = 1000;
 
 
 
+window.soundType = 'mute'; // uses speech synthesis!
 window.init = () => {
+  setupSynthesis();
   setScreen();
   loadData(() => {
     socket.on('emotion:update', updateEmotionCurried(() => {
@@ -140,6 +143,8 @@ window.init = () => {
     }));
 
     socket.on('reflection:restart', (msg) => {
+      switchLanguage();
+
       sharedSeed = msg.seed;
 
       resetTimeline(); 
@@ -175,6 +180,14 @@ function updateInterface() {
   $('#debug-info').text('CURRENT EMOTION: ' + curEmotion.name + ' (base: ' + curEmotion.base + ', level: ' + curEmotion.level + ')');
 }
 
+function switchLanguage() {
+  // switch window languages and assets
+  window.lang = window.lang === window.lang0 ? window.lang1 : window.lang0;
+  dataMeditations = window.lang === window.lang0 ? dataMeditationsL0 : dataMeditationsL1;
+  dataMeditationEmotions = window.lang === window.lang0 ? dataMeditationEmotionsL0 : dataMeditationEmotionsL1;
+  dataMemories = window.lang === window.lang0 ? dataMemoriesL0 : dataMemoriesL1;
+  speech.lang = window.lang;
+}
 
 ///////////////////////////
 // DATA AND PARAMS
@@ -182,11 +195,7 @@ function updateInterface() {
 
 function handleKey(e) {
   if (window.lang0 !== window.lang1 && e.key === 't') {
-    // switch window langauges and assets
-    window.lang = window.lang === window.lang0 ? window.lang1 : window.lang0;
-    dataMeditations = window.lang === window.lang0 ? dataMeditationsL0 : dataMeditationsL1;
-    dataMeditationEmotions = window.lang === window.lang0 ? dataMeditationEmotionsL0 : dataMeditationEmotionsL1;
-    dataMemories = window.lang === window.lang0 ? dataMemoriesL0 : dataMemoriesL1;
+    switchLanguage();
     // trigger reflection restart on server
     socket.emit('reflection:end');
   }
@@ -492,6 +501,9 @@ function displayMeditationPhrase(opts) {
         .attr('class', sizeClass)
         .fadeIn(opts.fadeIn);
     });
+    // speak it
+    speech.text = text;
+    window.speechSynthesis.speak(speech);
 }
 
 
@@ -934,3 +946,15 @@ function randomBetween(a, b) {
   return a + (Math.random() * (b - a));
 }
 
+
+
+function setupSynthesis() {
+  window.speechSynthesis.onvoiceschanged = function() {
+    const voices = window.speechSynthesis.getVoices();
+    console.log(voices);
+  };
+  speech = new SpeechSynthesisUtterance();
+  speech.lang = window.lang; // PEND: could be updated to do opposite language
+  speech.rate = 0.85;
+  // speech.voice = ??
+}

@@ -5,7 +5,7 @@ import { getImgUrls, getTextColorForBackground, addSvgFilterForElement } from '.
 
 /* VARIABLES */
 const scroll_up_time = 20000;
-const scroll_down_time = 500000;
+const scroll_down_time = 300 * 1000;
 const scroll_pause_time = 2000;
 const scroll_resume_time = 10000;
 const hand_blink_time = 700;
@@ -21,6 +21,8 @@ let selectedVoice;
 let hand_interval;
 const handIndicator = $('#hand-indicator');
 
+
+window.setupSound('environment');
 window.init = () => {
   if (video) {
     $('.backgrounds').hide();
@@ -60,20 +62,20 @@ function loadText() {
       .then(res => res.blob())
       .then(blob => blob.text())
       .then(text => {
-        $('.text').text(text);
+        $('.text').html(text+'<br>&nbsp;');
       });
   } else { // otherwise, change font and add both texts
-    $('.text').css('font-size', '3em');
+    $('.text').addClass('double-text');
     fetch(i18next.t('00_intro.txt', {lng: window.lang0}))
       .then(res0 => res0.blob())
       .then(blob0 => blob0.text())
       .then(text0=> {
-        $('#lang0-intro').text(text0);
+        $('#lang0-intro').html(text0+'<br>&nbsp;');
         fetch(i18next.t('00_intro.txt', {lng: window.lang1}))
           .then(res1 => res1.blob())
           .then(blob1 => blob1.text())
           .then(text1 => {
-            $('#lang1-intro').text(text1);
+            $('#lang1-intro').html(text1+'<br>&nbsp;');
           });
       });
   }
@@ -130,15 +132,16 @@ function scrollDown() {
 }
 
 function scrollResume() {
-  $('.holder').stop(true);
-  let remainingDistance = $('.holder').prop('scrollHeight') - $('.holder').scrollTop();
-  let currentPercentage = $('.holder').scrollTop() / $('.holder')[0].scrollHeight;
+  // $('.holder').stop(true);
+  // let remainingDistance = $('.holder').prop('scrollHeight') - $('.holder').scrollTop() - $('.holder').height();
+  // let currentPercentage = $('.holder').scrollTop() / ($('.holder').prop('scrollHeight') - $('.holder').height());
 
-  $('.holder').animate({
-    scrollTop: '+=' + remainingDistance // Use relative animation to scroll from current position to bottom
-  }, scroll_down_time * (1 - currentPercentage), 'linear', scrollUp);
+  // $('.holder').animate({
+  //   scrollTop: '+=' + remainingDistance // Use relative animation to scroll from current position to bottom
+  // }, scroll_down_time * (1 - currentPercentage), 'linear', scrollUp);
+  // console.log('resume scroll ', scroll_down_time * (1 - currentPercentage), currentPercentage);
 
-  setHandInterval();
+  // setHandInterval();
 }
 
 function scrollUp() {
