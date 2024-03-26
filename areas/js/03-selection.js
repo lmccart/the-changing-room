@@ -167,7 +167,7 @@ function updateInterface() {
   }, window.loadingDur - 1000);
   
   $elm.add($elm_t).fadeIn(fade_time, function() {
-    scrollToEmotion(curEmotion.name, curEmotion.base);
+    scrollToEmotion(curEmotion.name, curEmotion.base); // uncomment for scroll
 
     //transition to color of selected emotion colors
     console.log('setting colors');
@@ -215,7 +215,8 @@ function joinedMode() {
   }
 
   $('#wrapper_joined').stop(true).fadeIn(fade_time, function() {
-    scrollToEmotion(curEmotion.name, curEmotion.base).then(joinedTimer);
+    // scrollToEmotion(curEmotion.name, curEmotion.base).then(joinedTimer); // uncomment for scroll
+    jumpToEmotion(curEmotion.name, curEmotion.base).then(joinedTimer);
   });
   // $('#wrapper_joined').css('display','flex');
   $('#wrapper_separate').fadeOut(fade_time);
@@ -310,6 +311,22 @@ function scrollToEmotion(emotion_name, base_emotion) {
       scrollTop: scrollVal
     }, scrollTime, 'swing', resolve);
     $('#wrapper_joined').css('opacity', 1);
+  });
+}
+
+// jumps to emotion rather than scrolls
+function jumpToEmotion(emotion_name, base_emotion) {
+  return new Promise((resolve) => {
+    console.log(emotion_name, base_emotion);
+    const elm = '#option-' + emotion_name;
+    const elHeight = $(elm).height() * 0.9;
+    const currentPosition = $(elm).offset().top;
+    const currentScroll = $('#wrapper_joined').scrollTop();
+    const middle = $(window).height() / 2 - 58;
+    const scrollVal = currentScroll + (currentPosition - middle + (elHeight / 2));
+    $('#wrapper_joined').scrollTop(scrollVal);
+    $('#wrapper_joined').css('opacity', 1);
+    resolve();
   });
 }
 
