@@ -32,6 +32,7 @@ let dataMeditationEmotionsL1;
 let dataMemoriesL0;
 let dataMemoriesL1;
 
+
 // 10s before meditation
 // 10s per instruction
 // 15s per long instruction
@@ -476,6 +477,7 @@ function displayMeditationPhrase(opts) {
   let parts = opts.text.match(/[^\.!\?]+[\.!\?]+/g);
   let text;
   if (parts.length > 1) {
+    console.log(thisScreenParams.id)
     let id = thisScreenParams.id < 3 ? thisScreenParams.id : 0;
     text = id < parts.length ? parts[id] : parts[0];
   } else {

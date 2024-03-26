@@ -2,7 +2,7 @@ import $ from 'jquery';
 import '../css/07-rotating.scss';
 import './shared.js';
 
-setMode('reflection');
+setMode('passive');
 
 window.init = () => {
   console.log('init');
