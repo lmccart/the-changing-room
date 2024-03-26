@@ -41,7 +41,7 @@ window.init = () => {
 window.loadingComplete = () => {
   $('.intro-text-container').css('visibility', 'visible');
   scrollDown();
-  setTimeout(setHandInterval, scroll_pause_time);
+  setHandInterval();
 };
 
 window.speechSynthesis.onvoiceschanged = function() {
@@ -118,7 +118,6 @@ $('.holder').on('click wheel DOMMouseScroll mousewheel keyup touchmove', functio
   setTimeout(() => {
     scrollResume();
   }, scroll_resume_time);
-  setHandInterval();
 
 });
 
@@ -133,16 +132,14 @@ function scrollDown() {
 }
 
 function scrollResume() {
-  // $('.holder').stop(true);
-  // let remainingDistance = $('.holder').prop('scrollHeight') - $('.holder').scrollTop() - $('.holder').height();
-  // let currentPercentage = $('.holder').scrollTop() / ($('.holder').prop('scrollHeight') - $('.holder').height());
+  $('.holder').stop(true);
+  let remainingDistance = $('.holder').prop('scrollHeight') - $('.holder').scrollTop() - $('.holder').height();
+  let currentPercentage = $('.holder').scrollTop() / ($('.holder').prop('scrollHeight') - $('.holder').height());
 
-  // $('.holder').animate({
-  //   scrollTop: '+=' + remainingDistance // Use relative animation to scroll from current position to bottom
-  // }, scroll_down_time * (1 - currentPercentage), 'linear', scrollUp);
-  // console.log('resume scroll ', scroll_down_time * (1 - currentPercentage), currentPercentage);
-
-  // setHandInterval();
+  $('.holder').animate({
+    scrollTop: '+=' + remainingDistance // Use relative animation to scroll from current position to bottom
+  }, scroll_down_time * (1 - currentPercentage), 'linear', scrollUp);
+  console.log('resume scroll ', scroll_down_time * (1 - currentPercentage), currentPercentage);
 }
 
 function scrollUp() {
