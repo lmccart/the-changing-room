@@ -19,7 +19,18 @@ window.socket.on('sound:volume', setSoundVolume);
 document.title = $('#debug-area').text();
 
 let sound;
-window.soundType = window.location.href.includes('reflection') ? 'reflection' : 'environment';
+if (window.location.href.includes('mute')) {
+  window.soundType = 'mute';
+} else if (window.location.href.includes('rotating')) {
+  window.soundType = 'mute';
+} else if (window.location.href.includes('reflection')) {
+  window.soundType =  'reflection';
+} else {
+  window.soundType =  'environment';
+}
+
+
+console.log('soundType set to ', window.soundType);
 if (window.soundType) {
   sound = new Audio();
   sound.loop = true;
@@ -119,7 +130,7 @@ window.switchBackgrounds = (imgUrls, fadeDur, colors) => {
     bgToShow.css('background-image', `url(${imgUrl})`);
     $('#loader').attr('src', imgUrl).off();
     $('#loader').attr('src', imgUrl).on('load', function() {
-      console.log('loaded: ', imgUrl);
+      // console.log('loaded: ', imgUrl);
       bgToShow.fadeIn(fadeDur);
       bgToHide.fadeOut(fadeDur);
       resolve();

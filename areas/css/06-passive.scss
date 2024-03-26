@@ -114,9 +114,10 @@ svg {
 #textBg {
   font-size: 6vw;
   width: 200vw;
-  height: 200vh;
+  height: 100vh;
   position: absolute;
-  left: -4vw;
+  // left: -4vw;
+  left: 2vw;
   top: -42vh;
   font-style: italic;
   text-transform: capitalize;
@@ -133,4 +134,8 @@ svg {
   top: 0;
   left: 0;
   overflow: hidden;
+}
+
+#test-width {
+  font-size: 6vw;
 }

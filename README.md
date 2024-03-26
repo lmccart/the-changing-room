@@ -34,6 +34,7 @@
     * https://localhost:3000/05-convo2
     * https://localhost:3000/06-passive
     * https://localhost:3000/07-rotating
+    * https://localhost:3000/07-rotating-single
 
 ### System Preferences
 
@@ -163,6 +164,10 @@ If you create new keys not in other language's `translation.json`` files, you MU
 
 4. Lastly, in `areas/js/shared.js`, you must import the necessary translations and add them to the i18next resources on initialization (the `i18nInit` function). This should be fairly straightforward following the pre-exisiting examples. After you add these, they can stay here and do not be deleted in the future, even if you are not using them. By changing the primary and secondary langauges as in the previous section, you will ensure that extra languages are not used.
 
+
+## Other Debug
+* To autoplay sound from browser, chrome must be opened with this command line argument: `
+/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --autoplay-policy=no-user-gesture-required`
 
 ## References
 * https://github.com/peter-murray/node-hue-api#readme

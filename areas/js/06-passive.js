@@ -9,9 +9,9 @@ import './shared.js';
 import { getImgUrls, addSvgFilterForElement, getTextColorForBackground, getPopupUrls } from './lib/imageColorUtils.js';
 import i18next from 'i18next';
 
-const basePopupRate = 3000; // adjusted based on emotion intensity
-const minDisplayTime = 2000; // minimum time a popup shows on screen
-const displayVariation = 1000;
+const basePopupRate = 1000; // adjusted based on emotion intensity
+const minDisplayTime = 5000; // minimum time a popup shows on screen
+const displayVariation = 300;
 const overlapAllowance = 0.10; // allows 60% overlap when a new element is created
 const backgroundChangeTime = 20000; // adjusted based on emotion intensity
 const portionFiltered = 1;//0.5; // portion of popups with svg filter applied
@@ -91,11 +91,16 @@ async function updateInterface(durations) {
   const colors = window.baseColors[curEmotion.base][curEmotion.level - 1];
   // switchBackgrounds(imgUrls, durations[1] - durations[0] - 500, colors);
   $('body').css('background', `radial-gradient(${colors[1]},${colors[0]})`);
-  let s;
+  let twoWords = i18next.t(curEmotion.name, { lng: window.lang1}) + ' ' + i18next.t(curEmotion.name) + ' ';
+  $('#test-width').html(twoWords);
+  let s = '';
   for (let i = 0; i < 200; i++) {
-    s += i18next.t(curEmotion.name, { lng: window.lang1}) + ' ';
-    s += i18next.t(curEmotion.name) + ' ';
+      s += twoWords;
   }
+  let ratio = 2.15 * $('#test-width').width() / window.innerWidth;
+  $('#textBg').css('font-size',  `${6/ratio}vw`);
+  console.log
+
   $('#textBg').hide();
   $('#textBg').html(s);
   $('.backgrounds').hide();
@@ -364,7 +369,6 @@ function PopupFactory(emotionObj) {
     let fs = $element.css('font-size');
     fs = fs.substring(0, fs.length - 2);
     fs -= (screenNumber * 3);
-    console.log(fs);
     $element.css('font-size', fs);
    
     if (popup.type === POPUP.EXTRA && factoryThis.activeElements.length < 7) {
