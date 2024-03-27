@@ -3,22 +3,24 @@ import '../css/07-rotating-double.scss';
 import './shared.js';
 
 let currentMode;
-setMode('reflection'); // passive
-// checkModeToggle();
-// setInterval(checkModeToggle, 100);
-
 window.soundType = 'mute';
+
 window.init = () => {
-  console.log('init');
-  socket.on('emotion:update', (msg) => {
-    console.log('EMOTION:UPDATE');
-  });
+  // console.log('init');
+
+  // setTimeout(() => {
+  //   console.log('now listening');
+  //   socket.on('emotion:update', (msg) => {
+  //     console.log('EMOTION:UPDATE');
+  //     checkModeToggle();
+  //   });
+
+  // }, 4000);
 
 };
 
 function setMode(m) {
   currentMode = m;
-
   if (currentMode === 'reflection') {
     $('#passive-section').hide();
     $('#reflection-section').show();

@@ -12,11 +12,7 @@ import i18next from 'i18next';
 let curEmotion;
 let primaryColors;
 let backgroundTextColor;
-let secondaryColors;
 
-let dataMeditations;
-let dataMeditationEmotions;
-let dataMemories;
 let timeline;
 let imgURLs = [];
 let thisScreenParams;
@@ -24,13 +20,9 @@ let sharedSeed = 0;
 let emotionChanged = false;
 let skipToMemories = false;
 
-// data for lang0 and lang1
-let dataMeditationsL0;
-let dataMeditationsL1;
-let dataMeditationEmotionsL0;
-let dataMeditationEmotionsL1;
-let dataMemoriesL0;
-let dataMemoriesL1;
+let dataMeditations = {};
+let dataMeditationEmotions = {};
+let dataMemories = {};
 
 let speech;
 
@@ -39,19 +31,12 @@ let speech;
 // 15s per long instruction
 // total dur 6 minutes (plenty of time)
 
-
 ///////////////////////////////////////////////
 //// Screen parameters
 
-// const screenParams = {
-//   0: { id: 0, name: 'LEFT', width: 1802, height: 1080, display: 'left projector'},
-//   1: { id: 1, name: 'CENTER', width: 1897, height: 1080, display: 'center projector' },
-//   2: { id: 2, name: 'RIGHT', width: 1889, height: 1080, display: 'right projector' },
-//   999: { id: 999, name: 'FULLSCREEN', width: 0, height: 1080, display: 'fullscreen' },
-// };
 const screenParams = {
-  0: { id: 0, name: 'LEFT', width: 'AUTO', height: 'AUTO', display: 'left projector'},
-  1: { id: 1, name: 'CENTER', width: 'AUTO', height: 'AUTO', display: 'center projector' },
+  0: { id: 0, name: 'LEFT', width: 1920, height: 1080, display: 'left projector'},
+  1: { id: 1, name: 'CENTER', width: 1920, height: 1080, display: 'center projector' },
   2: { id: 2, name: 'RIGHT', width: 1920, height: 1080, display: 'right projector' },
   999: { id: 999, name: 'FULLSCREEN', width: 0, height: 1080, display: 'fullscreen' },
 };
@@ -65,7 +50,7 @@ document.title = '02 reflection: screen ' + screenNumber;
 ////////////// MEDITATION TIMINGS /////////////
 
 // We pause before meditation starts,
-let meditations_fadein_pause = 10000; // should be same as meditation_interval to match sound
+let meditations_fadein_pause = 4000; // should be same as meditation_interval to match sound
 
 // and slowly, the meditation fades in.
 let meditations_fadein_duration = 500; 
@@ -104,7 +89,7 @@ let memories_fadein_duration = 500;
 //////// The memory sequence starts.
 
 // Each memory arrives at this interval,
-let num_memories = 30;
+let num_memories = 20;
 
 let memory_interval = 2500;
 
@@ -127,7 +112,7 @@ let memories_fadeout_duration = 1000;
 
 // Finally,
 // we pause before we end the timeline
-let timeline_end_pause = 1000;
+let timeline_end_pause = 0;
 
 
 
@@ -135,24 +120,23 @@ window.soundType = 'mute'; // uses speech synthesis!
 window.init = () => {
   setupSynthesis();
   setScreen();
-  loadData(() => {
+  loadDataAsync(() => {
     socket.on('emotion:update', updateEmotionCurried(() => {
-      if (thisScreenParams.id === 1 || thisScreenParams.id === 999) { 
+      if (thisScreenParams.id === 0 || thisScreenParams.id === 999) { 
         socket.emit('reflection:end');
       }
     }));
 
     socket.on('reflection:restart', (msg) => {
-      switchLanguage();
-
       sharedSeed = msg.seed;
-
+      switchLanguage();
       resetTimeline(); 
       timeline.start();
       console.log('REFLECTION RESTARTED');
     });
 
-    socket.emit('emotion:get');
+    socket.emit('emotion:get'); 
+    console.log('loaded');
   });
 
   $(document).on('keypress', handleKey);
@@ -181,12 +165,12 @@ function updateInterface() {
 }
 
 function switchLanguage() {
-  // switch window languages and assets
-  window.lang = window.lang === window.lang0 ? window.lang1 : window.lang0;
-  dataMeditations = window.lang === window.lang0 ? dataMeditationsL0 : dataMeditationsL1;
-  dataMeditationEmotions = window.lang === window.lang0 ? dataMeditationEmotionsL0 : dataMeditationEmotionsL1;
-  dataMemories = window.lang === window.lang0 ? dataMemoriesL0 : dataMemoriesL1;
+
+  let i = (sharedSeed + thisScreenParams.id) % 2;
+
+  window.lang = window[`lang${i}`];
   speech.lang = window.lang;
+  console.log('SEED ', i, ' LANG ', window.lang);
 }
 
 ///////////////////////////
@@ -214,7 +198,7 @@ function handleKey(e) {
 }
 
 function setScreen() {
-  if (screenNumber < 3) {
+  if (screenNumber < 2) {
     $('#wrapper').addClass('screen-' + screenNumber);
     $('#wrapper').addClass('partialscreen');
   } else {
@@ -222,177 +206,93 @@ function setScreen() {
   }
   adjustScreen();
   $('#area-extra').text(screenParams[screenNumber].display);
+  console.log('screen set');
 }
 
 function adjustScreen() {
   thisScreenParams = screenParams[screenNumber];
   let w = thisScreenParams.width, h = thisScreenParams.height;
-  if (w == 'AUTO') {
-    w = '100%';
-  }
-  if (h == 'AUTO') {
-    h = '100%';
-  } 
-  console.log('params', w, h)
   $('#wrapper').width(w).height(h);
   $('.main').width(w).height(h);
   $('#loading').width(w).height(h);
 }
 
-function loadData(cb) {
-  let dataLoaded = window.lang0 === window.lang1 ? -3 : -6; // this is a bit hacky but simpler than Promises.all
+const papaPromise = (file) => new Promise((resolve, reject) => {
+  Papa.parse(file, { header: true, download: true, skipEmptyLines: 'greedy', complete: resolve, error: reject });
+});
 
-  fetch(i18next.t('02_meditation.txt', {lng: window.lang0}))
-    .then(res => res.blob())
-    .then(blob => blob.text())
-    .then(text => {
-      dataMeditationsL0 = text.split(/\r?\n/);
-      dataMeditations = dataMeditationsL0;
-      dataLoaded += 1;
-      if (dataLoaded === 0) {
-        cb(); 
-      } 
-    });
+async function loadDataAsync(cb) {
+  let file = await i18next.t('02_meditation.txt', {lng: window.lang0});
+  // let file = '/static/data/fr/02_meditation_fr.txt';
+  let data = await fetch(file);
+  let text = await data.text();
+  dataMeditations[window.lang0] = text.split(/\r?\n/);
+  console.log('loaded meditations ', window.lang0, file);
 
-  Papa.parse(i18next.t('02_meditation_emotion_specific.tsv', {lng: window.lang0}), {
-    download: true,
-    header: true,
-    skipEmptyLines: 'greedy',
-    complete: function(results) {
-      const rawResults = results.data;
-      // the data comes in as [{ 'EMOTION': 'annoyed', ' BODY AREA': 'Feel that...', ...} ...]
-      // I (dan) think it should be { 'annoyed': { 'BODY AREA': 'string, 'PERSON': 'string' } ... }
-      const reordered = {};
+  file = await i18next.t('02_meditation_emotion_specific.tsv', {lng: window.lang0});
+  data = await papaPromise(file);
+  dataMeditationEmotions[window.lang0] = reorderEmotionSpecific(data.data);
+  console.log('loaded emotion specific ', window.lang0, file);
 
-      for (let i = 0; i < rawResults.length; i++) {
-        let thisrow = rawResults[i];
+  file = await i18next.t('02_memories.tsv', {lng: window.lang0});
+  data = await papaPromise(file);
+  dataMemories[window.lang0] = reorderMemories(data.data);
+  console.log('loaded memories ', window.lang0, file);
 
-        let newrow = {};
-        Object.keys(thisrow).forEach((key) => {
-          newrow[key.trim()] = thisrow[key]; 
-        });
-
-        reordered[thisrow['EMOTION'].trim()] = newrow;
-      }
-      dataMeditationEmotionsL0 = reordered;
-      dataMeditationEmotions = dataMeditationEmotionsL0;
-      dataLoaded += 1;
-      if (dataLoaded === 0) {
-        cb(); 
-      } 
-    }
-  });
-
-  Papa.parse(i18next.t('02_memories.tsv', {lng: window.lang0}), {
-    download: true,
-    header: true,
-    skipEmptyLines: 'greedy',
-    complete: function(results) {
-      const rawResults = results.data;
-      // the data comes in as [{ 'afraid': 'One time this..', 'alive': 'one day...', ...} ...]
-      // I (dan) think it should be { 'annoyed': [ 'One time', ...], 'alive': ['one day', ..] /// 
-      const reordered = {};
-
-      for (let i = 0; i < rawResults.length; i++) {
-        let thisrow = rawResults[i];
-
-        let newrow = {};
-        Object.keys(thisrow).forEach((key) => { 
-          key = key.trim();
-          if (key !== '' && thisrow[key].trim() !== '') {
-            if (!reordered[key]) {
-              reordered[key] = []; 
-            } 
-            reordered[key].push(thisrow[key]);
-          }
-        });
-      }
-      dataMemoriesL0 = reordered;
-      dataMemories = dataMemoriesL0;
-      dataLoaded += 1;
-      if (dataLoaded === 0) {
-        cb(); 
-      } 
-    }
-  });
-
-  // only parse extra files if there is a second langauge
   if (window.lang0 !== window.lang1) {
+    file = await i18next.t('02_meditation.txt', {lng: window.lang1});
+    data = await fetch(file);
+    text = await data.text();
+    dataMeditations[window.lang1] = text.split(/\r?\n/);
+    console.log('loaded meditations ', window.lang1, file);
 
-    fetch(i18next.t('02_meditation.txt', {lng: window.lang1}))
-      .then(res => res.blob())
-      .then(blob => blob.text())
-      .then(text => {
-        dataMeditationsL1 = text.split(/\r?\n/);
-        dataLoaded += 1;
-        if (dataLoaded === 0) {
-          cb(); 
-        } 
-      });
+    file = await i18next.t('02_meditation_emotion_specific.tsv', {lng: window.lang1});
+    data = await papaPromise(file);
+    dataMeditationEmotions[window.lang1] = reorderEmotionSpecific(data.data);
+    console.log('loaded emotion specific ', window.lang1, file);
+  
+    file = await i18next.t('02_memories.tsv', {lng: window.lang1});
+    // file = '/static/data/en/02_memories_en.tsv';
+    data = await papaPromise(file);
+    dataMemories[window.lang1] = reorderMemories(data.data);
+    console.log('loaded memories ', window.lang1, file);
 
-    Papa.parse(i18next.t('02_meditation_emotion_specific.tsv', {lng: window.lang1}), {
-      download: true,
-      header: true,
-      skipEmptyLines: 'greedy',
-      complete: function(results) {
-        const rawResults = results.data;
-        // the data comes in as [{ 'EMOTION': 'annoyed', ' BODY AREA': 'Feel that...', ...} ...]
-        // I (dan) think it should be { 'annoyed': { 'BODY AREA': 'string, 'PERSON': 'string' } ... }
-        const reordered = {};
+  }
+  cb();
+}
 
-        for (let i = 0; i < rawResults.length; i++) {
-          let thisrow = rawResults[i];
-
-          let newrow = {};
-          Object.keys(thisrow).forEach((key) => {
-            newrow[key.trim()] = thisrow[key]; 
-          });
-
-          reordered[thisrow['EMOTION'].trim()] = newrow;
-        }
-        dataMeditationEmotionsL1 = reordered;
-        dataLoaded += 1;
-        if (dataLoaded === 0) {
-          cb(); 
-        } 
-      }
+function reorderEmotionSpecific(rawResults) {
+  const reordered = {};
+  for (let i = 0; i < rawResults.length; i++) {
+    let thisrow = rawResults[i];
+    let newrow = {};
+    Object.keys(thisrow).forEach((key) => {
+      newrow[key.trim()] = thisrow[key]; 
     });
+    reordered[thisrow['EMOTION'].trim()] = newrow;
+  }
+  return reordered;
+}
 
-    Papa.parse(i18next.t('02_memories.tsv', {lng: window.lang1}), {
-      download: true,
-      header: true,
-      skipEmptyLines: 'greedy',
-      complete: function(results) {
-        const rawResults = results.data;
-        // the data comes in as [{ 'afraid': 'One time this..', 'alive': 'one day...', ...} ...]
-        // I (dan) think it should be { 'annoyed': [ 'One time', ...], 'alive': ['one day', ..] /// 
-        const reordered = {};
 
-        for (let i = 0; i < rawResults.length; i++) {
-          let thisrow = rawResults[i];
-
-          let newrow = {};
-          Object.keys(thisrow).forEach((key) => { 
-            key = key.trim();
-            if (key !== '' && thisrow[key].trim() !== '') {
-              if (!reordered[key]) {
-                reordered[key] = []; 
-              } 
-              reordered[key].push(thisrow[key]);
-            }
-          });
-        }
-        dataMemoriesL1 = reordered;
-        dataLoaded += 1;
-        if (dataLoaded === 0) {
-          cb(); 
+function reorderMemories(rawResults) {
+  const reordered = {};
+  for (let i = 0; i < rawResults.length; i++) {
+    let thisrow = rawResults[i];
+    let newrow = {};
+    Object.keys(thisrow).forEach((key) => { 
+      key = key.trim();
+      if (key !== '' && thisrow[key].trim() !== '') {
+        if (!reordered[key]) {
+          reordered[key] = []; 
         } 
+        reordered[key].push(thisrow[key]);
       }
     });
   }
-
-  
+  return reordered;
 }
+
 
 /////////////////////////////////
 ///// BACKGROUNDS
@@ -466,9 +366,9 @@ function setColorsAndBackgrounds() {
 
 function generateMeditationTexts() {
 
-  let thisDataMeditationInserts = dataMeditationEmotions[curEmotion.name];
+  let thisDataMeditationInserts = dataMeditationEmotions[window.lang][curEmotion.name];
 
-  return dataMeditations
+  return dataMeditations[window.lang]
     .map((m) => {
       let newm = m;
       for (let k in thisDataMeditationInserts) {
@@ -487,7 +387,7 @@ function displayMeditationPhrase(opts) {
   let text;
   if (parts.length > 1) {
     console.log(thisScreenParams.id)
-    let id = thisScreenParams.id < 3 ? thisScreenParams.id : 0;
+    let id = thisScreenParams.id < 2 ? thisScreenParams.id : 0;
     text = id < parts.length ? parts[id] : parts[0];
   } else {
     text = opts.text;
@@ -502,8 +402,10 @@ function displayMeditationPhrase(opts) {
         .fadeIn(opts.fadeIn);
     });
     // speak it
-    speech.text = text;
-    window.speechSynthesis.speak(speech);
+    if (thisScreenParams.id === 0) {
+      speech.text = text;
+     setTimeout(() => { window.speechSynthesis.speak(speech); }, 2000);
+    }
 }
 
 
@@ -513,30 +415,20 @@ function displayMeditationPhrase(opts) {
 
 function pickMemoryPairs() {
   let memories = [];
+  console.log(window.lang)
+  console.log(dataMemories['fr'])
 
-  let thisEmotionMemories = seedShuffle(dataMemories[curEmotion.base], sharedSeed);
+  let thisEmotionMemories = seedShuffle(dataMemories[window.lang][curEmotion.base], sharedSeed);
 
   let rng = seedrandom(sharedSeed);
 
-  let screenN = -1;
-  let lastScreen = -1;
 
   for (let i = 0; i < num_memories; i++) {
 
     let img0 = imgURLs[Math.floor(rng() * imgURLs.length)];
     let img1 = imgURLs[Math.floor(rng() * imgURLs.length)];
     let text = thisEmotionMemories[i % thisEmotionMemories.length];
-
-    // randomly pick screen
-
-    if (i < 3) {
-      screenN = i;
-    } else {
-      while (screenN === lastScreen) {
-        screenN = Math.floor(rng() * 3);
-      }
-    }
-    lastScreen = screenN;
+    let screenN = Math.floor(rng() * 2);
 
     let thisMempair = [];
 
@@ -624,15 +516,6 @@ function loadMedia(memory, index, i, contrast) {
 }
 
 
-function positionMempairs(mempairs) {
-
-  mempairs = mempairs.map((mempair, index) => {
-    positionMempair(mempair, index);
-  });
-
-  return mempairs;
-
-}
 
 function positionMempair(mempair, index) {
   if (!mempair.display) { return mempair; }
@@ -744,10 +627,7 @@ async function generateAndPreloadMemoryPairs() {
       } else {
         mempair.display = false;
       }
-
     });
-
-    // memoryPairs = await preloadMemoriesAndSetDimensions(memoryPairs);
 
     let tasks = [];
     memoryPairs.forEach((mempair, index) => {
@@ -756,7 +636,7 @@ async function generateAndPreloadMemoryPairs() {
 
     Promise.all(tasks)
       .then(results => {
-        positionMempairs(memoryPairs); 
+        memoryPairs = memoryPairs.map(positionMempair);
         resolve(memoryPairs);
       });
 
@@ -814,10 +694,9 @@ async function queueEvents(timeline) {
     let mts = generateMeditationTexts();
     let ind = sharedSeed + 1;
     mts.forEach((mt, i) => {
-      // if (i < 2) { // temp for testing
       timeline.add({ time: timeMarker, event: function() { 
         displayMeditationPhrase({ text: mt, fadeIn: each_meditation_fadein_duration, fadeOut: each_meditation_fadeout_duration});
-        if (i % 3 === 1) {
+        if (i % 2 === 0) {
           let imgUrl = imgURLs[ind % imgURLs.length];
           switchBackgrounds([imgUrl], 15000, primaryColors);
           ind++;
@@ -829,7 +708,6 @@ async function queueEvents(timeline) {
       } else {
         timeMarker += meditation_interval; 
       }
-      // }
 
     });
 
@@ -891,7 +769,7 @@ async function queueEvents(timeline) {
   }
 
   timeline.add({ time: timeMarker, event: function() { 
-    if (thisScreenParams.id === 1 || thisScreenParams.id === 999) { 
+    if (thisScreenParams.id === 0 || thisScreenParams.id === 999) { 
       socket.emit('reflection:end');
     }
   } });
@@ -922,31 +800,23 @@ function resetTimeline() {
 /////////////////////////////////////
 
 function seedShuffle(array, seed) { 
-
   const rng = seedrandom(seed);
-
   let m = array.length, t, i;
-
   // While there remain elements to shuffle…
   while (m) {
-
     // Pick a remaining element…
     i = Math.floor(rng() * m--);
-
     // And swap it with the current element.
     t = array[m];
     array[m] = array[i];
     array[i] = t;
   }
-
   return array;
 }
 
 function randomBetween(a, b) {
   return a + (Math.random() * (b - a));
 }
-
-
 
 function setupSynthesis() {
   window.speechSynthesis.onvoiceschanged = function() {

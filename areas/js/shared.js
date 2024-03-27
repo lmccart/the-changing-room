@@ -59,7 +59,7 @@ fetch('/static/data/data.json')
     
     i18nInit(data.settings);
 
-    appendDebug();
+    // appendDebug();
 
     let areaName = window.location.pathname.substring(1);
     let areaData = data.areas[areaName];

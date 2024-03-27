@@ -44,6 +44,8 @@ let screenFactor = 1;
 window.emotionStrings = [];
 
 window.soundType = 'mute';
+
+
 window.init = () => {
   if (screenNumber) {
     $('#area-extra').text('screen ' + screenNumber); 
@@ -120,7 +122,8 @@ async function updateInterface(durations) {
 
 function parsePassive() {
   return new Promise(resolve => {
-    Papa.parse(i18next.t('06_passive.tsv'), {
+    let file = i18next.t('06_passive.tsv', {lng: window.lang0});
+    Papa.parse(file, {
       download: true,
       header: true,
       skipEmptyLines: 'greedy',

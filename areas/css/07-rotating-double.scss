@@ -1,8 +1,11 @@
 @import './shared.scss';
 
-body {
+body, html {
+  width: 1920px;
+  height: 1080px;
   background: black;
 }
+
 
 section {
   // position: absolute;
