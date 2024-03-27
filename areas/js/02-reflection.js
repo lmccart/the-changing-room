@@ -148,7 +148,7 @@ function updateEmotionCurried(callback) {
     if (!curEmotion || curEmotion.name !== msg.name) {
       curEmotion = msg;
       emotionChanged = true;
-      console.log('emotion has been updated to: ' + msg.name + ' (base: ' + msg.base + ', level: ' + msg.level + ')');
+      console.log('emotion has been updated to: ' + curEmotion.name + ' (base: ' + curEmotion.base + ', level: ' + curEmotion.level + ')');
       
       getImgUrls(curEmotion.base, curEmotion.level)
         .then(images => {
@@ -165,12 +165,11 @@ function updateInterface() {
 }
 
 function switchLanguage() {
-
-  let i = (sharedSeed + thisScreenParams.id) % 2;
-
+  let rng = seedrandom(sharedSeed);
+  let i = (Math.floor(100 * rng() + thisScreenParams.id)) % 2;
   window.lang = window[`lang${i}`];
   speech.lang = window.lang;
-  console.log('SEED ', i, ' LANG ', window.lang);
+  // console.log('SEED ', i, ' LANG ', window.lang);
 }
 
 ///////////////////////////
@@ -366,6 +365,7 @@ function setColorsAndBackgrounds() {
 
 function generateMeditationTexts() {
 
+  console.log('generateMeditationTexts ', curEmotion.name, window.lang);
   let thisDataMeditationInserts = dataMeditationEmotions[window.lang][curEmotion.name];
 
   return dataMeditations[window.lang]
@@ -386,7 +386,7 @@ function displayMeditationPhrase(opts) {
   let parts = opts.text.match(/[^\.!\?]+[\.!\?]+/g);
   let text;
   if (parts.length > 1) {
-    console.log(thisScreenParams.id)
+    // console.log(thisScreenParams.id)
     let id = thisScreenParams.id < 2 ? thisScreenParams.id : 0;
     text = id < parts.length ? parts[id] : parts[0];
   } else {
@@ -404,7 +404,7 @@ function displayMeditationPhrase(opts) {
     // speak it
     if (thisScreenParams.id === 0) {
       speech.text = text;
-     setTimeout(() => { window.speechSynthesis.speak(speech); }, 2000);
+      setTimeout(() => { window.speechSynthesis.speak(speech); }, 2000);
     }
 }
 
@@ -415,8 +415,8 @@ function displayMeditationPhrase(opts) {
 
 function pickMemoryPairs() {
   let memories = [];
-  console.log(window.lang)
-  console.log(dataMemories['fr'])
+  // console.log(window.lang)
+  // console.log(dataMemories['fr'])
 
   let thisEmotionMemories = seedShuffle(dataMemories[window.lang][curEmotion.base], sharedSeed);
 
