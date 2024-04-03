@@ -122,8 +122,13 @@ window.init = () => {
   setScreen();
   loadDataAsync(() => {
     socket.on('emotion:update', updateEmotionCurried(() => {
+      if (thisScreenParams.id === 0) {
+        window.speechSynthesis.cancel();
+      }
       if (thisScreenParams.id === 0 || thisScreenParams.id === 999) { 
-        socket.emit('reflection:end');
+        setTimeout(() => {
+          socket.emit('reflection:end');
+        }, 250);
       }
     }));
 
@@ -401,11 +406,11 @@ function displayMeditationPhrase(opts) {
         .attr('class', sizeClass)
         .fadeIn(opts.fadeIn);
     });
-    // speak it
-    if (thisScreenParams.id === 0) {
-      speech.text = text;
-      setTimeout(() => { window.speechSynthesis.speak(speech); }, 2000);
-    }
+  // speak it
+  if (thisScreenParams.id === 0) {
+    speech.text = text;
+    setTimeout(() => { window.speechSynthesis.speak(speech); }, 2000);
+  }
 }
 
 
@@ -821,7 +826,7 @@ function randomBetween(a, b) {
 function setupSynthesis() {
   window.speechSynthesis.onvoiceschanged = function() {
     const voices = window.speechSynthesis.getVoices();
-    console.log(voices);
+    // console.log(voices);
   };
   speech = new SpeechSynthesisUtterance();
   speech.lang = window.lang; // PEND: could be updated to do opposite language
