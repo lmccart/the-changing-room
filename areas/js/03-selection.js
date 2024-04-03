@@ -135,7 +135,7 @@ function updateInterface() {
 
   let prevEmotions = [];
   let nextEmotions = [];
-  const numEmotions = 14;
+  const numEmotions = 7;
 
   $elm.prevAll().slice(0, numEmotions).each(function() {
     prevEmotions.push($(this).html());
