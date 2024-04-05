@@ -423,8 +423,15 @@ function pickMemoryPairs() {
   // console.log(window.lang)
   // console.log(dataMemories['fr'])
 
-  let thisEmotionMemories = seedShuffle(dataMemories[window.lang][curEmotion.base], sharedSeed);
+  let thisEmotionMemories;
+  
+  if (window.bilingual) {
+    thisEmotionMemories = seedShuffle(dataMemories[window.lang0][curEmotion.base].concat(dataMemories[window.lang1][curEmotion.base]), sharedSeed);
+  } else {
+    thisEmotionMemories = seedShuffle(dataMemories[window.lang0][curEmotion.base], sharedSeed);
+  }
 
+  console.log(thisEmotionMemories);
   let rng = seedrandom(sharedSeed);
 
 
