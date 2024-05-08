@@ -259,6 +259,7 @@ function joinedTimer() {
 //stop auto scroll on manual scroll, restart timers
 // TODO: will need to change this when we fix the scroll/drag situation
 $('#wrapper_joined').on('click wheel DOMMouseScroll mousewheel keyup touchmove', function(e) { 
+  console.log(`auto scroll stopped with: ${e.type}`);
   if (e.type !== 'click') {
     $('#wrapper_joined').stop(true); 
     $('#wrapper_joined').clearQueue(); 
@@ -352,7 +353,10 @@ function separateMode() {
 
 // detect manual scroll
 // TODO: determine whether mousemove makes sense here later
-$('#wrapper_separate .scroll').on('click wheel DOMMouseScroll mousewheel keyup touchmove mousemove', joinedMode); 
+$('#wrapper_separate .scroll').on('click wheel DOMMouseScroll mousewheel keyup touchmove mousemove', function(e) {
+  console.log(`homescreen stopped: ${e.type}`);
+  joinedMode();
+}); 
 
 // auto scrolling
 function scrollSeparatePanels() {
