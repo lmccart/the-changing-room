@@ -6,7 +6,7 @@ let curEmotion;
 
 const dmx = new DMX();
 // ls /dev/tty.*
-const universe = dmx.addUniverse('tcr', 'enttec-usb-dmx-pro', '/dev/tty.usbserial-EN308136');
+const universe = dmx.addUniverse('tcr', 'enttec-usb-dmx-pro', '/dev/tty.usbserial-EN252270');
 
 const playEmotion = (emotion) => {
   curEmotion = emotion;
