@@ -15,7 +15,7 @@ body {
 }
 	
 .scroll {
-	width: 30.67vw;
+	width: 33vw;
 	padding: 2vw;
 	height: 100vh;
 	box-sizing: border-box;
@@ -87,7 +87,7 @@ body {
 
 #wrapper_separate {
 	display: flex;
-	hyphens: auto;
+	hyphens: manual;
 	::-webkit-scrollbar-thumb {
 		background-color: none;
 	}
@@ -102,7 +102,7 @@ body {
 	}
 
 	.margin {
-		width: 4vw;
+		width: 0vw;
 	}
 }
 
