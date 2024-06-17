@@ -6,7 +6,7 @@ import i18next from 'i18next';
 
 // VARIABLES
 const num_panels = 3;
-const idle_timeout = 0;
+const idle_timeout = 60;
 const scroll_timeout = 5;
 const scroll_down_time = 990000;
 const scroll_up_time = 15000;
@@ -32,13 +32,16 @@ for (let i = 0; i < num_panels; i++) {
 
 const handIndicator = $('#hand-indicator');
 const apiURL_emotions = '/emotions';
-let sel_intro_content;
 let emotions;
+let panelArrayL0 = [];
+let panelArrayL1 = [];
 
 let timer;
 let timer_to_idle;
 let hand_interval;
 let isSwiping = 0;
+
+window.introLang = 0;
 
 window.soundType = 'mute';
 window.init = () => {
@@ -94,10 +97,13 @@ window.init = () => {
   });
 
   // READ IN SELECTION TEXT
-  fetch(i18next.t('03_selection_intro'))
+  fetch(i18next.t('03_selection_intro', {lng: window.lang0}))
     .then(response => response.text())
-    .then(text => sel_intro_content = text)
-    .then(() => selection_txt_parse(sel_intro_content));
+    .then(text => selection_txt_parse(text, panelArrayL0));
+
+  fetch(i18next.t('03_selection_intro', {lng: window.lang1}))
+    .then(response => response.text())
+    .then(text => selection_txt_parse(text, panelArrayL1));
 
   $('#wrapper_separate').hide();
   // DO ANY OTHER INIT JQUERY STUFF
@@ -197,19 +203,49 @@ function updateInterface() {
 }
 
 ////////////////// PARSING SELECTION TEXT TO PANELS
-function selection_txt_parse(sel_intro_content) {
+function selection_txt_parse(sel_intro_content, panelArray) {
   let sel_intro_sent = sel_intro_content.replace(' ', '\n');
   sel_intro_sent = sel_intro_sent.match(/[^\.!\?]+[\.!\?]+/g);
   let num_sents_panels = Math.ceil(sel_intro_sent.length / num_panels);
-  const panel_array = new Array(Math.ceil(sel_intro_sent.length / num_sents_panels))
+  const panels = new Array(Math.ceil(sel_intro_sent.length / num_sents_panels))
     .fill()
     .map(_ => sel_intro_sent.splice(0, num_sents_panels));
-  for (let i = 0; i < panel_array.length; i++) {
-    const sentences = panel_array[i];
+
+  Array.prototype.push.apply(panelArray, panels);
+
+  for (let i = 0; i < panelArray.length; i++) {
+    const sentences = panelArray[i];
     for (let j = 0; j < sentences.length; j++) {
       separate_panels[i].firstChild.innerHTML += sentences[j]; 
     }
-    
+  }
+}
+
+function switchIntroLang() {
+  // update panel text
+  if (window.introLang === 1) {
+    console.log(`introLang in ${window.lang1}`);
+    console.log(panelArrayL1);
+    for (let i = 0; i < panelArrayL1.length; i++) {
+      const sentences = panelArrayL1[i];
+      separate_panels[i].firstChild.innerHTML = '';
+      for (let j = 0; j < sentences.length; j++) {
+        separate_panels[i].firstChild.innerHTML += sentences[j]; 
+      }
+    }
+    // switch language
+    window.introLang = 0;
+  } else {
+    console.log(`introLang in ${window.lang0}`);
+    console.log(panelArrayL0);
+    for (let i = 0; i < panelArrayL0.length; i++) {
+      const sentences = panelArrayL0[i];
+      separate_panels[i].firstChild.innerHTML = '';
+      for (let j = 0; j < sentences.length; j++) {
+        separate_panels[i].firstChild.innerHTML += sentences[j]; 
+      }
+    }
+    window.introLang = 1;
   }
 }
 
@@ -249,7 +285,7 @@ function joinedTimer() {
   }, 1000);
   timer_to_idle = setInterval(function() {
     sec_to_idle--;
-    // console.log('seconds to idle ' + sec_to_idle);
+    console.log('seconds to idle ' + sec_to_idle);
     if (sec_to_idle === -1) {
       clearInterval(timer_to_idle);
       separateMode();
@@ -344,6 +380,7 @@ function calcScrollVal(emotion_name) {
 ////////////////// SEPARATE MODE
 function separateMode() {
   console.log('ready to be separate');
+  switchIntroLang();
   $('#wrapper_joined').stop(true).fadeOut(fade_time);
   $('#wrapper_joined').css('display','none');
   $('#wrapper_separate').stop(true).fadeIn(fade_time);
