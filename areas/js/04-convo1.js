@@ -120,7 +120,6 @@ function startResetTimeout() {
 
 function showChatInput() {
 
-  document.querySelector("body").requestFullscreen();
   if (showChatTimeout) clearTimeout(showChatTimeout);
   $('#hand-indicator').hide();
   messageViewerContainer.hide(); 
@@ -132,6 +131,7 @@ function showChatInput() {
     chatInput.trigger('focus'); // this may not work on iPad, unless triggered by click
   }
 }
+
 
 function showMessageViewer() {
   introEl.hide();
@@ -169,7 +169,7 @@ function updateInterface() {
     chatSubmit.css('filter', 'none');
     $('#hand-indicator').css('filter', 'none');
   }
-  $('body').css('background', `radial-gradient(${colors[0]},${colors[1]})`);
+  $('.main').css('background', `radial-gradient(${colors[0]},${colors[1]})`);
   $('#debug-info').text(screen.width + ' ' + screen.height);//CURRENT EMOTION: ' + curEmotion.name + ' (base: ' + curEmotion.base + ', level: ' + curEmotion.level +')')
 }
 
@@ -225,3 +225,7 @@ function typeMessageByWord(string, el, iteration, secondLang) {
 }
 
 
+
+$('body').on('click', () => {
+  document.querySelector('body').requestFullscreen();
+})
