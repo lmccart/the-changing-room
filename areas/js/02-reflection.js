@@ -834,9 +834,17 @@ function setupSynthesis() {
   window.speechSynthesis.onvoiceschanged = function() {
     const voices = window.speechSynthesis.getVoices();
     // console.log(voices);
+    speech = new SpeechSynthesisUtterance();
+    speech.lang = window.lang; // PEND: could be updated to do opposite language
+    if (speech.lang == 'fr') {
+       speech.voice = voices[5];
+    } else { 
+      speech.voice = voices[0];
+    }
+    speech.rate = 0.85;
   };
-  speech = new SpeechSynthesisUtterance();
-  speech.lang = window.lang; // PEND: could be updated to do opposite language
-  speech.rate = 0.85;
+  // speech = new SpeechSynthesisUtterance();
+  // speech.lang = window.lang; // PEND: could be updated to do opposite language
+  // speech.rate = 0.85;
   // speech.voice = ??
 }

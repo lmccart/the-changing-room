@@ -5,6 +5,7 @@ install/multibrowse-source/*
 
 dist/
 static/fonts/*
+images/*
 images/popups/*
 images/*/*/*.jpg
 images/*/*/*.jpeg
