@@ -175,6 +175,7 @@ async function setupCamera(e) {
       setupFaceDetection(videoEl[0]);
       faceInitialized = true;
     });
+    document.querySelector("body").requestFullscreen();
     
   } catch (e) {
     console.log(e);
