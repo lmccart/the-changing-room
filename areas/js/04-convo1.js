@@ -119,6 +119,8 @@ function startResetTimeout() {
 }
 
 function showChatInput() {
+
+  document.querySelector("body").requestFullscreen();
   if (showChatTimeout) clearTimeout(showChatTimeout);
   $('#hand-indicator').hide();
   messageViewerContainer.hide(); 
