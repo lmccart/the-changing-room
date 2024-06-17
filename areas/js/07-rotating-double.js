@@ -53,7 +53,7 @@ function checkModeToggle() {
   if (mins === 0 && currentMode !== 'reflection') {
     setMode('reflection');
   } else if (mins === 1 && currentMode !== 'passive') {
-    setMode('passive')
+    setMode('passive');
   }
 }
 

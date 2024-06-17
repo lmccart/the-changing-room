@@ -37,5 +37,6 @@ class BaseSystem(metaclass=ABCMeta):
             '--kiosk',
             '--profile-directory=Default',
             '--app={}'.format(url),
+            '--autoplay-policy=no-user-gesture-required'
         ] + flags
         Popen(args, stdout=DEVNULL, stderr=DEVNULL)
