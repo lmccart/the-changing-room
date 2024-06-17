@@ -87,7 +87,7 @@ body {
 
 #wrapper_separate {
 	display: flex;
-	hyphens: auto;
+	hyphens: manual;
 	::-webkit-scrollbar-thumb {
 		background-color: none;
 	}
