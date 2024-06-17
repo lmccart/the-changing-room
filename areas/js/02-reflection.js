@@ -25,6 +25,7 @@ let dataMeditationEmotions = {};
 let dataMemories = {};
 
 let speech;
+let voices;
 
 // 10s before meditation
 // 10s per instruction
@@ -174,6 +175,7 @@ function switchLanguage() {
   let i = (Math.floor(100 * rng() + thisScreenParams.id)) % 2;
   window.lang = window[`lang${i}`];
   speech.lang = window.lang;
+  speech.voice = voices[`lang${i}`];
   // console.log('SEED ', i, ' LANG ', window.lang);
 }
 
@@ -431,7 +433,7 @@ function pickMemoryPairs() {
     thisEmotionMemories = seedShuffle(dataMemories[window.lang0][curEmotion.base], sharedSeed);
   }
 
-  console.log(thisEmotionMemories);
+  // console.log(thisEmotionMemories);
   let rng = seedrandom(sharedSeed);
 
 
@@ -832,15 +834,14 @@ function randomBetween(a, b) {
 
 function setupSynthesis() {
   window.speechSynthesis.onvoiceschanged = function() {
-    const voices = window.speechSynthesis.getVoices();
-    // console.log(voices);
+    // const allVoices = window.speechSynthesis.getVoices();
+    voices = {
+      lang0: allVoices[5],
+      lang1: allVoices[0]
+    };
+    console.log(allVoices);
     speech = new SpeechSynthesisUtterance();
-    speech.lang = window.lang; // PEND: could be updated to do opposite language
-    if (speech.lang == 'fr') {
-       speech.voice = voices[5];
-    } else { 
-      speech.voice = voices[0];
-    }
+    // speech.lang and speech.voice setup in switchLanguage()
     speech.rate = 0.85;
   };
   // speech = new SpeechSynthesisUtterance();
