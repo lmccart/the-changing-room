@@ -24,13 +24,19 @@ const playEmotion = (emotion) => {
 
   console.log(typeof rgb.r);
   let channelsUpdate = {
-    1: 255,
+    1: 100,
     2: rgb.r,
     3: rgb.g,
     4: rgb.b,
-    5: 150,
+    5: 50,
     6: 0,
-    7: 0
+    7: 0,
+    8: 0,
+    9: 0,
+    10: rgb.r,
+    11: rgb.g,
+    12: rgb.b,
+    13: 0
   };
 
   // universe.update(channelsUpdate);
