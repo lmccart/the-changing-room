@@ -6,7 +6,7 @@ let curEmotion;
 
 const dmx = new DMX();
 // ls /dev/tty.*
-const universe = dmx.addUniverse('tcr', 'enttec-usb-dmx-pro', '/dev/tty.usbserial-EN308136');
+const universe = dmx.addUniverse('tcr', 'enttec-usb-dmx-pro', '/dev/tty.usbserial-EN252270');
 
 const playEmotion = (emotion) => {
   curEmotion = emotion;
@@ -30,7 +30,13 @@ const playEmotion = (emotion) => {
     4: rgb.b,
     5: 150,
     6: 0,
-    7: 0
+    7: 0,
+    8: 0,
+    9: 255,
+    10: rgb.r,
+    11: rgb.g,
+    12: rgb.b,
+    13: 50
   };
 
   // universe.update(channelsUpdate);

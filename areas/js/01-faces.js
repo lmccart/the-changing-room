@@ -154,6 +154,8 @@ function setupPosenet() {
 }
 
 function handleClick(e) {
+
+  document.querySelector("body").requestFullscreen();
   if (!faceInitialized) {
     setupCamera(e);
   } else {

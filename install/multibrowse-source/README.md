@@ -1,11 +1,34 @@
 Multibrowse: Multi-Monitor Kiosk Mode
 =====================================
 
-Simple python script to open several full-screen browser windows onto multiple monitor setups.
+Utility to open several full-screen browser windows onto multiple monitor setups.
 
 Browser is currently set to Google Chrome, but can be adapted to use any browser.
 
-Supported platforms: Windows(7/8/10)/Linux/MacOS
+Supported platforms: Windows(7/8/10)/Linux/MacOS(x86/arm64)
+
+Installation
+------------
+
+Installing with a package manager is recommended.
+
+### Chocolatey
+
+```
+choco install multibrowse
+```
+
+### Manual Installation
+
+Binaries can be found on the [releases page](https://github.com/foxxyz/multibrowse/releases). To build yourself, see below.
+
+### Additional Requirements (Linux)
+
+On linux, `xrandr` is used to find display configuration and must be available on `PATH`.
+
+To install:
+  * Install with Apt: `apt install lxrandr`
+  * Install with Pacman: `pacman -S xorg-xrandr`
 
 Usage
 -----
@@ -34,38 +57,22 @@ Displays are ordered according to their x/y position from left to right, then to
 
 Additional CLI options passed to the `multibrowse` binary will be delegated to the browser instance. Check out the [wiki page](https://github.com/foxxyz/multibrowse/wiki) for common options.
 
-Installation
-------------
 
-Binaries can be found on the [releases page](https://github.com/foxxyz/multibrowse/releases). To build yourself, see below.
+Development
+-----------
 
-Development Requirements
-------------------------
+### Requirements
 
- * Python 3
+ * Rust
 
-### Linux
+### Running
 
- * `xrandr`
-  * Install with Apt: `apt-get install lxrandr`
-  * Install with Pacman: `pacman -S xorg-xrandr`
-
-### MacOS
-
- * PyObjC
-  * Install with pip: `pip install pyobjc`
-
+`cargo run`
 
 Building
 --------
 
-Multibrowse can be built into a single contained .exe file using [pyinstaller](http://www.pyinstaller.org/). Pyinstaller can be installed using `pip install pyinstaller`.
-
-The following command produces a single self-contained exe file in `/dist`:
-
-```
-pyinstaller --onefile multibrowse.py
-```
+`cargo build --release`
 
 License
 -------

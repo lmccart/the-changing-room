@@ -15,8 +15,8 @@ body {
 }
 	
 .scroll {
-	width: 30.67vw;
-	padding: 2vw;
+	width: 33.33vw;
+	padding-left: 2vw;
 	height: 100vh;
 	box-sizing: border-box;
 	-webkit-box-sizing: border-box;
@@ -35,7 +35,7 @@ body {
 
 #wrapper_joined {
 	width: 100%;
-	font-size: 8.5vw;
+	font-size: 10.45vw;
 	line-height: 1.07em;
 	display: flex;
 	overflow-y: scroll;
@@ -87,7 +87,7 @@ body {
 
 #wrapper_separate {
 	display: flex;
-	hyphens: auto;
+	hyphens: manual;
 	::-webkit-scrollbar-thumb {
 		background-color: none;
 	}
@@ -97,12 +97,12 @@ body {
 	}
 	.scroll {
 		// border: 1px solid #000;
-		font-size: 6vw;
+		font-size: 5.8vw;
 		overflow-y: scroll;
 	}
 
 	.margin {
-		width: 4vw;
+		width: 0vw;
 	}
 }
 
