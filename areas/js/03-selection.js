@@ -6,7 +6,7 @@ import i18next from 'i18next';
 
 // VARIABLES
 const num_panels = 3;
-const idle_timeout = 60;
+const idle_timeout = 30;
 const scroll_timeout = 5;
 const scroll_down_time = 990000;
 const scroll_up_time = 15000;
