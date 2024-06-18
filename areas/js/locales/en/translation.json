@@ -12,5 +12,6 @@
     "06_passive.tsv": "/static/data/en/06_passive_en.tsv",
     "fallback": "There is nothing you are afraid of.",
     "type_a_message": "Type a message to your partner...",
-    "next_instruction_shortly": "Next instruction coming up shortly..."
+    "next_instruction_shortly": "Next instruction coming up shortly...",
+    "come_here": "Come here."
 }

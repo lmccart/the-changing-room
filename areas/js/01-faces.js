@@ -23,6 +23,12 @@ let emotionPhrasesL0;
 let emotionPhrasesL1;
 let curPhraseL0 = 0;
 let curPhraseL1 = 0;
+let coverPhraseL0;
+let coverPhraseL1;
+let coverLang = 0;
+let coverInterval;
+let coverIntervalSet = false;
+let coverIntervalTime = 5000;
 
 let watchdog = 0; // used to delay showing/hiding video
 let faceFound = false;
@@ -50,6 +56,9 @@ window.init = () => {
       }, { passive:false });
     });
   // enableAutoTTS();
+
+  coverPhraseL0 = i18next.t('come_here', {lng: window.lang0});
+  coverPhraseL1 = i18next.t('come_here', {lng: window.lang1});
 };
 
 
@@ -155,7 +164,7 @@ function setupPosenet() {
 
 function handleClick(e) {
 
-  document.querySelector("body").requestFullscreen();
+  document.querySelector('body').requestFullscreen();
   if (!faceInitialized) {
     setupCamera(e);
   } else {
@@ -285,7 +294,11 @@ function colorFrame(color0) {
 function removeCover(loadCam) {
   let emotion_colors = baseColors[curEmotion.base][curEmotion.level - 1];
   colorFrame(emotion_colors[0]);
+
+  if (coverInterval) clearInterval(coverInterval);
+  coverIntervalSet = false;
   coverEl.hide();
+
   if (spellOut === false && !loadCam) {
     spellOut = true;
     console.log('flip spell out switch');
@@ -293,10 +306,23 @@ function removeCover(loadCam) {
   }
 }
 
+
 function showCover() {
   console.log('show cover');
   colorFrame('white');
   coverEl.show();
+
+  $('#spellbox').css('font-size', 210);
+
+  if (window.bilingual) {
+    if (!coverIntervalSet) {
+      $('#spellbox').text(coverPhraseL0);
+      coverInterval = setInterval(switchCover, coverIntervalTime);
+      coverIntervalSet = true;
+    }
+  } else {
+    $('#spellbox').text(coverPhraseL0);
+  }
 
   if (spellOut === true) {
     spellOut = false;
@@ -305,12 +331,25 @@ function showCover() {
   }
 }
 
+
+function switchCover() {
+  console.log('switching cover language');
+  coverLang = coverLang === 0 ? 1 : 0;
+
+  if (coverLang === 1) {
+    $('#spellbox').text(coverPhraseL1);
+  } else {
+    $('#spellbox').text(coverPhraseL0);
+  }
+}
+
 function cleanupText() {
   $('#dummy').empty();
   $('#spellbox').empty();
   if (phraseTimeout) clearTimeout(phraseTimeout);
   if (typingTimeout) clearTimeout(typingTimeout);
-
+  if (coverInterval) clearInterval(coverInterval);
+  coverIntervalSet = false;
 }
 
 function queueText(secondLang) {
