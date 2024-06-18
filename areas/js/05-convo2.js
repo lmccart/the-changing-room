@@ -141,7 +141,7 @@ function showConvoLoading() {
     switchBackgrounds(imgUrls, 1000, colors);
 
     if (window.bilingual) { 
-      let fs = instruction.length + instructioni18n.length > 80 ? '5vw' : '6vw';
+      let fs = instruction.length + instructioni18n.length > 90 ? '5vw' : '6vw';
       $('#instruction').css('font-size', fs);
       $('#instruction-i18n').css('font-size', fs);
     } else {
