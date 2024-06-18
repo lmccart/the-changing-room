@@ -37,8 +37,8 @@ window.init = () => {
 
 window.loadingComplete = () => {
   $('.intro-text-container').css('visibility', 'visible');
-  // scrollDown();
-  setHandInterval();
+  scrollDown();
+  // setHandInterval();
 };
 
 
@@ -97,15 +97,15 @@ async function updateInterface(durations) {
   $('.text').css('color', textColor);
 }
 
-$('.holder').on('click wheel DOMMouseScroll mousewheel keyup touchmove', function(e) { 
-  if (e.type !== 'click') {
-    $('.holder').stop(true); 
-  }
-  setTimeout(() => {
-    // scrollResume();
-  }, scroll_resume_time);
+// $('.holder').on('click wheel DOMMouseScroll mousewheel keyup touchmove', function(e) { 
+//   if (e.type !== 'click') {
+//     $('.holder').stop(true); 
+//   }
+//   setTimeout(() => {
+//     scrollResume();
+//   }, scroll_resume_time);
 
-});
+// });
 
 function scrollDown() {
   $('.holder').scrollTop(0);
