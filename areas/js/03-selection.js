@@ -97,11 +97,11 @@ window.init = () => {
   });
 
   // READ IN SELECTION TEXT
-  fetch(i18next.t('03_selection_intro', {lng: window.lang1}))
+  fetch(i18next.t('03_selection_intro', {lng: window.lang0}))
     .then(response => response.text())
     .then(text => selection_txt_parse(text, panelArrayL0));
 
-  fetch(i18next.t('03_selection_intro', {lng: window.lang0}))
+  fetch(i18next.t('03_selection_intro', {lng: window.lang1}))
     .then(response => response.text())
     .then(text => selection_txt_parse(text, panelArrayL1));
 
