@@ -83,6 +83,7 @@ function sendMessage(e) {
   e.preventDefault();
   const chatText = chatInput.val();
   if (chatText.length) {
+    console.log('send message');
     socket.emit('chat:send', {original: chatText, id: socketid});
     chatInput.val('');
     chatInput.trigger('blur');
@@ -174,6 +175,7 @@ function updateInterface() {
 }
 
 function handleNewMessage(data) {
+  console.log('handle new');
   showMessageViewer();
   console.log(data.id, socketid);
   if (data.id !== socketid) { // only show modified to partner
@@ -225,7 +227,3 @@ function typeMessageByWord(string, el, iteration, secondLang) {
 }
 
 
-
-$('body').on('click', () => {
-  document.querySelector('body').requestFullscreen();
-})
