@@ -63,7 +63,7 @@ function loadText() {
       .then(res => res.blob())
       .then(blob => blob.text())
       .then(text => {
-        $('.text').html(text+'<br>&nbsp;');
+        $('.text').html(text + '<br>&nbsp;');
       });
   } else { // otherwise, change font and add both texts
     $('.text').addClass('double-text');
@@ -71,12 +71,12 @@ function loadText() {
       .then(res0 => res0.blob())
       .then(blob0 => blob0.text())
       .then(text0=> {
-        $('#lang0-intro').html(text0+'<br>&nbsp;');
+        $('#lang0-intro').html(text0 + '<br>&nbsp;');
         fetch(i18next.t('00_intro.txt', {lng: window.lang1}))
           .then(res1 => res1.blob())
           .then(blob1 => blob1.text())
           .then(text1 => {
-            $('#lang1-intro').html(text1+'<br>&nbsp;');
+            $('#lang1-intro').html(text1 + '<br>&nbsp;');
           });
       });
   }
