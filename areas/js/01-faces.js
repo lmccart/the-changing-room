@@ -28,7 +28,7 @@ let coverPhraseL1;
 let coverLang = 0;
 let coverInterval;
 let coverIntervalSet = false;
-let coverIntervalTime = 5000;
+let coverIntervalTime = 10000;
 
 let watchdog = 0; // used to delay showing/hiding video
 let faceFound = false;
