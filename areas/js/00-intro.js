@@ -37,7 +37,7 @@ window.init = () => {
 
 window.loadingComplete = () => {
   $('.intro-text-container').css('visibility', 'visible');
-  scrollDown();
+  // scrollDown();
   setHandInterval();
 };
 
@@ -102,7 +102,7 @@ $('.holder').on('click wheel DOMMouseScroll mousewheel keyup touchmove', functio
     $('.holder').stop(true); 
   }
   setTimeout(() => {
-    scrollResume();
+    // scrollResume();
   }, scroll_resume_time);
 
 });
