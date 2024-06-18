@@ -106,12 +106,6 @@ async function updateInterface() {
   $('.instruction-container').css('border-color', colors[1]);
   $('#instruction').css('color', textColor);
   $('#instruction-i18n').css('color', textColor);
-  if (window.bilingual) { // changing font size depending on presence of second name
-    $('#instruction').css('font-size', '4vw');
-    $('#instructioni18n').css('font-size', '4vw');
-  } else {
-    $('#instruction').css('font-size', '8vw');
-  }
 }
 
 function reset() {
@@ -146,6 +140,14 @@ function showConvoLoading() {
 
     switchBackgrounds(imgUrls, 1000, colors);
 
+    if (window.bilingual) { 
+      let fs = instruction.length + instructioni18n.length > 90 ? '5vw' : '6vw';
+      $('#instruction').css('font-size', fs);
+      $('#instruction-i18n').css('font-size', fs);
+    } else {
+      $('#instruction').css('font-size', '8vw');
+    }
+
     if (window.bilingual) {
       const isLonger = instruction.length >= instructioni18n.length;
       typeInstruction(instruction, '#instruction', isLonger);
@@ -153,6 +155,7 @@ function showConvoLoading() {
     } else {
       typeInstruction(instruction, '#instruction', true);
     }
+    
 
   }, loadingBarTime);
 }

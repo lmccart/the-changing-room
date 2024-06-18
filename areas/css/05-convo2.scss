@@ -45,12 +45,17 @@ svg {
   }
 
   h1 {
-    font-size: 1.6vw;
+    font-size: 1.8vw;
   }
 
   .bar-container {
     position: relative;
     width: 40vw;
+  }
+  
+  #loading-text {
+    line-height: 1.8;
+    margin-bottom: 1em;
   }
 
   #loading-bar {
@@ -120,7 +125,7 @@ svg {
     
 
     #instruction {
-      font-size: 4vw;
+      font-size: 6vw;
       color: white;
       // height?
       width: 90%;
@@ -129,7 +134,7 @@ svg {
     }
 
     #instruction-i18n {
-      font-size: 4vw;
+      font-size: 6vw;
       color: white;
 
       width: 90%;

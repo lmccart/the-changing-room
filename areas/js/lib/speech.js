@@ -5,23 +5,28 @@
 let selectedVoiceIndex = 9999;
 let selectedVoice;
 
-window.speechSynthesis.onvoiceschanged = function() {
-  let voiceOptions = ['Ava', 'Allison', 'Samantha', 'Susan', 'Vicki', 'Kathy', 'Victoria'];
-  let voices = window.speechSynthesis.getVoices();
-  console.log('voice');
-  for (let v in voices) {
-    let ind = voiceOptions.indexOf(voices[v].voiceURI);
-    if (ind !== -1 && ind < selectedVoiceIndex) {
-      selectedVoice = voices[v];
-      selectedVoiceIndex = ind;
+if (window.speechSynthesis) {
+  
+  window.speechSynthesis.onvoiceschanged = function() {
+    let voiceOptions = ['Ava', 'Allison', 'Samantha', 'Susan', 'Vicki', 'Kathy', 'Victoria'];
+    let voices = window.speechSynthesis.getVoices();
+    console.log('voice');
+    for (let v in voices) {
+      let ind = voiceOptions.indexOf(voices[v].voiceURI);
+      if (ind !== -1 && ind < selectedVoiceIndex) {
+        selectedVoice = voices[v];
+        selectedVoiceIndex = ind;
+      }
     }
-  }
-};
+  };
+
+}
 
 export function speak(msg, vol) {
   if (arguments.length === 1) {
     vol = 1;
   }
+  if (!window.speechSynthesis) return;
   const utterance = new SpeechSynthesisUtterance(msg);
   utterance.volume = vol;
   utterance.rate = 0.8;
@@ -32,7 +37,7 @@ export function speak(msg, vol) {
 
 // function for making sure text to speech is available on iOS Safari
 export function enableAutoTTS() {
-  if (typeof window === 'undefined') {
+  if (typeof window === 'undefined' || !window.speechSynthesis) {
     return; 
   }
   

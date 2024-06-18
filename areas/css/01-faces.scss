@@ -15,13 +15,27 @@ body {
   height: 100vh;
 }
 
-#video-cover {
+#video-cover {  
   position: absolute;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
   background: black;
+}
+
+#hand-container {
+
+  display: flex;           /* establish flex container */
+  flex-direction: column;  /* make main axis vertical */
+  justify-content: center; /* center items vertically, in this case */
+  align-items: center;     /* center items horizontally, in this case */
+  width: 100vw;
+  height: 100vh;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 10;
 }
 
 #face-stream {
@@ -115,19 +129,6 @@ body {
   background-color: white;
   transform: rotate(90deg);
   Z-index: 2;
-}
-
-#hand-container {
-  display: flex;           /* establish flex container */
-  flex-direction: column;  /* make main axis vertical */
-  justify-content: center; /* center items vertically, in this case */
-  align-items: center;     /* center items horizontally, in this case */
-  width: 100vw;
-  height: 100vh;
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 10;
 }
 
 #hand-indicator {

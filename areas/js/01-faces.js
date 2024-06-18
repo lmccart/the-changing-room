@@ -23,12 +23,6 @@ let emotionPhrasesL0;
 let emotionPhrasesL1;
 let curPhraseL0 = 0;
 let curPhraseL1 = 0;
-let coverPhraseL0;
-let coverPhraseL1;
-let coverLang = 0;
-let coverInterval;
-let coverIntervalSet = false;
-let coverIntervalTime = 10000;
 
 let watchdog = 0; // used to delay showing/hiding video
 let faceFound = false;
@@ -56,9 +50,6 @@ window.init = () => {
       }, { passive:false });
     });
   // enableAutoTTS();
-
-  coverPhraseL0 = i18next.t('come_here', {lng: window.lang0});
-  coverPhraseL1 = i18next.t('come_here', {lng: window.lang1});
 };
 
 
@@ -66,7 +57,8 @@ window.loadingComplete = () => {
   if (faceFound) {
     queueText(false);
   }
-  $('#hand-container').delay(1000).fadeIn();
+  videoEl.delay(1000).fadeIn();
+  $('#hand-indicator').show();
 };
 
 function loadText() {
@@ -164,7 +156,7 @@ function setupPosenet() {
 
 function handleClick(e) {
 
-  document.querySelector('body').requestFullscreen();
+  document.querySelector("body").requestFullscreen();
   if (!faceInitialized) {
     setupCamera(e);
   } else {
@@ -181,8 +173,6 @@ async function setupCamera(e) {
     videoEl[0].srcObject = stream;
     videoEl.on('loadeddata', () => {
       resizeLayout();
-      removeCover(true);
-      $('#hand-container').remove();
       setupFaceDetection(videoEl[0]);
       faceInitialized = true;
     });
@@ -198,22 +188,22 @@ function setupFaceDetection(videoEl) {
       flipHorizontal: true
     })
       .then(function(pose) {
-        let hip = (pose.keypoints[11].score + pose.keypoints[12].score) / 2;
-        if (pose.score > 0.15) {
+        console.log(pose.keypoints[2].score);
+        if (pose.keypoints[2].score > 0.99) {
           watchdog = watchdog < 0 ? 0 : watchdog + 1;
-          if (watchdog > (delaySeconds * 10)) {
+          if (watchdog > (delaySeconds * 5)) {
             faceFound = true;
             removeCover();
           }
         } else {
           watchdog = watchdog > 0 ? 0 : watchdog - 1;
-          if (watchdog < -(delaySeconds * 10)) {
+          if (watchdog < -(delaySeconds * 5)) {
             faceFound = false;
             showCover();
           }
         }
       });
-  }, 100);
+  }, 200);
 }
 
 
@@ -254,7 +244,6 @@ function updateInterface() {
 
   // show loading screen
   cleanupText();
-  $('#hand-container').hide();
   showLoadingOverlay(curEmotion);
 
 
@@ -294,11 +283,7 @@ function colorFrame(color0) {
 function removeCover(loadCam) {
   let emotion_colors = baseColors[curEmotion.base][curEmotion.level - 1];
   colorFrame(emotion_colors[0]);
-
-  if (coverInterval) clearInterval(coverInterval);
-  coverIntervalSet = false;
   coverEl.hide();
-
   if (spellOut === false && !loadCam) {
     spellOut = true;
     console.log('flip spell out switch');
@@ -306,23 +291,10 @@ function removeCover(loadCam) {
   }
 }
 
-
 function showCover() {
   console.log('show cover');
   colorFrame('white');
   coverEl.show();
-
-  $('#spellbox').css('font-size', 210);
-
-  if (window.bilingual) {
-    if (!coverIntervalSet) {
-      $('#spellbox').text(coverPhraseL0);
-      coverInterval = setInterval(switchCover, coverIntervalTime);
-      coverIntervalSet = true;
-    }
-  } else {
-    $('#spellbox').text(coverPhraseL0);
-  }
 
   if (spellOut === true) {
     spellOut = false;
@@ -331,25 +303,12 @@ function showCover() {
   }
 }
 
-
-function switchCover() {
-  console.log('switching cover language');
-  coverLang = coverLang === 0 ? 1 : 0;
-
-  if (coverLang === 1) {
-    $('#spellbox').text(coverPhraseL1);
-  } else {
-    $('#spellbox').text(coverPhraseL0);
-  }
-}
-
 function cleanupText() {
   $('#dummy').empty();
   $('#spellbox').empty();
   if (phraseTimeout) clearTimeout(phraseTimeout);
   if (typingTimeout) clearTimeout(typingTimeout);
-  if (coverInterval) clearInterval(coverInterval);
-  coverIntervalSet = false;
+
 }
 
 function queueText(secondLang) {

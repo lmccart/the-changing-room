@@ -15,9 +15,6 @@ let video = true;
 let curEmotion;
 let imgUrls = [];
 
-let selectedVoiceIndex = 9999;
-let selectedVoice;
-
 let hand_interval;
 const handIndicator = $('#hand-indicator');
 
@@ -41,20 +38,9 @@ window.init = () => {
 window.loadingComplete = () => {
   $('.intro-text-container').css('visibility', 'visible');
   scrollDown();
-  setHandInterval();
+  // setHandInterval();
 };
 
-window.speechSynthesis.onvoiceschanged = function() {
-  let voiceOptions = ['Ava', 'Allison', 'Samantha', 'Susan', 'Vicki', 'Kathy', 'Victoria'];
-  let voices = window.speechSynthesis.getVoices();
-  for (let v in voices) {
-    let ind = voiceOptions.indexOf(voices[v].voiceURI);
-    if (ind !== -1 && ind < selectedVoiceIndex) {
-      selectedVoice = voices[v];
-      selectedVoiceIndex = ind;
-    }
-  }
-};
 
 function loadText() {
   if (window.lang0 === window.lang1) { // if only one langauge, remove second text div
@@ -111,15 +97,15 @@ async function updateInterface(durations) {
   $('.text').css('color', textColor);
 }
 
-$('.holder').on('click wheel DOMMouseScroll mousewheel keyup touchmove', function(e) { 
-  if (e.type !== 'click') {
-    $('.holder').stop(true); 
-  }
-  setTimeout(() => {
-    scrollResume();
-  }, scroll_resume_time);
+// $('.holder').on('click wheel DOMMouseScroll mousewheel keyup touchmove', function(e) { 
+//   if (e.type !== 'click') {
+//     $('.holder').stop(true); 
+//   }
+//   setTimeout(() => {
+//     scrollResume();
+//   }, scroll_resume_time);
 
-});
+// });
 
 function scrollDown() {
   $('.holder').scrollTop(0);
