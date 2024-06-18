@@ -107,8 +107,8 @@ async function updateInterface() {
   $('#instruction').css('color', textColor);
   $('#instruction-i18n').css('color', textColor);
   if (window.bilingual) { // changing font size depending on presence of second name
-    $('#instruction').css('font-size', '4vw');
-    $('#instructioni18n').css('font-size', '4vw');
+    $('#instruction').css('font-size', '6vw');
+    $('#instruction-i18n').css('font-size', '6vw');
   } else {
     $('#instruction').css('font-size', '8vw');
   }
