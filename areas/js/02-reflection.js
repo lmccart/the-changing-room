@@ -841,7 +841,7 @@ function setupSynthesis() {
       if (v.name == 'Amélie') {// || v.name == 'Marie') {
         voices.lang0 = v;
       }
-      else if (v.name == 'Samantha' || v.name == 'Ava') {
+      else if (v.name == 'Samantha' || v.name == 'Alva') {
         voices.lang1 = v;
       }
     }
