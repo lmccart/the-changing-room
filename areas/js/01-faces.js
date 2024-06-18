@@ -29,7 +29,6 @@ let faceFound = false;
 let faceInitialized = false;
 
 const coverEl = $('#video-cover');
-coverEl.on('click', removeCover);
 const videoEl = $('#face-stream');
 const canvas = document.createElement('canvas');
 
@@ -194,7 +193,7 @@ function setupFaceDetection(videoEl) {
           watchdog = watchdog < 0 ? 0 : watchdog + 1;
           if (watchdog > (delaySeconds * 10)) {
             faceFound = true;
-            // removeCover();
+            removeCover();
           }
         } else {
           watchdog = watchdog > 0 ? 0 : watchdog - 1;
