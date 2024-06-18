@@ -25,7 +25,7 @@ let dataMeditationEmotions = {};
 let dataMemories = {};
 
 let speech;
-let voices;
+let voices = {};
 let editMode;
 
 // 10s before meditation
@@ -836,11 +836,16 @@ function randomBetween(a, b) {
 function setupSynthesis() {
   window.speechSynthesis.onvoiceschanged = function() {
     const allVoices = window.speechSynthesis.getVoices();
-    voices = {
-      lang0: allVoices[5],
-      lang1: allVoices[0]
-    };
-    console.log(allVoices);
+    console.log(allVoices)
+    for (let v of allVoices) {
+      if (v.name == 'Amélie') {// || v.name == 'Marie') {
+        voices.lang0 = v;
+      }
+      else if (v.name == 'Samantha' || v.name == 'Ava') {
+        voices.lang1 = v;
+      }
+    }
+    console.log(voices)
     speech = new SpeechSynthesisUtterance();
     // speech.lang and speech.voice setup in switchLanguage()
     speech.rate = 0.85;
