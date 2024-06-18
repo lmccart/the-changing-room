@@ -188,8 +188,8 @@ function setupFaceDetection(videoEl) {
       flipHorizontal: true
     })
       .then(function(pose) {
-        let hip = (pose.keypoints[11].score + pose.keypoints[12].score) / 2;
-        if (pose.score > 0.15) {
+        console.log(pose.keypoints[2].score);
+        if (pose.keypoints[2].score > 0.99) {
           watchdog = watchdog < 0 ? 0 : watchdog + 1;
           if (watchdog > (delaySeconds * 10)) {
             faceFound = true;
