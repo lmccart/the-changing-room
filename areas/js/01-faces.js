@@ -191,19 +191,19 @@ function setupFaceDetection(videoEl) {
         console.log(pose.keypoints[2].score);
         if (pose.keypoints[2].score > 0.99) {
           watchdog = watchdog < 0 ? 0 : watchdog + 1;
-          if (watchdog > (delaySeconds * 10)) {
+          if (watchdog > (delaySeconds * 5)) {
             faceFound = true;
             removeCover();
           }
         } else {
           watchdog = watchdog > 0 ? 0 : watchdog - 1;
-          if (watchdog < -(delaySeconds * 10)) {
+          if (watchdog < -(delaySeconds * 5)) {
             faceFound = false;
             showCover();
           }
         }
       });
-  }, 100);
+  }, 200);
 }
 
 
