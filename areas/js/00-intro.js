@@ -15,9 +15,6 @@ let video = true;
 let curEmotion;
 let imgUrls = [];
 
-let selectedVoiceIndex = 9999;
-let selectedVoice;
-
 let hand_interval;
 const handIndicator = $('#hand-indicator');
 
@@ -44,17 +41,6 @@ window.loadingComplete = () => {
   setHandInterval();
 };
 
-window.speechSynthesis.onvoiceschanged = function() {
-  let voiceOptions = ['Ava', 'Allison', 'Samantha', 'Susan', 'Vicki', 'Kathy', 'Victoria'];
-  let voices = window.speechSynthesis.getVoices();
-  for (let v in voices) {
-    let ind = voiceOptions.indexOf(voices[v].voiceURI);
-    if (ind !== -1 && ind < selectedVoiceIndex) {
-      selectedVoice = voices[v];
-      selectedVoiceIndex = ind;
-    }
-  }
-};
 
 function loadText() {
   if (window.lang0 === window.lang1) { // if only one langauge, remove second text div
