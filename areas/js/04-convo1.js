@@ -10,7 +10,7 @@ let introText = '';
 let introText0 = '';
 let introText1 = '';
 let interruptIntro = false;
-let uiResetTimeout, showChatTimeout;
+let uiResetTimeout, showChatTimeout, introTimeout;
 let resetWaitTime = 10 * 1000; // Time before intro reset && inactivity timer
 let socketid;
 const typingSpeed = 200; // milliseconds
@@ -65,6 +65,7 @@ window.init = () => {
     } else {
       chatSubmit.hide();
     }
+    console.log('chatInput requesting startResetTimeout');
     startResetTimeout();
   });
 
@@ -100,12 +101,13 @@ function resetChat() {
   messageViewer.empty();
   // introEl.text(introText);
 
-  interruptIntro = false;
   const introTime0 = introText0.split(' ').length * typingSpeed;
+  interruptIntro = false;
+  if (introTimeout) { clearTimeout(introTimeout); }
   typeMessageByWord(introText0, introEl, 0, false);
   introEl.show();
   // Wait for 1st language intro to finish then begin 2nd
-  setTimeout(() => { typeMessageByWord(introText1, introEl, 0, true); }, introTime0 + 2000);
+  introTimeout = setTimeout(() => { typeMessageByWord(introText1, introEl, 0, true); }, introTime0 + 2000);
 
   // Show hand-indicator just after 2nd language intro begins
   setTimeout(() => { 
@@ -115,6 +117,7 @@ function resetChat() {
 
 function startResetTimeout() {
   clearTimeout(uiResetTimeout);
+  console.log('startResetTimeout has requested to resetChat');
   uiResetTimeout = setTimeout(resetChat, resetWaitTime);
   console.log('start reset timeout ' + uiResetTimeout);
 }
@@ -127,6 +130,7 @@ function showChatInput() {
   messageViewer.empty();
   introEl.hide();
   chatForm.show();
+  console.log('showChatInput requesting startResetTimeout');
   startResetTimeout();
   if (chatInput.val()) {
     chatInput.trigger('focus'); // this may not work on iPad, unless triggered by click
@@ -151,12 +155,19 @@ function updateEmotion(msg) {
     curEmotion = msg;
     console.log('emotion has been updated to: ' + msg.name + ' (base: ' + msg.base + ', level: ' + msg.level + ')');
     interruptIntro = true;
+    if (introTimeout) { clearTimeout(introTimeout); }
+    console.log('updateEmotion is updating interface');
     updateInterface();
   }
 }
 
 function updateInterface() {
   let durations = showLoadingOverlay(curEmotion);
+  interruptIntro = true;
+  if (introTimeout) { clearTimeout(introTimeout); }
+  clearTimeout(uiResetTimeout);
+  
+  console.log('updateInterface has requested to resetChat after loading delay');
   setTimeout(resetChat, window.loadingDur); 
   const colors = window.baseColors[curEmotion.base][curEmotion.level - 1];
   const textColor = getTextColorForBackground(colors[0], colors[1]);
@@ -190,7 +201,9 @@ function handleNewMessage(data) {
 
 function typeMessageByWord(string, el, iteration, secondLang) {
   if (interruptIntro) {
-    el.empty();
+    if (introTimeout) { clearTimeout(introTimeout); }
+    // el.empty();
+    console.log('interrupting intro');
     return;
   }
 
@@ -206,7 +219,8 @@ function typeMessageByWord(string, el, iteration, secondLang) {
       }, pauseOnMessageTime);
     }
     // Check to see if second language has gone before resetting
-    if (secondLang) { 
+    if (secondLang & el === introEl) { 
+      console.log(`typeMessagebyWord is requesting startResetTimeout() from ${el.attr('id')}`);
       startResetTimeout();
     }
     return;
