@@ -189,7 +189,7 @@ function setupFaceDetection(videoEl) {
     })
       .then(function(pose) {
         console.log(pose.keypoints[2].score);
-        if (pose.keypoints[2].score > 0.99) {
+        if (pose.keypoints[2].score > 0.8) {
           watchdog = watchdog < 0 ? 0 : watchdog + 1;
           if (watchdog > (delaySeconds * 5)) {
             faceFound = true;
