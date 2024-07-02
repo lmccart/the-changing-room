@@ -19,6 +19,8 @@ const loadingBarTime = 4000;
 let curInstruction = 0;
 let instructions, instructionsi18n;
 let colors;
+let introInterrupt = false;
+let introi18nInterrupt = false;
 
 window.soundType = 'mute';
 window.init = () => {
@@ -83,6 +85,7 @@ window.loadingComplete = () => {
 
 function updateEmotion(msg) {
   if (!curEmotion || curEmotion.name !== msg.name) {
+    introInterrupt = true;
     curEmotion = msg;
     console.log('emotion has been updated to: ' + msg.name + ' (base: ' + msg.base + ', level: ' + msg.level + ')');
     updateInterface();
@@ -150,9 +153,11 @@ function showConvoLoading() {
 
     if (window.bilingual) {
       const isLonger = instruction.length >= instructioni18n.length;
+      introInterrupt = false;
       typeInstruction(instruction, '#instruction', isLonger);
       typeInstruction(instructioni18n, '#instruction-i18n', !isLonger);
     } else {
+      introInterrupt = false;
       typeInstruction(instruction, '#instruction', true);
     }
     
@@ -167,6 +172,11 @@ function showConvoLoading() {
 function typeInstruction(string, element, longest, iteration) {
   console.log('typing for', element);
   var iteration = iteration || 0;
+
+  if (introInterrupt) {
+    $(element).empty();
+    return;
+  }
   
   // Prevent our code executing if there are no letters left
   if (iteration === string.length) {
