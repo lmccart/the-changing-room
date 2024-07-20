@@ -19,8 +19,7 @@ const loadingBarTime = 4000;
 let curInstruction = 0;
 let instructions, instructionsi18n;
 let colors;
-let introInterrupt = false;
-let introi18nInterrupt = false;
+let playing = false;
 
 window.soundType = 'mute';
 window.init = () => {
@@ -80,12 +79,14 @@ window.init = () => {
 };
 
 window.loadingComplete = () => {
-  showConvoLoading();
+  if (!playing) {
+    playing = true;
+    showConvoLoading();
+  }
 };
 
 function updateEmotion(msg) {
   if (!curEmotion || curEmotion.name !== msg.name) {
-    introInterrupt = true;
     curEmotion = msg;
     console.log('emotion has been updated to: ' + msg.name + ' (base: ' + msg.base + ', level: ' + msg.level + ')');
     updateInterface();
@@ -96,7 +97,7 @@ async function updateInterface() {
   $('#debug-info').text('CURRENT EMOTION: ' + curEmotion.name + ' (base: ' + curEmotion.base + ', level: ' + curEmotion.level + ')');
  
   const durations = showLoadingOverlay(curEmotion);
-  reset();
+  // reset();
   imgUrls = await getImgUrls(curEmotion.base, curEmotion.level);
   colors = window.baseColors[curEmotion.base][curEmotion.level - 1];
   switchBackgrounds(imgUrls, durations[1] - durations[0] - 500, colors);
@@ -121,14 +122,15 @@ function reset() {
 }
 
 function showConvoLoading() {
+  console.log('show convo loading');
   $('#convo-loading').show();
-  $('#instruction').empty();
-  $('#instruction-i18n').empty();
   clearTimeout(initTimeout);
 
   initTimeout = setTimeout(() => {
     // hide loading bar
     $('#convo-loading').hide();
+    $('#instruction').empty();
+    $('#instruction-i18n').empty();
 
     // start typing instruction
     let lastInstruction = curInstruction;
@@ -138,9 +140,6 @@ function showConvoLoading() {
     const instruction = instructions[curEmotion.base][curInstruction];
     const instructioni18n = window.bilingual ? instructionsi18n[curEmotion.base][curInstruction] : undefined;
     
-    // need to find a way to delay the reset for the longer instruction
-    // how long is typing speed?
-
     switchBackgrounds(imgUrls, 1000, colors);
 
     if (window.bilingual) { 
@@ -153,11 +152,9 @@ function showConvoLoading() {
 
     if (window.bilingual) {
       const isLonger = instruction.length >= instructioni18n.length;
-      introInterrupt = false;
       typeInstruction(instruction, '#instruction', isLonger);
       typeInstruction(instructioni18n, '#instruction-i18n', !isLonger);
     } else {
-      introInterrupt = false;
       typeInstruction(instruction, '#instruction', true);
     }
     
@@ -170,17 +167,14 @@ function showConvoLoading() {
 // check for longer and remoce 
 
 function typeInstruction(string, element, longest, iteration) {
-  console.log('typing for', element);
+  // console.log('typing for', element);
   var iteration = iteration || 0;
-
-  if (introInterrupt) {
-    $(element).empty();
-    return;
-  }
+  console.log(iteration, string.length);
   
   // Prevent our code executing if there are no letters left
   if (iteration === string.length) {
     if (longest) {
+      console.log('start new');
       loadingTimeout = setTimeout(() => {
         showConvoLoading();
         $('#instruction').empty();
